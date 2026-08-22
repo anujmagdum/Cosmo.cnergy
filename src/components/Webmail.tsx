@@ -41,6 +41,7 @@ interface Props {
   mailDraftQueue?: import('../types').QueuedMailDraft[];
   onPopMailDraftQueue?: (id: string) => void;
   onClearMailDraftQueue?: () => void;
+  onClearInitialCompose?: () => void;
 }
 
 const DEFAULT_ACCOUNTS: WebmailAccount[] = [
@@ -221,7 +222,8 @@ export const Webmail: React.FC<Props> = ({
   onSendSuccess,
   mailDraftQueue = [],
   onPopMailDraftQueue,
-  onClearMailDraftQueue
+  onClearMailDraftQueue,
+  onClearInitialCompose
 }) => {
   const [accounts, setAccounts] = useState<WebmailAccount[]>(() => {
     const saved = localStorage.getItem('cosmo_webmail_accounts');
@@ -254,15 +256,35 @@ export const Webmail: React.FC<Props> = ({
   const [composeAttachment, setComposeAttachment] = useState<EmailAttachment | null>(null);
   const [isSending, setIsSending] = useState(false);
 
-  // Listen to deep initialCompose routing
+  // Helper to safely reset and close compose state
+  const handleCloseCompose = () => {
+    setIsComposeOpen(false);
+    setComposeTo('');
+    setComposeCc('');
+    setComposeSubject('');
+    setComposeBody('');
+    setComposeAttachment(null);
+  };
+
+  // Clean up compose state on unmount to prevent persistent stale drafts
+  useEffect(() => {
+    return () => {
+      handleCloseCompose();
+    };
+  }, []);
+
+  // Listen to deep initialCompose routing and immediately clear from parent to avoid re-opening
   useEffect(() => {
     if (initialCompose) {
       if (initialCompose.to) setComposeTo(initialCompose.to);
       if (initialCompose.subject) setComposeSubject(initialCompose.subject);
       if (initialCompose.body) setComposeBody(initialCompose.body);
       setIsComposeOpen(true);
+      if (onClearInitialCompose) {
+        onClearInitialCompose();
+      }
     }
-  }, [initialCompose]);
+  }, [initialCompose, onClearInitialCompose]);
 
   // UI Recovery State: Window focus & storage synchronization for pending POs
   const [sessionPendingPOs, setSessionPendingPOs] = useState<QueuedMailDraft[]>(() => {
@@ -385,10 +407,10 @@ export const Webmail: React.FC<Props> = ({
     return emails.filter(e => e.accountEmail === activeAccount.email && e.folder === 'inbox' && e.isUnread).length;
   }, [emails, activeAccount]);
 
-  // IMAP Live Mail Polling Simulation & Backend Integration
+  // IMAP Live Mail Polling & Backend Integration
   const handleFetchMail = async () => {
     setIsFetching(true);
-    setSyncStatus('Connecting to IMAP SSL Server...');
+    setSyncStatus(`Connecting to ${activeAccount.imapHost || 'IMAP'} SSL Server (Port ${activeAccount.imapPort || 993})...`);
 
     try {
       const response = await fetch('/api/webmail-fetch', {
@@ -400,25 +422,29 @@ export const Webmail: React.FC<Props> = ({
         })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.emails && Array.isArray(data.emails)) {
-          setEmails(prev => [...data.emails, ...prev]);
+      const data = await response.json().catch(() => ({}));
+      if (response.ok && data.success) {
+        if (data.emails && Array.isArray(data.emails) && data.emails.length > 0) {
+          setEmails(prev => {
+            const existingIds = new Set(prev.map(e => e.id));
+            const newEmails = data.emails.filter((e: any) => !existingIds.has(e.id));
+            return [...newEmails, ...prev];
+          });
           setSyncStatus(`Sync complete! ${data.emails.length} new messages retrieved.`);
         } else {
-          setSyncStatus('Inbox is up to date (0 new messages on server).');
+          setSyncStatus(`Inbox is up to date (0 new messages on ${activeAccount.imapHost}).`);
         }
       } else {
-        setSyncStatus('IMAP server polled (No new server messages).');
+        setSyncStatus(`IMAP sync status: ${data.error || data.message || 'No new server messages'}`);
       }
     } catch (e: any) {
       console.error('Fetch error:', e);
-      setSyncStatus('Live IMAP sync simulated (Offline / Demo mode)');
+      setSyncStatus(`IMAP sync notice: ${e?.message || 'Server unreachable'}`);
     } finally {
       setTimeout(() => {
         setIsFetching(false);
         setSyncStatus(null);
-      }, 3000);
+      }, 3500);
     }
   };
 
@@ -437,8 +463,8 @@ export const Webmail: React.FC<Props> = ({
         })
       });
 
-      const data = await response.json();
-      if (data.success) {
+      const data = await response.json().catch(() => ({}));
+      if (response.ok && data.success) {
         setConnTestResult({
           success: true,
           message: data.message || `Connected to ${settingsForm.imapHost}:${settingsForm.imapPort} successfully!`
@@ -446,13 +472,13 @@ export const Webmail: React.FC<Props> = ({
       } else {
         setConnTestResult({
           success: false,
-          message: data.error || 'Connection failed. Please check host, port, and credentials.'
+          message: data.error || data.message || 'Connection failed. Please check host, port, and credentials.'
         });
       }
     } catch (e: any) {
       setConnTestResult({
-        success: true,
-        message: `Connection parameters to ${settingsForm.imapHost}:${settingsForm.imapPort} verified.`
+        success: false,
+        message: e?.message || `Failed to connect to ${settingsForm.imapHost}:${settingsForm.imapPort}. Verify server settings.`
       });
     } finally {
       setIsTestingConn(false);
@@ -576,24 +602,24 @@ export const Webmail: React.FC<Props> = ({
       });
 
       const resData = await response.json().catch(() => ({}));
-      if (response.ok && (resData.success || resData.simulated)) {
+      if (response.ok && resData.success) {
+        setEmails(prev => [newMail, ...prev]);
         if (onSendSuccess && initialCompose?.orderToConfirm) {
           onSendSuccess(initialCompose.orderToConfirm);
         }
+        alert(resData.message || `Email dispatched to ${composeTo}!`);
       } else {
-        console.warn('SMTP transport dispatch feedback:', resData);
+        console.warn('SMTP transport dispatch warning:', resData);
+        alert(`SMTP Dispatch Notice: ${resData.error || resData.message || 'Check mailbox credentials in settings.'}`);
+        setEmails(prev => [newMail, ...prev]);
       }
-    } catch (e) {
-      console.warn('Local/Demo SMTP dispatch error:', e);
-    } finally {
+    } catch (e: any) {
+      console.warn('Local SMTP dispatch error:', e);
+      alert(`Email dispatch error: ${e?.message || 'Could not connect to SMTP server.'}`);
       setEmails(prev => [newMail, ...prev]);
+    } finally {
       setIsSending(false);
-      setIsComposeOpen(false);
-      setComposeTo('');
-      setComposeCc('');
-      setComposeSubject('');
-      setComposeBody('');
-      setComposeAttachment(null);
+      handleCloseCompose();
 
       // Auto-load next draft in queue if available
       if (mailDraftQueue && mailDraftQueue.length > 0) {
@@ -1407,7 +1433,7 @@ export const Webmail: React.FC<Props> = ({
                 <Send className="w-5 h-5 text-emerald-600" />
                 <h3 className="text-xl font-bold text-[#073642]">Compose New Message</h3>
               </div>
-              <button onClick={() => setIsComposeOpen(false)} className="text-[#586E75] hover:text-[#073642] font-bold p-1">
+              <button onClick={handleCloseCompose} className="text-[#586E75] hover:text-[#073642] font-bold p-1">
                 ✕
               </button>
             </div>
@@ -1499,7 +1525,7 @@ export const Webmail: React.FC<Props> = ({
               <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#D6D1B1]/60">
                 <button
                   type="button"
-                  onClick={() => setIsComposeOpen(false)}
+                  onClick={handleCloseCompose}
                   className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] font-semibold text-xs hover:bg-[#E4DDC7]"
                 >
                   Discard Draft

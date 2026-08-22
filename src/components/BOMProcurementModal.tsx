@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { CatalogItem, ProductBOM, Supplier, MultiSupplierPODraft, ProductFolder, ProcurementOrder, formatProcurementSubject } from '../types';
+import { CatalogItem, ProductBOM, Supplier, MultiSupplierPODraft, ProductFolder, ProcurementOrder, formatProcurementSubject, QueuedMailDraft } from '../types';
 import { Layers, Rocket, Calculator, Check, ArrowRight, Zap, RefreshCw, X, Building2, Package, Mail, MessageSquare } from 'lucide-react';
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
   onClose: () => void;
   onDispatchOrders: (orders: MultiSupplierPODraft[], type: 'PO' | 'RFQ') => Promise<void>;
   onOpenWebmail?: (supplier: Supplier, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
+  onEnqueueMailDrafts?: (drafts: QueuedMailDraft[], openFirstImmediately?: boolean) => void;
 }
 
 export const BOMProcurementModal: React.FC<Props> = ({
@@ -21,7 +22,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
   orders = [],
   onClose,
   onDispatchOrders,
-  onOpenWebmail
+  onOpenWebmail,
+  onEnqueueMailDrafts
 }) => {
   // Option list combining Product Folders and registered BOM finished products
   const folderNames = folders.map(f => ({
@@ -261,17 +263,57 @@ export const BOMProcurementModal: React.FC<Props> = ({
             : `https://wa.me/?text=${encodeURIComponent(message)}`;
           window.open(waUrl, '_blank');
         });
-      } else if (dispatchChannel === 'webmail' && onOpenWebmail && splitDrafts.length > 0) {
-        // Route first draft or queue to internal Webmail
-        const first = splitDrafts[0];
-        onOpenWebmail(
-          first.supplier,
-          `${currentSelection?.name || 'Assembly'} (Batch x${packQuantity})`,
-          `${first.items.length} line items`,
-          packQuantity,
-          `1-Tap BOM Procurement Order for ${currentSelection?.name}`,
-          'ORDERED'
-        );
+      } else if (dispatchChannel === 'webmail' && splitDrafts.length > 0) {
+        // Construct comprehensive PO drafts for ALL vendors
+        console.log('[1-Tap BOM Email Dispatch] Preparing multi-vendor dispatch:', splitDrafts.map(d => ({
+          vendor: d.supplier.name,
+          email: editableContacts[d.supplier.id]?.email || d.supplier.email,
+          itemsCount: d.items.length,
+          totalAmount: d.total_amount
+        })));
+
+        const allQueuedDrafts: QueuedMailDraft[] = splitDrafts.map((draft, idx) => {
+          const contact = editableContacts[draft.supplier.id] || { email: draft.supplier.email, phone: draft.supplier.phone };
+          const itemsList = draft.items
+            .map(
+              (it, i) =>
+                `${i + 1}. ${it.catalogItem.name} (${it.catalogItem.specs || 'Standard'}) — Qty: ${it.quantity} ${it.catalogItem.uom || 'Pcs'} @ ₹${it.unit_price} = ₹${it.total_price.toLocaleString('en-IN')}`
+            )
+            .join('\n');
+
+          const emailBody = `Dear ${draft.supplier.contact_person || draft.supplier.name},\n\nPlease accept our formal ${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} for the "${currentSelection?.name || 'Assembly'}" (Batch x${packQuantity}):\n\n${itemsList}\n\nTotal PO Amount: ₹${draft.total_amount.toLocaleString('en-IN')}\n\nDelivery Location: Unit 4, Energy Tech Park, Pune Plant\nPayment Terms: 30 Days Net on QC Inspection\n\nPlease confirm order acceptance and dispatch schedule at your earliest convenience.\n\nBest regards,\nProcurement Department\nCosmo Cnergy Procurement Ltd.`;
+
+          return {
+            id: `bom-queue-${draft.supplier.id}-${Date.now()}-${idx}`,
+            supplier: { ...draft.supplier, email: contact.email || draft.supplier.email, phone: contact.phone || draft.supplier.phone },
+            to: contact.email || draft.supplier.email,
+            subject: `${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} - ${currentSelection?.name || 'Assembly'}`,
+            body: emailBody,
+            productName: currentSelection?.name || 'Assembly',
+            totalAmount: draft.total_amount,
+            itemsCount: draft.items.length,
+            context: 'CATALOG_BOM'
+          };
+        });
+
+        // Store remaining in session recovery
+        try {
+          sessionStorage.setItem('cosmo_pending_pos_queue', JSON.stringify(allQueuedDrafts.slice(1)));
+        } catch {}
+
+        if (onEnqueueMailDrafts) {
+          onEnqueueMailDrafts(allQueuedDrafts, true);
+        } else if (onOpenWebmail) {
+          const first = allQueuedDrafts[0];
+          onOpenWebmail(
+            first.supplier,
+            first.productName,
+            first.body,
+            first.totalAmount,
+            'CATALOG_BOM',
+            'ORDERED'
+          );
+        }
       }
 
       // Confirm & log orders in state / Supabase

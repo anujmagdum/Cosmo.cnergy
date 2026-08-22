@@ -51,12 +51,13 @@ export const Header: React.FC<Props> = ({
   const displayEmail = userEmail || (userName ? `${userName.toLowerCase().replace(/[^a-z0-9]/g, '')}@cosmocnergy.com` : '');
   const userInitial = (userName ? userName.charAt(0) : (displayEmail ? displayEmail.charAt(0) : 'U')).toUpperCase();
 
+  // Navigation Items: Orders as First/Main Item, AI Studio as Final Highlighted Item
   const navItems = [
-    { id: 'catalog' as const, label: 'Components & Products', icon: Layers },
-    { id: 'suppliers' as const, label: 'Suppliers', icon: Truck },
-    { id: 'ai' as const, label: 'AI Studio', icon: Sparkles },
-    { id: 'orders' as const, label: 'Orders', icon: History },
-    { id: 'webmail' as const, label: 'Webmail', icon: Mail },
+    { id: 'orders' as const, label: 'Orders', icon: History, isAi: false },
+    { id: 'catalog' as const, label: 'Components & Products', icon: Layers, isAi: false },
+    { id: 'suppliers' as const, label: 'Suppliers', icon: Truck, isAi: false },
+    { id: 'webmail' as const, label: 'Webmail', icon: Mail, isAi: false },
+    { id: 'ai' as const, label: 'AI Studio', icon: Sparkles, isAi: true },
   ];
 
   return (
@@ -66,7 +67,7 @@ export const Header: React.FC<Props> = ({
         <div className="flex items-center justify-between shrink-0">
           <div
             className="flex items-center gap-2.5 cursor-pointer group"
-            onClick={() => setActiveTab('catalog')}
+            onClick={() => setActiveTab('orders')}
           >
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center emerald-glow shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
               <Zap className="w-5 h-5 text-white fill-white" />
@@ -110,11 +111,32 @@ export const Header: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Center: Curvy-Square Compact Pill Navigation (No horizontal scrollbar) */}
+        {/* Center: Reordered Navigation Bar with Standout AI Studio Pill */}
         <nav className="flex flex-wrap items-center justify-center md:justify-start gap-1.5 p-1 rounded-2xl bg-[#071322]/80 border border-slate-800/80 shadow-inner">
           {navItems.map(item => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
+
+            // Standout styling for AI Studio
+            if (item.isAi) {
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all relative group overflow-hidden ${
+                    isActive
+                      ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-500 text-white shadow-lg shadow-purple-500/40 ring-2 ring-pink-400/60 scale-[1.03]'
+                      : 'bg-gradient-to-r from-purple-950/70 via-indigo-950/70 to-pink-950/70 hover:from-purple-900 hover:via-indigo-900 hover:to-pink-900 text-purple-200 hover:text-white border border-purple-500/40 shadow-sm shadow-purple-500/20 hover:scale-[1.02]'
+                  }`}
+                >
+                  <Icon className={`w-3.5 h-3.5 text-pink-300 group-hover:rotate-12 transition-transform ${isActive ? 'animate-spin-slow' : ''}`} />
+                  <span className="bg-gradient-to-r from-purple-200 via-pink-200 to-white bg-clip-text text-transparent font-black">
+                    {item.label}
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-ping absolute top-1.5 right-1.5" />
+                </button>
+              );
+            }
 
             return (
               <button

@@ -38,8 +38,8 @@ import {
 } from './services/mockData';
 
 export const App: React.FC = () => {
-  // Navigation State
-  const [activeTab, setActiveTab] = useState<'catalog' | 'suppliers' | 'ai' | 'orders' | 'webmail'>('catalog');
+  // Navigation State — Orders as default main landing view
+  const [activeTab, setActiveTab] = useState<'catalog' | 'suppliers' | 'ai' | 'orders' | 'webmail'>('orders');
 
   // Core Data States
   const [categories, setCategories] = useState<Category[]>([
@@ -1018,6 +1018,10 @@ export const App: React.FC = () => {
     setMailDraftQueue([]);
   };
 
+  const handleClearInitialCompose = () => {
+    setWebmailInitialCompose(null);
+  };
+
   // Internal Webmail Global Routing
   const handleOpenWebmail = (
     supplier: Supplier,
@@ -1128,6 +1132,7 @@ export const App: React.FC = () => {
             mailDraftQueue={mailDraftQueue}
             onPopMailDraftQueue={handlePopMailDraftQueue}
             onClearMailDraftQueue={handleClearMailDraftQueue}
+            onClearInitialCompose={handleClearInitialCompose}
           />
         )}
       </main>
@@ -1148,6 +1153,7 @@ export const App: React.FC = () => {
           onClose={() => setIsBOMModalOpen(false)}
           onDispatchOrders={handleDispatchOrders}
           onOpenWebmail={handleOpenWebmail}
+          onEnqueueMailDrafts={handleEnqueueMailDrafts}
         />
       )}
 

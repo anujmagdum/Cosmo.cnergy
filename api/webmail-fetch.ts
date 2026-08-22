@@ -1,47 +1,54 @@
-import { createClient } from '@supabase/supabase-js';
-
 // Serverless Handler for IMAP Email Sync & Connection Testing
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { account, mode = 'fetch' } = req.body;
+  const { account, mode = 'fetch', folder = 'inbox' } = req.body || {};
 
-  const imapHost = account?.imapHost || process.env.IMAP_HOST || '';
-  const imapPort = Number(account?.imapPort) || Number(process.env.IMAP_PORT) || 993;
-  const authUser = account?.username || account?.email;
-  const authPass = account?.password || '';
+  const imapHost = (account?.imapHost || account?.imap_host || process.env.IMAP_HOST || '').trim();
+  const imapPort = Number(account?.imapPort) || Number(account?.imap_port) || Number(process.env.IMAP_PORT) || 993;
+  const authUser = (account?.username || account?.auth_username || account?.email || '').trim();
+  const authPass = (account?.password || account?.auth_password || process.env.IMAP_PASS || '').trim();
+
+  if (!imapHost) {
+    return res.status(400).json({
+      success: false,
+      error: 'IMAP Host is required. Please check your Webmail account settings.'
+    });
+  }
 
   if (!authUser || !authPass) {
     return res.status(400).json({
       success: false,
-      error: 'Password or username is missing. Please enter your email password in Webmail Settings.'
+      error: `Password or username missing for ${authUser || 'account'}. Please enter your email password in Webmail Settings (Gear Icon).`
     });
   }
 
   try {
-    // Dynamically attempt ImapFlow if installed/available in environment
+    // Dynamically attempt ImapFlow
     let ImapFlowMod: any = null;
     try {
       const dynamicImport = new Function('specifier', 'return import(specifier)');
       const mod = await dynamicImport('imapflow');
       ImapFlowMod = mod.ImapFlow || mod.default?.ImapFlow || mod.default;
     } catch (e) {
-      console.log('ImapFlow native package not loaded, using structured fallback/sync simulation');
+      console.log('[IMAP Service] ImapFlow dynamic import fallback');
     }
 
     if (ImapFlowMod) {
+      const isSecure = imapPort === 993;
       const client = new ImapFlowMod({
         host: imapHost,
         port: imapPort,
-        secure: imapPort === 993,
+        secure: isSecure,
         auth: {
           user: authUser,
           pass: authPass,
         },
         tls: {
-          rejectUnauthorized: false
+          rejectUnauthorized: false,
+          minVersion: 'TLSv1.2'
         },
         logger: false
       });
@@ -52,73 +59,99 @@ export default async function handler(req: any, res: any) {
         await client.logout();
         return res.status(200).json({
           success: true,
-          message: `Successfully connected and authenticated to ${imapHost}:${imapPort} as ${authUser}!`
+          message: `Connection & authentication to ${imapHost}:${imapPort} verified for ${authUser}!`
         });
       }
 
-      // Fetch from INBOX
-      const lock = await client.getMailboxLock('INBOX');
+      // Determine target mailbox path
+      let mailboxPath = 'INBOX';
+      if (folder === 'sent') {
+        mailboxPath = imapHost.includes('gmail') ? '[Gmail]/Sent Mail' : 'Sent';
+      } else if (folder === 'trash') {
+        mailboxPath = imapHost.includes('gmail') ? '[Gmail]/Trash' : 'Trash';
+      }
+
+      let lock;
+      try {
+        lock = await client.getMailboxLock(mailboxPath);
+      } catch (boxErr) {
+        // Fallback to INBOX if specific folder path is not found
+        console.warn(`[IMAP] Could not lock ${mailboxPath}, falling back to INBOX:`, boxErr);
+        lock = await client.getMailboxLock('INBOX');
+      }
+
       const fetchedEmails: any[] = [];
 
       try {
-        const status = await client.status('INBOX', { messages: true });
+        const status = await client.status(mailboxPath, { messages: true, unseen: true });
         const total = status.messages || 0;
-        const startSeq = Math.max(1, total - 14);
-        const searchRange = `${startSeq}:${total}`;
 
-        for await (let message of client.fetch(searchRange, { envelope: true, bodyStructure: true, source: true })) {
-          const envelope = message.envelope;
-          const fromAddr = envelope.from?.[0]
-            ? `${envelope.from[0].name || ''} <${envelope.from[0].address || ''}>`.trim()
-            : 'Unknown Sender';
+        if (total > 0) {
+          const fetchCount = Math.min(15, total);
+          const startSeq = Math.max(1, total - fetchCount + 1);
+          const searchRange = `${startSeq}:${total}`;
 
-          const toAddr = envelope.to?.[0]?.address || account?.email || authUser;
+          for await (let message of client.fetch(searchRange, { envelope: true, bodyStructure: true, source: true, flags: true })) {
+            const envelope = message.envelope;
+            const fromAddr = envelope.from?.[0]
+              ? `${envelope.from[0].name || ''} <${envelope.from[0].address || ''}>`.trim()
+              : 'Unknown Sender';
 
-          fetchedEmails.push({
-            id: `imap-${message.uid || message.seq}`,
-            accountEmail: account?.email || authUser,
-            folder: 'inbox',
-            from: fromAddr,
-            to: toAddr,
-            subject: envelope.subject || '(No Subject)',
-            date: envelope.date ? new Date(envelope.date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : new Date().toLocaleString(),
-            timestamp: envelope.date ? new Date(envelope.date).getTime() : Date.now(),
-            snippet: envelope.subject || 'IMAP Message Received',
-            bodyHtml: `<div style="font-family: Arial, sans-serif; padding: 12px; color: #333; line-height: 1.6;">
-              <p><strong>Subject:</strong> ${envelope.subject || '(No Subject)'}</p>
-              <p><strong>From:</strong> ${fromAddr}</p>
-              <p><strong>Date:</strong> ${envelope.date || new Date().toISOString()}</p>
-              <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;"/>
-              <p style="white-space: pre-wrap;">Live IMAP payload received from ${imapHost}.</p>
-            </div>`,
-            isUnread: !(message.flags?.has('\\Seen')),
-            isStarred: Boolean(message.flags?.has('\\Flagged')),
-          });
+            const toAddr = envelope.to?.[0]?.address || account?.email || authUser;
+
+            // Extract text snippet or body from source if present
+            let bodyText = '';
+            if (message.source) {
+              const rawSource = message.source.toString();
+              const textMatch = rawSource.match(/Content-Type:\s*text\/(?:plain|html)[^]*?\r?\n\r?\n([^]*?)(?:\r?\n--|$)/i);
+              bodyText = textMatch ? textMatch[1].trim() : rawSource.substring(0, 500);
+            }
+
+            const cleanSnippet = (envelope.subject || bodyText.substring(0, 120) || 'New message received').replace(/<[^>]*>?/gm, '');
+
+            fetchedEmails.push({
+              id: `imap-${message.uid || message.seq}`,
+              accountEmail: account?.email || authUser,
+              folder: folder || 'inbox',
+              from: fromAddr,
+              to: toAddr,
+              subject: envelope.subject || '(No Subject)',
+              date: envelope.date ? new Date(envelope.date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : new Date().toLocaleString(),
+              timestamp: envelope.date ? new Date(envelope.date).getTime() : Date.now(),
+              snippet: cleanSnippet,
+              bodyHtml: `<div style="font-family: Arial, sans-serif; padding: 14px; color: #073642; line-height: 1.6;">
+                <p><strong>Subject:</strong> ${envelope.subject || '(No Subject)'}</p>
+                <p><strong>From:</strong> ${fromAddr}</p>
+                <p><strong>Date:</strong> ${envelope.date ? new Date(envelope.date).toUTCString() : new Date().toUTCString()}</p>
+                <hr style="border: 0; border-top: 1px solid #D6D1B1; margin: 15px 0;"/>
+                <div style="white-space: pre-wrap; font-size: 13px;">${bodyText || cleanSnippet}</div>
+              </div>`,
+              isUnread: !(message.flags?.has('\\Seen')),
+              isStarred: Boolean(message.flags?.has('\\Flagged')),
+            });
+          }
         }
       } finally {
-        lock.release();
+        if (lock) lock.release();
       }
 
       await client.logout();
-      return res.status(200).json({ success: true, emails: fetchedEmails.reverse() });
-    }
-
-    // Fallback if imapflow is not natively run on local dev
-    if (mode === 'test') {
-      return res.status(200).json({
-        success: true,
-        message: `Connection handshake verified to ${imapHost}:${imapPort} for account ${authUser}!`
+      return res.status(200).json({ 
+        success: true, 
+        emails: fetchedEmails.reverse(),
+        totalFound: fetchedEmails.length,
+        message: `Successfully retrieved ${fetchedEmails.length} messages from ${imapHost}.`
       });
     }
 
-    return res.status(200).json({
-      success: true,
-      message: 'IMAP live sync triggered',
-      emails: []
+    // Direct error if ImapFlow is not available
+    return res.status(500).json({
+      success: false,
+      error: 'ImapFlow module could not be loaded in runtime environment.'
     });
 
   } catch (error: any) {
-    console.error('IMAP Fetch/Test Error:', error);
+    console.error('[IMAP Service] Connection/Fetch Error:', error);
     return res.status(500).json({
       success: false,
       error: error.message || 'Failed to connect to IMAP server. Please verify IMAP host, port, username, and password.'
