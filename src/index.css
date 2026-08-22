@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #EEE8D5;
+    color: #073642;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', 'Inter', sans-serif;
+  }
+}
+
+/* Solarized Light & Datlion Cnergy Theme Tokens */
+.glass-panel {
+  background: #0B192C;
+  color: #FDF6E3;
+  border-bottom: 1px solid #1E3E62;
+  box-shadow: 0 4px 20px -2px rgba(11, 25, 44, 0.2);
+}
+
+.glass-card {
+  background: #FDF6E3;
+  border: 1px solid #D6D1B1;
+  box-shadow: 0 2px 8px -2px rgba(7, 54, 66, 0.08);
+  transition: all 0.2s ease-in-out;
+}
+
+.glass-card:hover {
+  border-color: #10B981;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.15), 0 4px 6px -2px rgba(7, 54, 66, 0.06);
+}
+
+/* Glow effects */
+.emerald-glow {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #EEE8D5;
+}
+::-webkit-scrollbar-thumb {
+  background: #93A1A1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #10B981;
+}
+
+/* Printable PO styling */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+}
