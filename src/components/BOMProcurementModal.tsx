@@ -231,6 +231,90 @@ export const BOMProcurementModal: React.FC<Props> = ({
     }));
   };
 
+  // Helper to format itemized PO list for a vendor draft
+  const formatVendorItemsList = (draft: MultiSupplierPODraft) => {
+    return draft.items
+      .map(
+        (it, i) =>
+          `${i + 1}. ${it.catalogItem.name} (${it.catalogItem.specs || 'Standard'}) — Qty: ${it.quantity} ${it.catalogItem.uom || 'Pcs'} @ ₹${it.unit_price} = ₹${it.total_price.toLocaleString('en-IN')}`
+      )
+      .join('\n');
+  };
+
+  // Helper to format full email subject & body for a vendor draft
+  const buildVendorEmailData = (draft: MultiSupplierPODraft) => {
+    const contact = editableContacts[draft.supplier.id] || { email: draft.supplier.email, phone: draft.supplier.phone };
+    const itemsList = formatVendorItemsList(draft);
+    const subject = `${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} - ${currentSelection?.name || 'Assembly'}`;
+    const body = `Dear ${draft.supplier.contact_person || draft.supplier.name},\n\nPlease accept our formal ${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} for the "${currentSelection?.name || 'Assembly'}" (Batch x${packQuantity}):\n\n${itemsList}\n\nTotal PO Amount: ₹${draft.total_amount.toLocaleString('en-IN')}\n\nDelivery Location: Unit 4, Energy Tech Park, Pune Plant\nPayment Terms: 30 Days Net on QC Inspection\n\nPlease confirm order acceptance and dispatch schedule at your earliest convenience.\n\nBest regards,\nProcurement Department\nCosmo Cnergy Procurement Ltd.`;
+    const mailtoUrl = `mailto:${encodeURIComponent(contact.email || '')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    return { to: contact.email || draft.supplier.email || '', subject, body, mailtoUrl };
+  };
+
+  // Helper to format WhatsApp message & URL for a vendor draft
+  const buildVendorWhatsAppUrl = (draft: MultiSupplierPODraft) => {
+    const contact = editableContacts[draft.supplier.id] || { email: draft.supplier.email, phone: draft.supplier.phone };
+    const cleanPhone = (contact.phone || '').replace(/[^0-9]/g, '');
+    const itemsList = draft.items
+      .map(i => `• ${i.catalogItem.name}: ${i.quantity} ${i.catalogItem.uom} @ ₹${i.unit_price} = ₹${i.total_price}`)
+      .join('\n');
+    const message = `*COSMOCNERGY 1-TAP PROCUREMENT*\n----------------------------------------\n📄 *Type:* ${orderType}\n🏢 *Vendor:* ${draft.supplier.name}\n📦 *Items:*\n${itemsList}\n💰 *Total:* ₹${draft.total_amount.toLocaleString('en-IN')}`;
+    const waUrl = cleanPhone
+      ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`
+      : `https://wa.me/?text=${encodeURIComponent(message)}`;
+    return { cleanPhone, message, waUrl };
+  };
+
+  // Dispatch a single vendor draft via Webmail or mailto:
+  const handleDispatchSingleVendorWebmail = (draft: MultiSupplierPODraft) => {
+    const emailData = buildVendorEmailData(draft);
+    if (!emailData.to) {
+      alert(`Please enter a valid Email Address for ${draft.supplier.name}`);
+      return;
+    }
+
+    if (onEnqueueMailDrafts) {
+      const queuedDraft: QueuedMailDraft = {
+        id: `bom-single-${draft.supplier.id}-${Date.now()}`,
+        supplier: { ...draft.supplier, email: emailData.to },
+        to: emailData.to,
+        subject: emailData.subject,
+        body: emailData.body,
+        productName: currentSelection?.name || 'Assembly',
+        totalAmount: draft.total_amount,
+        itemsCount: draft.items.length,
+        context: 'CATALOG_BOM'
+      };
+      onEnqueueMailDrafts([queuedDraft], true);
+      onClose();
+    } else if (onOpenWebmail) {
+      onOpenWebmail(
+        { ...draft.supplier, email: emailData.to },
+        currentSelection?.name || 'Assembly',
+        emailData.body,
+        draft.total_amount,
+        'CATALOG_BOM',
+        'ORDERED'
+      );
+      onClose();
+    } else {
+      window.location.href = emailData.mailtoUrl;
+    }
+  };
+
+  // Dispatch a single vendor draft via WhatsApp
+  const handleDispatchSingleVendorWhatsApp = (draft: MultiSupplierPODraft) => {
+    const { waUrl, cleanPhone } = buildVendorWhatsAppUrl(draft);
+    if (!cleanPhone) {
+      alert(`Please enter a valid WhatsApp/Phone Number for ${draft.supplier.name}`);
+      return;
+    }
+    window.open(waUrl, '_blank');
+  };
+
+  const [autoRecordOrders, setAutoRecordOrders] = useState<boolean>(true);
+
+  // Master Dispatch Handler — maps through POs, triggers Webmail/WhatsApp, and confirms DB mutation
   const handleMasterDispatch = async () => {
     // 1. Validation of contact info
     for (const draft of splitDrafts) {
@@ -250,45 +334,21 @@ export const BOMProcurementModal: React.FC<Props> = ({
     setIsDispatching(true);
     try {
       if (dispatchChannel === 'whatsapp') {
-        // Dispatch via WhatsApp Deep Link
+        // Dispatch via WhatsApp Deep Links
         splitDrafts.forEach(draft => {
-          const contact = editableContacts[draft.supplier.id];
-          const cleanPhone = (contact?.phone || '').replace(/[^0-9]/g, '');
-          const itemsList = draft.items
-            .map(i => `• ${i.catalogItem.name}: ${i.quantity} ${i.catalogItem.uom} @ ₹${i.unit_price} = ₹${i.total_price}`)
-            .join('\n');
-          const message = `*COSMOCNERGY 1-TAP PROCUREMENT*\n----------------------------------------\n📄 *Type:* ${orderType}\n🏢 *Vendor:* ${draft.supplier.name}\n📦 *Items:*\n${itemsList}\n💰 *Total:* ₹${draft.total_amount.toLocaleString('en-IN')}`;
-          const waUrl = cleanPhone
-            ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`
-            : `https://wa.me/?text=${encodeURIComponent(message)}`;
+          const { waUrl } = buildVendorWhatsAppUrl(draft);
           window.open(waUrl, '_blank');
         });
       } else if (dispatchChannel === 'webmail' && splitDrafts.length > 0) {
         // Construct comprehensive PO drafts for ALL vendors
-        console.log('[1-Tap BOM Email Dispatch] Preparing multi-vendor dispatch:', splitDrafts.map(d => ({
-          vendor: d.supplier.name,
-          email: editableContacts[d.supplier.id]?.email || d.supplier.email,
-          itemsCount: d.items.length,
-          totalAmount: d.total_amount
-        })));
-
         const allQueuedDrafts: QueuedMailDraft[] = splitDrafts.map((draft, idx) => {
-          const contact = editableContacts[draft.supplier.id] || { email: draft.supplier.email, phone: draft.supplier.phone };
-          const itemsList = draft.items
-            .map(
-              (it, i) =>
-                `${i + 1}. ${it.catalogItem.name} (${it.catalogItem.specs || 'Standard'}) — Qty: ${it.quantity} ${it.catalogItem.uom || 'Pcs'} @ ₹${it.unit_price} = ₹${it.total_price.toLocaleString('en-IN')}`
-            )
-            .join('\n');
-
-          const emailBody = `Dear ${draft.supplier.contact_person || draft.supplier.name},\n\nPlease accept our formal ${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} for the "${currentSelection?.name || 'Assembly'}" (Batch x${packQuantity}):\n\n${itemsList}\n\nTotal PO Amount: ₹${draft.total_amount.toLocaleString('en-IN')}\n\nDelivery Location: Unit 4, Energy Tech Park, Pune Plant\nPayment Terms: 30 Days Net on QC Inspection\n\nPlease confirm order acceptance and dispatch schedule at your earliest convenience.\n\nBest regards,\nProcurement Department\nCosmo Cnergy Procurement Ltd.`;
-
+          const emailData = buildVendorEmailData(draft);
           return {
             id: `bom-queue-${draft.supplier.id}-${Date.now()}-${idx}`,
-            supplier: { ...draft.supplier, email: contact.email || draft.supplier.email, phone: contact.phone || draft.supplier.phone },
-            to: contact.email || draft.supplier.email,
-            subject: `${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} - ${currentSelection?.name || 'Assembly'}`,
-            body: emailBody,
+            supplier: { ...draft.supplier, email: emailData.to },
+            to: emailData.to,
+            subject: emailData.subject,
+            body: emailData.body,
             productName: currentSelection?.name || 'Assembly',
             totalAmount: draft.total_amount,
             itemsCount: draft.items.length,
@@ -313,11 +373,19 @@ export const BOMProcurementModal: React.FC<Props> = ({
             'CATALOG_BOM',
             'ORDERED'
           );
+        } else {
+          // Fallback to mailto: for first vendor
+          const first = splitDrafts[0];
+          const emailData = buildVendorEmailData(first);
+          window.location.href = emailData.mailtoUrl;
         }
       }
 
-      // Confirm & log orders in state / Supabase
-      await onDispatchOrders(splitDrafts, orderType);
+      // Record orders to database if user opted in or confirms
+      if (autoRecordOrders && onDispatchOrders) {
+        await onDispatchOrders(splitDrafts, orderType);
+      }
+
       onClose();
     } catch (e) {
       console.error('Dispatch error:', e);
@@ -589,6 +657,31 @@ export const BOMProcurementModal: React.FC<Props> = ({
                     />
                   </div>
                 </div>
+
+                {/* Individual Vendor Send PO Action Bar */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#D6D1B1]/60">
+                  <span className="text-xs text-[#586E75]">
+                    Transmit this specific PO to <strong className="text-[#073642]">{selectedDraft.supplier.name}</strong>:
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleDispatchSingleVendorWebmail(selectedDraft)}
+                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
+                    >
+                      <Mail className="w-3.5 h-3.5" />
+                      <span>Send PO via Webmail</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDispatchSingleVendorWhatsApp(selectedDraft)}
+                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#FDF6E3] hover:bg-[#E4DDC7] text-[#073642] font-bold text-xs border border-[#D6D1B1] shadow-xs active:scale-95 transition-all cursor-pointer"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Send via WhatsApp</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -596,33 +689,46 @@ export const BOMProcurementModal: React.FC<Props> = ({
 
         {/* Modal Footer & MASTER DISPATCH BUTTON */}
         <div className="bg-[#EEE8D5] p-5 border-t border-[#D6D1B1] flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Channel Selector */}
-          <div className="flex items-center gap-2 bg-[#FDF6E3] p-1 rounded-xl border border-[#D6D1B1] text-xs">
-            <button
-              type="button"
-              onClick={() => setDispatchChannel('webmail')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all ${
-                dispatchChannel === 'webmail'
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'text-[#586E75] hover:text-[#073642]'
-              }`}
-            >
-              <Mail className="w-3.5 h-3.5" />
-              <span>Internal Webmail</span>
-            </button>
+          <div className="flex flex-wrap items-center gap-4">
+            {/* Channel Selector */}
+            <div className="flex items-center gap-2 bg-[#FDF6E3] p-1 rounded-xl border border-[#D6D1B1] text-xs">
+              <button
+                type="button"
+                onClick={() => setDispatchChannel('webmail')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all ${
+                  dispatchChannel === 'webmail'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-[#586E75] hover:text-[#073642]'
+                }`}
+              >
+                <Mail className="w-3.5 h-3.5" />
+                <span>Internal Webmail</span>
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setDispatchChannel('whatsapp')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all ${
-                dispatchChannel === 'whatsapp'
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'text-[#586E75] hover:text-[#073642]'
-              }`}
-            >
-              <MessageSquare className="w-3.5 h-3.5" />
-              <span>WhatsApp</span>
-            </button>
+              <button
+                type="button"
+                onClick={() => setDispatchChannel('whatsapp')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all ${
+                  dispatchChannel === 'whatsapp'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-[#586E75] hover:text-[#073642]'
+                }`}
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>WhatsApp</span>
+              </button>
+            </div>
+
+            {/* Optional Database Recording Toggle */}
+            <label className="flex items-center gap-2 text-xs font-semibold text-[#073642] cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={autoRecordOrders}
+                onChange={e => setAutoRecordOrders(e.target.checked)}
+                className="w-4 h-4 text-emerald-600 rounded border-[#D6D1B1] focus:ring-emerald-500 accent-emerald-600 cursor-pointer"
+              />
+              <span>Record orders in database</span>
+            </label>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
