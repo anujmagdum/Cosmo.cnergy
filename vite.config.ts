@@ -64,8 +64,14 @@ function apiDevMiddleware(): Plugin {
 
 export default defineConfig({
   plugins: [react(), apiDevMiddleware()],
+  optimizeDeps: {
+    entries: ['index.html']
+  },
   server: {
     port: 3000,
-    open: true
+    open: true,
+    watch: {
+      ignored: ['**/git/**', '**/node/**', '**/.git/**']
+    }
   }
 });

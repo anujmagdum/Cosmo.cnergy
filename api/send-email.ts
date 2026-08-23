@@ -1,3 +1,6 @@
+// Force Node.js runtime for Nodemailer SMTP transport
+export const runtime = 'nodejs';
+
 import nodemailer from 'nodemailer';
 
 export default async function handler(req: any, res: any) {

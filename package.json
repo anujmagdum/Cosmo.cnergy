@@ -13,6 +13,7 @@
     "@supabase/supabase-js": "^2.49.1",
     "@vercel/functions": "^3.7.4",
     "html2pdf.js": "^0.10.2",
+    "imapflow": "^1.7.2",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
     "lucide-react": "^0.475.0",

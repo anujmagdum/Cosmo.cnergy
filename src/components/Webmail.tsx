@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { WebmailAccount, EmailMessage, EmailAttachment, QueuedMailDraft } from '../types';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
