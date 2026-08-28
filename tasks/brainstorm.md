@@ -1,64 +1,47 @@
-# Brainstorming & Architecture Exploration: CosmoCnergy Smart Procurement OS
+# Brainstorming & Architecture Exploration: CosmoCnergy Full-Stack Enhancement
 
 ## 1. Problem Statement & Core Goals
-* **Problem:** Internal procurement for manufacturing/assembly teams is often slow, manual, and prone to error when calculating raw material quantities, matching suppliers, and sending RFQs/POs.
-* **Core Goal:** Build **CosmoCnergy**, an ultra-fast, 1-tap internal procurement web app powered by Supabase, Vercel, and Gemini AI. Inspired by the sleek UI and architecture of Datlion Cnergy.
-* **Key Innovations:**
-  1. **BOM Engine & Auto-Splitting:** 1-click product selection automatically calculates required raw materials and splits orders across multiple suppliers.
-  2. **1-Tap Dispatch:** Direct PDF generation and background serverless email/Nodemailer + WhatsApp integration.
-  3. **AI Photo & Voice Procurement:** Multimodal Gemini processing converts voice audio and paper lists/invoices into structured procurement drafts.
-  4. **Color-Coded Realtime Tracking:** Instant status visual indicators (`To Be Ordered`, `RFQ Sent`, `Ordered`, `Delivered`, `On Hold`) synced with Supabase Realtime.
-  5. **Supplier Action Hub:** Interactive supplier cards with quick actions (`WhatsApp`, `Email`, `Quick RFQ`, `Buying Link`).
+We are executing a comprehensive full-stack enhancement across 4 key pillars:
+1. **Information Architecture (IA) Restructuring:** Renaming core tabs (`Orders` ➔ `Procurement`, `Component & Product` ➔ `Inventory`, `Supplier` ➔ `Companies`) and synchronizing browser route states.
+2. **Relational Multi-Supplier Sourcing (M:N Schema):** Moving from single-supplier-per-component to a flexible `component_suppliers` junction table supporting vendor-specific pricing, MOQ, lead times, review summaries, and multi-platform rating breakdowns (IndiaMART, Google Maps, Amazon).
+3. **Hybrid AI Recommendation Engine:** Combining deterministic multi-criteria weighted pre-scoring (Cost 40%, Rating 30%, Lead Time 20%, MOQ 10%) with Gemini 3.6 Flash qualitative reasoning to award badges and select the best vendor.
+4. **Zero-Storage Google Drive Image Lightbox:** Transforming Google Drive links into instant thumbnail previews without hosting image binaries on Supabase storage.
 
 ---
 
-## 2. Option Comparison Matrix
+## 2. Architectural Trade-Offs & Design Options
 
-| Feature Dimension | Option A: **1-Tap Quick Catalog & Dispatch** (Selected) | Option B: **Conversational Assistant** | Option C: **Manual Form Builder** |
+### Pillar 1: Navigation & Route Synchronization
+| Option | Description | Pros | Cons |
 | :--- | :--- | :--- | :--- |
-| **Procurement Speed** | **Ultra-Fast (~5 seconds)** | Medium (~20 seconds) | Slow (~2-3 minutes) |
-| **BOM Auto-Splitting** | **Automated multi-supplier breakdown** | Prompt-driven splitting | Manual line-item entry |
-| **AI Integration** | **Photo OCR & Voice-to-Order** | Text Chat Bot | None |
-| **User Barrier** | **Zero-learning curve for internal teams** | Medium | High |
-| **Technical Complexity**| Medium (Clean React 18 + Supabase + Vercel) | High | Low |
+| **Option A: History API with URL Query Sync** *(Recommended)* | Uses `window.history.pushState` with path & query params (`/procurement`, `/inventory`, `/companies`) alongside reactive state. | No full-page reloads, clean URLs, deep-linkable PO drafts, lightweight without heavy router dependencies. | Requires manual route listener for browser back/forward buttons. |
+| **Option B: Pure State-Driven Tabs** | Internal state `activeTab` only without URL updates. | Simple implementation. | Users cannot bookmark or share links directly to a specific view or PO draft. |
 
 ---
 
-## 3. Recommended Architecture & Functional Design
-
-### A. Core Modules
-1. **Auth & Session:** Supabase Email/Password Auth for internal staff.
-2. **Dashboard & Quick Re-Order:** Visual catalog cards, top re-order widgets, and recent procurement activity feed.
-3. **BOM Engine & Cart:** Select finished assembly $\to$ Auto-populate raw material items $\to$ Auto-group items by supplier ID.
-4. **Supplier Hub:** Directory of vendors with color-coded status, direct buying portal URLs, email/WhatsApp hyperlinks, and Quick RFQ action bar.
-5. **AI Procurement Studio:** Voice note recorder & Photo invoice/note uploader using Gemini 3 Flash API.
-6. **Multi-Channel Dispatch Engine:**
-   - PDF Generation via `html2pdf.js`
-   - Serverless email API endpoint via `@vercel/functions` & Nodemailer
-   - Direct WhatsApp message builder (`wa.me`)
-7. **Real-time Status Tracking:** Color-coded badges backed by Supabase PostgreSQL realtime subscriptions.
-
-### B. Database Schema Blueprint (Supabase)
-* `suppliers`: `id`, `name`, `contact_person`, `email`, `phone`, `whatsapp`, `buying_url`, `created_at`
-* `catalog_items`: `id`, `name`, `specs`, `unit_of_measure`, `preset_price`, `supplier_id`, `created_at`
-* `product_boms`: `id`, `product_name`, `raw_material_id`, `required_qty_per_unit`
-* `procurement_orders`: `id`, `order_number`, `supplier_id`, `status` (`TO_BE_ORDERED`, `RFQ_SENT`, `ORDERED`, `DELIVERED`, `ON_HOLD`), `total_amount`, `pdf_url`, `created_by`, `created_at`
-* `order_items`: `id`, `order_id`, `item_id`, `quantity`, `unit_price`, `total_price`
+### Pillar 2: Sourcing Comparison UI & Trigger Location
+| Option | Description | Pros | Cons |
+| :--- | :--- | :--- | :--- |
+| **Option A: Dual-Trigger Matrix Drawer** *(Recommended)* | Accessible via both a **"🔍 Sourcing / Compare Vendors"** button on each Inventory Component card AND inside the Companies tab. | Maximum procurement velocity; engineer can compare suppliers while looking at low stock or while browsing vendor portfolios. | Slightly more trigger points to maintain. |
+| **Option B: Inventory-Only Drawer** | Only accessible from Component cards in the Inventory tab. | Minimal footprint. | Less discoverable from the Companies view. |
 
 ---
 
-## 4. Color-Coded Status Guide
-* 🟡 **`TO_BE_ORDERED`** — Amber (`bg-amber-100 text-amber-800 border-amber-300`)
-* 🔵 **`RFQ_SENT`** — Blue (`bg-blue-100 text-blue-800 border-blue-300`)
-* 🟣 **`ORDERED`** — Purple (`bg-purple-100 text-purple-800 border-purple-300`)
-* 🟢 **`DELIVERED`** — Emerald/Green (`bg-emerald-100 text-emerald-800 border-emerald-300`)
-* 🔴 **`ON_HOLD`** — Red (`bg-red-100 text-red-800 border-red-300`)
+### Pillar 3: Purchase Order Direct Routing Workflow
+| Option | Description | Pros | Cons |
+| :--- | :--- | :--- | :--- |
+| **Option A: Instant Pre-filled Modal / Dispatch Drawer** *(Recommended)* | Clicking "Create Purchase Order" in the comparison table automatically switches to `/procurement` and opens the pre-filled PO modal with winning vendor, unit price, and MOQ already populated. | 1-Tap frictionless dispatch via WhatsApp / Webmail / PDF. | None. |
+| **Option B: Raw Query Param Form** | Navigates to a blank purchase order page with URL parameters. | Standard web pattern. | Requires extra clicks to send RFQ or finalize order. |
 
 ---
 
-## 5. Next Steps & Implementation Roadmap
-1. **Environment Setup:** Initialize Vite + React + TypeScript + Tailwind CSS project in `D:\CosmoCnergy`.
-2. **Environment Variables (`.env`):** Configure Supabase URL/Anon Key & Gemini API Key.
-3. **Database Setup:** Create SQL migrations for tables, seed initial pre-loaded catalog and suppliers.
-4. **Core UI & State:** Build Header, Navigation, Catalog, BOM Selector, and Supplier Hub using Datlion Cnergy visual tokens.
-5. **AI & Dispatch:** Integrate Gemini Vision/Audio service & Vercel serverless email endpoint.
+### Pillar 4: Google Drive Thumbnail & Lightbox Strategy
+| Option | Description | Pros | Cons |
+| :--- | :--- | :--- | :--- |
+| **Option A: Multi-Endpoint Auto-Fallback** *(Recommended)* | Regex parses File ID and tries `lh3.googleusercontent.com/d/{id}=w1000` with fallback to `drive.google.com/thumbnail?id={id}&sz=w1000`. If access is restricted (private link), shows a polite warning with a direct "Open in Google Drive" button. | 100% zero-storage cost, ultra-fast CDN caching by Google, clean fallback UI. | Requires public Google Drive link permissions ("Anyone with link"). |
+| **Option B: Iframe Embed Only** | Renders Google Drive preview iframe (`drive.google.com/file/d/{id}/preview`). | Supports any file type. | Slower load time, heavy UI with Google toolbars. |
+
+---
+
+## 3. Recommended Approach & Next Steps
+We recommend proceeding with **Option A across all pillars** to achieve maximum performance, responsive UX, and seamless AI procurement.

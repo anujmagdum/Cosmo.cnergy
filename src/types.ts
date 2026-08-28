@@ -90,9 +90,20 @@ export interface Supplier {
   created_at?: string;
 }
 
+export interface SupplierMappingInput {
+  supplier_id: string;
+  unit_price: number;
+  rfq_quoted_price?: number;
+  moq: number;
+  lead_time_days: number;
+  part_number_vendor?: string;
+}
+
 // In Add Component schema: only 'name' is required; all other fields are nullable/optional
 export interface CatalogItem {
   id: string;
+  component_id?: string;
+  product_id?: string;
   name: string; // REQUIRED
   sku?: string;
   category?: string;
@@ -102,11 +113,41 @@ export interface CatalogItem {
   preset_price?: number;
   supplier_id?: string;
   supplier?: Supplier;
+  supplier_ids?: string[];
+  supplier_mappings?: SupplierMappingInput[];
   min_order_qty?: number;
   in_stock_qty?: number;
-  supplier_url?: string;
   procurement_status?: OrderStatus;
+  alert_threshold_percent?: number;
+  image_drive_url?: string;
   created_at?: string;
+}
+
+export type NavigationTab = 'procurement' | 'inventory' | 'companies' | 'ai' | 'webmail';
+
+export interface ComponentSupplier {
+  id: string;
+  component_id: string;
+  supplier_id: string;
+  unit_price: number;
+  rfq_quoted_price?: number;
+  moq: number;
+  lead_time_days: number;
+  part_number_vendor?: string;
+  external_rating: number;
+  review_summary?: string;
+  rating_sources?: {
+    indiamart?: number;
+    google_maps?: number;
+    amazon?: number;
+    tradeindia?: number;
+    moglix?: number;
+    industrybuying?: number;
+    [key: string]: number | undefined;
+  };
+  created_at?: string;
+  updated_at?: string;
+  supplier?: Supplier;
 }
 
 export interface WebmailAccount {
@@ -158,6 +199,7 @@ export interface QueuedMailDraft {
   totalAmount?: number;
   itemsCount?: number;
   orderToConfirm?: any;
+  orderType?: 'PO' | 'RFQ';
 }
 
 export interface ProductBOM {
@@ -174,6 +216,8 @@ export interface OrderItem {
   id?: string;
   order_id?: string;
   item_id: string;
+  component_id?: string;
+  product_id?: string;
   item?: CatalogItem;
   quantity: number;
   unit_price: number;

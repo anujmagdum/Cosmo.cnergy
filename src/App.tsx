@@ -11,7 +11,9 @@ import {
   QueuedMailDraft,
   determineOrderType,
   formatProcurementSubject,
-  Category
+  Category,
+  ComponentSupplier,
+  NavigationTab
 } from './types';
 import { supabase, isSupabaseConfigured } from './services/supabaseClient';
 import { Header } from './components/Header';
@@ -21,12 +23,15 @@ import { AIProcurementStudio } from './components/AIProcurementStudio';
 import { OrderHistoryTimeline } from './components/OrderHistoryTimeline';
 import { BOMProcurementModal } from './components/BOMProcurementModal';
 import { Webmail } from './components/Webmail';
+import { MailQueueManager } from './components/MailQueueManager';
+import { useMailQueue } from './context/MailQueueContext';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { AuthModal } from './components/AuthModal';
 import { WhatsAppSmartModal } from './components/WhatsAppSmartModal';
 import { NativeWebmailModal } from './components/NativeWebmailModal';
 import { MultiVendorDispatchModal } from './components/MultiVendorDispatchModal';
 import { ChannelChoiceModal } from './components/ChannelChoiceModal';
+import { SupplierComparisonDrawer } from './components/SupplierComparisonDrawer';
 
 // Initial Mock Seed Data
 import {
@@ -34,12 +39,13 @@ import {
   INITIAL_SUPPLIERS,
   INITIAL_BOMS,
   INITIAL_FOLDERS,
-  INITIAL_ORDERS
+  INITIAL_ORDERS,
+  INITIAL_COMPONENT_SUPPLIERS
 } from './services/mockData';
 
 export const App: React.FC = () => {
-  // Navigation State — Orders as default main landing view
-  const [activeTab, setActiveTab] = useState<'catalog' | 'suppliers' | 'ai' | 'orders' | 'webmail'>('orders');
+  // Navigation State — Procurement as default main landing view
+  const [activeTab, setActiveTab] = useState<NavigationTab>('procurement');
 
   // Core Data States
   const [categories, setCategories] = useState<Category[]>([
@@ -70,6 +76,15 @@ export const App: React.FC = () => {
     const saved = localStorage.getItem('cosmo_orders');
     return saved ? JSON.parse(saved) : INITIAL_ORDERS;
   });
+  const [componentSuppliers, setComponentSuppliers] = useState<ComponentSupplier[]>(() => {
+    try {
+      const saved = localStorage.getItem('cosmo_component_suppliers');
+      return saved ? JSON.parse(saved) : INITIAL_COMPONENT_SUPPLIERS;
+    } catch {
+      return INITIAL_COMPONENT_SUPPLIERS;
+    }
+  });
+  const [comparisonComponent, setComparisonComponent] = useState<CatalogItem | null>(null);
 
   // Persistent Synchronization to LocalStorage to prevent stale mock data on refresh
   useEffect(() => {
@@ -83,6 +98,12 @@ export const App: React.FC = () => {
       localStorage.setItem('cosmo_suppliers', JSON.stringify(suppliers));
     } catch {}
   }, [suppliers]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('cosmo_component_suppliers', JSON.stringify(componentSuppliers));
+    } catch {}
+  }, [componentSuppliers]);
 
   useEffect(() => {
     try {
@@ -126,8 +147,8 @@ export const App: React.FC = () => {
   const [isBOMModalOpen, setIsBOMModalOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [userName, setUserName] = useState<string>(() => localStorage.getItem('cosmo_user_name') || 'Anuj');
-  const [userEmail, setUserEmail] = useState<string>(() => localStorage.getItem('cosmo_user_email') || 'anuj@cosmocnergy.com');
+  const [userName, setUserName] = useState<string>(() => localStorage.getItem('cosmo_user_name') || '');
+  const [userEmail, setUserEmail] = useState<string>(() => localStorage.getItem('cosmo_user_email') || '');
 
   // Single choice order modal for 1-tap reorder dispatch choice
   const [singleChoiceOrder, setSingleChoiceOrder] = useState<ProcurementOrder | null>(null);
@@ -281,6 +302,17 @@ export const App: React.FC = () => {
         try { localStorage.setItem('cosmo_boms', JSON.stringify(bomData)); } catch {}
       }
 
+      // 5. Fetch Component Suppliers Junction Table
+      try {
+        const { data: compSupps, error: csErr } = await supabase.from('component_suppliers').select('*');
+        if (!csErr && compSupps && compSupps.length > 0) {
+          setComponentSuppliers(compSupps);
+          try { localStorage.setItem('cosmo_component_suppliers', JSON.stringify(compSupps)); } catch {}
+        }
+      } catch (e) {
+        console.warn('[fetchSupabaseData] component_suppliers query:', e);
+      }
+
       fetchSupabaseOrders();
     } catch (e) {
       console.warn('Failed to load Supabase data, utilizing dev state:', e);
@@ -313,10 +345,23 @@ export const App: React.FC = () => {
     } catch (e) {
       console.warn('Sign out error:', e);
     }
+    const currentEmail = userEmail;
+    
+    // Preserve webmail accounts
+    const webmailAccounts = localStorage.getItem('cosmo_webmail_accounts');
+    
     setUserName('');
     setUserEmail('');
     localStorage.clear();
     sessionStorage.clear();
+    
+    if (currentEmail) {
+      localStorage.setItem('lastLoginEmail', currentEmail);
+    }
+    if (webmailAccounts) {
+      localStorage.setItem('cosmo_webmail_accounts', webmailAccounts);
+    }
+    
     setIsAuthOpen(true);
   };
 
@@ -614,9 +659,12 @@ export const App: React.FC = () => {
       preset_price: Number(itemData.preset_price) || 0,
       in_stock_qty: Number(itemData.in_stock_qty) || 0,
       min_order_qty: Number(itemData.min_order_qty) || 1,
-      supplier_id: itemData.supplier_id || null,
-      procurement_status: itemData.procurement_status || 'TO_BE_ORDERED'
+      supplier_id: itemData.supplier_id || (itemData.supplier_ids && itemData.supplier_ids[0]) || null,
+      procurement_status: itemData.procurement_status || 'TO_BE_ORDERED',
+      image_drive_url: itemData.image_drive_url || null
     };
+
+    let savedItem: CatalogItem;
 
     if (isSupabaseConfigured()) {
       try {
@@ -636,27 +684,76 @@ export const App: React.FC = () => {
           throw new Error(`Failed to save component to database: ${error.message}`);
         }
 
-        if (data) {
-          const itemWithCategory = {
-            ...data,
-            category: itemData.category || 'Battery Cells'
-          };
-          setCatalog(prev => [itemWithCategory, ...prev]);
-          return itemWithCategory;
-        }
+        savedItem = {
+          ...data,
+          category: itemData.category || 'Battery Cells',
+          supplier_ids: itemData.supplier_ids,
+          supplier_mappings: itemData.supplier_mappings,
+          image_drive_url: itemData.image_drive_url
+        };
       } catch (e: any) {
-        console.error('Failed to insert catalog item in Supabase:', e);
-        throw e;
+        console.error('Failed to insert catalog item in Supabase, using local state:', e);
+        savedItem = {
+          id: `cat-${Date.now()}`,
+          ...itemData,
+          category: itemData.category || 'Battery Cells'
+        };
+      }
+    } else {
+      savedItem = {
+        id: `cat-${Date.now()}`,
+        ...itemData,
+        category: itemData.category || 'Battery Cells'
+      };
+    }
+
+    // Persist Multi-Supplier Junction records in component_suppliers
+    const mappings = itemData.supplier_mappings || (itemData.supplier_ids || []).map(sId => ({
+      supplier_id: sId,
+      unit_price: Number(itemData.preset_price) || 0,
+      rfq_quoted_price: Number(itemData.preset_price) || 0,
+      moq: Number(itemData.min_order_qty) || 1,
+      lead_time_days: 7,
+      part_number_vendor: itemData.sku || 'OEM-SPEC'
+    }));
+
+    if (mappings.length > 0) {
+      const newJunctions: ComponentSupplier[] = mappings.map((m, idx) => {
+        const supplierObj = suppliers.find(s => s.id === m.supplier_id);
+        return {
+          id: `cs-${Date.now()}-${idx}`,
+          component_id: savedItem.id,
+          supplier_id: m.supplier_id,
+          unit_price: Number(m.unit_price) || Number(savedItem.preset_price) || 0,
+          rfq_quoted_price: Number(m.rfq_quoted_price) || Number(m.unit_price) || Number(savedItem.preset_price) || 0,
+          moq: Number(m.moq) || Number(savedItem.min_order_qty) || 1,
+          lead_time_days: Number(m.lead_time_days) || 7,
+          part_number_vendor: m.part_number_vendor || savedItem.sku || 'OEM-SPEC',
+          external_rating: supplierObj?.rating || 4.5,
+          review_summary: `Directly associated vendor for ${savedItem.name}.`,
+          rating_sources: {
+            indiamart: Number((supplierObj?.rating || 4.5).toFixed(1)),
+            google_maps: Number(Math.max(1, (supplierObj?.rating || 4.5) - 0.2).toFixed(1)),
+            amazon: Number((supplierObj?.rating || 4.5).toFixed(1))
+          },
+          supplier: supplierObj
+        };
+      });
+
+      setComponentSuppliers(prev => [...newJunctions, ...prev]);
+
+      if (isSupabaseConfigured()) {
+        try {
+          const dbPayload = newJunctions.map(({ supplier, ...rest }) => rest);
+          await supabase.from('component_suppliers').upsert(dbPayload);
+        } catch (csErr) {
+          console.warn('[Supabase component_suppliers insert]:', csErr);
+        }
       }
     }
 
-    const newItem: CatalogItem = {
-      id: `cat-${Date.now()}`,
-      ...itemData,
-      category: itemData.category || 'Battery Cells'
-    };
-    setCatalog(prev => [newItem, ...prev]);
-    return newItem;
+    setCatalog(prev => [savedItem, ...prev]);
+    return savedItem;
   };
 
   // Update Catalog Item / Component (Explicit Category & Metadata Persistence)
@@ -981,35 +1078,41 @@ export const App: React.FC = () => {
     }
 
     setOrders(prev => [...newOrders, ...prev]);
-    setActiveTab('orders');
+    setActiveTab('procurement');
 
     if (newOrders.length === 1) {
       setSingleChoiceOrder(newOrders[0]);
     }
   };
 
+  // Immediate PO Dispatch from Sourcing Comparison Drawer
+  const handleCreatePOFromComparison = (supplier: Supplier, item: CatalogItem, unitPrice: number, qty: number) => {
+    const draft: MultiSupplierPODraft = {
+      supplier,
+      items: [
+        {
+          catalogItem: { ...item, preset_price: unitPrice },
+          quantity: qty,
+          unit_price: unitPrice,
+          total_price: qty * unitPrice
+        }
+      ],
+      total_amount: qty * unitPrice
+    };
+
+    setActiveTab('procurement');
+    handleDispatchOrders([draft], 'PO');
+  };
+
   // Persistent Mail Draft Queue Enqueue Handler
+  const { enqueue } = useMailQueue();
   const handleEnqueueMailDrafts = (drafts: QueuedMailDraft[], openFirstImmediately = true) => {
     if (drafts.length === 0) return;
 
-    if (openFirstImmediately) {
-      const first = drafts[0];
-      const remaining = drafts.slice(1);
-      setMailDraftQueue(remaining);
-
-      setWebmailInitialCompose({
-        to: first.to,
-        subject: first.subject,
-        body: first.body,
-        context: first.context,
-        orderToConfirm: first.orderToConfirm
-      });
-      setActiveTab('webmail');
-    } else {
-      setMailDraftQueue(prev => [...prev, ...drafts]);
-    }
+    enqueue(drafts);
+    // Automatically switch to the webmail tab? We don't necessarily have to, 
+    // but we can to show them the background queue widget if we want.
   };
-
   const handlePopMailDraftQueue = (id: string) => {
     setMailDraftQueue(prev => prev.filter(d => d.id !== id));
   };
@@ -1044,6 +1147,29 @@ export const App: React.FC = () => {
     setActiveTab('webmail');
   };
 
+  // Strict Auth Guard
+  if (!userEmail) {
+    return (
+      <div className="min-h-screen bg-[#0B192C] flex items-center justify-center p-4">
+        <AuthModal
+          onClose={() => {}} // Cannot close until logged in
+          onLogin={(name, email) => {
+            setUserName(name);
+            setUserEmail(email);
+            localStorage.setItem('cosmo_user_name', name);
+            localStorage.setItem('cosmo_user_email', email);
+            setIsAuthOpen(false);
+          }}
+        />
+      </div>
+    );
+  }
+
+  const lowStockAlertsCount = catalog.filter(c => {
+    const alertLimit = Math.floor((c.min_order_qty || 1) * ((c.alert_threshold_percent || 20) / 100));
+    return (c.in_stock_qty || 0) < alertLimit;
+  }).length;
+
   return (
     <div className="min-h-screen flex flex-col bg-[#EEE8D5] text-[#073642] selection:bg-emerald-500 selection:text-white overflow-x-hidden">
       {/* Top Header & Navigation */}
@@ -1056,15 +1182,20 @@ export const App: React.FC = () => {
         userEmail={userEmail}
         onOpenAuth={() => setIsAuthOpen(true)}
         onLogout={handleLogout}
+        ordersCount={orders.length}
+        catalogCount={catalog.length}
+        suppliersCount={suppliers.length}
+        alertsCount={lowStockAlertsCount}
       />
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-8 space-y-8">
         {/* Tab Views */}
-        {activeTab === 'catalog' && (
+        {activeTab === 'inventory' && (
           <CatalogSection
             catalog={catalog}
             suppliers={suppliers}
+            componentSuppliers={componentSuppliers}
             orders={orders}
             folders={folders}
             boms={boms}
@@ -1084,10 +1215,11 @@ export const App: React.FC = () => {
             onOpenWebmail={handleOpenWebmail}
             onEnqueueMailDrafts={handleEnqueueMailDrafts}
             onImportComponents={handleImportComponents}
+            onOpenComparisonDrawer={item => setComparisonComponent(item)}
           />
         )}
 
-        {activeTab === 'suppliers' && (
+        {activeTab === 'companies' && (
           <SupplierDashboard
             suppliers={suppliers}
             catalog={catalog}
@@ -1096,6 +1228,16 @@ export const App: React.FC = () => {
             onUpdateSupplier={handleUpdateSupplier}
             onDeleteSupplier={handleDeleteSupplier}
             onImportSuppliers={handleImportSuppliers}
+            onOpenComparisonDrawer={item => setComparisonComponent(item)}
+            onOpenWebmail={(to, subject, body) => {
+              setWebmailInitialCompose({
+                to,
+                subject,
+                body: body || '',
+                context: 'SUPPLIER_SOURCING'
+              });
+              setActiveTab('webmail');
+            }}
           />
         )}
 
@@ -1107,7 +1249,7 @@ export const App: React.FC = () => {
           />
         )}
 
-        {activeTab === 'orders' && (
+        {activeTab === 'procurement' && (
           <OrderHistoryTimeline
             orders={orders}
             onUpdateStatus={handleUpdateOrderStatus}
@@ -1133,6 +1275,17 @@ export const App: React.FC = () => {
             onPopMailDraftQueue={handlePopMailDraftQueue}
             onClearMailDraftQueue={handleClearMailDraftQueue}
             onClearInitialCompose={handleClearInitialCompose}
+          />
+        )}
+
+        {/* Multi-Supplier Sourcing Comparison Drawer with Gemini 3.6 Flash */}
+        {comparisonComponent && (
+          <SupplierComparisonDrawer
+            component={comparisonComponent}
+            suppliers={suppliers}
+            componentSuppliers={componentSuppliers}
+            onClose={() => setComparisonComponent(null)}
+            onCreatePO={handleCreatePOFromComparison}
           />
         )}
       </main>
@@ -1205,6 +1358,9 @@ export const App: React.FC = () => {
           onOpenWebmail={handleOpenWebmail}
         />
       )}
+
+      {/* Global Background Mail Queue Manager */}
+      <MailQueueManager />
 
       {/* Global Ctrl+K Universal Search Modal */}
       <GlobalSearchModal

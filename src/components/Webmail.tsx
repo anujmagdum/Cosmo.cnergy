@@ -728,77 +728,7 @@ export const Webmail: React.FC<Props> = ({
       </div>
 
       {/* Multi-Vendor PO Drafts Active Queue & Continue Dispatching Recovery Banner */}
-      {(() => {
-        const effectiveQueue = (mailDraftQueue && mailDraftQueue.length > 0) ? mailDraftQueue : sessionPendingPOs;
-        if (!effectiveQueue || effectiveQueue.length === 0) return null;
-
-        const nextDraft = effectiveQueue[0];
-
-        return (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-emerald-100/90 border border-emerald-300 text-emerald-950 text-xs font-semibold shadow-xs animate-in fade-in">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
-                {effectiveQueue.length}
-              </div>
-              <div>
-                <div className="font-bold text-sm text-[#073642] flex items-center gap-2">
-                  <span>Multi-Vendor Dispatch Queue Active</span>
-                  <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-200/80 text-emerald-900 border border-emerald-300">
-                    {effectiveQueue.length} Remaining
-                  </span>
-                </div>
-                <p className="text-[11px] text-emerald-800">
-                  Ready to dispatch: <strong>{nextDraft?.supplier?.name || 'Next Vendor'}</strong> ({nextDraft?.to})
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  if (nextDraft) {
-                    setComposeTo(nextDraft.to);
-                    setComposeSubject(nextDraft.subject);
-                    setComposeBody(nextDraft.body);
-                    setIsComposeOpen(true);
-                    
-                    const remaining = effectiveQueue.slice(1);
-                    setSessionPendingPOs(remaining);
-                    try {
-                      sessionStorage.setItem('cosmo_pending_pos_queue', JSON.stringify(remaining));
-                    } catch {}
-
-                    if (onPopMailDraftQueue) {
-                      onPopMailDraftQueue(nextDraft.id);
-                    }
-                  }
-                }}
-                className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold shadow-xs active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer text-xs"
-              >
-                <Send className="w-3.5 h-3.5" />
-                <span>Continue Dispatching: {nextDraft?.supplier?.name}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setSessionPendingPOs([]);
-                  try {
-                    sessionStorage.removeItem('cosmo_pending_pos_queue');
-                  } catch {}
-                  if (onClearMailDraftQueue) {
-                    onClearMailDraftQueue();
-                  }
-                }}
-                className="px-2.5 py-2 rounded-xl bg-white/80 hover:bg-white text-red-700 font-semibold border border-red-200 transition-all cursor-pointer text-xs"
-              >
-                Clear Queue
-              </button>
-            </div>
-          </div>
-        );
-      })()}
+      {/* Handled by global MailQueueManager now */}
 
       {syncStatus && (
         <div className="flex items-center gap-2 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 text-xs animate-fadeIn font-semibold">

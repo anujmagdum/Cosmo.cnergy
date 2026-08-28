@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Supplier, CatalogItem, Category } from '../types';
 import { CsvManagerWidget } from './CsvManagerWidget';
-import { Plus, Phone, Building2, MapPin, Search, Edit2, CheckCircle2, Shield, Mail, Trash2, AlertCircle } from 'lucide-react';
+import { FindSupplierTab } from './FindSupplierTab';
+import { Plus, Phone, Building2, MapPin, Search, Edit2, CheckCircle2, Shield, Mail, Trash2, AlertCircle, Sparkles } from 'lucide-react';
 
 interface Props {
   suppliers: Supplier[];
@@ -11,6 +12,8 @@ interface Props {
   onUpdateSupplier?: (supplier: Supplier) => Promise<any> | void;
   onDeleteSupplier?: (supplierId: string) => Promise<void> | void;
   onImportSuppliers?: (rows: any[]) => Promise<number | void> | number | void;
+  onOpenWebmail?: (to: string, subject: string, body?: string) => void;
+  onOpenComparisonDrawer?: (component: CatalogItem) => void;
 }
 
 const DEFAULT_CATEGORIES = [
@@ -29,8 +32,11 @@ export const SupplierDashboard: React.FC<Props> = ({
   onAddSupplier,
   onUpdateSupplier,
   onDeleteSupplier,
-  onImportSuppliers
+  onImportSuppliers,
+  onOpenWebmail,
+  onOpenComparisonDrawer
 }) => {
+  const [activeSupplierTab, setActiveSupplierTab] = useState<'all_suppliers' | 'find_new'>('all_suppliers');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -38,6 +44,8 @@ export const SupplierDashboard: React.FC<Props> = ({
   const [supplierToDelete, setSupplierToDelete] = useState<Supplier | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [toastFeedback, setToastFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [selectedSupplierIds, setSelectedSupplierIds] = useState<string[]>([]);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -163,6 +171,40 @@ export const SupplierDashboard: React.FC<Props> = ({
     }
   };
 
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedSupplierIds(filteredSuppliers.map(s => s.id));
+    } else {
+      setSelectedSupplierIds([]);
+    }
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedSupplierIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBulkDelete = async () => {
+    if (!onDeleteSupplier) return;
+    if (!confirm(`Are you sure you want to delete ${selectedSupplierIds.length} suppliers?`)) return;
+    setIsBulkDeleting(true);
+    try {
+      for (const id of selectedSupplierIds) {
+        await onDeleteSupplier(id);
+      }
+      setSelectedSupplierIds([]);
+      setToastFeedback({ type: 'success', message: 'Bulk delete successful.' });
+      setTimeout(() => setToastFeedback(null), 3500);
+    } catch (err: any) {
+      console.error('Bulk delete failed:', err);
+      setToastFeedback({ type: 'error', message: `Bulk delete failed: ${err.message || 'Failed'}` });
+      setTimeout(() => setToastFeedback(null), 5000);
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  };
+
   return (
     <div className="space-y-5">
       {/* Toast Feedback Notification */}
@@ -177,43 +219,83 @@ export const SupplierDashboard: React.FC<Props> = ({
         </div>
       )}
 
-      {/* Primary Action Header Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-5 rounded-2xl bg-[#0B192C] text-white shadow-md">
-        <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-            <Building2 className="w-7 h-7 text-emerald-400" />
-            <span>Supplier Directory</span>
-          </h2>
-          <p className="text-xs text-slate-300 mt-1">
-            Ultra-dense ladder directory, vendor contacts, commercial records, and verified supplier partners.
-          </p>
-        </div>
+      {/* Sub-Tab Switcher Bar (All Suppliers vs Find New Suppliers) */}
+      <div className="flex items-center gap-2 p-1.5 bg-[#FDF6E3] border border-[#D6D1B1] rounded-2xl w-fit shadow-xs">
+        <button
+          onClick={() => setActiveSupplierTab('all_suppliers')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+            activeSupplierTab === 'all_suppliers'
+              ? 'bg-[#0B192C] text-white shadow-md'
+              : 'text-[#073642] hover:bg-[#EEE8D5]'
+          }`}
+        >
+          <Building2 className="w-4 h-4 text-emerald-400" />
+          <span>All Suppliers ({suppliers.length})</span>
+        </button>
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>+ Add Supplier</span>
-          </button>
-        </div>
+        <button
+          onClick={() => setActiveSupplierTab('find_new')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+            activeSupplierTab === 'find_new'
+              ? 'bg-emerald-600 text-white shadow-md'
+              : 'text-[#073642] hover:bg-emerald-50 hover:text-emerald-800'
+          }`}
+        >
+          <Search className="w-4 h-4 text-cyan-400" />
+          <span>Find New Suppliers (AI & Maps)</span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-cyan-400 text-slate-950">
+            NEW
+          </span>
+        </button>
       </div>
 
-      {/* Decoupled Independent CSV Manager Widget */}
-      <CsvManagerWidget
-        sectionType="suppliers"
-        data={filteredSuppliers}
-        onImport={async rows => {
-          if (onImportSuppliers) {
-            return await onImportSuppliers(rows);
-          }
-          for (const row of rows) {
-            await onAddSupplier(row);
-          }
-          return rows.length;
-        }}
-      />
+      {/* CONDITIONAL SUB-TAB CONTENT */}
+      {activeSupplierTab === 'find_new' ? (
+        <FindSupplierTab
+          suppliers={suppliers}
+          categories={categories}
+          onAddSupplier={onAddSupplier}
+          onOpenWebmail={onOpenWebmail}
+        />
+      ) : (
+        <>
+          {/* Primary Action Header Bar */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-5 rounded-2xl bg-[#0B192C] text-white shadow-md">
+            <div>
+              <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                <Building2 className="w-7 h-7 text-emerald-400" />
+                <span>Supplier Directory</span>
+              </h2>
+              <p className="text-xs text-slate-300 mt-1">
+                Ultra-dense ladder directory, vendor contacts, commercial records, and verified supplier partners.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5">
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>+ Add Supplier</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Decoupled Independent CSV Manager Widget */}
+          <CsvManagerWidget
+            sectionType="suppliers"
+            data={filteredSuppliers}
+            onImport={async rows => {
+              if (onImportSuppliers) {
+                return await onImportSuppliers(rows);
+              }
+              for (const row of rows) {
+                await onAddSupplier(row);
+              }
+              return rows.length;
+            }}
+          />
 
       {/* Filter & Search Bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
@@ -248,12 +330,34 @@ export const SupplierDashboard: React.FC<Props> = ({
 
       {/* Suppliers Ladder List (Strict Vertical Ladder Layout) */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-[#073642] flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-emerald-600" />
-            <span>Verified Vendors ({filteredSuppliers.length})</span>
-          </h3>
-          <span className="text-[11px] text-[#586E75]">Maximized density ladder view</span>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2">
+          <div>
+            <h3 className="text-sm font-bold text-[#073642] flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={filteredSuppliers.length > 0 && selectedSupplierIds.length === filteredSuppliers.length}
+                onChange={handleSelectAll}
+                className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+              />
+              <Building2 className="w-4 h-4 text-emerald-600" />
+              <span>Verified Vendors ({filteredSuppliers.length})</span>
+            </h3>
+            <span className="text-[11px] text-[#586E75] ml-6">Maximized density ladder view with bulk selection</span>
+          </div>
+
+          {selectedSupplierIds.length > 0 && (
+            <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-emerald-500 animate-in fade-in">
+              <span className="text-xs font-bold text-[#073642] px-2">{selectedSupplierIds.length} Selected</span>
+              <button
+                onClick={handleBulkDelete}
+                disabled={isBulkDeleting}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                {isBulkDeleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col space-y-2">
@@ -265,8 +369,15 @@ export const SupplierDashboard: React.FC<Props> = ({
                 key={supplier.id}
                 className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all"
               >
-                {/* Left: Company Name, Category, Contact Person, Email, Phone */}
+                {/* Left: Checkbox, Company Name, Category, Contact Person, Email, Phone */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedSupplierIds.includes(supplier.id)}
+                    onChange={() => toggleSelectOne(supplier.id)}
+                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
+                  />
+                  
                   <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 flex items-center justify-center font-bold text-xs shrink-0">
                     <Building2 className="w-4 h-4" />
                   </div>
@@ -316,6 +427,18 @@ export const SupplierDashboard: React.FC<Props> = ({
                     </span>
                   </div>
 
+                  {supplierItems.length > 0 && onOpenComparisonDrawer && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenComparisonDrawer(supplierItems[0])}
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-teal-600/10 hover:bg-teal-600/20 text-teal-900 border border-teal-600/30 text-[10px] font-bold transition-all cursor-pointer shadow-2xs active:scale-95"
+                      title={`Compare all suppliers & RFQs for ${supplierItems[0].name}`}
+                    >
+                      <Building2 className="w-3 h-3 text-teal-700" />
+                      <span>Compare Parts</span>
+                    </button>
+                  )}
+
                   <div className="flex items-center gap-1.5">
                     <button
                       type="button"
@@ -342,6 +465,8 @@ export const SupplierDashboard: React.FC<Props> = ({
           })}
         </div>
       </div>
+    </>
+  )}
 
       {/* Delete Supplier Confirmation Modal */}
       {supplierToDelete && (

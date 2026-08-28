@@ -30,6 +30,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
   const [preferredChannel, setPreferredChannel] = useState<'webmail' | 'whatsapp'>('webmail');
   const [dispatchedMap, setDispatchedMap] = useState<Record<string, 'webmail' | 'whatsapp'>>({});
   const [activeQueueIndex, setActiveQueueIndex] = useState<number>(0);
+  const [selectedVendorIds, setSelectedVendorIds] = useState<string[]>([]);
 
   // Editable inline vendor contacts
   const [editableContacts, setEditableContacts] = useState<Record<string, { email: string; phone: string }>>(() => {
@@ -156,7 +157,12 @@ export const BatchSendPOsModal: React.FC<Props> = ({
     });
   }, [suppliers, vendorDrafts]);
 
-  const orderType = determineOrderType('CATALOG_BOM');
+  // Select all vendors by default
+  useEffect(() => {
+    setSelectedVendorIds(vendorDrafts.map(d => d.supplier.id));
+  }, [vendorDrafts]);
+
+  const [orderType, setOrderType] = useState<'PO' | 'RFQ'>('PO');
   const emailSubject = formatProcurementSubject(orderType, folder.name);
 
   // Update contact details in local state
@@ -186,7 +192,8 @@ export const BatchSendPOsModal: React.FC<Props> = ({
       )
       .join('\n');
 
-    return `Dear ${draft.supplier.contact_person || draft.supplier.name},\n\nPlease accept our Purchase Order (PO) for the "${folder.name}" assembly:\n\n${itemsList}\n\nTotal PO Amount: ₹${draft.total_amount.toLocaleString('en-IN')}\n\nDelivery Location: Unit 4, Energy Tech Park, Pune Plant\nPayment Terms: 30 Days Net on QC Inspection\n\nPlease confirm order acceptance and dispatch schedule at your earliest convenience.\n\nBest regards,\nProcurement Department\nCosmo Cnergy Procurement Ltd.`;
+    const docName = orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)';
+    return `Dear ${draft.supplier.contact_person || draft.supplier.name},\n\nPlease accept our ${docName} for the "${folder.name}" assembly:\n\n${itemsList}\n\nTotal Amount: ₹${draft.total_amount.toLocaleString('en-IN')}\n\nDelivery Location: Unit 4, Energy Tech Park, Pune Plant\nPayment Terms: 30 Days Net on QC Inspection\n\nPlease confirm at your earliest convenience.\n\nBest regards,\nProcurement Department\nCosmo Cnergy Procurement Ltd.`;
   };
 
   // Build WhatsApp text for a single vendor draft
@@ -195,7 +202,8 @@ export const BatchSendPOsModal: React.FC<Props> = ({
       .map(item => `• *${item.catalogItem.name}*: ${item.quantity} ${item.catalogItem.uom || 'Pcs'} @ ₹${item.unit_price}`)
       .join('\n');
 
-    return `*COSMO CNERGY PURCHASE ORDER (PO)* 🚀\n----------------------------------------\n🏢 *Product Assembly:* ${folder.name}\n👤 *Vendor:* ${draft.supplier.name}\n\n📦 *REQUIRED ITEMS:*\n${itemsList}\n\n💰 *TOTAL AMOUNT:* ₹${draft.total_amount.toLocaleString('en-IN')}\n📍 *Plant:* Pune Plant\n\nPlease confirm availability and quotation dispatch.`;
+    const docName = orderType === 'PO' ? 'PURCHASE ORDER (PO)' : 'REQUEST FOR QUOTATION (RFQ)';
+    return `*COSMO CNERGY ${docName}* 🚀\n----------------------------------------\n🏢 *Product Assembly:* ${folder.name}\n👤 *Vendor:* ${draft.supplier.name}\n\n📦 *REQUIRED ITEMS:*\n${itemsList}\n\n💰 *TOTAL AMOUNT:* ₹${draft.total_amount.toLocaleString('en-IN')}\n📍 *Plant:* Pune Plant\n\nPlease confirm availability and quotation dispatch.`;
   };
 
   // Dispatch individual vendor via internal Webmail and persist the remaining drafts in queue
@@ -271,14 +279,15 @@ export const BatchSendPOsModal: React.FC<Props> = ({
 
   // Fixed 'Dispatch All POs' Action Handler with Storage Persistence
   const handleBatchDispatchAll = async () => {
-    if (vendorDrafts.length === 0) return;
+    const selectedDrafts = vendorDrafts.filter(d => selectedVendorIds.includes(d.supplier.id));
+    if (selectedDrafts.length === 0) return;
 
     if (onLogOrders) {
-      await onLogOrders(vendorDrafts);
+      await onLogOrders(selectedDrafts);
     }
 
     if (preferredChannel === 'webmail') {
-      const allQueued: QueuedMailDraft[] = vendorDrafts.map((d, idx) => {
+      const allQueued: QueuedMailDraft[] = selectedDrafts.map((d, idx) => {
         const c = editableContacts[d.supplier.id] || { email: d.supplier.email, phone: d.supplier.phone };
         return {
           id: `queue-${d.supplier.id}-${Date.now()}-${idx}`,
@@ -289,7 +298,8 @@ export const BatchSendPOsModal: React.FC<Props> = ({
           productName: folder.name,
           totalAmount: d.total_amount,
           itemsCount: d.items.length,
-          context: 'CATALOG_BOM'
+          context: 'CATALOG_BOM',
+          orderType
         };
       });
 
@@ -301,7 +311,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
       if (onEnqueueMailDrafts) {
         onEnqueueMailDrafts(allQueued, true);
       } else if (onOpenWebmail) {
-        const first = vendorDrafts[0];
+        const first = selectedDrafts[0];
         const contact = editableContacts[first.supplier.id] || { email: first.supplier.email, phone: first.supplier.phone };
         onOpenWebmail(
           { ...first.supplier, email: contact.email },
@@ -313,7 +323,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
         );
       }
     } else if (preferredChannel === 'whatsapp') {
-      vendorDrafts.forEach(d => dispatchSingleVendorWhatsApp(d, false));
+      selectedDrafts.forEach(d => dispatchSingleVendorWhatsApp(d, false));
     }
 
     onClose();
@@ -348,34 +358,64 @@ export const BatchSendPOsModal: React.FC<Props> = ({
 
         {/* Dispatch Options & Progress */}
         <div className="bg-[#EEE8D5] p-4 rounded-2xl border border-[#D6D1B1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs">
-            <span className="font-bold text-[#073642]">Dispatch Channel:</span>
-            <div className="flex items-center p-1 bg-[#FDF6E3] rounded-xl border border-[#D6D1B1]">
-              <button
-                type="button"
-                onClick={() => setPreferredChannel('webmail')}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition-all ${
-                  preferredChannel === 'webmail'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-[#586E75] hover:text-[#073642]'
-                }`}
-              >
-                <Mail className="w-3.5 h-3.5" />
-                <span>Internal Webmail</span>
-              </button>
+          <div className="flex flex-wrap items-center gap-4 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#073642]">Dispatch Mode:</span>
+              <div className="flex items-center p-1 bg-[#FDF6E3] rounded-xl border border-[#D6D1B1]">
+                <button
+                  type="button"
+                  onClick={() => setOrderType('PO')}
+                  className={`px-3 py-1 rounded-lg font-bold transition-all ${
+                    orderType === 'PO'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-[#586E75] hover:text-[#073642]'
+                  }`}
+                >
+                  PO
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOrderType('RFQ')}
+                  className={`px-3 py-1 rounded-lg font-bold transition-all ${
+                    orderType === 'RFQ'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-[#586E75] hover:text-[#073642]'
+                  }`}
+                >
+                  RFQ
+                </button>
+              </div>
+            </div>
 
-              <button
-                type="button"
-                onClick={() => setPreferredChannel('whatsapp')}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition-all ${
-                  preferredChannel === 'whatsapp'
-                    ? 'bg-emerald-600 text-white shadow-xs'
-                    : 'text-[#586E75] hover:text-[#073642]'
-                }`}
-              >
-                <MessageSquare className="w-3.5 h-3.5" />
-                <span>WhatsApp</span>
-              </button>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#073642]">Channel:</span>
+              <div className="flex items-center p-1 bg-[#FDF6E3] rounded-xl border border-[#D6D1B1]">
+                <button
+                  type="button"
+                  onClick={() => setPreferredChannel('webmail')}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition-all ${
+                    preferredChannel === 'webmail'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-[#586E75] hover:text-[#073642]'
+                  }`}
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>Webmail</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPreferredChannel('whatsapp')}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition-all ${
+                    preferredChannel === 'whatsapp'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'text-[#586E75] hover:text-[#073642]'
+                  }`}
+                >
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>WhatsApp</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -386,7 +426,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
               className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 active:scale-95 transition-all cursor-pointer"
             >
               <Rocket className="w-4 h-4" />
-              <span>Dispatch All ({vendorDrafts.length}) POs</span>
+              <span>Dispatch All ({selectedVendorIds.length}) POs</span>
             </button>
           </div>
         </div>
@@ -408,6 +448,18 @@ export const BatchSendPOsModal: React.FC<Props> = ({
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#D6D1B1]/60 pb-2.5">
                   <div className="flex items-center gap-2.5">
+                    <input
+                      type="checkbox"
+                      checked={selectedVendorIds.includes(draft.supplier.id)}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setSelectedVendorIds(prev => [...prev, draft.supplier.id]);
+                        } else {
+                          setSelectedVendorIds(prev => prev.filter(id => id !== draft.supplier.id));
+                        }
+                      }}
+                      className="w-4 h-4 text-emerald-600 rounded border-[#D6D1B1] focus:ring-emerald-500 accent-emerald-600 cursor-pointer"
+                    />
                     <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
                       {index + 1}
                     </div>

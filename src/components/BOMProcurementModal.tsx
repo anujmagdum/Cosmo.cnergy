@@ -283,7 +283,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
         productName: currentSelection?.name || 'Assembly',
         totalAmount: draft.total_amount,
         itemsCount: draft.items.length,
-        context: 'CATALOG_BOM'
+        context: 'CATALOG_BOM',
+        orderType
       };
       onEnqueueMailDrafts([queuedDraft], true);
       onClose();
@@ -352,7 +353,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
             productName: currentSelection?.name || 'Assembly',
             totalAmount: draft.total_amount,
             itemsCount: draft.items.length,
-            context: 'CATALOG_BOM'
+            context: 'CATALOG_BOM',
+            orderType
           };
         });
 

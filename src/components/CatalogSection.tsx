@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   CatalogItem,
   Supplier,
@@ -10,7 +10,8 @@ import {
   MultiSupplierPODraft,
   QueuedMailDraft,
   STATUS_MAP,
-  Category
+  Category,
+  ComponentSupplier
 } from '../types';
 import { SKUCapacityCalculator } from './SKUCapacityCalculator';
 import { ReOrderConfirmationModal } from './ReOrderConfirmationModal';
@@ -18,6 +19,7 @@ import { ProductFolderRecipeModal } from './ProductFolderRecipeModal';
 import { BatchSendPOsModal } from './BatchSendPOsModal';
 import { EditComponentModal } from './EditComponentModal';
 import { CsvManagerWidget } from './CsvManagerWidget';
+import { DriveImageLightboxModal } from './DriveImageLightboxModal';
 import {
   Package,
   Search,
@@ -32,12 +34,18 @@ import {
   PlusCircle,
   Send,
   Edit2,
-  AlertCircle
+  AlertCircle,
+  Image as ImageIcon,
+  Eye,
+  Sparkles,
+  Award,
+  Tag
 } from 'lucide-react';
 
 interface Props {
   catalog: CatalogItem[];
   suppliers: Supplier[];
+  componentSuppliers?: ComponentSupplier[];
   orders: ProcurementOrder[];
   folders: ProductFolder[];
   boms: ProductBOM[];
@@ -57,6 +65,7 @@ interface Props {
   onOpenWebmail: (supplier: Supplier, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
   onEnqueueMailDrafts?: (drafts: QueuedMailDraft[], openFirstImmediately?: boolean) => void;
   onImportComponents?: (rows: any[]) => Promise<number | void> | number | void;
+  onOpenComparisonDrawer?: (component: CatalogItem) => void;
 }
 
 const DEFAULT_CATEGORIES = [
@@ -71,6 +80,7 @@ const DEFAULT_CATEGORIES = [
 export const CatalogSection: React.FC<Props> = ({
   catalog,
   suppliers,
+  componentSuppliers = [],
   orders,
   folders,
   boms,
@@ -88,9 +98,11 @@ export const CatalogSection: React.FC<Props> = ({
   onOpenWhatsApp,
   onOpenWebmail,
   onEnqueueMailDrafts,
-  onImportComponents
+  onImportComponents,
+  onOpenComparisonDrawer
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [lightboxData, setLightboxData] = useState<{ url: string; name: string } | null>(null);
   
   // Initialize category filter from URL Search Params or sessionStorage
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>(() => {
@@ -139,9 +151,27 @@ export const CatalogSection: React.FC<Props> = ({
   const [folderToDelete, setFolderToDelete] = useState<ProductFolder | null>(null);
   const [componentToDelete, setComponentToDelete] = useState<CatalogItem | null>(null);
 
+  // Active Procurement Widget Status Filter: 'ALL' | 'TO_BE_ORDERED'
+  const [activeStatusFilter, setActiveStatusFilter] = useState<'ALL' | 'TO_BE_ORDERED'>('ALL');
+
+  // Helper to determine if a catalog item is a stock bottleneck (stock <= 20%)
+  const isStockBottleneck = useCallback((item: CatalogItem): boolean => {
+    const currentStock = Number(item.in_stock_qty ?? 0);
+    const targetThreshold = Math.max(Number(item.min_order_qty || 0), 50);
+    const stockRatio = targetThreshold > 0 ? currentStock / targetThreshold : 1;
+    return stockRatio <= 0.20;
+  }, []);
+
+  // Multi-select & Bulk Delete states
+  const [selectedFolderIds, setSelectedFolderIds] = useState<string[]>([]);
+  const [isBulkDeletingFolders, setIsBulkDeletingFolders] = useState(false);
+  const [selectedComponentIds, setSelectedComponentIds] = useState<string[]>([]);
+  const [isBulkDeletingComponents, setIsBulkDeletingComponents] = useState(false);
+
   // 1-Tap Re-Order Modal State & Toast
   const [reOrderConfirmData, setReOrderConfirmData] = useState<{ item: CatalogItem; qty: number } | null>(null);
   const [toastFeedback, setToastFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [reorderQtyMap, setReorderQtyMap] = useState<Record<string, number>>({});
 
   const allCategoryNames = useMemo<string[]>(() => {
     const names: string[] = [
@@ -174,18 +204,67 @@ export const CatalogSection: React.FC<Props> = ({
     }
   };
 
-  // Add Component Form State
+  // Add Component Form State supporting Multi-Supplier Association
   const [catalogForm, setCatalogForm] = useState({
     name: '',
     category: 'Battery Cells',
     target_qty: 10,
     preset_price: 150,
     in_stock_qty: 100,
+    alert_threshold_percent: 20,
     uom: 'Pcs',
     specs: '',
-    supplier_id: suppliers[0]?.id || '',
-    procurement_status: 'TO_BE_ORDERED' as OrderStatus
+    selectedSuppliers: (suppliers[0] ? [
+      {
+        supplier_id: suppliers[0].id,
+        unit_price: 150,
+        rfq_quoted_price: 150,
+        moq: 10,
+        lead_time_days: 7,
+        part_number_vendor: 'OEM-SPEC'
+      }
+    ] : []),
+    procurement_status: 'TO_BE_ORDERED' as OrderStatus,
+    image_drive_url: ''
   });
+  const [supplierValidationMsg, setSupplierValidationMsg] = useState<string | null>(null);
+
+  const handleAddSupplierToForm = (supplierId: string) => {
+    if (!supplierId) return;
+    if (catalogForm.selectedSuppliers.some(s => s.supplier_id === supplierId)) return;
+    const supp = suppliers.find(s => s.id === supplierId);
+    if (!supp) return;
+
+    setCatalogForm(prev => ({
+      ...prev,
+      selectedSuppliers: [
+        ...prev.selectedSuppliers,
+        {
+          supplier_id: supplierId,
+          unit_price: Number(prev.preset_price) || 150,
+          rfq_quoted_price: Number(prev.preset_price) || 150,
+          moq: Number(prev.target_qty) || 10,
+          lead_time_days: 7,
+          part_number_vendor: prev.name ? `${prev.name.slice(0, 4).toUpperCase()}-${supp.name.slice(0, 3).toUpperCase()}` : 'OEM-SPEC'
+        }
+      ]
+    }));
+    setSupplierValidationMsg(null);
+  };
+
+  const handleRemoveSupplierFromForm = (supplierId: string) => {
+    setCatalogForm(prev => ({
+      ...prev,
+      selectedSuppliers: prev.selectedSuppliers.filter(s => s.supplier_id !== supplierId)
+    }));
+  };
+
+  const handleUpdateSupplierMapping = (supplierId: string, updates: Record<string, any>) => {
+    setCatalogForm(prev => ({
+      ...prev,
+      selectedSuppliers: prev.selectedSuppliers.map(s => (s.supplier_id === supplierId ? { ...s, ...updates } : s))
+    }));
+  };
 
   const filteredFolders = useMemo(() => {
     return folders.filter(f =>
@@ -193,30 +272,26 @@ export const CatalogSection: React.FC<Props> = ({
     );
   }, [folders, searchTerm]);
 
-  // Reactive Catalog Filtering with robust category normalization
+  // Reactive Catalog Filtering with category and widget status filter (Data-bound with component_id & product_id)
   const filteredCatalog = useMemo(() => {
-    const term = searchTerm.toLowerCase().trim();
-    const activeCat = selectedCategoryFilter.toLowerCase().trim();
-
     return catalog.filter(c => {
       const matchesSearch =
-        !term ||
-        c.name.toLowerCase().includes(term) ||
-        (c.category || '').toLowerCase().includes(term) ||
-        (c.specs || '').toLowerCase().includes(term);
+        c.name.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+        (c.specs && c.specs.toLowerCase().includes(searchTerm.toLowerCase().trim())) ||
+        (c.sku && c.sku.toLowerCase().includes(searchTerm.toLowerCase().trim()));
 
-      let matchesCategory = activeCat === 'all';
-      if (!matchesCategory) {
-        const itemCat = (c.category || '').toLowerCase().trim();
-        const relationalCatName = c.category_id
-          ? (categories.find(cat => cat.id === c.category_id)?.name || '').toLowerCase().trim()
-          : '';
-        matchesCategory = itemCat === activeCat || relationalCatName === activeCat;
+      const matchesCategory =
+        selectedCategoryFilter === 'ALL' ||
+        (c.category && c.category.toLowerCase() === selectedCategoryFilter.toLowerCase());
+
+      let matchesStatus = true;
+      if (activeStatusFilter === 'TO_BE_ORDERED') {
+        matchesStatus = isStockBottleneck(c);
       }
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesStatus;
     });
-  }, [catalog, searchTerm, selectedCategoryFilter, categories]);
+  }, [catalog, searchTerm, selectedCategoryFilter, activeStatusFilter, isStockBottleneck]);
 
   const handleAddFolderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -242,6 +317,12 @@ export const CatalogSection: React.FC<Props> = ({
     e.preventDefault();
     if (!catalogForm.name.trim()) return;
 
+    // Requirement: Ensure form validation requires at least 1 supplier
+    if (catalogForm.selectedSuppliers.length === 0) {
+      setSupplierValidationMsg('Please associate at least 1 supplier for this component.');
+      return;
+    }
+
     setIsSubmitting(true);
     const matchedCat = categories.find(c => c.name.toLowerCase() === catalogForm.category.toLowerCase());
 
@@ -253,10 +334,21 @@ export const CatalogSection: React.FC<Props> = ({
         specs: catalogForm.specs.trim(),
         uom: catalogForm.uom || 'Pcs',
         preset_price: Number(catalogForm.preset_price) || 0,
-        supplier_id: catalogForm.supplier_id || suppliers[0]?.id || '',
+        supplier_id: catalogForm.selectedSuppliers[0]?.supplier_id || '',
+        supplier_ids: catalogForm.selectedSuppliers.map(s => s.supplier_id),
+        supplier_mappings: catalogForm.selectedSuppliers.map(s => ({
+          supplier_id: s.supplier_id,
+          unit_price: Number(s.unit_price) || Number(catalogForm.preset_price) || 0,
+          rfq_quoted_price: Number(s.rfq_quoted_price) || Number(s.unit_price) || Number(catalogForm.preset_price) || 0,
+          moq: Number(s.moq) || Number(catalogForm.target_qty) || 1,
+          lead_time_days: Number(s.lead_time_days) || 7,
+          part_number_vendor: s.part_number_vendor || catalogForm.name.trim()
+        })),
         min_order_qty: Number(catalogForm.target_qty) || 1,
         in_stock_qty: Number(catalogForm.in_stock_qty) || 0,
-        procurement_status: catalogForm.procurement_status
+        alert_threshold_percent: catalogForm.alert_threshold_percent || 20,
+        procurement_status: catalogForm.procurement_status,
+        image_drive_url: catalogForm.image_drive_url.trim() || undefined
       });
 
       setCatalogForm({
@@ -265,13 +357,25 @@ export const CatalogSection: React.FC<Props> = ({
         target_qty: 10,
         preset_price: 150,
         in_stock_qty: 100,
+        alert_threshold_percent: 20,
         uom: 'Pcs',
         specs: '',
-        supplier_id: suppliers[0]?.id || '',
-        procurement_status: 'TO_BE_ORDERED'
+        selectedSuppliers: suppliers[0] ? [
+          {
+            supplier_id: suppliers[0].id,
+            unit_price: 150,
+            rfq_quoted_price: 150,
+            moq: 10,
+            lead_time_days: 7,
+            part_number_vendor: 'OEM-SPEC'
+          }
+        ] : [],
+        procurement_status: 'TO_BE_ORDERED',
+        image_drive_url: ''
       });
+      setSupplierValidationMsg(null);
       setIsAddCatalogOpen(false);
-      setToastFeedback({ type: 'success', message: `Component "${catalogForm.name}" added successfully!` });
+      setToastFeedback({ type: 'success', message: `Component "${catalogForm.name}" added with ${catalogForm.selectedSuppliers.length} supplier(s)!` });
       setTimeout(() => setToastFeedback(null), 3500);
     } catch (err: any) {
       console.error('Failed to add component:', err);
@@ -317,6 +421,90 @@ export const CatalogSection: React.FC<Props> = ({
     }
   };
 
+  // Folder Multi-Select Handlers
+  const handleSelectAllFolders = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedFolderIds(filteredFolders.map(f => f.id));
+    } else {
+      setSelectedFolderIds([]);
+    }
+  };
+
+  const toggleSelectOneFolder = (id: string) => {
+    setSelectedFolderIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBulkDeleteFolders = async () => {
+    if (!onDeleteProductFolder) return;
+    if (!confirm(`Are you sure you want to delete ${selectedFolderIds.length} product folders?`)) return;
+    setIsBulkDeletingFolders(true);
+    try {
+      for (const id of selectedFolderIds) {
+        await onDeleteProductFolder(id);
+      }
+      setSelectedFolderIds([]);
+      setToastFeedback({ type: 'success', message: 'Selected product folders deleted successfully.' });
+      setTimeout(() => setToastFeedback(null), 3500);
+    } catch (err: any) {
+      console.error('Bulk delete folders failed:', err);
+      setToastFeedback({ type: 'error', message: `Bulk delete failed: ${err.message || 'Failed'}` });
+      setTimeout(() => setToastFeedback(null), 5000);
+    } finally {
+      setIsBulkDeletingFolders(false);
+    }
+  };
+
+  // Component Multi-Select Handlers
+  const handleSelectAllComponents = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedComponentIds(filteredCatalog.map(c => c.id));
+    } else {
+      setSelectedComponentIds([]);
+    }
+  };
+
+  const toggleSelectOneComponent = (id: string) => {
+    setSelectedComponentIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBulkDeleteComponents = async () => {
+    if (!onDeleteCatalogItem) return;
+    if (!confirm(`Are you sure you want to delete ${selectedComponentIds.length} components?`)) return;
+    setIsBulkDeletingComponents(true);
+    try {
+      for (const id of selectedComponentIds) {
+        await onDeleteCatalogItem(id);
+      }
+      setSelectedComponentIds([]);
+      setToastFeedback({ type: 'success', message: 'Selected components deleted successfully.' });
+      setTimeout(() => setToastFeedback(null), 3500);
+    } catch (err: any) {
+      console.error('Bulk delete components failed:', err);
+      setToastFeedback({ type: 'error', message: `Bulk delete failed: ${err.message || 'Failed'}` });
+      setTimeout(() => setToastFeedback(null), 5000);
+    } finally {
+      setIsBulkDeletingComponents(false);
+    }
+  };
+
+  // Dynamic Real-time Status Counts for Top Widgets
+  const counts = useMemo(() => {
+    let to_be_ordered = 0;
+
+    catalog.forEach(item => {
+      if (isStockBottleneck(item)) to_be_ordered++;
+    });
+
+    return {
+      total: catalog.length,
+      to_be_ordered
+    };
+  }, [catalog, isStockBottleneck]);
+
   // Confirm Re-Order Execution
   const handleConfirmReOrder = async (item: CatalogItem, qty: number) => {
     await onQuickReorder(item, qty);
@@ -326,6 +514,98 @@ export const CatalogSection: React.FC<Props> = ({
 
   return (
     <div className="space-y-5">
+      {/* 2-Widget Grid: Procurement Dashboard & Status Filter Navigation */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        {/* 1. To Be Ordered (Dynamic Bottleneck Alert: Stock <= 20%) */}
+        <div
+          onClick={() => setActiveStatusFilter(activeStatusFilter === 'TO_BE_ORDERED' ? 'ALL' : 'TO_BE_ORDERED')}
+          className={`rounded-2xl p-4 border transition-all cursor-pointer flex flex-col justify-between select-none ${
+            activeStatusFilter === 'TO_BE_ORDERED'
+              ? 'bg-amber-500 text-slate-950 border-amber-600 shadow-lg ring-2 ring-amber-500/40 font-bold scale-[1.01]'
+              : 'bg-[#FDF6E3] hover:bg-amber-50/80 border-[#D6D1B1] hover:border-amber-400 shadow-xs'
+          }`}
+          title="Click to filter components needing to be ordered (Stock <= 20%)"
+        >
+          <div className="flex items-center justify-between">
+            <span
+              className={`text-[10px] sm:text-xs font-black uppercase tracking-wide flex items-center gap-1.5 ${
+                activeStatusFilter === 'TO_BE_ORDERED' ? 'text-slate-950' : 'text-[#586E75]'
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              To Be Ordered (Stock &le; 20%)
+            </span>
+            {activeStatusFilter === 'TO_BE_ORDERED' && (
+              <span className="text-[10px] font-black uppercase bg-slate-950 text-amber-400 px-2 py-0.5 rounded">
+                Active Filter
+              </span>
+            )}
+          </div>
+          <div className="flex items-end justify-between mt-3">
+            <span
+              className={`text-2xl sm:text-3xl font-extrabold font-mono ${
+                activeStatusFilter === 'TO_BE_ORDERED' ? 'text-slate-950' : 'text-amber-600'
+              }`}
+            >
+              {counts.to_be_ordered}
+            </span>
+            <span
+              className={`w-9 h-9 rounded-xl flex items-center justify-center border text-lg ${
+                activeStatusFilter === 'TO_BE_ORDERED'
+                  ? 'bg-slate-950/20 border-slate-950/30'
+                  : 'bg-amber-200/50 border-amber-300'
+              }`}
+            >
+              ⏳
+            </span>
+          </div>
+        </div>
+
+        {/* 2. All Procurement Records */}
+        <div
+          onClick={() => setActiveStatusFilter('ALL')}
+          className={`rounded-2xl p-4 border transition-all cursor-pointer flex flex-col justify-between select-none ${
+            activeStatusFilter === 'ALL'
+              ? 'bg-[#0B192C] text-white border-slate-700 shadow-lg ring-2 ring-slate-600/40 font-bold scale-[1.01]'
+              : 'bg-[#FDF6E3] hover:bg-[#EEE8D5] border-[#D6D1B1] shadow-xs'
+          }`}
+          title="Click to view all component procurement records"
+        >
+          <div className="flex items-center justify-between">
+            <span
+              className={`text-[10px] sm:text-xs font-black uppercase tracking-wide ${
+                activeStatusFilter === 'ALL' ? 'text-slate-300' : 'text-[#586E75]'
+              }`}
+            >
+              All Procurement Records
+            </span>
+            {activeStatusFilter === 'ALL' && (
+              <span className="text-[10px] font-black uppercase bg-emerald-500 text-white px-2 py-0.5 rounded">
+                All View
+              </span>
+            )}
+          </div>
+          <div className="flex items-end justify-between mt-3">
+            <span
+              className={`text-2xl sm:text-3xl font-extrabold font-mono ${
+                activeStatusFilter === 'ALL' ? 'text-white' : 'text-[#073642]'
+              }`}
+            >
+              {counts.total}
+            </span>
+            <span
+              className={`w-9 h-9 rounded-xl flex items-center justify-center border text-lg ${
+                activeStatusFilter === 'ALL'
+                  ? 'bg-slate-800 border-slate-700'
+                  : 'bg-slate-200/50 border-slate-300'
+              }`}
+            >
+              📋
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Toast Feedback Notification */}
       {toastFeedback && (
         <div
@@ -384,8 +664,11 @@ export const CatalogSection: React.FC<Props> = ({
         }}
       />
 
+      {/* SKU Capacity Calculator Widget */}
+      <SKUCapacityCalculator catalog={catalog} boms={boms} folders={folders} />
+
       {/* Filter, Search & Category Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between py-4">
         <div className="relative w-full sm:w-80">
           <Search className="w-4 h-4 text-[#586E75] absolute left-3.5 top-3" />
           <input
@@ -434,17 +717,36 @@ export const CatalogSection: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* SKU Capacity Calculator Widget */}
-      <SKUCapacityCalculator catalog={catalog} boms={boms} folders={folders} />
-
       {/* SUBSECTION 1: PRODUCT FOLDERS (Strict Vertical Ladder List View) */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-[#073642] flex items-center gap-2">
-            <Folder className="w-4 h-4 text-emerald-600" />
-            <span>Product Folders & Pack Assemblies ({filteredFolders.length})</span>
-          </h3>
-          <span className="text-[11px] text-[#586E75]">Dense ladder list</span>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2">
+          <div>
+            <h3 className="text-sm font-bold text-[#073642] flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={filteredFolders.length > 0 && selectedFolderIds.length === filteredFolders.length}
+                onChange={handleSelectAllFolders}
+                className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+              />
+              <Folder className="w-4 h-4 text-emerald-600" />
+              <span>Product Folders & Pack Assemblies ({filteredFolders.length})</span>
+            </h3>
+            <span className="text-[11px] text-[#586E75] ml-6">Dense ladder list with multi-select bulk delete</span>
+          </div>
+
+          {selectedFolderIds.length > 0 && (
+            <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-emerald-500 animate-in fade-in">
+              <span className="text-xs font-bold text-[#073642] px-2">{selectedFolderIds.length} Selected</span>
+              <button
+                onClick={handleBulkDeleteFolders}
+                disabled={isBulkDeletingFolders}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                {isBulkDeletingFolders ? 'Deleting...' : 'Delete Folders'}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col space-y-2">
@@ -457,8 +759,19 @@ export const CatalogSection: React.FC<Props> = ({
                 onClick={() => setActiveDetailFolder(folder)}
                 className="w-full group bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500/70 hover:shadow-xs transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3"
               >
-                {/* Left: Folder Name & Description & Components Count */}
+                {/* Left: Checkbox, Folder Name & Description & Components Count */}
                 <div className="flex items-center gap-3 min-w-0">
+                  <input
+                    type="checkbox"
+                    checked={selectedFolderIds.includes(folder.id)}
+                    onChange={e => {
+                      e.stopPropagation();
+                      toggleSelectOneFolder(folder.id);
+                    }}
+                    onClick={e => e.stopPropagation()}
+                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
+                  />
+
                   <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 flex items-center justify-center shrink-0">
                     <Folder className="w-4 h-4" />
                   </div>
@@ -521,26 +834,55 @@ export const CatalogSection: React.FC<Props> = ({
 
       {/* SUBSECTION 2: COMPONENTS (Strict Vertical Ladder List View) */}
       <div className="space-y-2 pt-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-[#073642] flex items-center gap-2">
-            <Package className="w-4 h-4 text-emerald-600" />
-            <span>Components & Raw Materials ({filteredCatalog.length})</span>
-          </h3>
-          <span className="text-[11px] text-[#586E75]">Maximized density ladder view</span>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2">
+          <div>
+            <h3 className="text-sm font-bold text-[#073642] flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={filteredCatalog.length > 0 && selectedComponentIds.length === filteredCatalog.length}
+                onChange={handleSelectAllComponents}
+                className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+              />
+              <Package className="w-4 h-4 text-emerald-600" />
+              <span>Components & Raw Materials ({filteredCatalog.length})</span>
+            </h3>
+            <span className="text-[11px] text-[#586E75] ml-6">Maximized density ladder view with multi-select bulk delete</span>
+          </div>
+
+          {selectedComponentIds.length > 0 && (
+            <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-emerald-500 animate-in fade-in">
+              <span className="text-xs font-bold text-[#073642] px-2">{selectedComponentIds.length} Selected</span>
+              <button
+                onClick={handleBulkDeleteComponents}
+                disabled={isBulkDeletingComponents}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                {isBulkDeletingComponents ? 'Deleting...' : 'Delete Components'}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col space-y-2">
           {filteredCatalog.map(item => {
             const supplier = suppliers.find(s => s.id === item.supplier_id);
-            const statusConfig = STATUS_MAP[item.procurement_status || 'TO_BE_ORDERED'] || STATUS_MAP['TO_BE_ORDERED'];
+            const isBottleneck = isStockBottleneck(item);
 
             return (
               <div
                 key={item.id}
                 className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all"
               >
-                {/* Left: Component Name, Category, Specs, Supplier */}
+                {/* Left: Checkbox, Component Name, Category, Specs, Supplier */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedComponentIds.includes(item.id)}
+                    onChange={() => toggleSelectOneComponent(item.id)}
+                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
+                  />
+
                   <div className="w-8 h-8 rounded-lg bg-[#EEE8D5] text-[#073642] border border-[#D6D1B1] flex items-center justify-center font-bold text-xs shrink-0">
                     <Package className="w-4 h-4 text-emerald-700" />
                   </div>
@@ -548,6 +890,35 @@ export const CatalogSection: React.FC<Props> = ({
                   <div className="truncate min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <h4 className="text-xs md:text-sm font-bold text-[#073642] truncate">{item.name}</h4>
+
+                      {/* Zero-Storage Google Drive Image Thumbnail / Lightbox Trigger */}
+                      {item.image_drive_url ? (
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            setLightboxData({ url: item.image_drive_url!, name: item.name });
+                          }}
+                          className="p-1 rounded-md bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 transition-all cursor-pointer shrink-0 shadow-2xs flex items-center gap-0.5"
+                          title="Open Google Drive Image Lightbox"
+                        >
+                          <ImageIcon className="w-3.5 h-3.5 text-emerald-700" />
+                          <Eye className="w-2.5 h-2.5 text-emerald-600" />
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            setEditingComponent(item);
+                          }}
+                          className="p-1 rounded-md bg-[#EEE8D5] hover:bg-[#E4DDC7] text-[#586E75] border border-dashed border-[#D6D1B1] transition-all cursor-pointer shrink-0"
+                          title="Attach Google Drive Image Link"
+                        >
+                          <ImageIcon className="w-3.5 h-3.5 opacity-40" />
+                        </button>
+                      )}
+
                       <select
                         value={
                           item.category_id ||
@@ -565,6 +936,8 @@ export const CatalogSection: React.FC<Props> = ({
 
                           const updatedItem: CatalogItem = {
                             ...item,
+                            component_id: item.id,
+                            product_id: catId || item.category_id || '',
                             category: catName,
                             category_id: catId
                           };
@@ -599,21 +972,35 @@ export const CatalogSection: React.FC<Props> = ({
                       <span>•</span>
                       <span className="flex items-center gap-1 truncate text-[#073642] font-medium">
                         <Building2 className="w-3 h-3 text-emerald-600 shrink-0" />
-                        <span className="truncate">{supplier?.name || 'General Supplier'}</span>
+                        <span className="truncate">
+                          {(() => {
+                            const linkedSupps = componentSuppliers.filter(cs => cs.component_id === item.id);
+                            const count = linkedSupps.length > 0
+                              ? linkedSupps.length
+                              : (item.supplier_ids?.length || (item.supplier_id ? 1 : 0));
+                            if (count > 1) {
+                              return `${supplier?.name || 'Primary'} +${count - 1} more`;
+                            }
+                            return supplier?.name || 'General Supplier';
+                          })()}
+                        </span>
                       </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Right: Metrics & Actions */}
-                <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#D6D1B1]/60">
-                  {/* Status Badge */}
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[9px] font-bold border flex items-center gap-1 shrink-0 ${statusConfig.badgeBg} ${statusConfig.badgeText} ${statusConfig.badgeBorder}`}
-                  >
-                    <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dotColor}`} />
-                    <span>{statusConfig.label}</span>
-                  </span>
+                <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#D6D1B1]/60">
+                  {/* Automated Conditional "To Be Ordered" Badge (Only when Stock <= 20%) */}
+                  {isBottleneck && (
+                    <span
+                      className="bg-amber-500/20 text-amber-900 border border-amber-500/40 text-xs px-2.5 py-1 rounded-md font-semibold flex items-center gap-1.5 shrink-0 select-none shadow-2xs"
+                      title="Stock is <= 20% of safe reorder threshold"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                      <span>To Be Ordered</span>
+                    </span>
+                  )}
 
                   {/* Stock */}
                   <div className="text-right">
@@ -631,13 +1018,65 @@ export const CatalogSection: React.FC<Props> = ({
                     </span>
                   </div>
 
-                  {/* 1-Tap Reorder */}
-                  <button
-                    onClick={() => setReOrderConfirmData({ item, qty: item.min_order_qty || 10 })}
-                    className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
-                  >
-                    1-Tap Reorder
-                  </button>
+                  {/* 1-Tap Reorder Input Group */}
+                  <div className="flex items-center rounded-lg border border-[#D6D1B1] overflow-hidden">
+                    <input
+                      type="number"
+                      min={1}
+                      value={reorderQtyMap[item.id] || item.min_order_qty || 10}
+                      onChange={e => setReorderQtyMap(prev => ({ ...prev, [item.id]: Number(e.target.value) }))}
+                      className="w-14 px-1.5 py-1.5 text-xs font-mono font-bold text-center bg-[#FDF6E3] focus:outline-none focus:bg-white text-[#073642]"
+                      title="Override quantity"
+                    />
+                    <button
+                      onClick={() => setReOrderConfirmData({ item, qty: reorderQtyMap[item.id] || item.min_order_qty || 10 })}
+                      className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
+                    >
+                      Reorder
+                    </button>
+                  </div>
+
+                  {/* Multi-Supplier Sourcing / Compare Trigger (Enabled if 2+ suppliers, else Disabled with Tooltip) */}
+                  {(() => {
+                    const linked = componentSuppliers.filter(cs => cs.component_id === item.id);
+                    const sCount = linked.length > 0 
+                      ? linked.length 
+                      : (item.supplier_ids?.length || (item.supplier_id ? 1 : 0));
+                    const canCompare = sCount >= 2;
+
+                    if (canCompare) {
+                      return (
+                        <button
+                          type="button"
+                          onClick={e => {
+                            e.stopPropagation();
+                            onOpenComparisonDrawer?.(item);
+                          }}
+                          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-teal-600/15 hover:bg-teal-600/25 text-teal-950 border border-teal-600/40 text-[10px] font-black transition-all cursor-pointer shadow-2xs active:scale-95 group"
+                          title={`Compare ${sCount} suppliers, RFQ prices & verified ratings`}
+                        >
+                          <Building2 className="w-3.5 h-3.5 text-teal-700 group-hover:scale-110 transition-transform" />
+                          <span>Compare ({sCount})</span>
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <div className="relative group inline-block">
+                        <button
+                          type="button"
+                          disabled
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-200/70 text-slate-400 border border-slate-300 text-[10px] font-semibold cursor-not-allowed opacity-75"
+                        >
+                          <Building2 className="w-3 h-3 text-slate-400" />
+                          <span>Compare ({sCount})</span>
+                        </button>
+                        <div className="absolute bottom-full right-0 mb-1.5 hidden group-hover:block w-44 p-1.5 bg-[#0B192C] text-white text-[10px] rounded-lg shadow-xl text-center z-30 font-medium pointer-events-none border border-slate-700">
+                          Add 2+ suppliers to compare
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {/* Edit & Delete Action Buttons */}
                   <div className="flex items-center gap-1">
@@ -767,21 +1206,208 @@ export const CatalogSection: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* Supplier (Optional) */}
-              <div>
-                <label className="block font-semibold text-[#073642] mb-1">Supplier Company (Optional)</label>
-                <select
-                  value={catalogForm.supplier_id}
-                  onChange={e => setCatalogForm({ ...catalogForm, supplier_id: e.target.value })}
-                  className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
-                >
-                  <option value="">-- Select Supplier (Optional) --</option>
-                  {suppliers.map(s => (
-                    <option key={s.id} value={s.id}>
-                      {s.name} ({s.contact_person})
-                    </option>
-                  ))}
-                </select>
+              {/* Multi-Supplier Sourcing Association (Tag / Pill UI + Commercial Parameters) */}
+              <div className="space-y-3 p-4 bg-[#FDF6E3] rounded-2xl border border-[#D6D1B1] shadow-2xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                  <div>
+                    <label className="block font-bold text-xs text-[#073642] uppercase tracking-wider flex items-center gap-1.5">
+                      <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Associated Sourcing Suppliers *</span>
+                    </label>
+                    <p className="text-[11px] text-[#586E75] mt-0.5">
+                      Associate 1 or more suppliers. Associating 2+ vendors enables the <strong>"Compare Suppliers"</strong> AI engine.
+                    </p>
+                  </div>
+                  {catalogForm.selectedSuppliers.length >= 2 && (
+                    <span className="self-start sm:self-auto flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-600/15 text-emerald-900 border border-emerald-500/30 text-[10px] font-black animate-in fade-in">
+                      <Sparkles className="w-3 h-3 text-emerald-600" />
+                      <span>Comparison Enabled ({catalogForm.selectedSuppliers.length} Vendors)</span>
+                    </span>
+                  )}
+                </div>
+
+                {/* Searchable Add Supplier Dropdown */}
+                <div className="flex gap-2">
+                  <select
+                    value=""
+                    onChange={e => {
+                      if (e.target.value) {
+                        handleAddSupplierToForm(e.target.value);
+                      }
+                    }}
+                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
+                  >
+                    <option value="">+ Click to add a supplier to this component...</option>
+                    {suppliers
+                      .filter(s => !catalogForm.selectedSuppliers.some(sel => sel.supplier_id === s.id))
+                      .map(s => (
+                        <option key={s.id} value={s.id}>
+                          {s.name} — {s.contact_person || s.category} {s.rating ? `(★ ${s.rating})` : ''}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+
+                {/* Validation Error Banner */}
+                {supplierValidationMsg && (
+                  <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 flex items-center gap-2 text-red-700 text-xs font-semibold">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{supplierValidationMsg}</span>
+                  </div>
+                )}
+
+                {/* Selected Suppliers Pill/Chip UI with Search + Remove 'x' */}
+                {catalogForm.selectedSuppliers.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {catalogForm.selectedSuppliers.map((item, idx) => {
+                      const supp = suppliers.find(s => s.id === item.supplier_id);
+                      return (
+                        <span
+                          key={item.supplier_id}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-[#073642] border border-[#D6D1B1] text-xs font-bold shadow-2xs group"
+                        >
+                          <Building2 className="w-3 h-3 text-emerald-600" />
+                          <span className="truncate max-w-[140px]">{supp?.name || item.supplier_id}</span>
+                          {idx === 0 && (
+                            <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-100 text-emerald-800 font-semibold">
+                              Primary
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSupplierFromForm(item.supplier_id)}
+                            className="p-0.5 rounded-full hover:bg-red-100 text-[#586E75] hover:text-red-700 transition-all cursor-pointer ml-1"
+                            title="Remove supplier"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-xs text-amber-800 bg-amber-50 p-2.5 rounded-xl border border-amber-200 flex items-center gap-2 font-medium">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-amber-600" />
+                    <span>No supplier selected yet. Please select at least 1 supplier above.</span>
+                  </div>
+                )}
+
+                {/* Multi-Supplier Highlighting Callout */}
+                {catalogForm.selectedSuppliers.length >= 2 ? (
+                  <div className="p-3 rounded-xl bg-teal-50 border border-teal-200 text-xs text-teal-950 flex items-start gap-2">
+                    <Sparkles className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="font-bold">Multi-Vendor Sourcing Active:</strong> You can tune individual RFQ quoted rates, MOQ, and lead times per supplier below. These metrics feed directly into algorithmic pre-scoring & Gemini 3.6 Flash recommendations.
+                    </div>
+                  </div>
+                ) : catalogForm.selectedSuppliers.length === 1 ? (
+                  <p className="text-[11px] text-[#586E75] italic">
+                    💡 Tip: Add a 2nd supplier to unlock side-by-side RFQ comparison & AI supplier ranking.
+                  </p>
+                ) : null}
+
+                {/* Dynamic Nested Fields / Compact Inline List per Selected Supplier */}
+                {catalogForm.selectedSuppliers.length > 0 && (
+                  <div className="space-y-2 mt-2 pt-2 border-t border-[#D6D1B1]/60">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#586E75] block">
+                      Supplier Commercial Parameters & RFQ Metrics:
+                    </span>
+
+                    <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                      {catalogForm.selectedSuppliers.map((item, idx) => {
+                        const supp = suppliers.find(s => s.id === item.supplier_id);
+                        return (
+                          <div
+                            key={item.supplier_id}
+                            className="p-3 rounded-xl bg-[#EEE8D5] border border-[#D6D1B1] space-y-2"
+                          >
+                            <div className="flex items-center justify-between text-xs">
+                              <div className="flex items-center gap-1.5 font-bold text-[#073642]">
+                                <span className="w-4 h-4 rounded-full bg-emerald-600 text-white text-[9px] flex items-center justify-center font-mono font-bold">
+                                  {idx + 1}
+                                </span>
+                                <span>{supp?.name}</span>
+                                {idx === 0 && (
+                                  <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold">
+                                    Primary
+                                  </span>
+                                )}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveSupplierFromForm(item.supplier_id)}
+                                className="text-[#586E75] hover:text-red-700 text-[11px] font-semibold flex items-center gap-0.5 cursor-pointer"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                                <span>Remove</span>
+                              </button>
+                            </div>
+
+                            {/* Dynamic 4-field grid per supplier */}
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                              <div>
+                                <label className="block text-[10px] font-semibold text-[#586E75] mb-0.5">RFQ Quoted Price (₹)</label>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  step="0.01"
+                                  value={item.rfq_quoted_price ?? item.unit_price}
+                                  onChange={e => handleUpdateSupplierMapping(item.supplier_id, {
+                                    rfq_quoted_price: Number(e.target.value) || 0,
+                                    unit_price: Number(e.target.value) || 0
+                                  })}
+                                  className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#073642] focus:outline-none focus:border-emerald-500"
+                                  placeholder="150"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-[10px] font-semibold text-[#586E75] mb-0.5">MOQ</label>
+                                <input
+                                  type="number"
+                                  min={1}
+                                  value={item.moq}
+                                  onChange={e => handleUpdateSupplierMapping(item.supplier_id, {
+                                    moq: Number(e.target.value) || 1
+                                  })}
+                                  className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#073642] focus:outline-none focus:border-emerald-500"
+                                  placeholder="10"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-[10px] font-semibold text-[#586E75] mb-0.5">Lead Time (Days)</label>
+                                <input
+                                  type="number"
+                                  min={1}
+                                  value={item.lead_time_days}
+                                  onChange={e => handleUpdateSupplierMapping(item.supplier_id, {
+                                    lead_time_days: Number(e.target.value) || 7
+                                  })}
+                                  className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#073642] focus:outline-none focus:border-emerald-500"
+                                  placeholder="7"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-[10px] font-semibold text-[#586E75] mb-0.5">Vendor Part # / SKU</label>
+                                <input
+                                  type="text"
+                                  value={item.part_number_vendor || ''}
+                                  onChange={e => handleUpdateSupplierMapping(item.supplier_id, {
+                                    part_number_vendor: e.target.value
+                                  })}
+                                  className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2 py-1 text-xs font-mono text-[#073642] focus:outline-none focus:border-emerald-500"
+                                  placeholder="OEM-SPEC"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Price & Stock Quantity (Optional) */}
@@ -799,7 +1425,7 @@ export const CatalogSection: React.FC<Props> = ({
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Stock Quantity (In-Stock, Optional)</label>
+                  <label className="block font-semibold text-[#073642] mb-1">Stock Quantity (In-Stock)</label>
                   <input
                     type="number"
                     min={0}
@@ -808,6 +1434,43 @@ export const CatalogSection: React.FC<Props> = ({
                     className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] font-mono font-bold focus:outline-none focus:border-emerald-500"
                   />
                 </div>
+              </div>
+
+              {/* Custom Stock Alert Threshold Slider */}
+              <div>
+                <label className="flex items-center justify-between font-semibold text-[#073642] mb-1 text-sm">
+                  <span>Low Stock Alert Threshold</span>
+                  <span className="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded text-xs">
+                    {catalogForm.alert_threshold_percent}% of MOQ
+                  </span>
+                </label>
+                <input
+                  type="range"
+                  min="5"
+                  max="100"
+                  step="5"
+                  value={catalogForm.alert_threshold_percent}
+                  onChange={e => setCatalogForm({ ...catalogForm, alert_threshold_percent: Number(e.target.value) })}
+                  className="w-full h-2 bg-[#D6D1B1] rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                />
+                <p className="text-[10px] text-[#586E75] mt-1">
+                  Alert triggers when stock falls below {Math.floor((Number(catalogForm.target_qty) || 1) * (catalogForm.alert_threshold_percent / 100))} {catalogForm.uom || 'Pcs'}
+                </p>
+              </div>
+
+              {/* Google Drive Image Link */}
+              <div>
+                <label className="block font-semibold text-[#073642] mb-1">Google Drive Image Link</label>
+                <input
+                  type="url"
+                  value={catalogForm.image_drive_url}
+                  onChange={e => setCatalogForm({ ...catalogForm, image_drive_url: e.target.value })}
+                  placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
+                  className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-mono text-xs"
+                />
+                <p className="text-[10px] text-[#586E75] mt-1 italic">
+                  (Ensure link permissions are set to "Anyone with the link can view")
+                </p>
               </div>
 
               {/* Technical Specifications */}
@@ -898,34 +1561,25 @@ export const CatalogSection: React.FC<Props> = ({
               </button>
             </div>
 
-            {/* Product Components List */}
+            {/* Product Components List (Read-Only View) */}
             <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-[#073642] uppercase tracking-wider">
                   Product Components ({activeDetailFolder.components?.length || 0}):
                 </h4>
-                {activeDetailFolder.components && activeDetailFolder.components.length > 0 && (
-                  <button
-                    onClick={() => setRecipeFolder(activeDetailFolder)}
-                    className="px-3.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-800 font-bold text-xs border border-emerald-500/30 transition-all flex items-center gap-1 active:scale-95 cursor-pointer"
-                  >
-                    <PlusCircle className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Edit Recipe (+ Add Component)</span>
-                  </button>
-                )}
+                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                  Read-Only View
+                </span>
               </div>
 
               {!activeDetailFolder.components || activeDetailFolder.components.length === 0 ? (
-                <div className="p-8 rounded-2xl bg-[#EEE8D5] border border-dashed border-[#D6D1B1] text-center space-y-3">
+                <div className="p-8 rounded-2xl bg-[#EEE8D5] border border-dashed border-[#D6D1B1] text-center space-y-2">
                   <p className="text-xs text-[#586E75] font-medium">
                     No raw material components assigned to this product recipe yet.
                   </p>
-                  <button
-                    onClick={() => setRecipeFolder(activeDetailFolder)}
-                    className="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-md hover:bg-emerald-500 transition-all cursor-pointer"
-                  >
-                    Configure Product Recipe (+ Add Components)
-                  </button>
+                  <p className="text-[11px] text-[#586E75]">
+                    To assign components, use the <strong className="text-[#073642] font-semibold">+ Component</strong> button on the Product Folder card.
+                  </p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1072,6 +1726,15 @@ export const CatalogSection: React.FC<Props> = ({
             setToastFeedback({ type: 'success', message: `Component "${updatedItem.name}" updated successfully!` });
             setTimeout(() => setToastFeedback(null), 3500);
           }}
+        />
+      )}
+
+      {/* Zero-Storage Google Drive Image Lightbox Modal */}
+      {lightboxData && (
+        <DriveImageLightboxModal
+          imageUrl={lightboxData.url}
+          componentName={lightboxData.name}
+          onClose={() => setLightboxData(null)}
         />
       )}
     </div>

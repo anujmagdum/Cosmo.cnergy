@@ -1,4 +1,4 @@
-import { Supplier, CatalogItem, ProductBOM, ProcurementOrder, ProductFolder } from '../types';
+import { Supplier, CatalogItem, ProductBOM, ProcurementOrder, ProductFolder, ComponentSupplier } from '../types';
 
 export const INITIAL_SUPPLIERS: Supplier[] = [
   {
@@ -64,7 +64,8 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     supplier_id: '11111111-1111-1111-1111-111111111111',
     min_order_qty: 16,
     in_stock_qty: 640,
-    procurement_status: 'TO_BE_ORDERED'
+    procurement_status: 'TO_BE_ORDERED',
+    image_drive_url: 'https://drive.google.com/file/d/1Bzi4f03-P2k9i2bY1Z3f9b8c7d6e5a4/view?usp=sharing'
   },
   {
     id: 'c2222222-2222-2222-2222-222222222222',
@@ -78,7 +79,8 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     supplier_id: '22222222-2222-2222-2222-222222222222',
     min_order_qty: 1,
     in_stock_qty: 45,
-    procurement_status: 'TO_BE_ORDERED'
+    procurement_status: 'TO_BE_ORDERED',
+    image_drive_url: 'https://drive.google.com/file/d/18yqV9Z2_bX3cW4e5f6g7h8i9j0k1l2m/view?usp=sharing'
   },
   {
     id: 'c3333333-3333-3333-3333-333333333333',
@@ -106,7 +108,8 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     supplier_id: '44444444-4444-4444-4444-444444444444',
     min_order_qty: 1,
     in_stock_qty: 20,
-    procurement_status: 'TO_BE_ORDERED'
+    procurement_status: 'TO_BE_ORDERED',
+    image_drive_url: 'https://drive.google.com/file/d/1234567890abcdefghijklmnopqrstuvwxyz/view?usp=sharing'
   },
   {
     id: 'c5555555-5555-5555-5555-555555555555',
@@ -121,6 +124,103 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     min_order_qty: 1,
     in_stock_qty: 120,
     procurement_status: 'TO_BE_ORDERED'
+  }
+];
+
+export const INITIAL_COMPONENT_SUPPLIERS: ComponentSupplier[] = [
+  // Competitors for 3.2V 100Ah LFP Grade A Cell (c1111111)
+  {
+    id: 'cs-1',
+    component_id: 'c1111111-1111-1111-1111-111111111111',
+    supplier_id: '11111111-1111-1111-1111-111111111111', // CellTech Energy
+    unit_price: 2850.00,
+    rfq_quoted_price: 2750.00,
+    moq: 16,
+    lead_time_days: 5,
+    part_number_vendor: 'LF105-CATL-SPEC',
+    external_rating: 4.8,
+    review_summary: 'Consistently Grade A internal resistance (<0.32mΩ) and timely Bangalore dispatch.',
+    rating_sources: { indiamart: 4.9, google_maps: 4.8, amazon: 4.7, tradeindia: 4.8 }
+  },
+  {
+    id: 'cs-2',
+    component_id: 'c1111111-1111-1111-1111-111111111111',
+    supplier_id: '22222222-2222-2222-2222-222222222222', // BMS Master Solutions
+    unit_price: 2950.00,
+    rfq_quoted_price: 2890.00,
+    moq: 32,
+    lead_time_days: 7,
+    part_number_vendor: 'EVE-100AH-PRISMATIC',
+    external_rating: 4.6,
+    review_summary: 'Authorized distributor, certified batch test certificates provided on delivery.',
+    rating_sources: { indiamart: 4.7, google_maps: 4.4, amazon: 4.5, moglix: 4.6 }
+  },
+  {
+    id: 'cs-3',
+    component_id: 'c1111111-1111-1111-1111-111111111111',
+    supplier_id: '33333333-3333-3333-3333-333333333333', // Busbar Corp
+    unit_price: 3100.00,
+    rfq_quoted_price: 2920.00,
+    moq: 8,
+    lead_time_days: 10,
+    part_number_vendor: 'GENERIC-LFP-100',
+    external_rating: 4.2,
+    review_summary: 'Reliable secondary supplier, lower MOQ but slightly higher price.',
+    rating_sources: { indiamart: 4.3, google_maps: 4.1, tradeindia: 4.2 }
+  },
+  // Competitors for 16S 100A Smart Bluetooth BMS (c2222222)
+  {
+    id: 'cs-4',
+    component_id: 'c2222222-2222-2222-2222-222222222222',
+    supplier_id: '22222222-2222-2222-2222-222222222222', // BMS Master
+    unit_price: 3400.00,
+    rfq_quoted_price: 3250.00,
+    moq: 1,
+    lead_time_days: 3,
+    part_number_vendor: 'DALY-16S-100A-SMART',
+    external_rating: 4.9,
+    review_summary: 'Direct OEM tier partner, full Bluetooth app calibration support and warranty.',
+    rating_sources: { indiamart: 4.9, google_maps: 4.9, amazon: 4.8, moglix: 4.9 }
+  },
+  {
+    id: 'cs-5',
+    component_id: 'c2222222-2222-2222-2222-222222222222',
+    supplier_id: '11111111-1111-1111-1111-111111111111', // CellTech
+    unit_price: 3550.00,
+    rfq_quoted_price: 3480.00,
+    moq: 5,
+    lead_time_days: 6,
+    part_number_vendor: 'JBD-16S-100A-UART',
+    external_rating: 4.7,
+    review_summary: 'JBD smart board with solid thermal cutoff accuracy, quick technical support.',
+    rating_sources: { indiamart: 4.7, google_maps: 4.6, amazon: 4.5 }
+  },
+  // Competitors for Flexible Copper Busbar (c3333333)
+  {
+    id: 'cs-6',
+    component_id: 'c3333333-3333-3333-3333-333333333333',
+    supplier_id: '33333333-3333-3333-3333-333333333333', // Busbar Corp
+    unit_price: 85.00,
+    rfq_quoted_price: 78.00,
+    moq: 20,
+    lead_time_days: 2,
+    part_number_vendor: 'BUS-CU-NICKEL-65MM',
+    external_rating: 4.7,
+    review_summary: 'Extremely fast 48h dispatch from Vadodara with clean nickel plating.',
+    rating_sources: { indiamart: 4.8, google_maps: 4.6, tradeindia: 4.7, industrybuying: 4.6 }
+  },
+  {
+    id: 'cs-7',
+    component_id: 'c3333333-3333-3333-3333-333333333333',
+    supplier_id: '44444444-4444-4444-4444-444444444444', // ThermalShield
+    unit_price: 92.00,
+    rfq_quoted_price: 88.00,
+    moq: 50,
+    lead_time_days: 5,
+    part_number_vendor: 'CU-BAR-EXT-100',
+    external_rating: 4.5,
+    review_summary: 'Good conductivity, bundled packaging available with fasteners.',
+    rating_sources: { indiamart: 4.5, google_maps: 4.4, amazon: 4.3 }
   }
 ];
 

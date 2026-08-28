@@ -28,6 +28,41 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
   const [toastFeedback, setToastFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [editingPDFOrder, setEditingPDFOrder] = useState<ProcurementOrder | null>(null);
   const [orderToDelete, setOrderToDelete] = useState<ProcurementOrder | null>(null);
+  const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedOrderIds(filteredOrders.map(o => o.id));
+    } else {
+      setSelectedOrderIds([]);
+    }
+  };
+
+  const toggleSelectOne = (id: string) => {
+    setSelectedOrderIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleBulkDelete = async () => {
+    if (!onDeleteOrder) return;
+    if (!confirm(`Are you sure you want to delete ${selectedOrderIds.length} orders?`)) return;
+    setIsBulkDeleting(true);
+    try {
+      for (const id of selectedOrderIds) {
+        await onDeleteOrder(id);
+      }
+      setSelectedOrderIds([]);
+      setToastFeedback({ type: 'success', message: 'Bulk delete successful.' });
+      setTimeout(() => setToastFeedback(null), 3500);
+    } catch (e: any) {
+      setToastFeedback({ type: 'error', message: `Bulk delete failed: ${e?.message || 'Error'}` });
+      setTimeout(() => setToastFeedback(null), 5000);
+    } finally {
+      setIsBulkDeleting(false);
+    }
+  };
   const [isDeleting, setIsDeleting] = useState(false);
 
   const filteredOrders = useMemo(() => {
@@ -151,15 +186,38 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
 
       {/* Orders Ladder List (Strict Vertical Ladder Layout) */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-[#073642] flex items-center gap-2">
-            <History className="w-4 h-4 text-emerald-600" />
-            <span>Procurement Records ({filteredOrders.length})</span>
-          </h3>
-          <span className="text-[11px] text-[#586E75]">Maximized density ladder view</span>
-        </div>
+        <div className="bg-[#EEE8D5] rounded-3xl p-4 sm:p-6 border border-[#D6D1B1] shadow-xl">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4">
+            <div>
+              <h3 className="font-bold text-[#073642] text-sm md:text-base flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={filteredOrders.length > 0 && selectedOrderIds.length === filteredOrders.length}
+                  onChange={handleSelectAll}
+                  className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+                />
+                <History className="w-4 h-4 text-emerald-600" />
+                Procurement Document Registry ({filteredOrders.length})
+              </h3>
+              <span className="text-[11px] text-[#586E75] ml-6">Maximized density ladder view with bulk selection</span>
+            </div>
 
-        <div className="flex flex-col space-y-2">
+            {selectedOrderIds.length > 0 && (
+              <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-emerald-500 animate-in fade-in">
+                <span className="text-xs font-bold text-[#073642] px-2">{selectedOrderIds.length} Selected</span>
+                <button
+                  onClick={handleBulkDelete}
+                  disabled={isBulkDeleting}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  {isBulkDeleting ? 'Deleting...' : 'Delete'}
+                </button>
+              </div>
+            )}
+          </div>
+  
+          <div className="flex flex-col space-y-2">
           {filteredOrders.map(order => {
             // Conditional Rendering: "Edit PDF" ONLY visible if status is 'ORDERED' or 'RFQ_SENT'
             const canEditPDF = order.status === 'ORDERED' || order.status === 'RFQ_SENT';
@@ -171,8 +229,15 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                 key={order.id}
                 className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all"
               >
-                {/* Left: Order Type, Order #, Supplier, Items Summary */}
+                {/* Left: Checkbox, Order Type, Order #, Supplier, Items Summary */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedOrderIds.includes(order.id)}
+                    onChange={() => toggleSelectOne(order.id)}
+                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
+                  />
+
                   <span
                     className={`px-2 py-0.5 rounded text-[10px] font-extrabold shrink-0 ${
                       order.type === 'PO' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
@@ -247,9 +312,10 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                     </button>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 

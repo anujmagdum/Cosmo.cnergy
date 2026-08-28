@@ -7,6 +7,8 @@ git
 git/
 node
 node/
+cloudflared.exe
+*.exe
 
 # Build outputs
 dist
@@ -15,6 +17,8 @@ build
 
 # Environment variables
 .env*
+vps.env
+*.env
 !.env.example
 
 # Vercel

@@ -399,31 +399,32 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                       />
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
                       <div>
-                        <label className="text-[10px] font-semibold text-[#586E75]">Quantity</label>
+                        <label className="text-[10px] font-semibold text-[#586E75] block mb-1">Quantity</label>
                         <input
                           type="number"
                           min={1}
                           value={item.quantity}
                           onChange={e => handleItemChange(idx, 'quantity', e.target.value)}
-                          className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-[#073642] font-mono font-bold text-center"
+                          className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-[#073642] font-mono font-bold text-center focus:outline-none focus:border-emerald-500"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-semibold text-[#586E75]">Unit Rate (₹)</label>
+                        <label className="text-[10px] font-semibold text-[#586E75] block mb-1">Unit Rate (INR)</label>
                         <input
                           type="number"
                           min={0}
+                          step="0.01"
                           value={item.unit_price}
                           onChange={e => handleItemChange(idx, 'unit_price', e.target.value)}
-                          className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-[#073642] font-mono font-bold text-right"
+                          className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-[#073642] font-mono font-bold text-right focus:outline-none focus:border-emerald-500"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-semibold text-[#586E75]">Total (₹)</label>
-                        <div className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-emerald-800 font-mono font-bold text-right">
-                          ₹{Number(item.total_price).toLocaleString('en-IN')}
+                        <label className="text-[10px] font-semibold text-[#586E75] block mb-1">Line Total</label>
+                        <div className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-emerald-800 font-mono font-bold text-right truncate overflow-hidden">
+                          ₹{Number(item.total_price || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                       </div>
                     </div>

@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => localStorage.getItem('lastLoginEmail') || '');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -91,14 +91,19 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
         )}
 
         {/* Login Form: Standard Email, Password, and Submit */}
-        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+        <form onSubmit={handleSubmit} autoComplete="on" className="space-y-4 text-xs">
           <div>
-            <label className="block font-semibold text-[#073642] mb-1.5 flex items-center gap-1.5">
+            <label htmlFor="auth-email" className="block font-semibold text-[#073642] mb-1.5 flex items-center gap-1.5">
               <Mail className="w-3.5 h-3.5 text-emerald-600" />
               <span>Email Address</span>
             </label>
             <input
+              key="auth-email-input"
+              id="auth-email"
+              name="email"
               type="email"
+              autoComplete="username"
+              autoFocus={false}
               required
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -108,12 +113,17 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
           </div>
 
           <div>
-            <label className="block font-semibold text-[#073642] mb-1.5 flex items-center gap-1.5">
+            <label htmlFor="auth-password" className="block font-semibold text-[#073642] mb-1.5 flex items-center gap-1.5">
               <Lock className="w-3.5 h-3.5 text-emerald-600" />
               <span>Password</span>
             </label>
             <input
+              key="auth-password-input"
+              id="auth-password"
+              name="password"
               type="password"
+              autoComplete="current-password"
+              autoFocus={false}
               required
               value={password}
               onChange={e => setPassword(e.target.value)}

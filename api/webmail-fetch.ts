@@ -86,7 +86,7 @@ export default async function handler(req: any, res: any) {
         const searchRange = `${startSeq}:${total}`;
 
         for await (let message of client.fetch(searchRange, { envelope: true, bodyStructure: true, source: true, flags: true })) {
-          const envelope = message.envelope;
+          const envelope = message.envelope || { from: [], to: [], subject: '', date: new Date() };
           const fromAddr = envelope.from?.[0]
             ? `${envelope.from[0].name || ''} <${envelope.from[0].address || ''}>`.trim()
             : 'Unknown Sender';

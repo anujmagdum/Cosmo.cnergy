@@ -37,7 +37,8 @@ export const EditComponentModal: React.FC<Props> = ({ item, suppliers, categorie
     uom: item.uom || 'Pcs',
     specs: item.specs || '',
     supplier_id: item.supplier_id || (suppliers[0]?.id || ''),
-    procurement_status: (item.procurement_status || 'TO_BE_ORDERED') as OrderStatus
+    procurement_status: (item.procurement_status || 'TO_BE_ORDERED') as OrderStatus,
+    image_drive_url: item.image_drive_url || ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -57,7 +58,8 @@ export const EditComponentModal: React.FC<Props> = ({ item, suppliers, categorie
       uom: formData.uom || 'Pcs',
       specs: formData.specs.trim(),
       supplier_id: formData.supplier_id,
-      procurement_status: formData.procurement_status
+      procurement_status: formData.procurement_status,
+      image_drive_url: formData.image_drive_url.trim() || undefined
     };
 
     onSave(updated);
@@ -183,6 +185,21 @@ export const EditComponentModal: React.FC<Props> = ({ item, suppliers, categorie
               <option value="DELIVERED">🟢 Delivered (Emerald Green)</option>
               <option value="ON_HOLD">🔴 On Hold (Rose Red)</option>
             </select>
+          </div>
+
+          {/* Google Drive Image Link */}
+          <div>
+            <label className="block font-semibold text-[#073642] mb-1">Google Drive Image Link</label>
+            <input
+              type="url"
+              value={formData.image_drive_url}
+              onChange={e => setFormData({ ...formData, image_drive_url: e.target.value })}
+              placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
+              className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-mono text-xs"
+            />
+            <p className="text-[11px] text-[#586E75] mt-1 italic">
+              (Ensure link permissions are set to "Anyone with the link can view")
+            </p>
           </div>
 
           {/* Technical Specs */}

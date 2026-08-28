@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { CatalogItem, ProductFolder, Supplier, ProductBOM, SearchResultItem, SearchResultSupplier, determineOrderType, formatProcurementSubject } from '../types';
+import { CatalogItem, ProductFolder, Supplier, ProductBOM, SearchResultItem, SearchResultSupplier, determineOrderType, formatProcurementSubject, NavigationTab } from '../types';
 import { executeUniversalSearch, SearchResultSet } from '../services/searchService';
 import { Search, X, Package, Folder, Truck, ExternalLink, Mail, MessageSquare, ChevronDown, ChevronUp, Sparkles, Building2, Send, CheckCircle2, ArrowRight } from 'lucide-react';
 
@@ -10,7 +10,7 @@ interface Props {
   folders: ProductFolder[];
   suppliers: Supplier[];
   boms: ProductBOM[];
-  onNavigateTab: (tab: 'catalog' | 'suppliers' | 'ai' | 'orders') => void;
+  onNavigateTab: (tab: NavigationTab) => void;
   onDraftPO?: (supplier: Supplier, item: CatalogItem, qty?: number) => void;
   onOpenWhatsApp?: (supplier: Supplier, context?: string) => void;
   onOpenWebmail?: (supplier: Supplier, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
@@ -282,11 +282,11 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
                                 <button
                                   onClick={() => {
-                                    onNavigateTab('catalog');
+                                    onNavigateTab('inventory');
                                     onClose();
                                   }}
                                   className="p-2 rounded-xl bg-[#FDF6E3] hover:bg-[#E4DDC7] text-[#073642] text-xs transition-all border border-[#D6D1B1]"
-                                  title="View in Catalog & BOM"
+                                  title="View in Inventory"
                                 >
                                   <ExternalLink className="w-3.5 h-3.5" />
                                 </button>
@@ -389,7 +389,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
                             <button
                               onClick={() => {
-                                onNavigateTab('catalog');
+                                onNavigateTab('inventory');
                                 onClose();
                               }}
                               className="flex items-center gap-1 font-bold text-emerald-800 hover:text-emerald-900"
@@ -436,7 +436,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
                             <button
                               onClick={() => {
-                                onNavigateTab('suppliers');
+                                onNavigateTab('companies');
                                 onClose();
                               }}
                               className="flex items-center gap-1 font-bold text-emerald-800 hover:text-emerald-900"

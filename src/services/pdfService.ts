@@ -136,14 +136,14 @@ export const buildOrderPDFDoc = (order: ProcurementOrder): jsPDF => {
   doc.text(`Order Type: ${order.type === 'RFQ' ? 'Request for Quotation' : 'Purchase Order'}`, 112, 64);
 
   // 4. AUTOTABLE FOR LINE ITEMS
-  const tableHead = [['#', 'Item Particulars', 'Technical Specifications', 'Qty', 'Unit Rate (INR)', 'Total Amount']];
+  const tableHead = [['#', 'Item Particulars', 'Technical Specifications', 'Qty', 'Unit Rate (INR)', 'Total Amount (INR)']];
   const tableBody = (order.items || []).map((item, idx) => [
     (idx + 1).toString(),
     `${item.item?.name || 'Catalog Item'}\nSKU: ${item.item?.sku || '-'}`,
     item.item?.specs || '-',
     `${item.quantity} ${item.item?.uom || 'Pcs'}`,
-    `₹${Number(item.unit_price).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`,
-    `₹${Number(item.total_price).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
+    `INR ${Number(item.unit_price).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+    `INR ${Number(item.total_price).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
   ]);
 
   autoTable(doc, {
@@ -151,6 +151,11 @@ export const buildOrderPDFDoc = (order: ProcurementOrder): jsPDF => {
     head: tableHead,
     body: tableBody,
     theme: 'grid',
+    tableWidth: 182,
+    styles: {
+      overflow: 'linebreak',
+      cellPadding: 2.5
+    },
     headStyles: {
       fillColor: emerald,
       textColor: [255, 255, 255],
@@ -166,11 +171,11 @@ export const buildOrderPDFDoc = (order: ProcurementOrder): jsPDF => {
     },
     columnStyles: {
       0: { halign: 'center', cellWidth: 10 },
-      1: { cellWidth: 52 },
-      2: { cellWidth: 55 },
-      3: { halign: 'center', cellWidth: 20 },
-      4: { halign: 'right', cellWidth: 25 },
-      5: { halign: 'right', cellWidth: 30, fontStyle: 'bold' }
+      1: { cellWidth: 44 },
+      2: { cellWidth: 50 },
+      3: { halign: 'center', cellWidth: 18 },
+      4: { halign: 'right', cellWidth: 28 },
+      5: { halign: 'right', cellWidth: 32, fontStyle: 'bold' }
     },
     alternateRowStyles: {
       fillColor: [248, 250, 252]
@@ -184,7 +189,7 @@ export const buildOrderPDFDoc = (order: ProcurementOrder): jsPDF => {
   // Left Box: Terms & Notes
   doc.setFillColor(...bgLight);
   doc.setDrawColor(226, 232, 240);
-  doc.roundedRect(14, finalY + 5, 105, 26, 2, 2, 'FD');
+  doc.roundedRect(14, finalY + 5, 102, 26, 2, 2, 'FD');
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7);
@@ -195,35 +200,35 @@ export const buildOrderPDFDoc = (order: ProcurementOrder): jsPDF => {
   doc.setFontSize(7);
   doc.setTextColor(...slateText);
   const termsText = order.notes || '1. Confirm dispatch schedule within 24h.\n2. Inspection upon delivery at Pune Plant.\n3. Tax Invoice required with physical shipment.';
-  const splitTerms = doc.splitTextToSize(termsText, 97);
+  const splitTerms = doc.splitTextToSize(termsText, 94);
   doc.text(splitTerms, 18, finalY + 14.5);
 
   // Right Box: Subtotal, GST, Grand Total
   doc.setFillColor(...bgLight);
   doc.setDrawColor(203, 213, 225);
-  doc.roundedRect(125, finalY + 5, 71, 26, 2, 2, 'FD');
+  doc.roundedRect(120, finalY + 5, 76, 26, 2, 2, 'FD');
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
   doc.setTextColor(...slateText);
-  doc.text('Subtotal (Excl. GST):', 129, finalY + 10.5);
-  doc.text(`₹${subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 192, finalY + 10.5, { align: 'right' });
+  doc.text('Subtotal (Excl. GST):', 124, finalY + 10.5);
+  doc.text(`INR ${subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 192, finalY + 10.5, { align: 'right' });
 
-  doc.text('Estimated GST (18%):', 129, finalY + 15.5);
-  doc.text(`₹${gstAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 192, finalY + 15.5, { align: 'right' });
+  doc.text('Estimated GST (18%):', 124, finalY + 15.5);
+  doc.text(`INR ${gstAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 192, finalY + 15.5, { align: 'right' });
 
   doc.setDrawColor(203, 213, 225);
   doc.setLineDashPattern([1, 1], 0);
-  doc.line(129, finalY + 19, 192, finalY + 19);
+  doc.line(124, finalY + 19, 192, finalY + 19);
   doc.setLineDashPattern([], 0);
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8.5);
   doc.setTextColor(...darkNavy);
-  doc.text('Grand Total:', 129, finalY + 25.5);
+  doc.text('Grand Total:', 124, finalY + 25.5);
   doc.setTextColor(...emerald);
-  doc.setFontSize(10.5);
-  doc.text(`₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, 192, finalY + 25.5, { align: 'right' });
+  doc.setFontSize(10);
+  doc.text(`INR ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 192, finalY + 25.5, { align: 'right' });
 
   // 6. BRAND FOOTER
   const pageHeight = doc.internal.pageSize.getHeight();
