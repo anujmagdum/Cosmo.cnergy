@@ -60,6 +60,29 @@ export const App: React.FC = () => {
     else setActiveTab('inventory');
   }, [location.pathname]);
 
+  const handleUpdateComponentCompany = (
+    linkId: string,
+    field: 'rfq_quoted_price' | 'moq' | 'lead_time_days' | 'unit_price',
+    value: number
+  ) => {
+    setComponentCompanies(prev => {
+      const next = prev.map(cc => {
+        if (cc.id === linkId) {
+          return {
+            ...cc,
+            [field]: value,
+            ...(field === 'rfq_quoted_price' ? { unit_price: value } : {})
+          };
+        }
+        return cc;
+      });
+      try {
+        localStorage.setItem('cosmo_component_companies', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
   const handleTabChange = (tab: NavigationTab) => {
     setActiveTab(tab);
     if (tab === 'inventory') navigate('/');
@@ -1279,11 +1302,39 @@ export const App: React.FC = () => {
               onClearInitialCompose={handleClearInitialCompose}
             />
           } />
+          <Route path="inventory" element={
+            <CatalogSection
+              catalog={catalog}
+              companies={companies}
+              componentCompanies={componentCompanies}
+              orders={orders}
+              folders={folders}
+              boms={boms}
+              categories={categories}
+              onAddCatalogItem={handleAddCatalogItem}
+              onUpdateCatalogItem={handleUpdateCatalogItem}
+              onAddProductFolder={handleAddProductFolder}
+              onUpdateFolderLinkedPOs={handleUpdateFolderLinkedPOs}
+              onUpdateFolderComponents={handleUpdateFolderComponents}
+              onUpdateCompanyContact={handleUpdateCompanyPhone}
+              onLogOrders={drafts => handleDispatchOrders(drafts, 'PO')}
+              onDeleteProductFolder={handleDeleteProductFolder}
+              onDeleteOrder={handleDeleteOrder}
+              onDeleteCatalogItem={handleDeleteCatalogItem}
+              onQuickReorder={handleQuickReorderItem}
+              onOpenWhatsApp={(company, context) => setWhatsAppModalData({ company, context })}
+              onOpenWebmail={handleOpenWebmail}
+              onEnqueueMailDrafts={handleEnqueueMailDrafts}
+              onImportComponents={handleImportComponents}
+              onOpenComparisonDrawer={item => setComparisonComponent(item)}
+            />
+          } />
           <Route path="inventory/component/:id" element={
             <ComponentComparisonPage 
               catalog={catalog}
               companies={companies}
               componentCompanies={componentCompanies}
+              onUpdateComponentCompany={handleUpdateComponentCompany}
             />
           } />
         </Route>

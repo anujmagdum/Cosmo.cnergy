@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   CatalogItem,
   Company,
@@ -28,6 +29,7 @@ import {
   FolderPlus,
   Trash2,
   Building2,
+  ChevronRight,
   X,
   Check,
   Layers,
@@ -101,6 +103,7 @@ export const CatalogSection: React.FC<Props> = ({
   onImportComponents,
   onOpenComparisonDrawer
 }) => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [lightboxData, setLightboxData] = useState<{ url: string; name: string } | null>(null);
   
@@ -870,9 +873,7 @@ export const CatalogSection: React.FC<Props> = ({
             const isBottleneck = isStockBottleneck(item);
 
             return (
-              <div
-                key={item.id}
-                className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all"
+              <div key={item.id} onClick={() => navigate(`/inventory/component/${item.id}`)} className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500 hover:shadow-md cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all group/card"
               >
                 {/* Left: Checkbox, Component Name, Category, Specs, Company */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -1019,7 +1020,7 @@ export const CatalogSection: React.FC<Props> = ({
                   </div>
 
                   {/* 1-Tap Reorder Input Group */}
-                  <div className="flex items-center rounded-lg border border-[#D6D1B1] overflow-hidden">
+                  <div onClick={e => e.stopPropagation()} className="flex items-center rounded-lg border border-[#D6D1B1] overflow-hidden">
                     <input
                       type="number"
                       min={1}
@@ -1036,44 +1037,21 @@ export const CatalogSection: React.FC<Props> = ({
                     </button>
                   </div>
 
-                  {/* Multi-Company Sourcing / Compare Trigger (Enabled if 2+ companies, else Disabled with Tooltip) */}
+                                    {/* Linked Companies indicator badge (Click card to open dedicated view) */}
                   {(() => {
                     const linked = componentCompanies.filter(cs => cs.component_id === item.id);
                     const sCount = linked.length > 0 
                       ? linked.length 
                       : (item.company_ids?.length || (item.company_id ? 1 : 0));
-                    const canCompare = sCount >= 2;
-
-                    if (canCompare) {
-                      return (
-                        <button
-                          type="button"
-                          onClick={e => {
-                            e.stopPropagation();
-                            onOpenComparisonDrawer?.(item);
-                          }}
-                          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-teal-600/15 hover:bg-teal-600/25 text-teal-950 border border-teal-600/40 text-[10px] font-black transition-all cursor-pointer shadow-2xs active:scale-95 group"
-                          title={`Compare ${sCount} companies, RFQ prices & verified ratings`}
-                        >
-                          <Building2 className="w-3.5 h-3.5 text-teal-700 group-hover:scale-110 transition-transform" />
-                          <span>Compare ({sCount})</span>
-                        </button>
-                      );
-                    }
 
                     return (
-                      <div className="relative group inline-block">
-                        <button
-                          type="button"
-                          disabled
-                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-200/70 text-slate-400 border border-slate-300 text-[10px] font-semibold cursor-not-allowed opacity-75"
-                        >
-                          <Building2 className="w-3 h-3 text-slate-400" />
-                          <span>Compare ({sCount})</span>
-                        </button>
-                        <div className="absolute bottom-full right-0 mb-1.5 hidden group-hover:block w-44 p-1.5 bg-[#0B192C] text-white text-[10px] rounded-lg shadow-xl text-center z-30 font-medium pointer-events-none border border-slate-700">
-                          Add 2+ companies to compare
-                        </div>
+                      <div
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600/10 text-emerald-950 border border-emerald-500/30 text-[10px] font-bold shrink-0 group-hover/card:bg-emerald-600/20 transition-colors"
+                        title="Click to view dedicated company comparison page"
+                      >
+                        <Building2 className="w-3.5 h-3.5 text-emerald-700" />
+                        <span>{sCount} {sCount === 1 ? 'Company' : 'Companies'}</span>
+                        <ChevronRight className="w-3 h-3 text-emerald-600 group-hover/card:translate-x-0.5 transition-transform" />
                       </div>
                     );
                   })()}
