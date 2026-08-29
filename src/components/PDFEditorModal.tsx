@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ProcurementOrder, OrderItem, OrderStatus, Supplier } from '../types';
+import { ProcurementOrder, OrderItem, OrderStatus, Company } from '../types';
 import { generateOrderPDF, generateOrderPDFBlobUri } from '../services/pdfService';
 import { X, FileText, Download, Save, Plus, Trash2, Building2, RefreshCw, Eye, Edit3, CheckCircle2 } from 'lucide-react';
 
@@ -12,7 +12,7 @@ interface Props {
 export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
   const [editableOrder, setEditableOrder] = useState<ProcurementOrder>(() => ({
     ...order,
-    supplier: order.supplier ? { ...order.supplier } : undefined,
+    company: order.company ? { ...order.company } : undefined,
     items: (order.items || []).map(it => ({
       ...it,
       item: it.item ? { ...it.item } : undefined
@@ -51,7 +51,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
     editableOrder.status,
     editableOrder.created_by,
     editableOrder.notes,
-    editableOrder.supplier,
+    editableOrder.company,
     editableOrder.items
   ]);
 
@@ -61,11 +61,11 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
     const currentItem = { ...updatedItems[index] };
 
     if (field === 'name') {
-      currentItem.item = { ...(currentItem.item || { id: `cat-${Date.now()}`, sku: 'SKU', specs: '', uom: 'Pcs', preset_price: 100, supplier_id: '', min_order_qty: 1, in_stock_qty: 100, procurement_status: 'TO_BE_ORDERED' }), name: value };
+      currentItem.item = { ...(currentItem.item || { id: `cat-${Date.now()}`, sku: 'SKU', specs: '', uom: 'Pcs', preset_price: 100, company_id: '', min_order_qty: 1, in_stock_qty: 100, procurement_status: 'TO_BE_ORDERED' }), name: value };
     } else if (field === 'sku') {
-      currentItem.item = { ...(currentItem.item || { id: `cat-${Date.now()}`, name: 'Item', specs: '', uom: 'Pcs', preset_price: 100, supplier_id: '', min_order_qty: 1, in_stock_qty: 100, procurement_status: 'TO_BE_ORDERED' }), sku: value };
+      currentItem.item = { ...(currentItem.item || { id: `cat-${Date.now()}`, name: 'Item', specs: '', uom: 'Pcs', preset_price: 100, company_id: '', min_order_qty: 1, in_stock_qty: 100, procurement_status: 'TO_BE_ORDERED' }), sku: value };
     } else if (field === 'specs') {
-      currentItem.item = { ...(currentItem.item || { id: `cat-${Date.now()}`, name: 'Item', sku: 'SKU', uom: 'Pcs', preset_price: 100, supplier_id: '', min_order_qty: 1, in_stock_qty: 100, procurement_status: 'TO_BE_ORDERED' }), specs: value };
+      currentItem.item = { ...(currentItem.item || { id: `cat-${Date.now()}`, name: 'Item', sku: 'SKU', uom: 'Pcs', preset_price: 100, company_id: '', min_order_qty: 1, in_stock_qty: 100, procurement_status: 'TO_BE_ORDERED' }), specs: value };
     } else if (field === 'quantity') {
       const qty = Number(value) || 0;
       currentItem.quantity = qty;
@@ -75,7 +75,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
       currentItem.unit_price = price;
       currentItem.total_price = (Number(currentItem.quantity) || 0) * price;
     } else if (field === 'uom') {
-      currentItem.item = { ...(currentItem.item || { id: `cat-${Date.now()}`, name: 'Item', sku: 'SKU', specs: '', preset_price: 100, supplier_id: '', min_order_qty: 1, in_stock_qty: 100, procurement_status: 'TO_BE_ORDERED' }), uom: value };
+      currentItem.item = { ...(currentItem.item || { id: `cat-${Date.now()}`, name: 'Item', sku: 'SKU', specs: '', preset_price: 100, company_id: '', min_order_qty: 1, in_stock_qty: 100, procurement_status: 'TO_BE_ORDERED' }), uom: value };
     }
 
     updatedItems[index] = currentItem;
@@ -101,7 +101,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
         specs: 'Standard Specification',
         uom: 'Pcs',
         preset_price: 100,
-        supplier_id: editableOrder.supplier_id,
+        company_id: editableOrder.company_id,
         min_order_qty: 1,
         in_stock_qty: 100,
         procurement_status: 'TO_BE_ORDERED'
@@ -236,11 +236,11 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
               </div>
             </div>
 
-            {/* 2. Supplier Vendor Entity */}
+            {/* 2. Company Vendor Entity */}
             <div className="p-4 rounded-2xl bg-[#FDF6E3] border border-[#D6D1B1] shadow-xs space-y-4">
               <h4 className="text-xs font-bold text-[#073642] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#D6D1B1]/60 pb-2">
                 <Building2 className="w-4 h-4 text-emerald-600" />
-                <span>Supplier / Vendor Entity</span>
+                <span>Company / Vendor Entity</span>
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -248,12 +248,12 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                   <label className="block font-semibold text-[#073642] mb-1">Company / Entity Name</label>
                   <input
                     type="text"
-                    value={editableOrder.supplier?.name || ''}
+                    value={editableOrder.company?.name || ''}
                     onChange={e =>
                       setEditableOrder({
                         ...editableOrder,
-                        supplier: {
-                          ...(editableOrder.supplier || { id: 'supp-1', email: '', contact_person: '', phone: '', whatsapp: '' }),
+                        company: {
+                          ...(editableOrder.company || { id: 'supp-1', email: '', contact_person: '', phone: '', whatsapp: '' }),
                           name: e.target.value
                         }
                       })
@@ -266,12 +266,12 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                   <label className="block font-semibold text-[#073642] mb-1">Attn Contact Person</label>
                   <input
                     type="text"
-                    value={editableOrder.supplier?.contact_person || ''}
+                    value={editableOrder.company?.contact_person || ''}
                     onChange={e =>
                       setEditableOrder({
                         ...editableOrder,
-                        supplier: {
-                          ...(editableOrder.supplier || { id: 'supp-1', name: '', email: '', phone: '', whatsapp: '' }),
+                        company: {
+                          ...(editableOrder.company || { id: 'supp-1', name: '', email: '', phone: '', whatsapp: '' }),
                           contact_person: e.target.value
                         }
                       })
@@ -284,12 +284,12 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                   <label className="block font-semibold text-[#073642] mb-1">Primary Email</label>
                   <input
                     type="email"
-                    value={editableOrder.supplier?.email || ''}
+                    value={editableOrder.company?.email || ''}
                     onChange={e =>
                       setEditableOrder({
                         ...editableOrder,
-                        supplier: {
-                          ...(editableOrder.supplier || { id: 'supp-1', name: '', contact_person: '', phone: '', whatsapp: '' }),
+                        company: {
+                          ...(editableOrder.company || { id: 'supp-1', name: '', contact_person: '', phone: '', whatsapp: '' }),
                           email: e.target.value
                         }
                       })
@@ -302,12 +302,12 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                   <label className="block font-semibold text-[#073642] mb-1">Phone / WhatsApp</label>
                   <input
                     type="text"
-                    value={editableOrder.supplier?.phone || ''}
+                    value={editableOrder.company?.phone || ''}
                     onChange={e =>
                       setEditableOrder({
                         ...editableOrder,
-                        supplier: {
-                          ...(editableOrder.supplier || { id: 'supp-1', name: '', email: '', contact_person: '', whatsapp: '' }),
+                        company: {
+                          ...(editableOrder.company || { id: 'supp-1', name: '', email: '', contact_person: '', whatsapp: '' }),
                           phone: e.target.value
                         }
                       })
@@ -320,12 +320,12 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                   <label className="block font-semibold text-[#073642] mb-1">Plant / Dispatch Address</label>
                   <input
                     type="text"
-                    value={editableOrder.supplier?.address || ''}
+                    value={editableOrder.company?.address || ''}
                     onChange={e =>
                       setEditableOrder({
                         ...editableOrder,
-                        supplier: {
-                          ...(editableOrder.supplier || { id: 'supp-1', name: '', email: '', contact_person: '', phone: '', whatsapp: '' }),
+                        company: {
+                          ...(editableOrder.company || { id: 'supp-1', name: '', email: '', contact_person: '', phone: '', whatsapp: '' }),
                           address: e.target.value
                         }
                       })

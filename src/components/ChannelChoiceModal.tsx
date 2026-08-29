@@ -1,11 +1,11 @@
 import React from 'react';
 import { Mail, MessageSquare, CheckCircle, X } from 'lucide-react';
-import { ProcurementOrder, Supplier } from '../types';
+import { ProcurementOrder, Company } from '../types';
 
 interface Props {
   order: ProcurementOrder;
   onClose: () => void;
-  onOpenWebmail?: (supplier: Supplier, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
+  onOpenWebmail?: (company: Company, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
 }
 
 export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebmail }) => {
@@ -16,12 +16,12 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
     .map(i => `- ${i.item?.name || 'Item'}: ${i.quantity} ${i.item?.uom || 'Pcs'} @ ₹${i.unit_price}/unit = ₹${i.total_price}`)
     .join('\n');
 
-  const emailBody = `Dear ${order.supplier?.contact_person || order.supplier?.name || 'Supplier'},\n\nPlease find order details below:\n\nOrder Number: ${order.order_number}\nDate: ${new Date(order.created_at).toLocaleDateString('en-IN')}\n\nItems:\n${itemsListText}\n\nTotal Amount: ₹${Number(order.total_amount).toLocaleString('en-IN')}\n\nNotes: ${order.notes || 'Please confirm receipt.'}\n\nBest regards,\n${order.created_by}\n${companyName}`;
+  const emailBody = `Dear ${order.company?.contact_person || order.company?.name || 'Company'},\n\nPlease find order details below:\n\nOrder Number: ${order.order_number}\nDate: ${new Date(order.created_at).toLocaleDateString('en-IN')}\n\nItems:\n${itemsListText}\n\nTotal Amount: ₹${Number(order.total_amount).toLocaleString('en-IN')}\n\nNotes: ${order.notes || 'Please confirm receipt.'}\n\nBest regards,\n${order.created_by}\n${companyName}`;
 
   const handleSendWebmail = () => {
-    if (onOpenWebmail && order.supplier) {
+    if (onOpenWebmail && order.company) {
       onOpenWebmail(
-        order.supplier,
+        order.company,
         subject,
         emailBody,
         order.total_amount,
@@ -33,9 +33,9 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
   };
 
   const handleSendWhatsApp = () => {
-    const phone = order.supplier?.whatsapp || order.supplier?.phone || '';
+    const phone = order.company?.whatsapp || order.company?.phone || '';
     const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const waText = `*${companyName}*\n📄 *${order.type}:* ${order.order_number}\n🏢 *Vendor:* ${order.supplier?.name}\n💰 *Total:* ₹${Number(order.total_amount).toLocaleString('en-IN')}\n\n📦 *Items:*\n${itemsListText}`;
+    const waText = `*${companyName}*\n📄 *${order.type}:* ${order.order_number}\n🏢 *Vendor:* ${order.company?.name}\n💰 *Total:* ₹${Number(order.total_amount).toLocaleString('en-IN')}\n\n📦 *Items:*\n${itemsListText}`;
     const waUrl = cleanPhone 
       ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waText)}`
       : `https://wa.me/?text=${encodeURIComponent(waText)}`;
@@ -59,7 +59,7 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
           </div>
           <h3 className="text-xl font-bold text-[#073642]">Order Created Successfully!</h3>
           <p className="text-xs text-[#586E75]">
-            Order <span className="font-mono font-bold text-emerald-800">{order.order_number}</span> is logged. Choose how you would like to transmit it to <span className="text-[#073642] font-semibold">{order.supplier?.name}</span>:
+            Order <span className="font-mono font-bold text-emerald-800">{order.order_number}</span> is logged. Choose how you would like to transmit it to <span className="text-[#073642] font-semibold">{order.company?.name}</span>:
           </p>
         </div>
 

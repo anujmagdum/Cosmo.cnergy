@@ -73,7 +73,7 @@ export interface ProductFolder {
   created_at?: string;
 }
 
-export interface Supplier {
+export interface Company {
   id: string;
   name: string;
   contact_person: string;
@@ -88,11 +88,12 @@ export interface Supplier {
   rating?: number;
   gstin?: string;
   payment_terms?: string;
+  remark?: string;
   created_at?: string;
 }
 
-export interface SupplierMappingInput {
-  supplier_id: string;
+export interface CompanyMappingInput {
+  company_id: string;
   unit_price: number;
   rfq_quoted_price?: number;
   moq: number;
@@ -112,10 +113,10 @@ export interface CatalogItem {
   specs?: string;
   uom?: string;
   preset_price?: number;
-  supplier_id?: string;
-  supplier?: Supplier;
-  supplier_ids?: string[];
-  supplier_mappings?: SupplierMappingInput[];
+  company_id?: string;
+  company?: Company;
+  company_ids?: string[];
+  company_mappings?: CompanyMappingInput[];
   min_order_qty?: number;
   in_stock_qty?: number;
   procurement_status?: OrderStatus;
@@ -126,10 +127,10 @@ export interface CatalogItem {
 
 export type NavigationTab = 'procurement' | 'inventory' | 'companies' | 'ai' | 'webmail';
 
-export interface ComponentSupplier {
+export interface ComponentCompany {
   id: string;
   component_id: string;
-  supplier_id: string;
+  company_id: string;
   unit_price: number;
   rfq_quoted_price?: number;
   moq: number;
@@ -148,7 +149,7 @@ export interface ComponentSupplier {
   };
   created_at?: string;
   updated_at?: string;
-  supplier?: Supplier;
+  company?: Company;
 }
 
 export interface WebmailAccount {
@@ -191,7 +192,7 @@ export interface EmailMessage {
 
 export interface QueuedMailDraft {
   id: string;
-  supplier: Supplier;
+  company: Company;
   to: string;
   subject: string;
   body: string;
@@ -228,8 +229,8 @@ export interface OrderItem {
 export interface ProcurementOrder {
   id: string;
   order_number: string;
-  supplier_id: string;
-  supplier?: Supplier;
+  company_id: string;
+  company?: Company;
   type: 'PO' | 'RFQ';
   status: OrderStatus;
   total_amount: number;
@@ -268,8 +269,8 @@ export function formatProcurementSubject(orderType: OrderType, productName: stri
   return `Purchase Order (PO) - ${name}`;
 }
 
-export interface MultiSupplierPODraft {
-  supplier: Supplier;
+export interface MultiCompanyPODraft {
+  company: Company;
   items: {
     catalogItem: CatalogItem;
     quantity: number;
@@ -279,9 +280,9 @@ export interface MultiSupplierPODraft {
   total_amount: number;
 }
 
-export interface SearchResultSupplier {
-  supplierId: string;
-  supplierName: string;
+export interface SearchResultCompany {
+  companyId: string;
+  companyName: string;
   unitPrice?: number;
   leadTime?: string;
   isPrimary?: boolean;
@@ -305,8 +306,8 @@ export interface SearchResultItem {
     presetPrice?: number;
     uom?: string;
     inStockQty?: number;
-    supplierCount?: number;
-    suppliers?: SearchResultSupplier[];
+    companyCount?: number;
+    companies?: SearchResultCompany[];
     folderComponentsCount?: number;
     linkedPosCount?: number;
     rating?: number;

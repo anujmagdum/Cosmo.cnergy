@@ -85,7 +85,7 @@ export const buildOrderPDFDoc = (order: ProcurementOrder): jsPDF => {
   doc.line(14, 34, 196, 34);
 
   // 3. VENDOR & ORDER METADATA BOXES
-  // Left Box: Supplier Entity
+  // Left Box: Company Entity
   doc.setFillColor(...bgLight);
   doc.setDrawColor(226, 232, 240);
   doc.setLineWidth(0.3);
@@ -99,16 +99,16 @@ export const buildOrderPDFDoc = (order: ProcurementOrder): jsPDF => {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
   doc.setTextColor(...darkNavy);
-  doc.text(order.supplier?.name || 'Supplier Vendor Entity', 18, 47.5);
+  doc.text(order.company?.name || 'Company Vendor Entity', 18, 47.5);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(...slateText);
-  doc.text(`Attn: ${order.supplier?.contact_person || '-'}`, 18, 52);
-  doc.text(`Email: ${order.supplier?.email || '-'}`, 18, 56);
-  doc.text(`Phone: ${order.supplier?.phone || '-'}`, 18, 60);
-  if (order.supplier?.address) {
-    doc.text(`Address: ${order.supplier.address.substring(0, 48)}`, 18, 64);
+  doc.text(`Attn: ${order.company?.contact_person || '-'}`, 18, 52);
+  doc.text(`Email: ${order.company?.email || '-'}`, 18, 56);
+  doc.text(`Phone: ${order.company?.phone || '-'}`, 18, 60);
+  if (order.company?.address) {
+    doc.text(`Address: ${order.company.address.substring(0, 48)}`, 18, 64);
   }
 
   // Right Box: Order Parameters
@@ -254,8 +254,8 @@ export const buildOrderPDFDoc = (order: ProcurementOrder): jsPDF => {
  */
 export const generateOrderPDF = async (order: ProcurementOrder): Promise<void> => {
   const doc = buildOrderPDFDoc(order);
-  const safeSupplierName = (order.supplier?.name || 'Vendor').replace(/[^a-zA-Z0-9]/g, '_');
-  const filename = `${order.order_number}_${safeSupplierName}.pdf`;
+  const safeCompanyName = (order.company?.name || 'Vendor').replace(/[^a-zA-Z0-9]/g, '_');
+  const filename = `${order.order_number}_${safeCompanyName}.pdf`;
   doc.save(filename);
 };
 

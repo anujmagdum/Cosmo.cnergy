@@ -73,7 +73,7 @@ const DEFAULT_ACCOUNTS: WebmailAccount[] = [
   {
     id: 'acc-support',
     email: 'support@cosmocnergy.com',
-    senderName: 'CosmoCnergy Supplier Support',
+    senderName: 'CosmoCnergy Company Support',
     imapHost: 'mail.cosmocnergy.com',
     imapPort: 993,
     smtpHost: 'mail.cosmocnergy.com',

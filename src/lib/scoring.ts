@@ -1,7 +1,7 @@
-import { ComponentSupplier } from '../types';
+import { ComponentCompany } from '../types';
 
-export interface ScoredSupplierCandidate {
-  componentSupplier: ComponentSupplier;
+export interface ScoredCompanyCandidate {
+  componentCompany: ComponentCompany;
   effectivePrice: number;
   effectiveRating: number;
   ratingBreakdown: { platform: string; rating: number }[];
@@ -18,7 +18,7 @@ export interface ScoredSupplierCandidate {
  * Computes multi-platform aggregated rating from rating_sources JSONB or falls back to external_rating
  */
 export const calculateAggregatedRating = (
-  cs: ComponentSupplier
+  cs: ComponentCompany
 ): { rating: number; breakdown: { platform: string; rating: number }[] } => {
   const sources = cs.rating_sources || {};
   const entries = Object.entries(sources).filter(([_, val]) => typeof val === 'number' && val > 0) as [string, number][];
@@ -33,7 +33,7 @@ export const calculateAggregatedRating = (
     return { rating: avg, breakdown };
   }
 
-  const fallback = cs.external_rating || cs.supplier?.rating || 4.0;
+  const fallback = cs.external_rating || cs.company?.rating || 4.0;
   return {
     rating: Number(fallback.toFixed(1)),
     breakdown: [
@@ -73,9 +73,9 @@ const formatPlatformName = (key: string): string => {
  * - Lead Time: 20% (Inverted: faster delivery = higher score)
  * - Minimum Order Quantity: 10% (Inverted: lower trial MOQ = higher score)
  */
-export const scoreSupplierCandidates = (
-  candidates: ComponentSupplier[]
-): ScoredSupplierCandidate[] => {
+export const scoreCompanyCandidates = (
+  candidates: ComponentCompany[]
+): ScoredCompanyCandidate[] => {
   if (!candidates || candidates.length === 0) return [];
 
   // Extract values
@@ -92,7 +92,7 @@ export const scoreSupplierCandidates = (
   const minMoq = Math.min(...moqs);
   const maxMoq = Math.max(...moqs);
 
-  const scored: ScoredSupplierCandidate[] = candidates.map(cs => {
+  const scored: ScoredCompanyCandidate[] = candidates.map(cs => {
     const effectivePrice = Number(cs.rfq_quoted_price || cs.unit_price) || 1;
     const { rating: effectiveRating, breakdown: ratingBreakdown } = calculateAggregatedRating(cs);
     const leadTime = Number(cs.lead_time_days) || 1;
@@ -113,7 +113,7 @@ export const scoreSupplierCandidates = (
     const matchScore = Math.min(100, Math.max(1, Math.round(costScore + ratingScore + leadTimeScore + moqScore)));
 
     return {
-      componentSupplier: cs,
+      componentCompany: cs,
       effectivePrice,
       effectiveRating,
       ratingBreakdown,
@@ -135,8 +135,8 @@ export const scoreSupplierCandidates = (
  * Returns Top N candidates for Gemini AI evaluation
  */
 export const getTopScoredCandidates = (
-  candidates: ComponentSupplier[],
+  candidates: ComponentCompany[],
   topN: number = 3
-): ScoredSupplierCandidate[] => {
-  return scoreSupplierCandidates(candidates).slice(0, topN);
+): ScoredCompanyCandidate[] => {
+  return scoreCompanyCandidates(candidates).slice(0, topN);
 };

@@ -95,7 +95,7 @@ export const MailQueueManager: React.FC = () => {
                 {(index + 1).toString().padStart(2, '0')}
               </div>
               <div className="min-w-0">
-                <div className="font-bold text-slate-200 truncate">{item.supplier.name}</div>
+                <div className="font-bold text-slate-200 truncate">{item.company.name}</div>
                 <div className="text-slate-400 text-[10px] truncate">{item.subject}</div>
                 {item.error && <div className="text-red-400 text-[10px] mt-0.5 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {item.error}</div>}
               </div>

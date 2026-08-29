@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
-import { Supplier } from '../types';
+import { Company } from '../types';
 import { MessageSquare, X, PhoneCall, Check } from 'lucide-react';
 
 interface Props {
-  supplier: Supplier;
+  company: Company;
   itemNameOrContext?: string;
   onClose: () => void;
-  onUpdateSupplierPhone: (supplierId: string, phone: string) => Promise<void> | void;
+  onUpdateCompanyPhone: (companyId: string, phone: string) => Promise<void> | void;
 }
 
 export const WhatsAppSmartModal: React.FC<Props> = ({
-  supplier,
+  company,
   itemNameOrContext = 'procurement items',
   onClose,
-  onUpdateSupplierPhone
+  onUpdateCompanyPhone
 }) => {
-  const existingPhone = supplier.whatsapp || supplier.phone || '';
+  const existingPhone = company.whatsapp || company.phone || '';
   const needsPhone = !existingPhone.trim();
 
   const [phoneInput, setPhoneInput] = useState(existingPhone);
@@ -23,7 +23,7 @@ export const WhatsAppSmartModal: React.FC<Props> = ({
 
   const executeWhatsAppLaunch = (targetPhone: string) => {
     const cleanPhone = targetPhone.replace(/[^0-9]/g, '');
-    const message = `Hello ${supplier.name}, inquiring about ${itemNameOrContext} quotation from Cosmo Cnergy.`;
+    const message = `Hello ${company.name}, inquiring about ${itemNameOrContext} quotation from Cosmo Cnergy.`;
     const encodedText = encodeURIComponent(message);
     const waUrl = cleanPhone 
       ? `https://wa.me/${cleanPhone}?text=${encodedText}`
@@ -42,7 +42,7 @@ export const WhatsAppSmartModal: React.FC<Props> = ({
     }
 
     try {
-      await onUpdateSupplierPhone(supplier.id, phoneInput);
+      await onUpdateCompanyPhone(company.id, phoneInput);
       executeWhatsAppLaunch(phoneInput);
     } catch (err) {
       console.error('Failed to update phone number:', err);
@@ -71,7 +71,7 @@ export const WhatsAppSmartModal: React.FC<Props> = ({
         <form onSubmit={handleSaveAndLaunch} className="space-y-4">
           <div className="space-y-1.5">
             <p className="text-xs text-[#586E75] font-medium">
-              Please enter phone number for <span className="font-bold text-[#073642]">{supplier.name}</span>:
+              Please enter phone number for <span className="font-bold text-[#073642]">{company.name}</span>:
             </p>
 
             <div className="relative">
@@ -97,7 +97,7 @@ export const WhatsAppSmartModal: React.FC<Props> = ({
               Pre-filled Message Preview:
             </div>
             <p className="text-xs text-[#073642] font-mono italic leading-relaxed">
-              "Hello {supplier.name}, inquiring about {itemNameOrContext} quotation from Cosmo Cnergy."
+              "Hello {company.name}, inquiring about {itemNameOrContext} quotation from Cosmo Cnergy."
             </p>
           </div>
 

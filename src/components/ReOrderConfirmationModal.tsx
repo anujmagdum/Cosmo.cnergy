@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { CatalogItem, Supplier } from '../types';
+import { CatalogItem, Company } from '../types';
 import { ShoppingCart, X, Check, Building2, PackageCheck, Mail, MessageSquare, Send, Sparkles, FileText, ChevronDown, CheckCircle2 } from 'lucide-react';
 
 interface Props {
   item: CatalogItem;
   quantity: number;
-  supplier?: Supplier;
+  company?: Company;
   onClose: () => void;
   onConfirm: (item: CatalogItem, qty: number) => Promise<void> | void;
-  onOpenWebmail?: (supplier: Supplier, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
-  onOpenWhatsApp?: (supplier: Supplier, context?: string) => void;
+  onOpenWebmail?: (company: Company, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
+  onOpenWhatsApp?: (company: Company, context?: string) => void;
 }
 
 export const ReOrderConfirmationModal: React.FC<Props> = ({
   item,
   quantity,
-  supplier,
+  company,
   onClose,
   onConfirm,
   onOpenWebmail,
@@ -28,7 +28,7 @@ export const ReOrderConfirmationModal: React.FC<Props> = ({
   const [emailBody, setEmailBody] = useState<string>('');
 
   const totalPrice = quantity * Number(item.preset_price || 0);
-  const supplierName = supplier?.name || 'Supplier Vendor';
+  const companyName = company?.name || 'Company Vendor';
 
   // Dynamic Subject Line mapping
   const subjectOptions = [
@@ -42,7 +42,7 @@ export const ReOrderConfirmationModal: React.FC<Props> = ({
   useEffect(() => {
     if (selectedSubjectKey === 'rfq') {
       setEmailBody(
-`Dear ${supplierName} Sales & Quotation Team,
+`Dear ${companyName} Sales & Quotation Team,
 
 We are seeking a formal Price Quotation and delivery lead time for the following component requirement:
 
@@ -59,7 +59,7 @@ Cosmo Cnergy / Datlion Cnergy Enterprise`
       );
     } else if (selectedSubjectKey === 'po') {
       setEmailBody(
-`Dear ${supplierName} Orders & Dispatch Team,
+`Dear ${companyName} Orders & Dispatch Team,
 
 Please accept this formal Purchase Order for the following component:
 
@@ -77,7 +77,7 @@ Cosmo Cnergy`
       );
     } else if (selectedSubjectKey === 'status') {
       setEmailBody(
-`Dear ${supplierName} Support & Logistics Team,
+`Dear ${companyName} Support & Logistics Team,
 
 We are following up on the current production and dispatch status for:
 • Component: ${item.name}
@@ -90,7 +90,7 @@ Cosmo Cnergy Procurement`
       );
     } else {
       setEmailBody(
-`Dear ${supplierName} Team,
+`Dear ${companyName} Team,
 
 We have an urgent procurement inquiry regarding stock availability and best pricing for:
 • Component: ${item.name}
@@ -102,7 +102,7 @@ Best regards,
 Cosmo Cnergy Procurement Team`
       );
     }
-  }, [selectedSubjectKey, item.name, item.specs, item.uom, item.preset_price, quantity, supplierName, totalPrice]);
+  }, [selectedSubjectKey, item.name, item.specs, item.uom, item.preset_price, quantity, companyName, totalPrice]);
 
   const handleExecuteDispatch = async () => {
     setIsPlacing(true);
@@ -112,9 +112,9 @@ Cosmo Cnergy Procurement Team`
         setIsSuccess(true);
       } else if (selectedChannel === 'webmail') {
         const activeSubject = subjectOptions.find(o => o.key === selectedSubjectKey)?.label || `Procurement: ${item.name}`;
-        const targetSupplier = supplier || {
+        const targetCompany = company || {
           id: 'supp-gen',
-          name: supplierName,
+          name: companyName,
           contact_person: 'Sales Dept',
           email: 'sales@vendor.com',
           phone: '+91 98765 43210'
@@ -122,7 +122,7 @@ Cosmo Cnergy Procurement Team`
 
         if (onOpenWebmail) {
           onOpenWebmail(
-            targetSupplier,
+            targetCompany,
             activeSubject,
             emailBody,
             totalPrice,
@@ -134,11 +134,11 @@ Cosmo Cnergy Procurement Team`
         onClose();
         return;
       } else if (selectedChannel === 'whatsapp') {
-        const rawPhone = supplier?.whatsapp || supplier?.phone || '';
+        const rawPhone = company?.whatsapp || company?.phone || '';
         const cleanPhone = rawPhone.replace(/[^0-9]/g, '');
         const formattedPhone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
 
-        const waText = `*CosmoCnergy Procurement Inquiry*\n\nHello ${supplierName},\nWe would like to request an order / quotation for:\n• *Item:* ${item.name}\n• *Qty:* ${quantity} ${item.uom || 'Pcs'}\n• *Specs:* ${item.specs || 'Standard'}\n\nPlease confirm availability and price. Thank you!`;
+        const waText = `*CosmoCnergy Procurement Inquiry*\n\nHello ${companyName},\nWe would like to request an order / quotation for:\n• *Item:* ${item.name}\n• *Qty:* ${quantity} ${item.uom || 'Pcs'}\n• *Specs:* ${item.specs || 'Standard'}\n\nPlease confirm availability and price. Thank you!`;
         const waUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(waText)}`;
         window.open(waUrl, '_blank');
 
@@ -163,7 +163,7 @@ Cosmo Cnergy Procurement Team`
           <div className="space-y-2">
             <h3 className="text-2xl font-bold text-[#073642]">Order created successfully</h3>
             <p className="text-xs text-[#586E75]">
-              Procurement order for <strong className="text-[#073642]">{item.name}</strong> ({quantity} {item.uom || 'Pcs'}) has been logged with <strong className="text-[#073642]">{supplierName}</strong>.
+              Procurement order for <strong className="text-[#073642]">{item.name}</strong> ({quantity} {item.uom || 'Pcs'}) has been logged with <strong className="text-[#073642]">{companyName}</strong>.
             </p>
           </div>
 
@@ -204,7 +204,7 @@ Cosmo Cnergy Procurement Team`
             <div>
               <h3 className="text-lg font-bold text-[#073642]">1-Tap Component Reorder</h3>
               <p className="text-xs text-[#586E75]">
-                Target Vendor: <strong className="text-[#073642]">{supplierName}</strong>
+                Target Vendor: <strong className="text-[#073642]">{companyName}</strong>
               </p>
             </div>
           </div>
@@ -319,7 +319,7 @@ Cosmo Cnergy Procurement Team`
           <div className="p-4 rounded-2xl bg-[#EEE8D5] border border-[#D6D1B1] space-y-2 text-xs">
             <div className="flex items-center gap-2 font-bold text-emerald-800">
               <MessageSquare className="w-4 h-4 text-emerald-600" />
-              <span>Target WhatsApp Contact: {supplier?.phone || '+91 98765 43210'}</span>
+              <span>Target WhatsApp Contact: {company?.phone || '+91 98765 43210'}</span>
             </div>
             <p className="text-[#586E75] leading-relaxed">
               Clicking dispatch will open an official WhatsApp chat pre-filled with the component particulars ({item.name}, Qty: {quantity} {item.uom || 'Pcs'}) and request immediate commercial confirmation.

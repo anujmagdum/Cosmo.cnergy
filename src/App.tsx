@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import {
   CatalogItem,
-  Supplier,
+  Company,
   ProcurementOrder,
   OrderStatus,
   ProductFolder,
   ProductBOM,
-  MultiSupplierPODraft,
+  MultiCompanyPODraft,
   ProductFolderComponent,
   QueuedMailDraft,
   determineOrderType,
   formatProcurementSubject,
   Category,
-  ComponentSupplier,
+  ComponentCompany,
   NavigationTab
 } from './types';
 import { supabase, isSupabaseConfigured } from './services/supabaseClient';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Layout } from './components/Layout';
+import { ComponentComparisonPage } from './components/ComponentComparisonPage';
 import { Header } from './components/Header';
 import { CatalogSection } from './components/CatalogSection';
-import { SupplierDashboard } from './components/SupplierDashboard';
+import { CompanyDashboard } from './components/CompanyDashboard';
 import { AIProcurementStudio } from './components/AIProcurementStudio';
 import { OrderHistoryTimeline } from './components/OrderHistoryTimeline';
 import { BOMProcurementModal } from './components/BOMProcurementModal';
@@ -31,7 +34,7 @@ import { WhatsAppSmartModal } from './components/WhatsAppSmartModal';
 import { NativeWebmailModal } from './components/NativeWebmailModal';
 import { MultiVendorDispatchModal } from './components/MultiVendorDispatchModal';
 import { ChannelChoiceModal } from './components/ChannelChoiceModal';
-import { SupplierComparisonDrawer } from './components/SupplierComparisonDrawer';
+import { CompanyComparisonDrawer } from './components/CompanyComparisonDrawer';
 
 // Initial Mock Seed Data
 import {
@@ -46,6 +49,22 @@ import {
 export const App: React.FC = () => {
   // Navigation State — Procurement as default main landing view
   const [activeTab, setActiveTab] = useState<NavigationTab>('procurement');
+  const navigate = useNavigate();
+  const location = useLocation();
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes('companies')) setActiveTab('companies');
+    else if (path.includes('ai')) setActiveTab('ai');
+    else if (path.includes('procurement')) setActiveTab('procurement');
+    else if (path.includes('webmail')) setActiveTab('webmail');
+    else setActiveTab('inventory');
+  }, [location.pathname]);
+
+  const handleTabChange = (tab: NavigationTab) => {
+    setActiveTab(tab);
+    if (tab === 'inventory') navigate('/');
+    else navigate('/' + tab);
+  };
 
   // Core Data States
   const [categories, setCategories] = useState<Category[]>([
@@ -54,14 +73,14 @@ export const App: React.FC = () => {
     { id: 'cat-3', name: 'Connectors & Busbars' },
     { id: 'cat-4', name: 'Metal Enclosures' },
     { id: 'cat-5', name: 'Wiring & Harnesses' },
-    { id: 'cat-6', name: 'General Supplier' }
+    { id: 'cat-6', name: 'General Company' }
   ]);
   const [catalog, setCatalog] = useState<CatalogItem[]>(() => {
     const saved = localStorage.getItem('cosmo_catalog');
     return saved ? JSON.parse(saved) : INITIAL_CATALOG;
   });
-  const [suppliers, setSuppliers] = useState<Supplier[]>(() => {
-    const saved = localStorage.getItem('cosmo_suppliers');
+  const [companies, setCompanies] = useState<Company[]>(() => {
+    const saved = localStorage.getItem('cosmo_companies');
     return saved ? JSON.parse(saved) : INITIAL_SUPPLIERS;
   });
   const [boms, setBoms] = useState<ProductBOM[]>(() => {
@@ -76,9 +95,9 @@ export const App: React.FC = () => {
     const saved = localStorage.getItem('cosmo_orders');
     return saved ? JSON.parse(saved) : INITIAL_ORDERS;
   });
-  const [componentSuppliers, setComponentSuppliers] = useState<ComponentSupplier[]>(() => {
+  const [componentCompanies, setComponentCompanies] = useState<ComponentCompany[]>(() => {
     try {
-      const saved = localStorage.getItem('cosmo_component_suppliers');
+      const saved = localStorage.getItem('cosmo_component_companies');
       return saved ? JSON.parse(saved) : INITIAL_COMPONENT_SUPPLIERS;
     } catch {
       return INITIAL_COMPONENT_SUPPLIERS;
@@ -95,15 +114,15 @@ export const App: React.FC = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('cosmo_suppliers', JSON.stringify(suppliers));
+      localStorage.setItem('cosmo_companies', JSON.stringify(companies));
     } catch {}
-  }, [suppliers]);
+  }, [companies]);
 
   useEffect(() => {
     try {
-      localStorage.setItem('cosmo_component_suppliers', JSON.stringify(componentSuppliers));
+      localStorage.setItem('cosmo_component_companies', JSON.stringify(componentCompanies));
     } catch {}
-  }, [componentSuppliers]);
+  }, [componentCompanies]);
 
   useEffect(() => {
     try {
@@ -164,12 +183,12 @@ export const App: React.FC = () => {
 
   // Global WhatsApp and Webmail Modals State
   const [whatsAppModalData, setWhatsAppModalData] = useState<{
-    supplier: Supplier;
+    company: Company;
     context?: string;
   } | null>(null);
 
   const [webmailModalData, setWebmailModalData] = useState<{
-    supplier: Supplier;
+    company: Company;
     itemName?: string;
     specs?: string;
     qty?: number | string;
@@ -179,7 +198,7 @@ export const App: React.FC = () => {
 
   // Multi-vendor dispatch queue state
   const [multiVendorState, setMultiVendorState] = useState<{
-    drafts: MultiSupplierPODraft[];
+    drafts: MultiCompanyPODraft[];
     type: 'PO' | 'RFQ';
   } | null>(null);
 
@@ -242,12 +261,12 @@ export const App: React.FC = () => {
         try { localStorage.setItem('cosmo_categories', JSON.stringify(catgs)); } catch {}
       }
 
-      // 1. Fetch Suppliers (with graceful fallback if join fails)
+      // 1. Fetch Companies (with graceful fallback if join fails)
       let loadedSupps: any[] | null = null;
-      const { data: supps, error: suppsErr } = await supabase.from('suppliers').select('*, cat_rel:categories(id, name)');
+      const { data: supps, error: suppsErr } = await supabase.from('companies').select('*, cat_rel:categories(id, name)');
       if (suppsErr) {
-        console.warn('[fetchSupabaseData] Relational suppliers query failed, attempting standard select:', suppsErr);
-        const { data: fallbackSupps } = await supabase.from('suppliers').select('*');
+        console.warn('[fetchSupabaseData] Relational companies query failed, attempting standard select:', suppsErr);
+        const { data: fallbackSupps } = await supabase.from('companies').select('*');
         if (fallbackSupps) loadedSupps = fallbackSupps;
       } else if (supps) {
         loadedSupps = supps;
@@ -256,12 +275,12 @@ export const App: React.FC = () => {
       if (loadedSupps) {
         const normalizedSupps = loadedSupps.map((s: any) => ({
           ...s,
-          category: s.cat_rel?.name || s.category || 'General Supplier',
+          category: s.cat_rel?.name || s.category || 'General Company',
           category_id: s.cat_rel?.id || s.category_id
         }));
         normalizedSupps.forEach((s: any) => delete s.cat_rel);
-        setSuppliers(normalizedSupps);
-        try { localStorage.setItem('cosmo_suppliers', JSON.stringify(normalizedSupps)); } catch {}
+        setCompanies(normalizedSupps);
+        try { localStorage.setItem('cosmo_companies', JSON.stringify(normalizedSupps)); } catch {}
       }
 
       // 2. Fetch Catalog Items (with graceful fallback if join fails)
@@ -302,15 +321,15 @@ export const App: React.FC = () => {
         try { localStorage.setItem('cosmo_boms', JSON.stringify(bomData)); } catch {}
       }
 
-      // 5. Fetch Component Suppliers Junction Table
+      // 5. Fetch Component Companies Junction Table
       try {
-        const { data: compSupps, error: csErr } = await supabase.from('component_suppliers').select('*');
+        const { data: compSupps, error: csErr } = await supabase.from('component_companies').select('*');
         if (!csErr && compSupps && compSupps.length > 0) {
-          setComponentSuppliers(compSupps);
-          try { localStorage.setItem('cosmo_component_suppliers', JSON.stringify(compSupps)); } catch {}
+          setComponentCompanies(compSupps);
+          try { localStorage.setItem('cosmo_component_companies', JSON.stringify(compSupps)); } catch {}
         }
       } catch (e) {
-        console.warn('[fetchSupabaseData] component_suppliers query:', e);
+        console.warn('[fetchSupabaseData] component_companies query:', e);
       }
 
       fetchSupabaseOrders();
@@ -323,7 +342,7 @@ export const App: React.FC = () => {
     try {
       const { data: ords, error: ordsErr } = await supabase
         .from('procurement_orders')
-        .select('*, supplier:suppliers(*), items:order_items(*, item:catalog_items(*))')
+        .select('*, company:companies(*), items:order_items(*, item:catalog_items(*))')
         .order('created_at', { ascending: false });
 
       if (ordsErr) console.error('[fetchSupabaseOrders] error:', ordsErr);
@@ -471,26 +490,26 @@ export const App: React.FC = () => {
     });
   };
 
-  // Synchronous Delete Supplier Mutation: Await Supabase with .select() verification
-  const handleDeleteSupplier = async (supplierId: string) => {
+  // Synchronous Delete Company Mutation: Await Supabase with .select() verification
+  const handleDeleteCompany = async (companyId: string) => {
     if (isSupabaseConfigured()) {
       try {
-        const { data, error } = await supabase.from('suppliers').delete().eq('id', supplierId).select();
+        const { data, error } = await supabase.from('companies').delete().eq('id', companyId).select();
         if (error) {
-          console.error('[DELETE suppliers failed]', { message: error.message, code: error.code, details: error.details, hint: error.hint });
-          throw new Error(`Failed to delete supplier (${error.code}): ${error.message}`);
+          console.error('[DELETE companies failed]', { message: error.message, code: error.code, details: error.details, hint: error.hint });
+          throw new Error(`Failed to delete company (${error.code}): ${error.message}`);
         }
         if (!data || data.length === 0) {
-          console.warn(`[DELETE suppliers] 0 rows deleted in DB for ID: ${supplierId}`);
+          console.warn(`[DELETE companies] 0 rows deleted in DB for ID: ${companyId}`);
         }
       } catch (err: any) {
-        console.error('Delete supplier exception:', err);
+        console.error('Delete company exception:', err);
         throw err;
       }
     }
-    setSuppliers(prev => {
-      const updated = prev.filter(s => s.id !== supplierId);
-      try { localStorage.setItem('cosmo_suppliers', JSON.stringify(updated)); } catch {}
+    setCompanies(prev => {
+      const updated = prev.filter(s => s.id !== companyId);
+      try { localStorage.setItem('cosmo_companies', JSON.stringify(updated)); } catch {}
       return updated;
     });
   };
@@ -531,113 +550,113 @@ export const App: React.FC = () => {
     });
   };
 
-  // Update Supplier Contact Info
-  const handleUpdateSupplierPhone = async (supplierId: string, email: string, phone: string) => {
-    setSuppliers(prev =>
-      prev.map(s => (s.id === supplierId ? { ...s, email, phone, whatsapp: phone } : s))
+  // Update Company Contact Info
+  const handleUpdateCompanyPhone = async (companyId: string, email: string, phone: string) => {
+    setCompanies(prev =>
+      prev.map(s => (s.id === companyId ? { ...s, email, phone, whatsapp: phone } : s))
     );
 
     if (isSupabaseConfigured()) {
       try {
         await supabase
-          .from('suppliers')
+          .from('companies')
           .update({ email, phone, whatsapp: phone })
-          .eq('id', supplierId);
+          .eq('id', companyId);
       } catch (e) {
-        console.warn('Failed to update supplier contact in Supabase:', e);
+        console.warn('Failed to update company contact in Supabase:', e);
       }
     }
   };
 
-  // Add Supplier with Category Relation & DB Persistence
-  const handleAddSupplier = async (supplierData: Omit<Supplier, 'id'>) => {
-    let categoryId = supplierData.category_id;
-    if (!categoryId && supplierData.category) {
-      const match = categories.find(c => c.name.toLowerCase() === supplierData.category!.toLowerCase());
+  // Add Company with Category Relation & DB Persistence
+  const handleAddCompany = async (companyData: Omit<Company, 'id'>) => {
+    let categoryId = companyData.category_id;
+    if (!categoryId && companyData.category) {
+      const match = categories.find(c => c.name.toLowerCase() === companyData.category!.toLowerCase());
       categoryId = match?.id;
     }
 
     const payload: any = {
-      name: supplierData.name,
-      contact_person: supplierData.contact_person || 'Sales Dept',
-      email: supplierData.email,
-      phone: supplierData.phone || '',
-      whatsapp: supplierData.whatsapp || supplierData.phone || '',
-      buying_url: supplierData.buying_url || '',
-      address: supplierData.address || '',
-      gstin: supplierData.gstin || '',
-      payment_terms: supplierData.payment_terms || 'Net 30 Days',
-      category: supplierData.category || 'General Supplier',
+      name: companyData.name,
+      contact_person: companyData.contact_person || 'Sales Dept',
+      email: companyData.email,
+      phone: companyData.phone || '',
+      whatsapp: companyData.whatsapp || companyData.phone || '',
+      buying_url: companyData.buying_url || '',
+      address: companyData.address || '',
+      gstin: companyData.gstin || '',
+      payment_terms: companyData.payment_terms || 'Net 30 Days',
+      category: companyData.category || 'General Company',
       category_id: categoryId || null,
       rating: 4.8
     };
 
     if (isSupabaseConfigured()) {
       try {
-        let { data, error } = await supabase.from('suppliers').insert(payload).select().single();
+        let { data, error } = await supabase.from('companies').insert(payload).select().single();
         
         // If FK violation on category_id, retry without category_id
         if (error && (error.code === '23503' || error.message?.includes('category_id'))) {
-          console.warn('[Supabase INSERT supplier] Retrying without category_id FK:', error.message);
+          console.warn('[Supabase INSERT company] Retrying without category_id FK:', error.message);
           const { category_id, ...fallbackPayload } = payload;
-          const retryRes = await supabase.from('suppliers').insert(fallbackPayload).select().single();
+          const retryRes = await supabase.from('companies').insert(fallbackPayload).select().single();
           data = retryRes.data;
           error = retryRes.error;
         }
 
         if (error) {
-          console.error('[Supabase INSERT supplier failed]', error);
-          throw new Error(`Failed to save supplier to database: ${error.message}`);
+          console.error('[Supabase INSERT company failed]', error);
+          throw new Error(`Failed to save company to database: ${error.message}`);
         }
 
         if (data) {
           const suppWithCategory = {
             ...data,
-            category: supplierData.category || 'General Supplier'
+            category: companyData.category || 'General Company'
           };
-          setSuppliers(prev => [suppWithCategory, ...prev]);
+          setCompanies(prev => [suppWithCategory, ...prev]);
           return suppWithCategory;
         }
       } catch (e: any) {
-        console.error('Failed to add supplier in Supabase:', e);
+        console.error('Failed to add company in Supabase:', e);
         throw e;
       }
     }
 
-    const newSupplier: Supplier = {
+    const newCompany: Company = {
       id: `supp-${Date.now()}`,
-      ...supplierData,
+      ...companyData,
       rating: 4.8
     };
-    setSuppliers(prev => [newSupplier, ...prev]);
-    return newSupplier;
+    setCompanies(prev => [newCompany, ...prev]);
+    return newCompany;
   };
 
-  // Update Supplier Attributes
-  const handleUpdateSupplier = async (updatedSupplier: Supplier) => {
-    setSuppliers(prev => prev.map(s => (s.id === updatedSupplier.id ? updatedSupplier : s)));
+  // Update Company Attributes
+  const handleUpdateCompany = async (updatedCompany: Company) => {
+    setCompanies(prev => prev.map(s => (s.id === updatedCompany.id ? updatedCompany : s)));
 
     if (isSupabaseConfigured()) {
       try {
         await supabase
-          .from('suppliers')
+          .from('companies')
           .update({
-            name: updatedSupplier.name,
-            contact_person: updatedSupplier.contact_person,
-            email: updatedSupplier.email,
-            phone: updatedSupplier.phone,
-            whatsapp: updatedSupplier.whatsapp,
-            buying_url: updatedSupplier.buying_url,
-            address: updatedSupplier.address,
-            category: updatedSupplier.category,
-            category_id: updatedSupplier.category_id,
-            rating: updatedSupplier.rating,
-            gstin: updatedSupplier.gstin,
-            payment_terms: updatedSupplier.payment_terms
+            name: updatedCompany.name,
+            contact_person: updatedCompany.contact_person,
+            email: updatedCompany.email,
+            phone: updatedCompany.phone,
+            whatsapp: updatedCompany.whatsapp,
+            buying_url: updatedCompany.buying_url,
+            address: updatedCompany.address,
+            category: updatedCompany.category,
+            category_id: updatedCompany.category_id,
+            rating: updatedCompany.rating,
+            gstin: updatedCompany.gstin,
+            payment_terms: updatedCompany.payment_terms
           })
-          .eq('id', updatedSupplier.id);
+          .eq('id', updatedCompany.id);
       } catch (e) {
-        console.error('Failed to update supplier in Supabase:', e);
+        console.error('Failed to update company in Supabase:', e);
       }
     }
   };
@@ -659,7 +678,7 @@ export const App: React.FC = () => {
       preset_price: Number(itemData.preset_price) || 0,
       in_stock_qty: Number(itemData.in_stock_qty) || 0,
       min_order_qty: Number(itemData.min_order_qty) || 1,
-      supplier_id: itemData.supplier_id || (itemData.supplier_ids && itemData.supplier_ids[0]) || null,
+      company_id: itemData.company_id || (itemData.company_ids && itemData.company_ids[0]) || null,
       procurement_status: itemData.procurement_status || 'TO_BE_ORDERED',
       image_drive_url: itemData.image_drive_url || null
     };
@@ -670,10 +689,10 @@ export const App: React.FC = () => {
       try {
         let { data, error } = await supabase.from('catalog_items').insert(payload).select().single();
         
-        // If FK violation on category_id or supplier_id, retry without FK
-        if (error && (error.code === '23503' || error.message?.includes('category_id') || error.message?.includes('supplier_id'))) {
-          console.warn('[Supabase INSERT item] Retrying without category_id/supplier_id FK:', error.message);
-          const { category_id, supplier_id, ...fallbackPayload } = payload;
+        // If FK violation on category_id or company_id, retry without FK
+        if (error && (error.code === '23503' || error.message?.includes('category_id') || error.message?.includes('company_id'))) {
+          console.warn('[Supabase INSERT item] Retrying without category_id/company_id FK:', error.message);
+          const { category_id, company_id, ...fallbackPayload } = payload;
           const retryRes = await supabase.from('catalog_items').insert(fallbackPayload).select().single();
           data = retryRes.data;
           error = retryRes.error;
@@ -687,8 +706,8 @@ export const App: React.FC = () => {
         savedItem = {
           ...data,
           category: itemData.category || 'Battery Cells',
-          supplier_ids: itemData.supplier_ids,
-          supplier_mappings: itemData.supplier_mappings,
+          company_ids: itemData.company_ids,
+          company_mappings: itemData.company_mappings,
           image_drive_url: itemData.image_drive_url
         };
       } catch (e: any) {
@@ -707,9 +726,9 @@ export const App: React.FC = () => {
       };
     }
 
-    // Persist Multi-Supplier Junction records in component_suppliers
-    const mappings = itemData.supplier_mappings || (itemData.supplier_ids || []).map(sId => ({
-      supplier_id: sId,
+    // Persist Multi-Company Junction records in component_companies
+    const mappings = itemData.company_mappings || (itemData.company_ids || []).map(sId => ({
+      company_id: sId,
       unit_price: Number(itemData.preset_price) || 0,
       rfq_quoted_price: Number(itemData.preset_price) || 0,
       moq: Number(itemData.min_order_qty) || 1,
@@ -718,36 +737,36 @@ export const App: React.FC = () => {
     }));
 
     if (mappings.length > 0) {
-      const newJunctions: ComponentSupplier[] = mappings.map((m, idx) => {
-        const supplierObj = suppliers.find(s => s.id === m.supplier_id);
+      const newJunctions: ComponentCompany[] = mappings.map((m, idx) => {
+        const companyObj = companies.find(s => s.id === m.company_id);
         return {
           id: `cs-${Date.now()}-${idx}`,
           component_id: savedItem.id,
-          supplier_id: m.supplier_id,
+          company_id: m.company_id,
           unit_price: Number(m.unit_price) || Number(savedItem.preset_price) || 0,
           rfq_quoted_price: Number(m.rfq_quoted_price) || Number(m.unit_price) || Number(savedItem.preset_price) || 0,
           moq: Number(m.moq) || Number(savedItem.min_order_qty) || 1,
           lead_time_days: Number(m.lead_time_days) || 7,
           part_number_vendor: m.part_number_vendor || savedItem.sku || 'OEM-SPEC',
-          external_rating: supplierObj?.rating || 4.5,
+          external_rating: companyObj?.rating || 4.5,
           review_summary: `Directly associated vendor for ${savedItem.name}.`,
           rating_sources: {
-            indiamart: Number((supplierObj?.rating || 4.5).toFixed(1)),
-            google_maps: Number(Math.max(1, (supplierObj?.rating || 4.5) - 0.2).toFixed(1)),
-            amazon: Number((supplierObj?.rating || 4.5).toFixed(1))
+            indiamart: Number((companyObj?.rating || 4.5).toFixed(1)),
+            google_maps: Number(Math.max(1, (companyObj?.rating || 4.5) - 0.2).toFixed(1)),
+            amazon: Number((companyObj?.rating || 4.5).toFixed(1))
           },
-          supplier: supplierObj
+          company: companyObj
         };
       });
 
-      setComponentSuppliers(prev => [...newJunctions, ...prev]);
+      setComponentCompanies(prev => [...newJunctions, ...prev]);
 
       if (isSupabaseConfigured()) {
         try {
-          const dbPayload = newJunctions.map(({ supplier, ...rest }) => rest);
-          await supabase.from('component_suppliers').upsert(dbPayload);
+          const dbPayload = newJunctions.map(({ company, ...rest }) => rest);
+          await supabase.from('component_companies').upsert(dbPayload);
         } catch (csErr) {
-          console.warn('[Supabase component_suppliers insert]:', csErr);
+          console.warn('[Supabase component_companies insert]:', csErr);
         }
       }
     }
@@ -786,7 +805,7 @@ export const App: React.FC = () => {
           preset_price: Number(normalizedItem.preset_price) || 0,
           in_stock_qty: Number(normalizedItem.in_stock_qty) || 0,
           min_order_qty: Number(normalizedItem.min_order_qty) || 1,
-          supplier_id: normalizedItem.supplier_id || null,
+          company_id: normalizedItem.company_id || null,
           procurement_status: normalizedItem.procurement_status || 'TO_BE_ORDERED'
         };
 
@@ -829,9 +848,9 @@ export const App: React.FC = () => {
   // CSV Import Batch Handlers
   const handleImportComponents = async (rows: any[]): Promise<number> => {
     const importedItems: CatalogItem[] = rows.map((row, idx) => {
-      let suppId = row.supplier_id;
-      if (!suppId && row.supplier_name) {
-        const found = suppliers.find(s => s.name.toLowerCase() === row.supplier_name.toLowerCase());
+      let suppId = row.company_id;
+      if (!suppId && row.company_name) {
+        const found = companies.find(s => s.name.toLowerCase() === row.company_name.toLowerCase());
         if (found) suppId = found.id;
       }
       return {
@@ -843,7 +862,7 @@ export const App: React.FC = () => {
         preset_price: Number(row.preset_price) || 0,
         in_stock_qty: Number(row.in_stock_qty) || 100,
         min_order_qty: Number(row.min_order_qty) || 1,
-        supplier_id: suppId || suppliers[0]?.id || '',
+        company_id: suppId || companies[0]?.id || '',
         procurement_status: row.procurement_status || 'TO_BE_ORDERED'
       };
     });
@@ -862,12 +881,12 @@ export const App: React.FC = () => {
 
   const handleImportOrders = async (rows: any[]): Promise<number> => {
     const importedOrders: ProcurementOrder[] = rows.map((row, idx) => {
-      const supp = suppliers.find(s => s.id === row.supplier_id || s.name.toLowerCase() === (row.supplier_name || '').toLowerCase());
+      const supp = companies.find(s => s.id === row.company_id || s.name.toLowerCase() === (row.company_name || '').toLowerCase());
       return {
         id: `po-${Date.now()}-${idx}`,
         order_number: row.order_number,
-        supplier_id: supp?.id || suppliers[0]?.id || '',
-        supplier: supp || suppliers[0],
+        company_id: supp?.id || companies[0]?.id || '',
+        company: supp || companies[0],
         type: row.type || 'PO',
         status: row.status || 'ORDERED',
         total_amount: Number(row.total_amount) || 0,
@@ -882,7 +901,7 @@ export const App: React.FC = () => {
         const payload = importedOrders.map(o => ({
           id: o.id,
           order_number: o.order_number,
-          supplier_id: o.supplier_id,
+          company_id: o.company_id,
           type: o.type,
           status: o.status,
           total_amount: o.total_amount,
@@ -900,15 +919,15 @@ export const App: React.FC = () => {
     return importedOrders.length;
   };
 
-  const handleImportSuppliers = async (rows: any[]): Promise<number> => {
-    const importedSupps: Supplier[] = rows.map((row, idx) => ({
+  const handleImportCompanies = async (rows: any[]): Promise<number> => {
+    const importedSupps: Company[] = rows.map((row, idx) => ({
       id: `supp-${Date.now()}-${idx}`,
       name: row.name,
       contact_person: row.contact_person || 'Sales Dept',
       email: row.email,
       phone: row.phone,
       whatsapp: row.whatsapp || row.phone,
-      category: row.category || 'General Supplier',
+      category: row.category || 'General Company',
       gstin: row.gstin || '',
       payment_terms: row.payment_terms || 'Net 30 Days',
       address: row.address || '',
@@ -918,13 +937,13 @@ export const App: React.FC = () => {
 
     if (isSupabaseConfigured()) {
       try {
-        await supabase.from('suppliers').upsert(importedSupps);
+        await supabase.from('companies').upsert(importedSupps);
       } catch (e) {
-        console.warn('Batch insert suppliers to Supabase error:', e);
+        console.warn('Batch insert companies to Supabase error:', e);
       }
     }
 
-    setSuppliers(prev => [...importedSupps, ...prev]);
+    setCompanies(prev => [...importedSupps, ...prev]);
     return importedSupps.length;
   };
 
@@ -964,12 +983,12 @@ export const App: React.FC = () => {
     }
   };
 
-  // Component-Level Reorder Trigger (Targets only component-specific supplier)
+  // Component-Level Reorder Trigger (Targets only component-specific company)
   const handleQuickReorderItem = (item: CatalogItem, qty: number) => {
-    const supplier = suppliers.find(s => s.id === item.supplier_id) || suppliers[0];
+    const company = companies.find(s => s.id === item.company_id) || companies[0];
 
-    const draft: MultiSupplierPODraft = {
-      supplier,
+    const draft: MultiCompanyPODraft = {
+      company,
       items: [
         {
           catalogItem: item,
@@ -1013,8 +1032,8 @@ export const App: React.FC = () => {
     }
   };
 
-  // Dispatch Multi-Supplier Orders & Sync with Product Folder
-  const handleDispatchOrders = async (drafts: MultiSupplierPODraft[], type: 'PO' | 'RFQ') => {
+  // Dispatch Multi-Company Orders & Sync with Product Folder
+  const handleDispatchOrders = async (drafts: MultiCompanyPODraft[], type: 'PO' | 'RFQ') => {
     const newOrders: ProcurementOrder[] = [];
 
     for (let i = 0; i < drafts.length; i++) {
@@ -1025,8 +1044,8 @@ export const App: React.FC = () => {
       const newOrder: ProcurementOrder = {
         id: orderId,
         order_number: orderNumber,
-        supplier_id: draft.supplier.id,
-        supplier: draft.supplier,
+        company_id: draft.company.id,
+        company: draft.company,
         type,
         status: type === 'PO' ? 'ORDERED' : 'RFQ_SENT',
         total_amount: draft.total_amount,
@@ -1052,7 +1071,7 @@ export const App: React.FC = () => {
           await supabase.from('procurement_orders').insert({
             id: newOrder.id,
             order_number: newOrder.order_number,
-            supplier_id: newOrder.supplier_id,
+            company_id: newOrder.company_id,
             type: newOrder.type,
             status: newOrder.status,
             total_amount: newOrder.total_amount,
@@ -1078,7 +1097,7 @@ export const App: React.FC = () => {
     }
 
     setOrders(prev => [...newOrders, ...prev]);
-    setActiveTab('procurement');
+    handleTabChange('procurement');
 
     if (newOrders.length === 1) {
       setSingleChoiceOrder(newOrders[0]);
@@ -1086,9 +1105,9 @@ export const App: React.FC = () => {
   };
 
   // Immediate PO Dispatch from Sourcing Comparison Drawer
-  const handleCreatePOFromComparison = (supplier: Supplier, item: CatalogItem, unitPrice: number, qty: number) => {
-    const draft: MultiSupplierPODraft = {
-      supplier,
+  const handleCreatePOFromComparison = (company: Company, item: CatalogItem, unitPrice: number, qty: number) => {
+    const draft: MultiCompanyPODraft = {
+      company,
       items: [
         {
           catalogItem: { ...item, preset_price: unitPrice },
@@ -1100,7 +1119,7 @@ export const App: React.FC = () => {
       total_amount: qty * unitPrice
     };
 
-    setActiveTab('procurement');
+    handleTabChange('procurement');
     handleDispatchOrders([draft], 'PO');
   };
 
@@ -1127,7 +1146,7 @@ export const App: React.FC = () => {
 
   // Internal Webmail Global Routing
   const handleOpenWebmail = (
-    supplier: Supplier,
+    company: Company,
     itemName?: string,
     specs?: string,
     qty?: number | string,
@@ -1136,15 +1155,15 @@ export const App: React.FC = () => {
   ) => {
     const orderType = determineOrderType(context || 'CATALOG_BOM', statusState);
     const subject = formatProcurementSubject(orderType, itemName || 'Battery Components');
-    const defaultBody = `Dear Sales Team (${supplier.name}),\n\nWe at Cosmo Cnergy would like to request an official ${orderType} for the following:\n\n• Item: ${itemName || 'Catalog Component'}\n• Specifications: ${specs || 'Standard industrial spec'}\n• Quantity Required: ${qty || 100}\n\nPlease confirm availability, GST rates, and delivery schedule to Pune plant.\n\nBest regards,\n${userName}\nCosmo Cnergy`;
+    const defaultBody = `Dear Sales Team (${company.name}),\n\nWe at Cosmo Cnergy would like to request an official ${orderType} for the following:\n\n• Item: ${itemName || 'Catalog Component'}\n• Specifications: ${specs || 'Standard industrial spec'}\n• Quantity Required: ${qty || 100}\n\nPlease confirm availability, GST rates, and delivery schedule to Pune plant.\n\nBest regards,\n${userName}\nCosmo Cnergy`;
 
     setWebmailInitialCompose({
-      to: supplier.email || '',
+      to: company.email || '',
       subject,
       body: defaultBody,
       context
     });
-    setActiveTab('webmail');
+    handleTabChange('webmail');
   };
 
   // Strict Auth Guard
@@ -1173,122 +1192,102 @@ export const App: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#EEE8D5] text-[#073642] selection:bg-emerald-500 selection:text-white overflow-x-hidden">
       {/* Top Header & Navigation */}
-      <Header
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenBOMModal={() => setIsBOMModalOpen(true)}
-        onOpenSearch={() => setIsSearchOpen(true)}
-        userName={userName}
-        userEmail={userEmail}
-        onOpenAuth={() => setIsAuthOpen(true)}
-        onLogout={handleLogout}
-        ordersCount={orders.length}
-        catalogCount={catalog.length}
-        suppliersCount={suppliers.length}
-        alertsCount={lowStockAlertsCount}
-      />
+      
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-8 space-y-8">
-        {/* Tab Views */}
-        {activeTab === 'inventory' && (
-          <CatalogSection
-            catalog={catalog}
-            suppliers={suppliers}
-            componentSuppliers={componentSuppliers}
-            orders={orders}
-            folders={folders}
-            boms={boms}
-            categories={categories}
-            onAddCatalogItem={handleAddCatalogItem}
-            onUpdateCatalogItem={handleUpdateCatalogItem}
-            onAddProductFolder={handleAddProductFolder}
-            onUpdateFolderLinkedPOs={handleUpdateFolderLinkedPOs}
-            onUpdateFolderComponents={handleUpdateFolderComponents}
-            onUpdateSupplierContact={handleUpdateSupplierPhone}
-            onLogOrders={drafts => handleDispatchOrders(drafts, 'PO')}
-            onDeleteProductFolder={handleDeleteProductFolder}
-            onDeleteOrder={handleDeleteOrder}
-            onDeleteCatalogItem={handleDeleteCatalogItem}
-            onQuickReorder={handleQuickReorderItem}
-            onOpenWhatsApp={(supplier, context) => setWhatsAppModalData({ supplier, context })}
-            onOpenWebmail={handleOpenWebmail}
-            onEnqueueMailDrafts={handleEnqueueMailDrafts}
-            onImportComponents={handleImportComponents}
-            onOpenComparisonDrawer={item => setComparisonComponent(item)}
-          />
-        )}
-
-        {activeTab === 'companies' && (
-          <SupplierDashboard
-            suppliers={suppliers}
-            catalog={catalog}
-            categories={categories}
-            onAddSupplier={handleAddSupplier}
-            onUpdateSupplier={handleUpdateSupplier}
-            onDeleteSupplier={handleDeleteSupplier}
-            onImportSuppliers={handleImportSuppliers}
-            onOpenComparisonDrawer={item => setComparisonComponent(item)}
-            onOpenWebmail={(to, subject, body) => {
-              setWebmailInitialCompose({
-                to,
-                subject,
-                body: body || '',
-                context: 'SUPPLIER_SOURCING'
-              });
-              setActiveTab('webmail');
-            }}
-          />
-        )}
-
-        {activeTab === 'ai' && (
-          <AIProcurementStudio
-            catalog={catalog}
-            suppliers={suppliers}
-            onGenerateOrderFromAI={drafts => handleDispatchOrders(drafts, 'PO')}
-          />
-        )}
-
-        {activeTab === 'procurement' && (
-          <OrderHistoryTimeline
-            orders={orders}
-            onUpdateStatus={handleUpdateOrderStatus}
-            onUpdateOrder={handleUpdateOrder}
-            onDeleteOrder={handleDeleteOrder}
-            onOpenWhatsApp={(supplier, context) => setWhatsAppModalData({ supplier, context })}
-            onOpenWebmail={handleOpenWebmail}
-            onImportOrders={handleImportOrders}
-          />
-        )}
-
-        {activeTab === 'webmail' && (
-          <Webmail
-            currentUser={userName}
-            onOpenAuth={() => setIsAuthOpen(true)}
-            initialCompose={webmailInitialCompose}
-            onSendSuccess={orderToConfirm => {
-              if (orderToConfirm) {
-                handleDispatchOrders(orderToConfirm.drafts, orderToConfirm.type);
-              }
-            }}
-            mailDraftQueue={mailDraftQueue}
-            onPopMailDraftQueue={handlePopMailDraftQueue}
-            onClearMailDraftQueue={handleClearMailDraftQueue}
-            onClearInitialCompose={handleClearInitialCompose}
-          />
-        )}
-
-        {/* Multi-Supplier Sourcing Comparison Drawer with Gemini 3.6 Flash */}
-        {comparisonComponent && (
-          <SupplierComparisonDrawer
-            component={comparisonComponent}
-            suppliers={suppliers}
-            componentSuppliers={componentSuppliers}
-            onClose={() => setComparisonComponent(null)}
-            onCreatePO={handleCreatePOFromComparison}
-          />
-        )}
-      </main>
+      <Routes>
+        <Route path="/" element={<Layout activeTab={activeTab} setActiveTab={handleTabChange} unreadWebmailCount={mailDraftQueue.length} onOpenBOMModal={() => setIsBOMModalOpen(true)} onOpenSearch={() => setIsSearchOpen(true)} userName={userName} onOpenAuth={() => setIsAuthOpen(true)} onLogout={handleLogout} ordersCount={orders.length} catalogCount={catalog.length} companiesCount={companies.length} />}>
+          <Route index element={
+            <CatalogSection
+              catalog={catalog}
+              companies={companies}
+              componentCompanies={componentCompanies}
+              orders={orders}
+              folders={folders}
+              boms={boms}
+              categories={categories}
+              onAddCatalogItem={handleAddCatalogItem}
+              onUpdateCatalogItem={handleUpdateCatalogItem}
+              onAddProductFolder={handleAddProductFolder}
+              onUpdateFolderLinkedPOs={handleUpdateFolderLinkedPOs}
+              onUpdateFolderComponents={handleUpdateFolderComponents}
+              onUpdateCompanyContact={handleUpdateCompanyPhone}
+              onLogOrders={drafts => handleDispatchOrders(drafts, 'PO')}
+              onDeleteProductFolder={handleDeleteProductFolder}
+              onDeleteOrder={handleDeleteOrder}
+              onDeleteCatalogItem={handleDeleteCatalogItem}
+              onQuickReorder={handleQuickReorderItem}
+              onOpenWhatsApp={(company, context) => setWhatsAppModalData({ company, context })}
+              onOpenWebmail={handleOpenWebmail}
+              onEnqueueMailDrafts={handleEnqueueMailDrafts}
+              onImportComponents={handleImportComponents}
+              onOpenComparisonDrawer={item => setComparisonComponent(item)}
+            />
+          } />
+          <Route path="companies" element={
+            <CompanyDashboard
+              companies={companies}
+              catalog={catalog}
+              categories={categories}
+              onAddCompany={handleAddCompany}
+              onUpdateCompany={handleUpdateCompany}
+              onDeleteCompany={handleDeleteCompany}
+              onImportCompanies={handleImportCompanies}
+              onOpenComparisonDrawer={item => setComparisonComponent(item)}
+              onOpenWebmail={(to, subject, body) => {
+                setWebmailInitialCompose({
+                  to,
+                  subject,
+                  body: body || '',
+                  context: 'COMPANY_SOURCING'
+                });
+                handleTabChange('webmail');
+              }}
+            />
+          } />
+          <Route path="ai" element={
+            <AIProcurementStudio
+              catalog={catalog}
+              companies={companies}
+              onGenerateOrderFromAI={drafts => handleDispatchOrders(drafts, 'PO')}
+            />
+          } />
+          <Route path="procurement" element={
+            <OrderHistoryTimeline
+              orders={orders}
+              onUpdateStatus={handleUpdateOrderStatus}
+              onUpdateOrder={handleUpdateOrder}
+              onDeleteOrder={handleDeleteOrder}
+              onOpenWhatsApp={(company, context) => setWhatsAppModalData({ company, context })}
+              onOpenWebmail={handleOpenWebmail}
+              onImportOrders={handleImportOrders}
+            />
+          } />
+          <Route path="webmail" element={
+            <Webmail
+              currentUser={userName}
+              onOpenAuth={() => setIsAuthOpen(true)}
+              initialCompose={webmailInitialCompose}
+              onSendSuccess={orderToConfirm => {
+                if (orderToConfirm) {
+                  handleDispatchOrders(orderToConfirm.drafts, orderToConfirm.type);
+                }
+              }}
+              mailDraftQueue={mailDraftQueue}
+              onPopMailDraftQueue={handlePopMailDraftQueue}
+              onClearMailDraftQueue={handleClearMailDraftQueue}
+              onClearInitialCompose={handleClearInitialCompose}
+            />
+          } />
+          <Route path="inventory/component/:id" element={
+            <ComponentComparisonPage 
+              catalog={catalog}
+              companies={companies}
+              componentCompanies={componentCompanies}
+            />
+          } />
+        </Route>
+      </Routes>
 
       {/* Footer */}
       <footer className="glass-panel border-t border-[#1e3e62] py-6 text-center text-xs text-slate-300 bg-[#0B192C]">
@@ -1300,7 +1299,7 @@ export const App: React.FC = () => {
         <BOMProcurementModal
           catalog={catalog}
           boms={boms}
-          suppliers={suppliers}
+          companies={companies}
           folders={folders}
           orders={orders}
           onClose={() => setIsBOMModalOpen(false)}
@@ -1313,11 +1312,11 @@ export const App: React.FC = () => {
       {/* WhatsApp Smart Modal */}
       {whatsAppModalData && (
         <WhatsAppSmartModal
-          supplier={whatsAppModalData.supplier}
+          company={whatsAppModalData.company}
           itemNameOrContext={whatsAppModalData.context}
           onClose={() => setWhatsAppModalData(null)}
-          onUpdateSupplierPhone={async (supplierId: string, phone: string) => {
-            await handleUpdateSupplierPhone(supplierId, whatsAppModalData.supplier.email || '', phone);
+          onUpdateCompanyPhone={async (companyId: string, phone: string) => {
+            await handleUpdateCompanyPhone(companyId, whatsAppModalData.company.email || '', phone);
           }}
         />
       )}
@@ -1325,7 +1324,7 @@ export const App: React.FC = () => {
       {/* Native Webmail Dispatcher Modal */}
       {webmailModalData && (
         <NativeWebmailModal
-          supplier={webmailModalData.supplier}
+          company={webmailModalData.company}
           itemName={webmailModalData.itemName}
           itemSpecs={webmailModalData.specs}
           quantity={webmailModalData.qty}
@@ -1368,9 +1367,9 @@ export const App: React.FC = () => {
         onClose={() => setIsSearchOpen(false)}
         catalog={catalog}
         folders={folders}
-        suppliers={suppliers}
+        companies={companies}
         boms={boms}
-        onNavigateTab={tab => setActiveTab(tab)}
+        onNavigateTab={tab => handleTabChange(tab)}
         onOpenWebmail={handleOpenWebmail}
       />
 

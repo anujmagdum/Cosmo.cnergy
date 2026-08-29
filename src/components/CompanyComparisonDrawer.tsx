@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { CatalogItem, Supplier, ComponentSupplier } from '../types';
+import { CatalogItem, Company, ComponentCompany } from '../types';
 import {
-  scoreSupplierCandidates,
+  scoreCompanyCandidates,
   getTopScoredCandidates,
-  ScoredSupplierCandidate
+  ScoredCompanyCandidate
 } from '../lib/scoring';
 import {
-  adviseBestSupplier,
-  SupplierRecommendationResult
-} from '../services/supplierAdvisor';
+  adviseBestCompany,
+  CompanyRecommendationResult
+} from '../services/companyAdvisor';
 import {
   X,
   Sparkles,
@@ -28,44 +28,44 @@ import {
 
 interface Props {
   component: CatalogItem;
-  suppliers: Supplier[];
-  componentSuppliers: ComponentSupplier[];
+  companies: Company[];
+  componentCompanies: ComponentCompany[];
   onClose: () => void;
-  onCreatePO: (supplier: Supplier, item: CatalogItem, unitPrice: number, qty: number) => void;
+  onCreatePO: (company: Company, item: CatalogItem, unitPrice: number, qty: number) => void;
 }
 
-export const SupplierComparisonDrawer: React.FC<Props> = ({
+export const CompanyComparisonDrawer: React.FC<Props> = ({
   component,
-  suppliers,
-  componentSuppliers,
+  companies,
+  componentCompanies,
   onClose,
   onCreatePO
 }) => {
   const [isLoadingAI, setIsLoadingAI] = useState(true);
-  const [recommendation, setRecommendation] = useState<SupplierRecommendationResult | null>(null);
+  const [recommendation, setRecommendation] = useState<CompanyRecommendationResult | null>(null);
 
-  // Filter linked suppliers for this component
-  const linkedRecords: ComponentSupplier[] = React.useMemo(() => {
-    const directLinks = componentSuppliers.filter(cs => cs.component_id === component.id);
+  // Filter linked companies for this component
+  const linkedRecords: ComponentCompany[] = React.useMemo(() => {
+    const directLinks = componentCompanies.filter(cs => cs.component_id === component.id);
     if (directLinks.length > 0) {
-      // Deduplicate by supplier_id (in case multi-category causes duplicate junction entries)
+      // Deduplicate by company_id (in case multi-category causes duplicate junction entries)
       const seen = new Set<string>();
       return directLinks
-        .filter(cs => { const dup = seen.has(cs.supplier_id); seen.add(cs.supplier_id); return !dup; })
+        .filter(cs => { const dup = seen.has(cs.company_id); seen.add(cs.company_id); return !dup; })
         .map(cs => ({
           ...cs,
-          supplier: cs.supplier || suppliers.find(s => s.id === cs.supplier_id)
+          company: cs.company || companies.find(s => s.id === cs.company_id)
         }));
     }
 
-    // Fallback 1: If component carries supplier_mappings or supplier_ids directly
-    if (component.supplier_mappings && component.supplier_mappings.length > 0) {
-      return component.supplier_mappings.map((m, idx) => {
-        const supp = suppliers.find(s => s.id === m.supplier_id);
+    // Fallback 1: If component carries company_mappings or company_ids directly
+    if (component.company_mappings && component.company_mappings.length > 0) {
+      return component.company_mappings.map((m, idx) => {
+        const supp = companies.find(s => s.id === m.company_id);
         return {
-          id: `synth-${component.id}-${m.supplier_id}-${idx}`,
+          id: `synth-${component.id}-${m.company_id}-${idx}`,
           component_id: component.id,
-          supplier_id: m.supplier_id,
+          company_id: m.company_id,
           unit_price: Number(m.unit_price) || Number(component.preset_price) || 150,
           rfq_quoted_price: Number(m.rfq_quoted_price) || Number(m.unit_price) || Number(component.preset_price) || 150,
           moq: Number(m.moq) || Number(component.min_order_qty) || 10,
@@ -74,18 +74,18 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
           external_rating: supp?.rating || 4.5,
           review_summary: `Directly quoted vendor: ${supp?.name}.`,
           rating_sources: { indiamart: supp?.rating || 4.6, google_maps: 4.3, amazon: 4.5 },
-          supplier: supp
+          company: supp
         };
       });
     }
 
-    if (component.supplier_ids && component.supplier_ids.length > 0) {
-      return component.supplier_ids.map((sId, idx) => {
-        const supp = suppliers.find(s => s.id === sId);
+    if (component.company_ids && component.company_ids.length > 0) {
+      return component.company_ids.map((sId, idx) => {
+        const supp = companies.find(s => s.id === sId);
         return {
           id: `synth-${component.id}-${sId}-${idx}`,
           component_id: component.id,
-          supplier_id: sId,
+          company_id: sId,
           unit_price: component.preset_price || 150,
           rfq_quoted_price: component.preset_price || 150,
           moq: component.min_order_qty || 10,
@@ -94,38 +94,38 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
           external_rating: supp?.rating || 4.5,
           review_summary: `Directly linked vendor: ${supp?.name}.`,
           rating_sources: { indiamart: supp?.rating || 4.6, google_maps: 4.3, amazon: 4.5 },
-          supplier: supp
+          company: supp
         };
       });
     }
 
-    // Fallback 2: If no M:N junction records yet, synthesize from component default supplier
-    if (component.supplier_id) {
-      const supp = suppliers.find(s => s.id === component.supplier_id);
+    // Fallback 2: If no M:N junction records yet, synthesize from component default company
+    if (component.company_id) {
+      const supp = companies.find(s => s.id === component.company_id);
       return [
         {
-          id: `synth-${component.id}-${component.supplier_id}`,
+          id: `synth-${component.id}-${component.company_id}`,
           component_id: component.id,
-          supplier_id: component.supplier_id,
+          company_id: component.company_id,
           unit_price: component.preset_price || 150,
           rfq_quoted_price: component.preset_price || 150,
           moq: component.min_order_qty || 10,
           lead_time_days: 7,
           part_number_vendor: component.sku || 'OEM-SPEC',
           external_rating: supp?.rating || 4.5,
-          review_summary: 'Verified industrial supplier with verified on-spec test reports.',
+          review_summary: 'Verified industrial company with verified on-spec test reports.',
           rating_sources: { indiamart: 4.6, google_maps: 4.3, amazon: 4.5 },
-          supplier: supp
+          company: supp
         }
       ];
     }
 
     return [];
-  }, [component, componentSuppliers, suppliers]);
+  }, [component, componentCompanies, companies]);
 
   // Deterministic scoring of all candidates
-  const scoredCandidates: ScoredSupplierCandidate[] = React.useMemo(() => {
-    return scoreSupplierCandidates(linkedRecords);
+  const scoredCandidates: ScoredCompanyCandidate[] = React.useMemo(() => {
+    return scoreCompanyCandidates(linkedRecords);
   }, [linkedRecords]);
 
   // Run Gemini 3.6 Flash Advisor on top candidates
@@ -140,12 +140,12 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
       setIsLoadingAI(true);
       try {
         const top3 = getTopScoredCandidates(linkedRecords, 3);
-        const result = await adviseBestSupplier(component, top3);
+        const result = await adviseBestCompany(component, top3);
         if (isMounted) {
           setRecommendation(result);
         }
       } catch (err) {
-        console.error('[SupplierComparisonDrawer] Advisor error:', err);
+        console.error('[CompanyComparisonDrawer] Advisor error:', err);
       } finally {
         if (isMounted) {
           setIsLoadingAI(false);
@@ -159,7 +159,7 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
     };
   }, [component, linkedRecords, scoredCandidates]);
 
-  const winningId = recommendation?.winning_supplier_id || scoredCandidates[0]?.componentSupplier.supplier_id;
+  const winningId = recommendation?.winning_company_id || scoredCandidates[0]?.componentCompany.company_id;
 
   return (
     <div
@@ -180,7 +180,7 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg md:text-xl font-extrabold text-[#073642]">
-                    Multi-Supplier Sourcing Matrix
+                    Multi-Company Sourcing Matrix
                   </h3>
                   <span className="bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-black px-2 py-0.5 rounded-full">
                     {scoredCandidates.length} Vendors Available
@@ -262,7 +262,7 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
                     <h4 className="text-sm font-extrabold text-[#073642] flex items-center gap-2">
                       <span>Recommended Vendor:</span>
                       <span className="text-emerald-900 underline underline-offset-2">
-                        {suppliers.find(s => s.id === recommendation.winning_supplier_id)?.name || 'Top Supplier'}
+                        {companies.find(s => s.id === recommendation.winning_company_id)?.name || 'Top Company'}
                       </span>
                     </h4>
                   </div>
@@ -282,11 +282,11 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
             </div>
           ) : null}
 
-          {/* Supplier Comparison Grid / Rows */}
+          {/* Company Comparison Grid / Rows */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-black text-[#073642] uppercase tracking-wider">
-                Supplier Candidates Ranked by Multi-Criteria Formula
+                Company Candidates Ranked by Multi-Criteria Formula
               </h4>
               <span className="text-[10px] text-[#586E75] font-medium">
                 Weights: 40% RFQ Price • 30% Rating • 20% Lead Time • 10% MOQ
@@ -297,14 +297,14 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
               <div className="p-8 text-center bg-[#EEE8D5]/60 border border-dashed border-[#D6D1B1] rounded-2xl space-y-2">
                 <Building2 className="w-8 h-8 text-[#586E75] mx-auto" />
                 <p className="text-xs text-[#586E75] font-semibold">
-                  No suppliers currently mapped to this component in the junction database.
+                  No companies currently mapped to this component in the junction database.
                 </p>
               </div>
             ) : (
               scoredCandidates.map((candidate, idx) => {
-                const { componentSupplier: cs, effectivePrice, effectiveRating, ratingBreakdown, matchScore } = candidate;
-                const supplierObj = cs.supplier || suppliers.find(s => s.id === cs.supplier_id);
-                const isWinner = cs.supplier_id === winningId;
+                const { componentCompany: cs, effectivePrice, effectiveRating, ratingBreakdown, matchScore } = candidate;
+                const companyObj = cs.company || companies.find(s => s.id === cs.company_id);
+                const isWinner = cs.company_id === winningId;
 
                 return (
                   <div
@@ -315,7 +315,7 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
                         : 'bg-[#EEE8D5]/60 hover:bg-[#EEE8D5] border-[#D6D1B1] shadow-2xs'
                     }`}
                   >
-                    {/* Top Row: Rank, Supplier Info, Match Score */}
+                    {/* Top Row: Rank, Company Info, Match Score */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#D6D1B1]/60 pb-3">
                       <div className="flex items-center gap-3">
                         <span
@@ -331,7 +331,7 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
                         <div>
                           <div className="flex items-center gap-2">
                             <h5 className="font-extrabold text-sm text-[#073642]">
-                              {supplierObj?.name || 'Industrial Supplier'}
+                              {companyObj?.name || 'Industrial Company'}
                             </h5>
                             {isWinner && (
                               <span className="bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-black px-2 py-0.2 rounded uppercase">
@@ -343,7 +343,7 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
                           <div className="flex items-center gap-2 text-[11px] text-[#586E75] mt-0.5">
                             <span>Vendor Part: <strong className="font-mono text-[#073642]">{cs.part_number_vendor || 'N/A'}</strong></span>
                             <span>•</span>
-                            <span>{supplierObj?.address || 'Industrial Zone'}</span>
+                            <span>{companyObj?.address || 'Industrial Zone'}</span>
                           </div>
                         </div>
                       </div>
@@ -440,13 +440,13 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
                     {/* Bottom Action: Create Purchase Order (1-Tap Immediate Modal Launch) */}
                     <div className="pt-2 border-t border-[#D6D1B1]/60 flex items-center justify-between">
                       <span className="text-[10px] text-[#586E75]">
-                        Contact: <strong className="text-[#073642] font-medium">{supplierObj?.contact_person || 'Sales Desk'}</strong> ({supplierObj?.phone || supplierObj?.email})
+                        Contact: <strong className="text-[#073642] font-medium">{companyObj?.contact_person || 'Sales Desk'}</strong> ({companyObj?.phone || companyObj?.email})
                       </span>
 
                       <button
                         onClick={() => {
-                          if (supplierObj) {
-                            onCreatePO(supplierObj, component, effectivePrice, cs.moq);
+                          if (companyObj) {
+                            onCreatePO(companyObj, component, effectivePrice, cs.moq);
                             onClose();
                           }
                         }}
@@ -470,7 +470,7 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
         {/* Drawer Footer */}
         <div className="p-4 border-t border-[#D6D1B1]/70 bg-[#FDF6E3] flex items-center justify-between text-xs text-[#586E75]">
           <span>
-            Target Route: <code className="font-mono text-[10px] bg-[#EEE8D5] px-1.5 py-0.5 rounded">/procurement/new?supplierId={winningId}&price=...</code>
+            Target Route: <code className="font-mono text-[10px] bg-[#EEE8D5] px-1.5 py-0.5 rounded">/procurement/new?companyId={winningId}&price=...</code>
           </span>
           <button
             onClick={onClose}

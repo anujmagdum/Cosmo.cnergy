@@ -1,6 +1,6 @@
-import { Supplier, CatalogItem, ProductBOM, ProcurementOrder, ProductFolder, ComponentSupplier } from '../types';
+import { Company, CatalogItem, ProductBOM, ProcurementOrder, ProductFolder, ComponentCompany } from '../types';
 
-export const INITIAL_SUPPLIERS: Supplier[] = [
+export const INITIAL_SUPPLIERS: Company[] = [
   {
     id: '11111111-1111-1111-1111-111111111111',
     name: 'CellTech Energy Systems',
@@ -61,7 +61,7 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     specs: 'LiFePO4, 3.2V, 100Ah, 6000 Cycles, M6 Terminals',
     uom: 'Pcs',
     preset_price: 2850.00,
-    supplier_id: '11111111-1111-1111-1111-111111111111',
+    company_id: '11111111-1111-1111-1111-111111111111',
     min_order_qty: 16,
     in_stock_qty: 640,
     procurement_status: 'TO_BE_ORDERED',
@@ -76,7 +76,7 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     specs: 'UART/CAN Bus, Active Balancing 1A, Temp Sensors',
     uom: 'Pcs',
     preset_price: 3400.00,
-    supplier_id: '22222222-2222-2222-2222-222222222222',
+    company_id: '22222222-2222-2222-2222-222222222222',
     min_order_qty: 1,
     in_stock_qty: 45,
     procurement_status: 'TO_BE_ORDERED',
@@ -91,7 +91,7 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     specs: 'Nickel Plated Copper, Hole Pitch 65mm',
     uom: 'Pcs',
     preset_price: 85.00,
-    supplier_id: '33333333-3333-3333-3333-333333333333',
+    company_id: '33333333-3333-3333-3333-333333333333',
     min_order_qty: 15,
     in_stock_qty: 800,
     procurement_status: 'TO_BE_ORDERED'
@@ -105,7 +105,7 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     specs: 'IP65 Rated, Powder Coated, Handles & Display Cutout',
     uom: 'Set',
     preset_price: 4500.00,
-    supplier_id: '44444444-4444-4444-4444-444444444444',
+    company_id: '44444444-4444-4444-4444-444444444444',
     min_order_qty: 1,
     in_stock_qty: 20,
     procurement_status: 'TO_BE_ORDERED',
@@ -120,19 +120,19 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     specs: 'Silicone Insulated, Amphenol Connectors',
     uom: 'Set',
     preset_price: 420.00,
-    supplier_id: '33333333-3333-3333-3333-333333333333',
+    company_id: '33333333-3333-3333-3333-333333333333',
     min_order_qty: 1,
     in_stock_qty: 120,
     procurement_status: 'TO_BE_ORDERED'
   }
 ];
 
-export const INITIAL_COMPONENT_SUPPLIERS: ComponentSupplier[] = [
+export const INITIAL_COMPONENT_SUPPLIERS: ComponentCompany[] = [
   // Competitors for 3.2V 100Ah LFP Grade A Cell (c1111111)
   {
     id: 'cs-1',
     component_id: 'c1111111-1111-1111-1111-111111111111',
-    supplier_id: '11111111-1111-1111-1111-111111111111', // CellTech Energy
+    company_id: '11111111-1111-1111-1111-111111111111', // CellTech Energy
     unit_price: 2850.00,
     rfq_quoted_price: 2750.00,
     moq: 16,
@@ -145,7 +145,7 @@ export const INITIAL_COMPONENT_SUPPLIERS: ComponentSupplier[] = [
   {
     id: 'cs-2',
     component_id: 'c1111111-1111-1111-1111-111111111111',
-    supplier_id: '22222222-2222-2222-2222-222222222222', // BMS Master Solutions
+    company_id: '22222222-2222-2222-2222-222222222222', // BMS Master Solutions
     unit_price: 2950.00,
     rfq_quoted_price: 2890.00,
     moq: 32,
@@ -158,21 +158,21 @@ export const INITIAL_COMPONENT_SUPPLIERS: ComponentSupplier[] = [
   {
     id: 'cs-3',
     component_id: 'c1111111-1111-1111-1111-111111111111',
-    supplier_id: '33333333-3333-3333-3333-333333333333', // Busbar Corp
+    company_id: '33333333-3333-3333-3333-333333333333', // Busbar Corp
     unit_price: 3100.00,
     rfq_quoted_price: 2920.00,
     moq: 8,
     lead_time_days: 10,
     part_number_vendor: 'GENERIC-LFP-100',
     external_rating: 4.2,
-    review_summary: 'Reliable secondary supplier, lower MOQ but slightly higher price.',
+    review_summary: 'Reliable secondary company, lower MOQ but slightly higher price.',
     rating_sources: { indiamart: 4.3, google_maps: 4.1, tradeindia: 4.2 }
   },
   // Competitors for 16S 100A Smart Bluetooth BMS (c2222222)
   {
     id: 'cs-4',
     component_id: 'c2222222-2222-2222-2222-222222222222',
-    supplier_id: '22222222-2222-2222-2222-222222222222', // BMS Master
+    company_id: '22222222-2222-2222-2222-222222222222', // BMS Master
     unit_price: 3400.00,
     rfq_quoted_price: 3250.00,
     moq: 1,
@@ -185,7 +185,7 @@ export const INITIAL_COMPONENT_SUPPLIERS: ComponentSupplier[] = [
   {
     id: 'cs-5',
     component_id: 'c2222222-2222-2222-2222-222222222222',
-    supplier_id: '11111111-1111-1111-1111-111111111111', // CellTech
+    company_id: '11111111-1111-1111-1111-111111111111', // CellTech
     unit_price: 3550.00,
     rfq_quoted_price: 3480.00,
     moq: 5,
@@ -199,7 +199,7 @@ export const INITIAL_COMPONENT_SUPPLIERS: ComponentSupplier[] = [
   {
     id: 'cs-6',
     component_id: 'c3333333-3333-3333-3333-333333333333',
-    supplier_id: '33333333-3333-3333-3333-333333333333', // Busbar Corp
+    company_id: '33333333-3333-3333-3333-333333333333', // Busbar Corp
     unit_price: 85.00,
     rfq_quoted_price: 78.00,
     moq: 20,
@@ -212,7 +212,7 @@ export const INITIAL_COMPONENT_SUPPLIERS: ComponentSupplier[] = [
   {
     id: 'cs-7',
     component_id: 'c3333333-3333-3333-3333-333333333333',
-    supplier_id: '44444444-4444-4444-4444-444444444444', // ThermalShield
+    company_id: '44444444-4444-4444-4444-444444444444', // ThermalShield
     unit_price: 92.00,
     rfq_quoted_price: 88.00,
     moq: 50,
@@ -271,8 +271,8 @@ export const INITIAL_ORDERS: ProcurementOrder[] = [
   {
     id: 'po111111-1111-1111-1111-111111111111',
     order_number: 'PO-2026-0801',
-    supplier_id: '11111111-1111-1111-1111-111111111111',
-    supplier: INITIAL_SUPPLIERS[0],
+    company_id: '11111111-1111-1111-1111-111111111111',
+    company: INITIAL_SUPPLIERS[0],
     type: 'PO',
     status: 'ORDERED',
     total_amount: 45600.00,
@@ -292,8 +292,8 @@ export const INITIAL_ORDERS: ProcurementOrder[] = [
   {
     id: 'po222222-2222-2222-2222-222222222222',
     order_number: 'RFQ-2026-0802',
-    supplier_id: '22222222-2222-2222-2222-222222222222',
-    supplier: INITIAL_SUPPLIERS[1],
+    company_id: '22222222-2222-2222-2222-222222222222',
+    company: INITIAL_SUPPLIERS[1],
     type: 'RFQ',
     status: 'RFQ_SENT',
     total_amount: 34000.00,
@@ -313,8 +313,8 @@ export const INITIAL_ORDERS: ProcurementOrder[] = [
   {
     id: 'po333333-3333-3333-3333-333333333333',
     order_number: 'PO-2026-0803',
-    supplier_id: '33333333-3333-3333-3333-333333333333',
-    supplier: INITIAL_SUPPLIERS[2],
+    company_id: '33333333-3333-3333-3333-333333333333',
+    company: INITIAL_SUPPLIERS[2],
     type: 'PO',
     status: 'TO_BE_ORDERED',
     total_amount: 1275.00,

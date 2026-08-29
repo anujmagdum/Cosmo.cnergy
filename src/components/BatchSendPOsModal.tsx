@@ -1,27 +1,27 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ProductFolder, CatalogItem, Supplier, ProcurementOrder, MultiSupplierPODraft, QueuedMailDraft, determineOrderType, formatProcurementSubject } from '../types';
+import { ProductFolder, CatalogItem, Company, ProcurementOrder, MultiCompanyPODraft, QueuedMailDraft, determineOrderType, formatProcurementSubject } from '../types';
 import { Send, Mail, MessageSquare, Check, X, AlertCircle, Building2, ExternalLink, RefreshCw, Rocket, Phone, Edit2, ShieldAlert, Zap, Layers } from 'lucide-react';
 
 interface Props {
   folder: ProductFolder;
   catalog: CatalogItem[];
-  suppliers: Supplier[];
+  companies: Company[];
   orders: ProcurementOrder[];
   onClose: () => void;
-  onUpdateSupplierContact?: (supplierId: string, email: string, phone: string) => Promise<void> | void;
-  onLogOrders?: (drafts: MultiSupplierPODraft[]) => Promise<void> | void;
-  onOpenWhatsApp?: (supplier: Supplier, context?: string) => void;
-  onOpenWebmail?: (supplier: Supplier, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
+  onUpdateCompanyContact?: (companyId: string, email: string, phone: string) => Promise<void> | void;
+  onLogOrders?: (drafts: MultiCompanyPODraft[]) => Promise<void> | void;
+  onOpenWhatsApp?: (company: Company, context?: string) => void;
+  onOpenWebmail?: (company: Company, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
   onEnqueueMailDrafts?: (drafts: QueuedMailDraft[], openFirstImmediately?: boolean) => void;
 }
 
 export const BatchSendPOsModal: React.FC<Props> = ({
   folder,
   catalog,
-  suppliers,
+  companies,
   orders,
   onClose,
-  onUpdateSupplierContact,
+  onUpdateCompanyContact,
   onLogOrders,
   onOpenWhatsApp,
   onOpenWebmail,
@@ -35,7 +35,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
   // Editable inline vendor contacts
   const [editableContacts, setEditableContacts] = useState<Record<string, { email: string; phone: string }>>(() => {
     const map: Record<string, { email: string; phone: string }> = {};
-    suppliers.forEach(s => {
+    companies.forEach(s => {
       map[s.id] = {
         email: s.email || '',
         phone: s.whatsapp || s.phone || ''
@@ -45,8 +45,8 @@ export const BatchSendPOsModal: React.FC<Props> = ({
   });
 
   // Aggregate folder components by vendor_id
-  const vendorDrafts = useMemo<MultiSupplierPODraft[]>(() => {
-    const map = new Map<string, MultiSupplierPODraft>();
+  const vendorDrafts = useMemo<MultiCompanyPODraft[]>(() => {
+    const map = new Map<string, MultiCompanyPODraft>();
 
     // 1. Process Recipe Components
     (folder.components || []).forEach(comp => {
@@ -54,10 +54,10 @@ export const BatchSendPOsModal: React.FC<Props> = ({
         || catalog.find(c => c.name.toLowerCase() === (comp.item_id || '').toLowerCase());
       if (!catItem) return;
 
-      const supp = (catItem.supplier_id ? suppliers.find(s => s.id === catItem.supplier_id) : null)
-        || catItem.supplier
-        || (catItem.supplier_id ? suppliers.find(s => s.name.toLowerCase() === (catItem.supplier_id || '').toLowerCase()) : null)
-        || suppliers[0]
+      const supp = (catItem.company_id ? companies.find(s => s.id === catItem.company_id) : null)
+        || catItem.company
+        || (catItem.company_id ? companies.find(s => s.name.toLowerCase() === (catItem.company_id || '').toLowerCase()) : null)
+        || companies[0]
         || {
           id: 'supp-default',
           name: 'General Vendor',
@@ -69,7 +69,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
 
       if (!map.has(supp.id)) {
         map.set(supp.id, {
-          supplier: supp,
+          company: supp,
           items: [],
           total_amount: 0
         });
@@ -93,8 +93,8 @@ export const BatchSendPOsModal: React.FC<Props> = ({
     if (map.size === 0 && folder.linked_po_ids && folder.linked_po_ids.length > 0) {
       const linkedOrders = orders.filter(o => folder.linked_po_ids.includes(o.id));
       linkedOrders.forEach(po => {
-        const supp = po.supplier || suppliers.find(s => s.id === po.supplier_id) || {
-          id: po.supplier_id || 'supp-default',
+        const supp = po.company || companies.find(s => s.id === po.company_id) || {
+          id: po.company_id || 'supp-default',
           name: 'General Vendor',
           email: 'sales@vendor.com',
           phone: '+91 98765 43210',
@@ -104,7 +104,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
 
         if (!map.has(supp.id)) {
           map.set(supp.id, {
-            supplier: supp,
+            company: supp,
             items: [],
             total_amount: 0
           });
@@ -131,13 +131,13 @@ export const BatchSendPOsModal: React.FC<Props> = ({
     }
 
     return Array.from(map.values());
-  }, [folder, catalog, suppliers, orders]);
+  }, [folder, catalog, companies, orders]);
 
-  // Sync contacts whenever suppliers or vendorDrafts change
+  // Sync contacts whenever companies or vendorDrafts change
   useEffect(() => {
     setEditableContacts(prev => {
       const updated = { ...prev };
-      suppliers.forEach(s => {
+      companies.forEach(s => {
         if (!updated[s.id] || !updated[s.id].email) {
           updated[s.id] = {
             email: s.email || '',
@@ -146,45 +146,45 @@ export const BatchSendPOsModal: React.FC<Props> = ({
         }
       });
       vendorDrafts.forEach(d => {
-        if (!updated[d.supplier.id] || !updated[d.supplier.id].email) {
-          updated[d.supplier.id] = {
-            email: d.supplier.email || '',
-            phone: d.supplier.whatsapp || d.supplier.phone || ''
+        if (!updated[d.company.id] || !updated[d.company.id].email) {
+          updated[d.company.id] = {
+            email: d.company.email || '',
+            phone: d.company.whatsapp || d.company.phone || ''
           };
         }
       });
       return updated;
     });
-  }, [suppliers, vendorDrafts]);
+  }, [companies, vendorDrafts]);
 
   // Select all vendors by default
   useEffect(() => {
-    setSelectedVendorIds(vendorDrafts.map(d => d.supplier.id));
+    setSelectedVendorIds(vendorDrafts.map(d => d.company.id));
   }, [vendorDrafts]);
 
   const [orderType, setOrderType] = useState<'PO' | 'RFQ'>('PO');
   const emailSubject = formatProcurementSubject(orderType, folder.name);
 
   // Update contact details in local state
-  const handleContactChange = (supplierId: string, field: 'email' | 'phone', val: string) => {
+  const handleContactChange = (companyId: string, field: 'email' | 'phone', val: string) => {
     setEditableContacts(prev => ({
       ...prev,
-      [supplierId]: {
-        ...prev[supplierId],
+      [companyId]: {
+        ...prev[companyId],
         [field]: val
       }
     }));
   };
 
-  const handleSaveContact = (supplierId: string) => {
-    const contact = editableContacts[supplierId];
-    if (contact && onUpdateSupplierContact) {
-      onUpdateSupplierContact(supplierId, contact.email, contact.phone);
+  const handleSaveContact = (companyId: string) => {
+    const contact = editableContacts[companyId];
+    if (contact && onUpdateCompanyContact) {
+      onUpdateCompanyContact(companyId, contact.email, contact.phone);
     }
   };
 
   // Build Body for a single vendor draft
-  const generateVendorEmailBody = (draft: MultiSupplierPODraft) => {
+  const generateVendorEmailBody = (draft: MultiCompanyPODraft) => {
     const itemsList = draft.items
       .map(
         (item, idx) =>
@@ -193,33 +193,33 @@ export const BatchSendPOsModal: React.FC<Props> = ({
       .join('\n');
 
     const docName = orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)';
-    return `Dear ${draft.supplier.contact_person || draft.supplier.name},\n\nPlease accept our ${docName} for the "${folder.name}" assembly:\n\n${itemsList}\n\nTotal Amount: ₹${draft.total_amount.toLocaleString('en-IN')}\n\nDelivery Location: Unit 4, Energy Tech Park, Pune Plant\nPayment Terms: 30 Days Net on QC Inspection\n\nPlease confirm at your earliest convenience.\n\nBest regards,\nProcurement Department\nCosmo Cnergy Procurement Ltd.`;
+    return `Dear ${draft.company.contact_person || draft.company.name},\n\nPlease accept our ${docName} for the "${folder.name}" assembly:\n\n${itemsList}\n\nTotal Amount: ₹${draft.total_amount.toLocaleString('en-IN')}\n\nDelivery Location: Unit 4, Energy Tech Park, Pune Plant\nPayment Terms: 30 Days Net on QC Inspection\n\nPlease confirm at your earliest convenience.\n\nBest regards,\nProcurement Department\nCosmo Cnergy Procurement Ltd.`;
   };
 
   // Build WhatsApp text for a single vendor draft
-  const generateVendorWhatsAppText = (draft: MultiSupplierPODraft) => {
+  const generateVendorWhatsAppText = (draft: MultiCompanyPODraft) => {
     const itemsList = draft.items
       .map(item => `• *${item.catalogItem.name}*: ${item.quantity} ${item.catalogItem.uom || 'Pcs'} @ ₹${item.unit_price}`)
       .join('\n');
 
     const docName = orderType === 'PO' ? 'PURCHASE ORDER (PO)' : 'REQUEST FOR QUOTATION (RFQ)';
-    return `*COSMO CNERGY ${docName}* 🚀\n----------------------------------------\n🏢 *Product Assembly:* ${folder.name}\n👤 *Vendor:* ${draft.supplier.name}\n\n📦 *REQUIRED ITEMS:*\n${itemsList}\n\n💰 *TOTAL AMOUNT:* ₹${draft.total_amount.toLocaleString('en-IN')}\n📍 *Plant:* Pune Plant\n\nPlease confirm availability and quotation dispatch.`;
+    return `*COSMO CNERGY ${docName}* 🚀\n----------------------------------------\n🏢 *Product Assembly:* ${folder.name}\n👤 *Vendor:* ${draft.company.name}\n\n📦 *REQUIRED ITEMS:*\n${itemsList}\n\n💰 *TOTAL AMOUNT:* ₹${draft.total_amount.toLocaleString('en-IN')}\n📍 *Plant:* Pune Plant\n\nPlease confirm availability and quotation dispatch.`;
   };
 
   // Dispatch individual vendor via internal Webmail and persist the remaining drafts in queue
-  const dispatchSingleVendorWebmail = (draft: MultiSupplierPODraft, advanceQueue = false) => {
-    const contact = editableContacts[draft.supplier.id] || { email: draft.supplier.email, phone: draft.supplier.phone };
+  const dispatchSingleVendorWebmail = (draft: MultiCompanyPODraft, advanceQueue = false) => {
+    const contact = editableContacts[draft.company.id] || { email: draft.company.email, phone: draft.company.phone };
     if (!contact.email) {
-      alert(`Please enter a valid email for ${draft.supplier.name}`);
+      alert(`Please enter a valid email for ${draft.company.name}`);
       return;
     }
 
     const allQueued: QueuedMailDraft[] = vendorDrafts.map((d, idx) => {
-      const c = editableContacts[d.supplier.id] || { email: d.supplier.email, phone: d.supplier.phone };
+      const c = editableContacts[d.company.id] || { email: d.company.email, phone: d.company.phone };
       return {
-        id: `queue-${d.supplier.id}-${Date.now()}-${idx}`,
-        supplier: { ...d.supplier, email: c.email, phone: c.phone },
-        to: c.email || d.supplier.email,
+        id: `queue-${d.company.id}-${Date.now()}-${idx}`,
+        company: { ...d.company, email: c.email, phone: c.phone },
+        to: c.email || d.company.email,
         subject: emailSubject,
         body: generateVendorEmailBody(d),
         productName: folder.name,
@@ -229,7 +229,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
       };
     });
 
-    const activeDraftIndex = allQueued.findIndex(q => q.supplier.id === draft.supplier.id);
+    const activeDraftIndex = allQueued.findIndex(q => q.company.id === draft.company.id);
     const activeDraft = allQueued[activeDraftIndex] || allQueued[0];
     const remainingDrafts = allQueued.filter((_, idx) => idx !== activeDraftIndex);
 
@@ -242,7 +242,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
       onEnqueueMailDrafts([activeDraft, ...remainingDrafts], true);
     } else if (onOpenWebmail) {
       onOpenWebmail(
-        { ...draft.supplier, email: contact.email },
+        { ...draft.company, email: contact.email },
         folder.name,
         generateVendorEmailBody(draft),
         draft.total_amount,
@@ -250,7 +250,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
         'ORDERED'
       );
     }
-    setDispatchedMap(prev => ({ ...prev, [draft.supplier.id]: 'webmail' }));
+    setDispatchedMap(prev => ({ ...prev, [draft.company.id]: 'webmail' }));
 
     if (advanceQueue) {
       setActiveQueueIndex(prev => Math.min(prev + 1, vendorDrafts.length - 1));
@@ -259,18 +259,18 @@ export const BatchSendPOsModal: React.FC<Props> = ({
   };
 
   // Dispatch individual vendor via WhatsApp
-  const dispatchSingleVendorWhatsApp = (draft: MultiSupplierPODraft, advanceQueue = false) => {
-    const contact = editableContacts[draft.supplier.id] || { email: draft.supplier.email, phone: draft.supplier.phone };
+  const dispatchSingleVendorWhatsApp = (draft: MultiCompanyPODraft, advanceQueue = false) => {
+    const contact = editableContacts[draft.company.id] || { email: draft.company.email, phone: draft.company.phone };
     const cleanPhone = contact.phone.replace(/[^0-9]/g, '');
     if (!cleanPhone) {
-      alert(`Please enter a valid phone number for ${draft.supplier.name}`);
+      alert(`Please enter a valid phone number for ${draft.company.name}`);
       return;
     }
 
     const text = generateVendorWhatsAppText(draft);
     const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(text)}`;
     window.open(waUrl, '_blank');
-    setDispatchedMap(prev => ({ ...prev, [draft.supplier.id]: 'whatsapp' }));
+    setDispatchedMap(prev => ({ ...prev, [draft.company.id]: 'whatsapp' }));
 
     if (advanceQueue) {
       setActiveQueueIndex(prev => Math.min(prev + 1, vendorDrafts.length - 1));
@@ -279,7 +279,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
 
   // Fixed 'Dispatch All POs' Action Handler with Storage Persistence
   const handleBatchDispatchAll = async () => {
-    const selectedDrafts = vendorDrafts.filter(d => selectedVendorIds.includes(d.supplier.id));
+    const selectedDrafts = vendorDrafts.filter(d => selectedVendorIds.includes(d.company.id));
     if (selectedDrafts.length === 0) return;
 
     if (onLogOrders) {
@@ -288,11 +288,11 @@ export const BatchSendPOsModal: React.FC<Props> = ({
 
     if (preferredChannel === 'webmail') {
       const allQueued: QueuedMailDraft[] = selectedDrafts.map((d, idx) => {
-        const c = editableContacts[d.supplier.id] || { email: d.supplier.email, phone: d.supplier.phone };
+        const c = editableContacts[d.company.id] || { email: d.company.email, phone: d.company.phone };
         return {
-          id: `queue-${d.supplier.id}-${Date.now()}-${idx}`,
-          supplier: { ...d.supplier, email: c.email, phone: c.phone },
-          to: c.email || d.supplier.email,
+          id: `queue-${d.company.id}-${Date.now()}-${idx}`,
+          company: { ...d.company, email: c.email, phone: c.phone },
+          to: c.email || d.company.email,
           subject: emailSubject,
           body: generateVendorEmailBody(d),
           productName: folder.name,
@@ -312,9 +312,9 @@ export const BatchSendPOsModal: React.FC<Props> = ({
         onEnqueueMailDrafts(allQueued, true);
       } else if (onOpenWebmail) {
         const first = selectedDrafts[0];
-        const contact = editableContacts[first.supplier.id] || { email: first.supplier.email, phone: first.supplier.phone };
+        const contact = editableContacts[first.company.id] || { email: first.company.email, phone: first.company.phone };
         onOpenWebmail(
-          { ...first.supplier, email: contact.email },
+          { ...first.company, email: contact.email },
           folder.name,
           generateVendorEmailBody(first),
           first.total_amount,
@@ -434,12 +434,12 @@ export const BatchSendPOsModal: React.FC<Props> = ({
         {/* Vendor Drafts Ladder List */}
         <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-1">
           {vendorDrafts.map((draft, index) => {
-            const contact = editableContacts[draft.supplier.id] || { email: draft.supplier.email, phone: draft.supplier.phone };
-            const isDispatched = Boolean(dispatchedMap[draft.supplier.id]);
+            const contact = editableContacts[draft.company.id] || { email: draft.company.email, phone: draft.company.phone };
+            const isDispatched = Boolean(dispatchedMap[draft.company.id]);
 
             return (
               <div
-                key={draft.supplier.id}
+                key={draft.company.id}
                 className={`p-4 rounded-2xl border transition-all ${
                   isDispatched
                     ? 'bg-emerald-50/70 border-emerald-300'
@@ -450,12 +450,12 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                   <div className="flex items-center gap-2.5">
                     <input
                       type="checkbox"
-                      checked={selectedVendorIds.includes(draft.supplier.id)}
+                      checked={selectedVendorIds.includes(draft.company.id)}
                       onChange={e => {
                         if (e.target.checked) {
-                          setSelectedVendorIds(prev => [...prev, draft.supplier.id]);
+                          setSelectedVendorIds(prev => [...prev, draft.company.id]);
                         } else {
-                          setSelectedVendorIds(prev => prev.filter(id => id !== draft.supplier.id));
+                          setSelectedVendorIds(prev => prev.filter(id => id !== draft.company.id));
                         }
                       }}
                       className="w-4 h-4 text-emerald-600 rounded border-[#D6D1B1] focus:ring-emerald-500 accent-emerald-600 cursor-pointer"
@@ -464,9 +464,9 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                       {index + 1}
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-[#073642]">{draft.supplier.name}</h4>
+                      <h4 className="font-bold text-sm text-[#073642]">{draft.company.name}</h4>
                       <p className="text-[11px] text-[#586E75]">
-                        Contact: {draft.supplier.contact_person || 'Sales Dept'} • Total: <strong className="text-emerald-800 font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
+                        Contact: {draft.company.contact_person || 'Sales Dept'} • Total: <strong className="text-emerald-800 font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
                       </p>
                     </div>
                   </div>

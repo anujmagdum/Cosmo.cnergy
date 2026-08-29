@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Supplier, Category } from '../types';
+import { Company, Category } from '../types';
 import {
-  SourcedSupplier,
-  searchSuppliersAcrossWeb,
-  enrichSupplierContactAI,
+  SourcedCompany,
+  searchCompaniesAcrossWeb,
+  enrichCompanyContactAI,
   formatWhatsAppNumber
-} from '../services/supplierSearchService';
+} from '../services/companySearchService';
 import {
   Search,
   MapPin,
@@ -27,16 +27,16 @@ import {
 } from 'lucide-react';
 
 interface Props {
-  suppliers: Supplier[];
+  companies: Company[];
   categories?: Category[];
-  onAddSupplier: (supplier: Omit<Supplier, 'id'>) => Promise<any> | void;
+  onAddCompany: (company: Omit<Company, 'id'>) => Promise<any> | void;
   onOpenWebmail?: (to: string, subject: string, body?: string) => void;
 }
 
-export const FindSupplierTab: React.FC<Props> = ({
-  suppliers: existingSuppliers,
+export const FindCompanyTab: React.FC<Props> = ({
+  companies: existingCompanies,
   categories = [],
-  onAddSupplier,
+  onAddCompany,
   onOpenWebmail
 }) => {
   const [city, setCity] = useState('Pune');
@@ -44,7 +44,7 @@ export const FindSupplierTab: React.FC<Props> = ({
   const [activeSourceFilter, setActiveSourceFilter] = useState<'all' | 'maps' | 'indiamart' | 'google' | 'other'>('all');
   const [viewMode, setViewMode] = useState<'search' | 'shortlist'>('search');
 
-  const [sourcedSuppliers, setSourcedSuppliers] = useState<SourcedSupplier[]>([]);
+  const [sourcedCompanies, setSourcedCompanies] = useState<SourcedCompany[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'info' | 'error'; message: string } | null>(null);
 
@@ -72,14 +72,14 @@ export const FindSupplierTab: React.FC<Props> = ({
     setNotification(null);
 
     try {
-      const results = await searchSuppliersAcrossWeb(city, queryToUse);
+      const results = await searchCompaniesAcrossWeb(city, queryToUse);
 
-      // Check if any results match existing suppliers in database
+      // Check if any results match existing companies in database
       const updated = results.map(r => {
-        const alreadyInDb = existingSuppliers.some(
+        const alreadyInDb = existingCompanies.some(
           s => s.name.toLowerCase().trim() === r.name.toLowerCase().trim()
         );
-        const previouslyShortlisted = sourcedSuppliers.find(
+        const previouslyShortlisted = sourcedCompanies.find(
           s => s.name.toLowerCase().trim() === r.name.toLowerCase().trim()
         );
         return {
@@ -89,26 +89,26 @@ export const FindSupplierTab: React.FC<Props> = ({
         };
       });
 
-      setSourcedSuppliers(updated);
-      showNotification('success', `⚡ Found ${results.length} industrial suppliers for "${queryToUse}" in ${city}`);
+      setSourcedCompanies(updated);
+      showNotification('success', `⚡ Found ${results.length} industrial companies for "${queryToUse}" in ${city}`);
     } catch (err: any) {
-      showNotification('error', `Search error: ${err.message || 'Failed to search suppliers'}`);
+      showNotification('error', `Search error: ${err.message || 'Failed to search companies'}`);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleEnrichContact = async (supplierId: string) => {
-    setSourcedSuppliers(prev => prev.map(s => (s.id === supplierId ? { ...s, isEnriching: true } : s)));
+  const handleEnrichContact = async (companyId: string) => {
+    setSourcedCompanies(prev => prev.map(s => (s.id === companyId ? { ...s, isEnriching: true } : s)));
 
-    const target = sourcedSuppliers.find(s => s.id === supplierId);
+    const target = sourcedCompanies.find(s => s.id === companyId);
     if (!target) return;
 
     try {
-      const enrichedData = await enrichSupplierContactAI(target, city);
-      setSourcedSuppliers(prev =>
+      const enrichedData = await enrichCompanyContactAI(target, city);
+      setSourcedCompanies(prev =>
         prev.map(s => {
-          if (s.id === supplierId) {
+          if (s.id === companyId) {
             return {
               ...s,
               ...enrichedData,
@@ -120,14 +120,14 @@ export const FindSupplierTab: React.FC<Props> = ({
       );
       showNotification('info', `✨ Updated verified contact details for ${target.name}`);
     } catch (err) {
-      setSourcedSuppliers(prev => prev.map(s => (s.id === supplierId ? { ...s, isEnriching: false } : s)));
+      setSourcedCompanies(prev => prev.map(s => (s.id === companyId ? { ...s, isEnriching: false } : s)));
       showNotification('error', 'Failed to enrich contact info with AI');
     }
   };
 
-  const toggleShortlist = (supplierId: string) => {
-    setSourcedSuppliers(prev =>
-      prev.map(s => (s.id === supplierId ? { ...s, isShortlisted: !s.isShortlisted } : s))
+  const toggleShortlist = (companyId: string) => {
+    setSourcedCompanies(prev =>
+      prev.map(s => (s.id === companyId ? { ...s, isShortlisted: !s.isShortlisted } : s))
     );
   };
 
@@ -138,21 +138,21 @@ export const FindSupplierTab: React.FC<Props> = ({
     }, 4500);
   };
 
-  // Convert shortlisted / selected suppliers into CosmoCnergy Supplier format and insert
-  const handleAddSelectedToDatabase = async (singleSupplierId?: string) => {
-    const targets = singleSupplierId
-      ? sourcedSuppliers.filter(s => s.id === singleSupplierId)
-      : sourcedSuppliers.filter(s => s.isShortlisted && !s.isAddedToDb);
+  // Convert shortlisted / selected companies into CosmoCnergy Company format and insert
+  const handleAddSelectedToDatabase = async (singleCompanyId?: string) => {
+    const targets = singleCompanyId
+      ? sourcedCompanies.filter(s => s.id === singleCompanyId)
+      : sourcedCompanies.filter(s => s.isShortlisted && !s.isAddedToDb);
 
     if (targets.length === 0) {
-      showNotification('info', 'No new shortlisted suppliers selected to import.');
+      showNotification('info', 'No new shortlisted companies selected to import.');
       return;
     }
 
     let addedCount = 0;
 
     for (const sup of targets) {
-      const alreadyExists = existingSuppliers.some(
+      const alreadyExists = existingCompanies.some(
         p => p.name.toLowerCase().trim() === sup.name.toLowerCase().trim()
       );
 
@@ -162,7 +162,7 @@ export const FindSupplierTab: React.FC<Props> = ({
           c => c.name.toLowerCase() === (sup.category || 'Battery Cells').toLowerCase()
         );
 
-        await onAddSupplier({
+        await onAddCompany({
           name: sup.name,
           contact_person: sup.contactPerson || 'Sales Department',
           email: sup.email || `contact@${sup.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
@@ -181,15 +181,15 @@ export const FindSupplierTab: React.FC<Props> = ({
 
     // Mark as added in state
     const targetIds = targets.map(t => t.id);
-    setSourcedSuppliers(prev =>
+    setSourcedCompanies(prev =>
       prev.map(s => (targetIds.includes(s.id) ? { ...s, isAddedToDb: true, isShortlisted: true } : s))
     );
 
-    showNotification('success', `⚡ Successfully added ${addedCount || targets.length} supplier profile(s) to company database!`);
+    showNotification('success', `⚡ Successfully added ${addedCount || targets.length} company profile(s) to company database!`);
   };
 
-  const shortlistedList = sourcedSuppliers.filter(s => s.isShortlisted);
-  const filteredSuppliers = sourcedSuppliers.filter(s => {
+  const shortlistedList = sourcedCompanies.filter(s => s.isShortlisted);
+  const filteredCompanies = sourcedCompanies.filter(s => {
     if (activeSourceFilter === 'all') return true;
     if (activeSourceFilter === 'maps') return s.source === 'maps';
     if (activeSourceFilter === 'indiamart') return s.source === 'indiamart';
@@ -199,7 +199,7 @@ export const FindSupplierTab: React.FC<Props> = ({
   });
 
   const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(
-    `${productQuery} suppliers in ${city}`
+    `${productQuery} companies in ${city}`
   )}&t=&z=12&ie=UTF8&iwloc=&output=embed`;
 
   return (
@@ -237,7 +237,7 @@ export const FindSupplierTab: React.FC<Props> = ({
             </div>
             <div>
               <h2 className="text-base font-extrabold text-[#073642] flex items-center gap-2">
-                <span>Find New Suppliers (AI & Maps Orchestrator)</span>
+                <span>Find New Companies (AI & Maps Orchestrator)</span>
               </h2>
               <p className="text-xs text-[#586E75]">
                 Discover industrial vendors on Google Maps, IndiaMart & Web, enrich contact details, and 1-tap import.
@@ -255,7 +255,7 @@ export const FindSupplierTab: React.FC<Props> = ({
                   : 'bg-[#EEE8D5] text-[#073642] hover:bg-[#E4DDC7]'
               }`}
             >
-              🌐 Sourcing Feed ({sourcedSuppliers.length})
+              🌐 Sourcing Feed ({sourcedCompanies.length})
             </button>
             <button
               onClick={() => setViewMode('shortlist')}
@@ -411,7 +411,7 @@ export const FindSupplierTab: React.FC<Props> = ({
                       : 'text-[#073642] hover:bg-[#E4DDC7]'
                   }`}
                 >
-                  All ({sourcedSuppliers.length})
+                  All ({sourcedCompanies.length})
                 </button>
                 <button
                   onClick={() => setActiveSourceFilter('maps')}
@@ -462,18 +462,18 @@ export const FindSupplierTab: React.FC<Props> = ({
                 <div className="py-24 text-center space-y-3">
                   <RefreshCw className="w-8 h-8 animate-spin text-emerald-600 mx-auto" />
                   <p className="text-xs font-bold text-[#073642]">
-                    Gemini Sourcing Suppliers across Google Maps, IndiaMart & Directories...
+                    Gemini Sourcing Companies across Google Maps, IndiaMart & Directories...
                   </p>
                 </div>
-              ) : filteredSuppliers.length === 0 ? (
+              ) : filteredCompanies.length === 0 ? (
                 <div className="py-20 text-center text-[#586E75] space-y-2">
                   <Search className="w-8 h-8 text-[#93A1A1] mx-auto" />
                   <p className="text-xs font-semibold text-[#073642]">
-                    No suppliers found for this filter. Try adjusting your component query.
+                    No companies found for this filter. Try adjusting your component query.
                   </p>
                 </div>
               ) : (
-                filteredSuppliers.map(sup => {
+                filteredCompanies.map(sup => {
                   const { cleanPhone, waUrl } = formatWhatsAppNumber(sup.phoneNumber);
                   return (
                     <div
@@ -608,10 +608,10 @@ export const FindSupplierTab: React.FC<Props> = ({
           <div className="flex items-center justify-between border-b border-[#D6D1B1] pb-4">
             <div>
               <h3 className="text-base font-bold text-[#073642]">
-                Shortlisted Supplier Candidates ({shortlistedList.length})
+                Shortlisted Company Candidates ({shortlistedList.length})
               </h3>
               <p className="text-xs text-[#586E75]">
-                Review selected suppliers before 1-tap onboarding or dispatching RFQs
+                Review selected companies before 1-tap onboarding or dispatching RFQs
               </p>
             </div>
 
@@ -630,7 +630,7 @@ export const FindSupplierTab: React.FC<Props> = ({
             <div className="py-20 text-center text-[#586E75] space-y-2">
               <BookmarkPlus className="w-8 h-8 text-[#93A1A1] mx-auto" />
               <p className="text-xs font-semibold text-[#073642]">
-                No suppliers shortlisted yet. Switch back to Sourcing Feed and click "+ Shortlist".
+                No companies shortlisted yet. Switch back to Sourcing Feed and click "+ Shortlist".
               </p>
             </div>
           ) : (
@@ -724,4 +724,4 @@ export const FindSupplierTab: React.FC<Props> = ({
   );
 };
 
-export default FindSupplierTab;
+export default FindCompanyTab;

@@ -1,7 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 import { getGeminiApiKey } from './geminiService';
 
-export interface SourcedSupplier {
+export interface SourcedCompany {
   id: string;
   name: string;
   source: 'maps' | 'indiamart' | 'google' | 'tradeindia' | 'other';
@@ -45,14 +45,14 @@ const getSourceLabel = (source: string): string => {
   }
 };
 
-export const searchSuppliersAcrossWeb = async (
+export const searchCompaniesAcrossWeb = async (
   city: string,
   product: string
-): Promise<SourcedSupplier[]> => {
+): Promise<SourcedCompany[]> => {
   const apiKey = getGeminiApiKey();
 
   if (!apiKey || apiKey === 'your-gemini-api-key-here') {
-    return getFallbackSuppliers(city, product);
+    return getFallbackCompanies(city, product);
   }
 
   try {
@@ -60,15 +60,15 @@ export const searchSuppliersAcrossWeb = async (
     const prompt = `You are the Lead Industrial Procurement Sourcing AI for CosmoCnergy (Manufacturer of Lithium Battery Packs, Energy Storage Systems, and Power Electronics in India).
 
 MISSION:
-Find real, verified, or realistic industrial manufacturers, authorized distributors, and tier-1 suppliers for "${product}" in or near "${city}, India".
+Find real, verified, or realistic industrial manufacturers, authorized distributors, and tier-1 companies for "${product}" in or near "${city}, India".
 
 Analyze sources across Google Maps, IndiaMart, Google Search, and Trade Directories:
-1. "maps" - Local industrial area suppliers found on Google Maps in ${city}.
-2. "indiamart" - Listed B2B suppliers on IndiaMart for ${product} in ${city}.
+1. "maps" - Local industrial area companies found on Google Maps in ${city}.
+2. "indiamart" - Listed B2B companies on IndiaMart for ${product} in ${city}.
 3. "google" - Top manufacturer/distributor websites found via Google.
 4. "tradeindia" or "other" - Verified trade directory listings (TradeIndia, ExportersIndia).
 
-For EACH supplier, provide complete realistic industrial contact details:
+For EACH company, provide complete realistic industrial contact details:
 - Company Name
 - Source ("maps", "indiamart", "google", "tradeindia", "other")
 - Source Label (e.g. "📍 Google Maps", "🏭 IndiaMart", "🌐 Google Search", "📦 TradeIndia")
@@ -77,11 +77,11 @@ For EACH supplier, provide complete realistic industrial contact details:
 - Key Contact Person Name (e.g. "Rajesh Kumar (Sales)", "Amit Patel (Director)")
 - Address with industrial estate, landmark, and Pincode in ${city}
 - GST Number (15-digit Indian GST format)
-- Star rating (e.g. "4.8 ★ (140 reviews)" or "Verified Supplier")
+- Star rating (e.g. "4.8 ★ (140 reviews)" or "Verified Company")
 - Category (e.g. "Battery Cells", "Electronics", "Enclosures", "Hardware")
 - Website URL
 
-Return 8 to 12 high-quality supplier results spread evenly across the sources in valid JSON array format.`;
+Return 8 to 12 high-quality company results spread evenly across the sources in valid JSON array format.`;
 
     const candidateModels = ['gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
     let responseText = '';
@@ -103,25 +103,25 @@ Return 8 to 12 high-quality supplier results spread evenly across the sources in
           break;
         }
       } catch (err: any) {
-        console.warn(`[Supplier Sourcing] Model ${model} failed:`, err?.message || err);
+        console.warn(`[Company Sourcing] Model ${model} failed:`, err?.message || err);
       }
     }
 
     if (!responseText) {
-      return getFallbackSuppliers(city, product);
+      return getFallbackCompanies(city, product);
     }
 
     const cleanJson = responseText.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
     const parsed = JSON.parse(cleanJson);
-    const suppliersList = Array.isArray(parsed) ? parsed : parsed.suppliers || [];
+    const companiesList = Array.isArray(parsed) ? parsed : parsed.companies || [];
 
-    if (!Array.isArray(suppliersList) || suppliersList.length === 0) {
-      return getFallbackSuppliers(city, product);
+    if (!Array.isArray(companiesList) || companiesList.length === 0) {
+      return getFallbackCompanies(city, product);
     }
 
-    return suppliersList.map((s: any, idx: number) => ({
+    return companiesList.map((s: any, idx: number) => ({
       id: `supp_${Date.now()}_${idx}`,
-      name: s.name || `Industrial Supplier ${idx + 1}`,
+      name: s.name || `Industrial Company ${idx + 1}`,
       source: s.source || 'google',
       sourceLabel: s.sourceLabel || getSourceLabel(s.source),
       phoneNumber: s.phoneNumber || '',
@@ -131,35 +131,35 @@ Return 8 to 12 high-quality supplier results spread evenly across the sources in
       gstNumber: s.gstNumber || '',
       rating: s.rating || '4.6 ★ Verified',
       website: s.website || '',
-      category: s.category || 'General Supplier',
+      category: s.category || 'General Company',
       isShortlisted: false,
       isAddedToDb: false,
       isEnriching: false
     }));
   } catch (error) {
-    console.warn('[Supplier Sourcing] API query failed, using verified fallback data:', error);
-    return getFallbackSuppliers(city, product);
+    console.warn('[Company Sourcing] API query failed, using verified fallback data:', error);
+    return getFallbackCompanies(city, product);
   }
 };
 
-export const enrichSupplierContactAI = async (
-  supplier: SourcedSupplier,
+export const enrichCompanyContactAI = async (
+  company: SourcedCompany,
   city: string
-): Promise<Partial<SourcedSupplier>> => {
+): Promise<Partial<SourcedCompany>> => {
   const apiKey = getGeminiApiKey();
 
   if (!apiKey || apiKey === 'your-gemini-api-key-here') {
     return {
-      phoneNumber: supplier.phoneNumber || '+91 98220 54123',
-      email: supplier.email || `sales@${supplier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
-      contactPerson: supplier.contactPerson || 'Ramesh Kulkarni (Sales Head)',
-      gstNumber: supplier.gstNumber || '27AAECP1234F1Z5'
+      phoneNumber: company.phoneNumber || '+91 98220 54123',
+      email: company.email || `sales@${company.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
+      contactPerson: company.contactPerson || 'Ramesh Kulkarni (Sales Head)',
+      gstNumber: company.gstNumber || '27AAECP1234F1Z5'
     };
   }
 
   try {
     const ai = new GoogleGenAI({ apiKey });
-    const prompt = `Search online to find verified business contact details for the company: "${supplier.name}" located in "${supplier.address || city}, India".
+    const prompt = `Search online to find verified business contact details for the company: "${company.name}" located in "${company.address || city}, India".
 
 Extract:
 1. Mobile or WhatsApp Phone Number (10-digit Indian mobile number)
@@ -200,24 +200,24 @@ Return strictly valid JSON object with keys: phoneNumber, email, contactPerson, 
     const parsed = JSON.parse(cleanJson);
 
     return {
-      phoneNumber: parsed.phoneNumber || supplier.phoneNumber,
-      email: parsed.email || supplier.email,
-      contactPerson: parsed.contactPerson || supplier.contactPerson,
-      gstNumber: parsed.gstNumber || supplier.gstNumber,
-      address: parsed.address || supplier.address
+      phoneNumber: parsed.phoneNumber || company.phoneNumber,
+      email: parsed.email || company.email,
+      contactPerson: parsed.contactPerson || company.contactPerson,
+      gstNumber: parsed.gstNumber || company.gstNumber,
+      address: parsed.address || company.address
     };
   } catch (error) {
     console.error('AI Contact Enrichment Error:', error);
     return {
-      phoneNumber: supplier.phoneNumber || '+91 98220 54123',
-      email: supplier.email || `sales@${supplier.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
-      contactPerson: supplier.contactPerson || 'Suresh Deshmukh (Sales Manager)',
-      gstNumber: supplier.gstNumber || '27AAECP8921K1Z2'
+      phoneNumber: company.phoneNumber || '+91 98220 54123',
+      email: company.email || `sales@${company.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
+      contactPerson: company.contactPerson || 'Suresh Deshmukh (Sales Manager)',
+      gstNumber: company.gstNumber || '27AAECP8921K1Z2'
     };
   }
 };
 
-const getFallbackSuppliers = (city: string, product: string): SourcedSupplier[] => {
+const getFallbackCompanies = (city: string, product: string): SourcedCompany[] => {
   const cleanCity = city.trim() || 'Pune';
   const cleanProduct = product.trim() || '3.2V 100Ah LFP Battery Cells';
 
@@ -249,7 +249,7 @@ const getFallbackSuppliers = (city: string, product: string): SourcedSupplier[] 
       contactPerson: 'Vikas Sharma (Director)',
       address: `Shed B-12, Electronics Zone, ${cleanCity} - 411038`,
       gstNumber: '27AACCA4491D1Z8',
-      rating: '4.7 ★ Star Supplier',
+      rating: '4.7 ★ Star Company',
       website: 'https://apexenergy.co.in',
       category: 'Electronics / BMS',
       isShortlisted: false,

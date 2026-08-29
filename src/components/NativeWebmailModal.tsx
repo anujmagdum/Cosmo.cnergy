@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Supplier, determineOrderType, formatProcurementSubject } from '../types';
+import { Company, determineOrderType, formatProcurementSubject } from '../types';
 import { Mail, X, Paperclip, Send, CheckCircle, Zap, FileText, AlertCircle, Loader2 } from 'lucide-react';
 
 interface Props {
-  supplier: Supplier;
+  company: Company;
   itemName?: string;
   itemSpecs?: string;
   quantity?: number | string;
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const NativeWebmailModal: React.FC<Props> = ({
-  supplier,
+  company,
   itemName = 'Battery Cell / Materials Assembly',
   itemSpecs = 'Standard Industry Grade Specification',
   quantity = 100,
@@ -26,10 +26,10 @@ export const NativeWebmailModal: React.FC<Props> = ({
   const orderType = determineOrderType(context, statusState);
   const initialSubject = formatProcurementSubject(orderType, itemName);
 
-  const [toEmail, setToEmail] = useState(supplier.email || '');
+  const [toEmail, setToEmail] = useState(company.email || '');
   const [subject, setSubject] = useState(initialSubject);
 
-  const defaultBody = `Dear Sales Team (${supplier.name}),
+  const defaultBody = `Dear Sales Team (${company.name}),
 
 We at Cosmo Cnergy would like to request an official Request for Quotation (RFQ)/PO for the following item:
 
@@ -124,7 +124,7 @@ Cosmo Cnergy`;
                 </span>
               </div>
               <p className="text-xs text-[#586E75]">
-                Direct SMTP transport to <strong className="text-[#073642]">{supplier.name}</strong>
+                Direct SMTP transport to <strong className="text-[#073642]">{company.name}</strong>
               </p>
             </div>
           </div>

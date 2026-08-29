@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ProcurementOrder, OrderStatus, STATUS_MAP, Supplier } from '../types';
+import { ProcurementOrder, OrderStatus, STATUS_MAP, Company } from '../types';
 import { PDFEditorModal } from './PDFEditorModal';
 import { CsvManagerWidget } from './CsvManagerWidget';
 import { History, Calendar, User, Search, CheckCircle, Edit3, Trash2, AlertCircle } from 'lucide-react';
@@ -9,8 +9,8 @@ interface Props {
   onUpdateStatus: (orderId: string, newStatus: OrderStatus) => void;
   onUpdateOrder?: (updatedOrder: ProcurementOrder) => void;
   onDeleteOrder?: (orderId: string) => Promise<void> | void;
-  onOpenWhatsApp?: (supplier: Supplier, context?: string) => void;
-  onOpenWebmail?: (supplier: Supplier, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
+  onOpenWhatsApp?: (company: Company, context?: string) => void;
+  onOpenWebmail?: (company: Company, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
   onImportOrders?: (rows: any[]) => Promise<number | void> | number | void;
 }
 
@@ -71,7 +71,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
       const matchesSearch =
         !term ||
         o.order_number.toLowerCase().includes(term) ||
-        (o.supplier?.name || '').toLowerCase().includes(term) ||
+        (o.company?.name || '').toLowerCase().includes(term) ||
         (o.created_by || '').toLowerCase().includes(term);
       const matchesStatus = filterStatus === 'ALL' || o.status === filterStatus;
       return matchesSearch && matchesStatus;
@@ -141,7 +141,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
           <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
           <input
             type="text"
-            placeholder="Search order #, supplier, author..."
+            placeholder="Search order #, company, author..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-xl pl-10 pr-4 py-2 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 transition-all shadow-sm font-medium"
@@ -229,7 +229,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                 key={order.id}
                 className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all"
               >
-                {/* Left: Checkbox, Order Type, Order #, Supplier, Items Summary */}
+                {/* Left: Checkbox, Order Type, Order #, Company, Items Summary */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <input
                     type="checkbox"
@@ -250,7 +250,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                     <div className="flex items-center gap-2">
                       <h4 className="text-xs md:text-sm font-bold text-[#073642] font-mono truncate">{order.order_number}</h4>
                       <span className="text-[#586E75] text-[11px]">to</span>
-                      <span className="text-emerald-800 text-xs font-bold truncate">{order.supplier?.name || 'General Supplier'}</span>
+                      <span className="text-emerald-800 text-xs font-bold truncate">{order.company?.name || 'General Company'}</span>
                       <span className="px-1.5 py-0.2 rounded text-[10px] bg-[#EEE8D5] text-[#073642] font-semibold border border-[#D6D1B1] shrink-0">
                         {itemsCount} item{itemsCount !== 1 ? 's' : ''}
                       </span>

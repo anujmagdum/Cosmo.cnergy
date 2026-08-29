@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Download, Upload, FileSpreadsheet, Check, AlertCircle } from 'lucide-react';
 
-export type CsvSectionType = 'components' | 'orders' | 'suppliers';
+export type CsvSectionType = 'components' | 'orders' | 'companies';
 
 interface Props {
   sectionType: CsvSectionType;
@@ -13,16 +13,16 @@ const SECTION_HEADERS_CONFIG: Record<CsvSectionType, { title: string; requiredHe
   components: {
     title: 'Components CSV Template',
     requiredHeaders: ['name', 'category'],
-    optionalHeaders: ['preset_price', 'in_stock_qty', 'uom', 'specs', 'supplier_name', 'procurement_status']
+    optionalHeaders: ['preset_price', 'in_stock_qty', 'uom', 'specs', 'company_name', 'procurement_status']
   },
-  suppliers: {
-    title: 'Suppliers CSV Template',
+  companies: {
+    title: 'Companies CSV Template',
     requiredHeaders: ['name', 'email', 'phone'],
     optionalHeaders: ['contact_person', 'category', 'gstin', 'payment_terms', 'address', 'buying_url']
   },
   orders: {
     title: 'Orders CSV Template',
-    requiredHeaders: ['order_number', 'supplier_name'],
+    requiredHeaders: ['order_number', 'company_name'],
     optionalHeaders: ['type', 'status', 'total_amount', 'created_by', 'notes']
   }
 };
@@ -86,7 +86,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
       let rows: string[][] = [];
 
       if (sectionType === 'components') {
-        headers = ['Component Name', 'Category', 'Price (INR)', 'Stock Qty', 'UOM', 'Specs', 'Supplier Name', 'Procurement Status'];
+        headers = ['Component Name', 'Category', 'Price (INR)', 'Stock Qty', 'UOM', 'Specs', 'Company Name', 'Procurement Status'];
         rows = (data || []).map(item => [
           `"${(item.name || '').replace(/"/g, '""')}"`,
           `"${(item.category || 'Battery Cells').replace(/"/g, '""')}"`,
@@ -94,27 +94,27 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
           item.in_stock_qty !== undefined ? String(item.in_stock_qty) : '0',
           `"${(item.uom || 'Pcs').replace(/"/g, '""')}"`,
           `"${(item.specs || '').replace(/"/g, '""')}"`,
-          `"${(item.supplier?.name || item.supplier_name || '').replace(/"/g, '""')}"`,
+          `"${(item.company?.name || item.company_name || '').replace(/"/g, '""')}"`,
           `"${(item.procurement_status || 'TO_BE_ORDERED').replace(/"/g, '""')}"`
         ]);
-      } else if (sectionType === 'suppliers') {
-        headers = ['Supplier Name', 'Contact Person', 'Email', 'Phone', 'Category', 'GSTIN', 'Payment Terms', 'Address', 'Buying URL'];
+      } else if (sectionType === 'companies') {
+        headers = ['Company Name', 'Contact Person', 'Email', 'Phone', 'Category', 'GSTIN', 'Payment Terms', 'Address', 'Buying URL'];
         rows = (data || []).map(item => [
           `"${(item.name || '').replace(/"/g, '""')}"`,
           `"${(item.contact_person || '').replace(/"/g, '""')}"`,
           `"${(item.email || '').replace(/"/g, '""')}"`,
           `"${(item.phone || '').replace(/"/g, '""')}"`,
-          `"${(item.category || 'General Supplier').replace(/"/g, '""')}"`,
+          `"${(item.category || 'General Company').replace(/"/g, '""')}"`,
           `"${(item.gstin || '').replace(/"/g, '""')}"`,
           `"${(item.payment_terms || 'Net 30 Days').replace(/"/g, '""')}"`,
           `"${(item.address || '').replace(/"/g, '""')}"`,
           `"${(item.buying_url || '').replace(/"/g, '""')}"`
         ]);
       } else if (sectionType === 'orders') {
-        headers = ['Order Number', 'Supplier Name', 'Type', 'Status', 'Total Amount (INR)', 'Created By', 'Notes', 'Created At'];
+        headers = ['Order Number', 'Company Name', 'Type', 'Status', 'Total Amount (INR)', 'Created By', 'Notes', 'Created At'];
         rows = (data || []).map(item => [
           `"${(item.order_number || '').replace(/"/g, '""')}"`,
-          `"${(item.supplier?.name || item.supplier_name || '').replace(/"/g, '""')}"`,
+          `"${(item.company?.name || item.company_name || '').replace(/"/g, '""')}"`,
           `"${(item.type || 'PO').replace(/"/g, '""')}"`,
           `"${(item.status || 'ORDERED').replace(/"/g, '""')}"`,
           item.total_amount !== undefined ? String(item.total_amount) : '0',
@@ -173,8 +173,8 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
           val = val.replace(/^["']|["']$/g, '').trim();
 
           // Normalizations for known fields
-          if (key.includes('name') && !key.includes('supplier')) obj.name = val;
-          else if (key.includes('supplier') && key.includes('name')) obj.supplier_name = val;
+          if (key.includes('name') && !key.includes('company')) obj.name = val;
+          else if (key.includes('company') && key.includes('name')) obj.company_name = val;
           else if (key.includes('category')) obj.category = val;
           else if (key.includes('price') || key.includes('rate') || key.includes('amount')) obj.preset_price = Number(val) || 0;
           else if (key.includes('stock') || key.includes('qty')) obj.in_stock_qty = Number(val) || 0;

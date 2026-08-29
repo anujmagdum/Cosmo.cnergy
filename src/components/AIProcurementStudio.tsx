@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CatalogItem, Supplier, MultiSupplierPODraft } from '../types';
+import { CatalogItem, Company, MultiCompanyPODraft } from '../types';
 import {
   parseProcurementWithGemini,
   getGeminiApiKey,
@@ -23,13 +23,13 @@ import {
 
 interface Props {
   catalog: CatalogItem[];
-  suppliers: Supplier[];
-  onGenerateOrderFromAI: (drafts: MultiSupplierPODraft[]) => void;
+  companies: Company[];
+  onGenerateOrderFromAI: (drafts: MultiCompanyPODraft[]) => void;
 }
 
 export const AIProcurementStudio: React.FC<Props> = ({
   catalog,
-  suppliers,
+  companies,
   onGenerateOrderFromAI
 }) => {
   const [textPrompt, setTextPrompt] = useState('');
@@ -126,7 +126,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
   const handleConvertToOrder = () => {
     if (parsedItems.length === 0) return;
 
-    const supplierMap = new Map<string, MultiSupplierPODraft>();
+    const companyMap = new Map<string, MultiCompanyPODraft>();
 
     parsedItems.forEach(pi => {
       const matchedCatalog =
@@ -138,28 +138,28 @@ export const AIProcurementStudio: React.FC<Props> = ({
           specs: pi.specs || 'Extracted via Gemini Vision',
           preset_price: pi.estimatedPrice,
           uom: 'Pcs',
-          supplier_id: suppliers[0]?.id || 'supp-1'
+          company_id: companies[0]?.id || 'supp-1'
         };
 
-      const supplier =
-        suppliers.find(s => s.id === matchedCatalog.supplier_id) ||
-        suppliers[0] || {
+      const company =
+        companies.find(s => s.id === matchedCatalog.company_id) ||
+        companies[0] || {
           id: 'supp-1',
-          name: 'General Industrial Supplier',
+          name: 'General Industrial Company',
           contact_person: 'Sales Dept',
-          email: 'sales@supplier.com',
+          email: 'sales@company.com',
           phone: '+91 98765 43210'
         };
 
-      if (!supplierMap.has(supplier.id)) {
-        supplierMap.set(supplier.id, {
-          supplier,
+      if (!companyMap.has(company.id)) {
+        companyMap.set(company.id, {
+          company,
           items: [],
           total_amount: 0
         });
       }
 
-      const draft = supplierMap.get(supplier.id)!;
+      const draft = companyMap.get(company.id)!;
       const unitPrice = pi.estimatedPrice || matchedCatalog.preset_price || 100;
       const total_price = pi.quantity * unitPrice;
       draft.items.push({
@@ -171,7 +171,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
       draft.total_amount += total_price;
     });
 
-    onGenerateOrderFromAI(Array.from(supplierMap.values()));
+    onGenerateOrderFromAI(Array.from(companyMap.values()));
   };
 
   return (

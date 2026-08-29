@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { CatalogItem, ProductFolder, Supplier, ProductBOM, SearchResultItem, SearchResultSupplier, determineOrderType, formatProcurementSubject, NavigationTab } from '../types';
+import { CatalogItem, ProductFolder, Company, ProductBOM, SearchResultItem, SearchResultCompany, determineOrderType, formatProcurementSubject, NavigationTab } from '../types';
 import { executeUniversalSearch, SearchResultSet } from '../services/searchService';
 import { Search, X, Package, Folder, Truck, ExternalLink, Mail, MessageSquare, ChevronDown, ChevronUp, Sparkles, Building2, Send, CheckCircle2, ArrowRight } from 'lucide-react';
 
@@ -8,12 +8,12 @@ interface Props {
   onClose: () => void;
   catalog: CatalogItem[];
   folders: ProductFolder[];
-  suppliers: Supplier[];
+  companies: Company[];
   boms: ProductBOM[];
   onNavigateTab: (tab: NavigationTab) => void;
-  onDraftPO?: (supplier: Supplier, item: CatalogItem, qty?: number) => void;
-  onOpenWhatsApp?: (supplier: Supplier, context?: string) => void;
-  onOpenWebmail?: (supplier: Supplier, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
+  onDraftPO?: (company: Company, item: CatalogItem, qty?: number) => void;
+  onOpenWhatsApp?: (company: Company, context?: string) => void;
+  onOpenWebmail?: (company: Company, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
   onOpenFolder?: (folder: ProductFolder) => void;
 }
 
@@ -22,7 +22,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
   onClose,
   catalog,
   folders,
-  suppliers,
+  companies,
   boms,
   onNavigateTab,
   onDraftPO,
@@ -45,8 +45,8 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
   // Execute universal search
   const results: SearchResultSet = useMemo(() => {
-    return executeUniversalSearch(debouncedQuery, catalog, folders, suppliers, boms);
-  }, [debouncedQuery, catalog, folders, suppliers, boms]);
+    return executeUniversalSearch(debouncedQuery, catalog, folders, companies, boms);
+  }, [debouncedQuery, catalog, folders, companies, boms]);
 
   // Auto-expand components when there are 3 or fewer results
   useEffect(() => {
@@ -81,14 +81,14 @@ export const GlobalSearchModal: React.FC<Props> = ({
     }));
   };
 
-  const handleQuickDraftPO = (supplierData: SearchResultSupplier, itemResult: SearchResultItem) => {
-    const matchedSupplier = suppliers.find(s => s.id === supplierData.supplierId) || {
-      id: supplierData.supplierId,
-      name: supplierData.supplierName,
-      email: supplierData.email || 'sales@vendor.com',
-      phone: supplierData.phone || '+91 98765 43210',
-      whatsapp: supplierData.whatsapp || '919876543210',
-      contact_person: supplierData.contactPerson || 'Sales Dept'
+  const handleQuickDraftPO = (companyData: SearchResultCompany, itemResult: SearchResultItem) => {
+    const matchedCompany = companies.find(s => s.id === companyData.companyId) || {
+      id: companyData.companyId,
+      name: companyData.companyName,
+      email: companyData.email || 'sales@vendor.com',
+      phone: companyData.phone || '+91 98765 43210',
+      whatsapp: companyData.whatsapp || '919876543210',
+      contact_person: companyData.contactPerson || 'Sales Dept'
     };
 
     const targetCatalogItem = catalog.find(c => c.id === itemResult.id) || {
@@ -97,17 +97,17 @@ export const GlobalSearchModal: React.FC<Props> = ({
       name: itemResult.title,
       specs: itemResult.metadata?.specs || 'Standard',
       uom: itemResult.metadata?.uom || 'Pcs',
-      preset_price: supplierData.unitPrice || itemResult.metadata?.presetPrice || 100,
-      supplier_id: supplierData.supplierId
+      preset_price: companyData.unitPrice || itemResult.metadata?.presetPrice || 100,
+      company_id: companyData.companyId
     };
 
     if (onDraftPO) {
-      onDraftPO(matchedSupplier, targetCatalogItem, 20);
+      onDraftPO(matchedCompany, targetCatalogItem, 20);
     } else if (onOpenWebmail) {
       const orderType = determineOrderType('CATALOG_BOM');
       const subject = formatProcurementSubject(orderType, targetCatalogItem.name);
-      const body = `Dear ${matchedSupplier.contact_person || matchedSupplier.name},\n\nPlease accept our Purchase Order (PO) inquiry for:\n\n• Item: ${targetCatalogItem.name} (${targetCatalogItem.specs})\n• Required Quantity: 20 ${targetCatalogItem.uom}\n• Quoted Unit Price: ₹${supplierData.unitPrice || targetCatalogItem.preset_price}\n\nPlease confirm dispatch timeline.\n\nBest regards,\nProcurement Team\nCosmo Cnergy`;
-      onOpenWebmail(matchedSupplier, subject, body, 20 * (supplierData.unitPrice || Number(targetCatalogItem.preset_price) || 100), 'CATALOG_BOM', 'ORDERED');
+      const body = `Dear ${matchedCompany.contact_person || matchedCompany.name},\n\nPlease accept our Purchase Order (PO) inquiry for:\n\n• Item: ${targetCatalogItem.name} (${targetCatalogItem.specs})\n• Required Quantity: 20 ${targetCatalogItem.uom}\n• Quoted Unit Price: ₹${companyData.unitPrice || targetCatalogItem.preset_price}\n\nPlease confirm dispatch timeline.\n\nBest regards,\nProcurement Team\nCosmo Cnergy`;
+      onOpenWebmail(matchedCompany, subject, body, 20 * (companyData.unitPrice || Number(targetCatalogItem.preset_price) || 100), 'CATALOG_BOM', 'ORDERED');
       onClose();
     }
   };
@@ -127,7 +127,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               autoFocus
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              placeholder="Search components, MPN, SKUs, product folders, suppliers..."
+              placeholder="Search components, MPN, SKUs, product folders, companies..."
               className="w-full bg-[#12243d] border border-slate-700 text-white placeholder-slate-400 rounded-2xl px-4 py-2.5 text-sm md:text-base focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 font-medium"
             />
             {searchTerm && (
@@ -192,7 +192,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                   : 'bg-[#FDF6E3] text-[#073642] hover:bg-[#E4DDC7] border border-[#D6D1B1]'
               }`}
             >
-              Suppliers ({results.suppliers.length})
+              Companies ({results.companies.length})
             </button>
           </div>
 
@@ -207,7 +207,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
             <div className="py-12 text-center space-y-3 text-[#586E75]">
               <Sparkles className="w-10 h-10 text-emerald-600 mx-auto opacity-80" />
               <p className="text-sm font-semibold text-[#073642]">
-                Type any component name, part number, SKU, product folder, or supplier name.
+                Type any component name, part number, SKU, product folder, or company name.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs">
                 <span className="text-[#586E75]">Try searching:</span>
@@ -244,7 +244,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                     <div className="space-y-3">
                       {results.components.map(item => {
                         const isExpanded = expandedComponentIds[item.id];
-                        const suppliersList = item.metadata?.suppliers || [];
+                        const companiesList = item.metadata?.companies || [];
 
                         return (
                           <div
@@ -276,7 +276,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                   onClick={() => toggleComponentExpand(item.id)}
                                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FDF6E3] hover:bg-emerald-50 text-emerald-800 border border-[#D6D1B1] text-xs font-bold transition-all"
                                 >
-                                  <span>{suppliersList.length} Associated Supplier(s)</span>
+                                  <span>{companiesList.length} Associated Company(s)</span>
                                   {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                                 </button>
 
@@ -293,7 +293,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                               </div>
                             </div>
 
-                            {/* RELATIONAL EXPANSION: Associated Suppliers List */}
+                            {/* RELATIONAL EXPANSION: Associated Companies List */}
                             {isExpanded && (
                               <div className="p-4 bg-[#FDF6E3] border-t border-[#D6D1B1] space-y-2.5">
                                 <span className="text-[11px] font-bold text-[#586E75] uppercase tracking-wider block">
@@ -301,15 +301,15 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                 </span>
 
                                 <div className="grid grid-cols-1 gap-2">
-                                  {suppliersList.map(supp => (
+                                  {companiesList.map(supp => (
                                     <div
-                                      key={supp.supplierId}
+                                      key={supp.companyId}
                                       className="p-3 bg-[#EEE8D5] rounded-xl border border-[#D6D1B1] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:shadow-xs transition-all"
                                     >
                                       <div className="space-y-0.5">
                                         <div className="flex items-center gap-2">
                                           <Building2 className="w-3.5 h-3.5 text-emerald-600" />
-                                          <span className="font-bold text-xs text-[#073642]">{supp.supplierName}</span>
+                                          <span className="font-bold text-xs text-[#073642]">{supp.companyName}</span>
                                           {supp.isPrimary && (
                                             <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                                               Primary Vendor
@@ -335,11 +335,11 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                           <button
                                             onClick={() => {
                                               const cleanPhone = supp.whatsapp?.replace(/[^0-9]/g, '');
-                                              const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(`Hi ${supp.supplierName}, request for quote for ${item.title} (${item.metadata?.sku}).`)}`;
+                                              const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(`Hi ${supp.companyName}, request for quote for ${item.title} (${item.metadata?.sku}).`)}`;
                                               window.open(waUrl, '_blank');
                                             }}
                                             className="p-1.5 rounded-lg bg-[#FDF6E3] hover:bg-[#E4DDC7] text-emerald-800 border border-[#D6D1B1] text-xs transition-all"
-                                            title="WhatsApp Supplier"
+                                            title="WhatsApp Company"
                                           >
                                             <MessageSquare className="w-3.5 h-3.5" />
                                           </button>
@@ -406,15 +406,15 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
               {/* SUBSECTION 3: SUPPLIERS & VENDORS */}
               {(activeCategoryFilter === 'ALL' || activeCategoryFilter === 'SUPPLIERS') &&
-                results.suppliers.length > 0 && (
+                results.companies.length > 0 && (
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold text-[#586E75] uppercase tracking-wider">
                       <Truck className="w-4 h-4 text-emerald-600" />
-                      <span>Suppliers & Partners ({results.suppliers.length})</span>
+                      <span>Companies & Partners ({results.companies.length})</span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {results.suppliers.map(supp => (
+                      {results.companies.map(supp => (
                         <div
                           key={supp.id}
                           className="p-4 bg-[#EEE8D5] rounded-2xl border border-[#D6D1B1] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
@@ -441,7 +441,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                               }}
                               className="flex items-center gap-1 font-bold text-emerald-800 hover:text-emerald-900"
                             >
-                              <span>View Supplier</span>
+                              <span>View Company</span>
                               <ArrowRight className="w-3.5 h-3.5" />
                             </button>
                           </div>
@@ -460,7 +460,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
             <span className="px-2 py-0.5 rounded bg-[#FDF6E3] text-[#073642] font-mono font-bold text-[10px] border border-[#D6D1B1]">
               Ctrl+K
             </span>
-            <span>Universal cross-entity search with supplier expansion</span>
+            <span>Universal cross-entity search with company expansion</span>
           </div>
 
           <button

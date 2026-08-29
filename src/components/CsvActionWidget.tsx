@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Download, Upload, Loader2, CheckCircle2, AlertCircle, FileSpreadsheet } from 'lucide-react';
 
-export type CsvSectionType = 'components' | 'orders' | 'suppliers';
+export type CsvSectionType = 'components' | 'orders' | 'companies';
 
 interface Props {
   sectionType: CsvSectionType;
@@ -52,8 +52,8 @@ export const CsvActionWidget: React.FC<Props> = ({
         'In-Stock Qty',
         'Min Order Qty',
         'UOM',
-        'Supplier ID',
-        'Supplier Name',
+        'Company ID',
+        'Company Name',
         'Technical Specifications',
         'Procurement Status'
       ];
@@ -66,8 +66,8 @@ export const CsvActionWidget: React.FC<Props> = ({
         escapeCsvValue(item.in_stock_qty ?? 0),
         escapeCsvValue(item.min_order_qty ?? 1),
         escapeCsvValue(item.uom || 'Pcs'),
-        escapeCsvValue(item.supplier_id || ''),
-        escapeCsvValue(item.supplier?.name || ''),
+        escapeCsvValue(item.company_id || ''),
+        escapeCsvValue(item.company?.name || ''),
         escapeCsvValue(item.specs || ''),
         escapeCsvValue(item.procurement_status || 'TO_BE_ORDERED')
       ]);
@@ -76,8 +76,8 @@ export const CsvActionWidget: React.FC<Props> = ({
         'Order Number',
         'Document Type',
         'Order Status',
-        'Supplier ID',
-        'Supplier Name',
+        'Company ID',
+        'Company Name',
         'Total Amount (INR)',
         'Items Count',
         'Items Detail',
@@ -95,8 +95,8 @@ export const CsvActionWidget: React.FC<Props> = ({
           escapeCsvValue(order.order_number || ''),
           escapeCsvValue(order.type || 'PO'),
           escapeCsvValue(order.status || 'ORDERED'),
-          escapeCsvValue(order.supplier_id || ''),
-          escapeCsvValue(order.supplier?.name || ''),
+          escapeCsvValue(order.company_id || ''),
+          escapeCsvValue(order.company?.name || ''),
           escapeCsvValue(order.total_amount ?? 0),
           escapeCsvValue((order.items || []).length),
           escapeCsvValue(itemsSummary),
@@ -105,7 +105,7 @@ export const CsvActionWidget: React.FC<Props> = ({
           escapeCsvValue(order.notes || '')
         ];
       });
-    } else if (sectionType === 'suppliers') {
+    } else if (sectionType === 'companies') {
       headers = [
         'Company Name',
         'Contact Person',
@@ -126,7 +126,7 @@ export const CsvActionWidget: React.FC<Props> = ({
         escapeCsvValue(supp.email || ''),
         escapeCsvValue(supp.phone || ''),
         escapeCsvValue(supp.whatsapp || supp.phone || ''),
-        escapeCsvValue(supp.category || 'General Supplier'),
+        escapeCsvValue(supp.category || 'General Company'),
         escapeCsvValue(supp.gstin || ''),
         escapeCsvValue(supp.payment_terms || 'Net 30 Days'),
         escapeCsvValue(supp.address || ''),
@@ -233,8 +233,8 @@ export const CsvActionWidget: React.FC<Props> = ({
               in_stock_qty: parseInt(rowObj.instockqty || rowObj.stockquantity || rowObj.stock || rowObj.qty || '100', 10) || 100,
               min_order_qty: parseInt(rowObj.minorderqty || rowObj.moq || '1', 10) || 1,
               uom: rowObj.uom || rowObj.unit || 'Pcs',
-              supplier_id: rowObj.supplierid || '',
-              supplier_name: rowObj.suppliername || rowObj.supplier || '',
+              company_id: rowObj.companyid || '',
+              company_name: rowObj.companyname || rowObj.company || '',
               specs: rowObj.technicalspecifications || rowObj.specs || rowObj.specification || '',
               procurement_status: rowObj.procurementstatus || rowObj.status || 'TO_BE_ORDERED'
             });
@@ -244,14 +244,14 @@ export const CsvActionWidget: React.FC<Props> = ({
               order_number: orderNum,
               type: (rowObj.documenttype || rowObj.type || 'PO').toUpperCase() === 'RFQ' ? 'RFQ' : 'PO',
               status: rowObj.orderstatus || rowObj.status || 'ORDERED',
-              supplier_id: rowObj.supplierid || '',
-              supplier_name: rowObj.suppliername || rowObj.supplier || '',
+              company_id: rowObj.companyid || '',
+              company_name: rowObj.companyname || rowObj.company || '',
               total_amount: parseFloat(rowObj.totalamountinr || rowObj.totalamount || rowObj.amount || '0') || 0,
               created_by: rowObj.createdby || 'ANUJ (PROCUREMENT HEAD)',
               notes: rowObj.notes || rowObj.remarks || ''
             });
-          } else if (sectionType === 'suppliers') {
-            const name = rowObj.companyname || rowObj.name || rowObj.suppliername || rowObj.supplier;
+          } else if (sectionType === 'companies') {
+            const name = rowObj.companyname || rowObj.name || rowObj.companyname || rowObj.company;
             if (!name) continue;
 
             parsedRows.push({
@@ -260,7 +260,7 @@ export const CsvActionWidget: React.FC<Props> = ({
               email: rowObj.emailaddress || rowObj.email || 'sales@vendor.com',
               phone: rowObj.phonenumber || rowObj.phone || rowObj.mobile || '+91 98765 43210',
               whatsapp: rowObj.whatsapp || rowObj.phone || '',
-              category: rowObj.category || 'General Supplier',
+              category: rowObj.category || 'General Company',
               gstin: rowObj.gstin || rowObj.gst || '',
               payment_terms: rowObj.paymentterms || rowObj.terms || 'Net 30 Days',
               address: rowObj.address || rowObj.plantaddress || '',

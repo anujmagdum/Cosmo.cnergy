@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { MultiSupplierPODraft, Supplier } from '../types';
+import { MultiCompanyPODraft, Company } from '../types';
 import { Mail, MessageSquare, Check, X, ShieldAlert, Sparkles, ArrowRight, Rocket, Building2 } from 'lucide-react';
 import { generateProcurementEmailBodyWithGemini } from '../services/geminiService';
 
 interface Props {
-  drafts: MultiSupplierPODraft[];
+  drafts: MultiCompanyPODraft[];
   type: 'PO' | 'RFQ';
   onClose: () => void;
-  onConfirmAll: (drafts: MultiSupplierPODraft[], type: 'PO' | 'RFQ') => Promise<void>;
-  onOpenWebmail?: (supplier: Supplier, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
+  onConfirmAll: (drafts: MultiCompanyPODraft[], type: 'PO' | 'RFQ') => Promise<void>;
+  onOpenWebmail?: (company: Company, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
 }
 
 export const MultiVendorDispatchModal: React.FC<Props> = ({
@@ -22,8 +22,8 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [loadingVendorId, setLoadingVendorId] = useState<string | null>(null);
 
-  const handleDispatchVendorWebmail = async (draft: MultiSupplierPODraft) => {
-    setLoadingVendorId(draft.supplier.id);
+  const handleDispatchVendorWebmail = async (draft: MultiCompanyPODraft) => {
+    setLoadingVendorId(draft.company.id);
     try {
       const orderNum = `${type}-2026-${Math.floor(1000 + Math.random() * 9000)}`;
       const itemsList = draft.items.map(i => ({
@@ -36,15 +36,15 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
       const { subject, body } = await generateProcurementEmailBodyWithGemini(
         orderNum,
         type,
-        draft.supplier.name,
-        draft.supplier.contact_person || '',
+        draft.company.name,
+        draft.company.contact_person || '',
         draft.total_amount,
         itemsList
       );
 
       if (onOpenWebmail) {
         onOpenWebmail(
-          draft.supplier,
+          draft.company,
           subject,
           body,
           draft.total_amount,
@@ -53,7 +53,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
         );
       }
 
-      setDispatchedMap(prev => ({ ...prev, [draft.supplier.id]: 'webmail' }));
+      setDispatchedMap(prev => ({ ...prev, [draft.company.id]: 'webmail' }));
       onClose();
     } catch (e) {
       console.error('Webmail dispatch error:', e);
@@ -62,8 +62,8 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
     }
   };
 
-  const handleDispatchVendorWhatsApp = (draft: MultiSupplierPODraft) => {
-    const phone = draft.supplier.whatsapp || draft.supplier.phone || '';
+  const handleDispatchVendorWhatsApp = (draft: MultiCompanyPODraft) => {
+    const phone = draft.company.whatsapp || draft.company.phone || '';
     const cleanPhone = phone.replace(/[^0-9]/g, '');
     const orderNum = `${type}-2026-${Math.floor(1000 + Math.random() * 9000)}`;
 
@@ -71,13 +71,13 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
       .map(i => `• *${i.catalogItem.name}*: ${i.quantity} ${i.catalogItem.uom || 'Pcs'} @ ₹${i.unit_price} = ₹${i.total_price}`)
       .join('\n');
 
-    const waText = `*COSMOCNERGY PROCUREMENT* 🚀\n----------------------------------------\n📄 *${type}:* ${orderNum}\n🏢 *Vendor:* ${draft.supplier.name}\n\n📦 *ITEMS:*\n${itemsText}\n\n💰 *TOTAL:* ₹${Number(draft.total_amount).toLocaleString('en-IN')}`;
+    const waText = `*COSMOCNERGY PROCUREMENT* 🚀\n----------------------------------------\n📄 *${type}:* ${orderNum}\n🏢 *Vendor:* ${draft.company.name}\n\n📦 *ITEMS:*\n${itemsText}\n\n💰 *TOTAL:* ₹${Number(draft.total_amount).toLocaleString('en-IN')}`;
     const waUrl = cleanPhone
       ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waText)}`
       : `https://wa.me/?text=${encodeURIComponent(waText)}`;
 
     window.open(waUrl, '_blank');
-    setDispatchedMap(prev => ({ ...prev, [draft.supplier.id]: 'whatsapp' }));
+    setDispatchedMap(prev => ({ ...prev, [draft.company.id]: 'whatsapp' }));
   };
 
   const handleFinishAll = async () => {
@@ -122,11 +122,11 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
         {/* Vendor Cards List */}
         <div className="space-y-3 max-h-[50vh] overflow-y-auto pr-1">
           {drafts.map((draft, idx) => {
-            const isDispatched = Boolean(dispatchedMap[draft.supplier.id]);
+            const isDispatched = Boolean(dispatchedMap[draft.company.id]);
 
             return (
               <div
-                key={draft.supplier.id}
+                key={draft.company.id}
                 className={`p-4 rounded-2xl border transition-all ${
                   isDispatched ? 'bg-emerald-50/70 border-emerald-300' : 'bg-[#EEE8D5]/70 border-[#D6D1B1]'
                 }`}
@@ -137,9 +137,9 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
                       {idx + 1}
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-[#073642]">{draft.supplier.name}</h4>
+                      <h4 className="font-bold text-sm text-[#073642]">{draft.company.name}</h4>
                       <p className="text-[11px] text-[#586E75]">
-                        {draft.supplier.email} • {draft.items.length} items • <strong className="text-emerald-800 font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
+                        {draft.company.email} • {draft.items.length} items • <strong className="text-emerald-800 font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
                       </p>
                     </div>
                   </div>
@@ -147,7 +147,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleDispatchVendorWebmail(draft)}
-                      disabled={loadingVendorId === draft.supplier.id}
+                      disabled={loadingVendorId === draft.company.id}
                       className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs active:scale-95 transition-all"
                     >
                       <Mail className="w-3.5 h-3.5" />

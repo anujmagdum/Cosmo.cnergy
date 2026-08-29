@@ -3,12 +3,12 @@
 -- ====================================================================
 -- Target Supabase Project: obvahbbqvujqxbaqurjg
 -- Description:
---   1. Recreates all tables (categories, suppliers, catalog_items, product_folders,
+--   1. Recreates all tables (categories, companies, catalog_items, product_folders,
 --      product_boms, procurement_orders, order_items, users, webmail_accounts).
 --   2. Enables Row Level Security (RLS) with full permissive CRUD policies
 --      for 'anon' and 'authenticated' roles.
 --   3. Sets up Foreign Key constraints with proper ON DELETE CASCADE / SET NULL.
---   4. Seeds initial default categories, suppliers, components, and BOM recipes.
+--   4. Seeds initial default categories, companies, components, and BOM recipes.
 --   5. Reloads PostgREST schema cache via NOTIFY pgrst, 'reload schema'.
 --
 -- Instructions: Run this entire script in Supabase Dashboard -> SQL Editor -> Run
@@ -33,18 +33,18 @@ CREATE TABLE IF NOT EXISTS public.categories (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2. suppliers
-CREATE TABLE IF NOT EXISTS public.suppliers (
+-- 2. companies
+CREATE TABLE IF NOT EXISTS public.companies (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     name TEXT NOT NULL,
     contact_person TEXT NOT NULL DEFAULT 'Sales Dept',
-    email TEXT NOT NULL DEFAULT 'sales@supplier.com',
+    email TEXT NOT NULL DEFAULT 'sales@company.com',
     phone TEXT DEFAULT '',
     whatsapp TEXT DEFAULT '',
     buying_url TEXT DEFAULT '',
     address TEXT DEFAULT '',
     category_id TEXT REFERENCES public.categories(id) ON DELETE SET NULL,
-    category TEXT DEFAULT 'General Supplier',
+    category TEXT DEFAULT 'General Company',
     rating NUMERIC(3, 2) DEFAULT 4.80,
     gstin TEXT DEFAULT '',
     payment_terms TEXT DEFAULT 'Net 30 Days',
@@ -61,11 +61,11 @@ CREATE TABLE IF NOT EXISTS public.catalog_items (
     specs TEXT DEFAULT '',
     uom TEXT DEFAULT 'Pcs',
     preset_price NUMERIC(12, 2) DEFAULT 0.00,
-    supplier_id TEXT REFERENCES public.suppliers(id) ON DELETE SET NULL,
+    company_id TEXT REFERENCES public.companies(id) ON DELETE SET NULL,
     min_order_qty INT DEFAULT 1,
     in_stock_qty INT DEFAULT 100,
     procurement_status TEXT DEFAULT 'TO_BE_ORDERED',
-    supplier_url TEXT DEFAULT '',
+    company_url TEXT DEFAULT '',
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS public.product_boms (
 CREATE TABLE IF NOT EXISTS public.procurement_orders (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
     order_number TEXT NOT NULL DEFAULT ('PO-' || to_char(NOW(), 'YYYYMMDD') || '-' || substr(md5(random()::text), 1, 4)),
-    supplier_id TEXT REFERENCES public.suppliers(id) ON DELETE SET NULL,
+    company_id TEXT REFERENCES public.companies(id) ON DELETE SET NULL,
     type TEXT CHECK (type IN ('PO', 'RFQ')) DEFAULT 'PO',
     status TEXT CHECK (status IN ('TO_BE_ORDERED', 'RFQ_SENT', 'ORDERED', 'DELIVERED', 'ON_HOLD')) DEFAULT 'ORDERED',
     total_amount NUMERIC(14, 2) DEFAULT 0.00,
@@ -146,10 +146,10 @@ CREATE TABLE IF NOT EXISTS public.webmail_accounts (
 -- --------------------------------------------------------------------
 -- STEP 3: CREATE INDEXES FOR FAST QUERY EXECUTION
 -- --------------------------------------------------------------------
-CREATE INDEX IF NOT EXISTS idx_catalog_items_supplier ON public.catalog_items(supplier_id);
+CREATE INDEX IF NOT EXISTS idx_catalog_items_company ON public.catalog_items(company_id);
 CREATE INDEX IF NOT EXISTS idx_catalog_items_category ON public.catalog_items(category_id);
-CREATE INDEX IF NOT EXISTS idx_suppliers_category ON public.suppliers(category_id);
-CREATE INDEX IF NOT EXISTS idx_procurement_orders_supplier ON public.procurement_orders(supplier_id);
+CREATE INDEX IF NOT EXISTS idx_companies_category ON public.companies(category_id);
+CREATE INDEX IF NOT EXISTS idx_procurement_orders_company ON public.procurement_orders(company_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_order ON public.order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_item ON public.order_items(item_id);
 CREATE INDEX IF NOT EXISTS idx_product_boms_raw_mat ON public.product_boms(raw_material_id);
@@ -161,7 +161,7 @@ CREATE INDEX IF NOT EXISTS idx_product_boms_raw_mat ON public.product_boms(raw_m
 
 -- Enable RLS across all tables
 ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.suppliers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.companies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.catalog_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.product_folders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.product_boms ENABLE ROW LEVEL SECURITY;
@@ -189,8 +189,8 @@ END $$;
 -- 1. categories
 CREATE POLICY "categories_all" ON public.categories FOR ALL USING (true) WITH CHECK (true);
 
--- 2. suppliers
-CREATE POLICY "suppliers_all" ON public.suppliers FOR ALL USING (true) WITH CHECK (true);
+-- 2. companies
+CREATE POLICY "companies_all" ON public.companies FOR ALL USING (true) WITH CHECK (true);
 
 -- 3. catalog_items
 CREATE POLICY "catalog_items_all" ON public.catalog_items FOR ALL USING (true) WITH CHECK (true);
@@ -226,11 +226,11 @@ VALUES
     ('catg-3', 'Connectors & Busbars', 'Flexible Copper Busbars, Nickel Strips & High-Current Terminals'),
     ('catg-4', 'Metal Enclosures', 'IP65 Rated Cabinets, Rack Mount Enclosures & Structural Sheet Metal'),
     ('catg-5', 'Wiring & Harnesses', 'High-Temp Silicone Cables, Wire Harnesses & Multi-Pin Connectors'),
-    ('catg-6', 'General Supplier', 'Consumables, Thermal Pads, Fasteners & Production Tools')
+    ('catg-6', 'General Company', 'Consumables, Thermal Pads, Fasteners & Production Tools')
 ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description;
 
--- Suppliers
-INSERT INTO public.suppliers (id, name, contact_person, email, phone, whatsapp, buying_url, address, category, category_id, rating)
+-- Companies
+INSERT INTO public.companies (id, name, contact_person, email, phone, whatsapp, buying_url, address, category, category_id, rating)
 VALUES
     ('11111111-1111-1111-1111-111111111111', 'CellTech Energy Systems', 'Rajesh Sharma', 'sales@celltechenergy.com', '+91 98765 43210', '919876543210', 'https://celltechenergy.com/portal', 'Plot 45, Electronics City Phase 1, Bengaluru', 'Battery Cells', 'catg-1', 4.80),
     ('22222222-2222-2222-2222-222222222222', 'BMS Master Solutions', 'Anita Desai', 'orders@bmsmasters.com', '+91 98123 45678', '919812345678', 'https://bmsmasters.com/b2b', 'Sector 62, Tech Zone, Noida', 'Electronics / BMS', 'catg-2', 4.90),
@@ -239,7 +239,7 @@ VALUES
 ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, email = EXCLUDED.email;
 
 -- Catalog Items (Components)
-INSERT INTO public.catalog_items (id, sku, name, category, category_id, specs, uom, preset_price, supplier_id, min_order_qty, in_stock_qty, procurement_status)
+INSERT INTO public.catalog_items (id, sku, name, category, category_id, specs, uom, preset_price, company_id, min_order_qty, in_stock_qty, procurement_status)
 VALUES
     ('c1111111-1111-1111-1111-111111111111', 'CELL-3.2V-100AH', '3.2V 100Ah LFP Grade A Cell', 'Battery Cells', 'catg-1', 'LiFePO4, 3.2V, 100Ah, 6000 Cycles, M6 Terminals', 'Pcs', 2850.00, '11111111-1111-1111-1111-111111111111', 16, 640, 'TO_BE_ORDERED'),
     ('c2222222-2222-2222-2222-222222222222', 'BMS-16S-100A', '16S 100A Smart Bluetooth BMS', 'Electronics / BMS', 'catg-2', 'UART/CAN Bus, Active Balancing 1A, Temp Sensors', 'Pcs', 3400.00, '22222222-2222-2222-2222-222222222222', 1, 45, 'TO_BE_ORDERED'),

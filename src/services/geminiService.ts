@@ -313,7 +313,7 @@ export const dynamicHeuristicParse = (
 export const generateProcurementEmailBodyWithGemini = async (
   orderNumber: string,
   type: string,
-  supplierName: string,
+  vendorName: string,
   contactPerson: string,
   totalAmount: number,
   items: { name: string; qty: number; unitPrice: number; totalPrice: number }[]
@@ -321,13 +321,13 @@ export const generateProcurementEmailBodyWithGemini = async (
   const companyName = import.meta.env.VITE_COMPANY_NAME || 'CosmoCnergy Procurement Ltd.';
   const defaultSubject =
     type === 'RFQ'
-      ? `Request for Quotation (RFQ) - ${orderNumber} - ${supplierName}`
-      : `Purchase Order (PO) - ${orderNumber} - ${supplierName}`;
+      ? `Request for Quotation (RFQ) - ${orderNumber} - ${companyName}`
+      : `Purchase Order (PO) - ${orderNumber} - ${companyName}`;
   const itemsText = items
     .map(i => `- ${i.name}: ${i.qty} units @ ₹${i.unitPrice} = ₹${i.totalPrice}`)
     .join('\n');
 
-  const fallbackBody = `Dear ${contactPerson || supplierName},\n\nPlease accept our ${type === 'RFQ' ? 'Request for Quotation' : 'Purchase Order'} ${orderNumber}.\n\nItems Requested:\n${itemsText}\n\nTotal Amount: ₹${Number(totalAmount).toLocaleString('en-IN')}\n\nPlease confirm availability and expected dispatch schedule at your earliest convenience.\n\nBest regards,\nProcurement Team\n${companyName}`;
+  const fallbackBody = `Dear ${contactPerson || vendorName},\n\nPlease accept our ${type === 'RFQ' ? 'Request for Quotation' : 'Purchase Order'} ${orderNumber}.\n\nItems Requested:\n${itemsText}\n\nTotal Amount: ₹${Number(totalAmount).toLocaleString('en-IN')}\n\nPlease confirm availability and expected dispatch schedule at your earliest convenience.\n\nBest regards,\nProcurement Team\n${companyName}`;
 
   const apiKey = getGeminiApiKey();
   if (!apiKey || apiKey === 'your-gemini-api-key-here') {
@@ -340,7 +340,7 @@ export const generateProcurementEmailBodyWithGemini = async (
 Draft a professional, courteous, concise, and business-ready procurement email for:
 - Order Type: ${type === 'RFQ' ? 'Request for Quotation' : 'Purchase Order'}
 - Order Number: ${orderNumber}
-- Supplier: ${supplierName} (Contact: ${contactPerson})
+- Company: ${companyName} (Contact: ${contactPerson})
 - Line Items:
 ${itemsText}
 - Total Amount: ₹${Number(totalAmount).toLocaleString('en-IN')}

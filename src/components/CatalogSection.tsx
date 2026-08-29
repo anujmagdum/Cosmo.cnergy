@@ -1,17 +1,17 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   CatalogItem,
-  Supplier,
+  Company,
   ProcurementOrder,
   OrderStatus,
   ProductFolder,
   ProductBOM,
   ProductFolderComponent,
-  MultiSupplierPODraft,
+  MultiCompanyPODraft,
   QueuedMailDraft,
   STATUS_MAP,
   Category,
-  ComponentSupplier
+  ComponentCompany
 } from '../types';
 import { SKUCapacityCalculator } from './SKUCapacityCalculator';
 import { ReOrderConfirmationModal } from './ReOrderConfirmationModal';
@@ -44,8 +44,8 @@ import {
 
 interface Props {
   catalog: CatalogItem[];
-  suppliers: Supplier[];
-  componentSuppliers?: ComponentSupplier[];
+  companies: Company[];
+  componentCompanies?: ComponentCompany[];
   orders: ProcurementOrder[];
   folders: ProductFolder[];
   boms: ProductBOM[];
@@ -55,14 +55,14 @@ interface Props {
   onAddProductFolder: (folderName: string) => Promise<any> | void;
   onUpdateFolderLinkedPOs: (folderId: string, poIds: string[]) => void;
   onUpdateFolderComponents?: (folderId: string, components: ProductFolderComponent[]) => void;
-  onUpdateSupplierContact?: (supplierId: string, email: string, phone: string) => Promise<void> | void;
-  onLogOrders?: (drafts: MultiSupplierPODraft[]) => Promise<void> | void;
+  onUpdateCompanyContact?: (companyId: string, email: string, phone: string) => Promise<void> | void;
+  onLogOrders?: (drafts: MultiCompanyPODraft[]) => Promise<void> | void;
   onDeleteProductFolder: (folderId: string) => Promise<void> | void;
   onDeleteOrder: (orderId: string) => Promise<void> | void;
   onDeleteCatalogItem: (itemId: string) => Promise<void> | void;
   onQuickReorder: (item: CatalogItem, qty: number) => void;
-  onOpenWhatsApp: (supplier: Supplier, context?: string) => void;
-  onOpenWebmail: (supplier: Supplier, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
+  onOpenWhatsApp: (company: Company, context?: string) => void;
+  onOpenWebmail: (company: Company, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
   onEnqueueMailDrafts?: (drafts: QueuedMailDraft[], openFirstImmediately?: boolean) => void;
   onImportComponents?: (rows: any[]) => Promise<number | void> | number | void;
   onOpenComparisonDrawer?: (component: CatalogItem) => void;
@@ -74,13 +74,13 @@ const DEFAULT_CATEGORIES = [
   'Connectors & Busbars',
   'Metal Enclosures',
   'Wiring & Harnesses',
-  'General Supplier'
+  'General Company'
 ];
 
 export const CatalogSection: React.FC<Props> = ({
   catalog,
-  suppliers,
-  componentSuppliers = [],
+  companies,
+  componentCompanies = [],
   orders,
   folders,
   boms,
@@ -204,7 +204,7 @@ export const CatalogSection: React.FC<Props> = ({
     }
   };
 
-  // Add Component Form State supporting Multi-Supplier Association
+  // Add Component Form State supporting Multi-Company Association
   const [catalogForm, setCatalogForm] = useState({
     name: '',
     category: 'Battery Cells',
@@ -214,9 +214,9 @@ export const CatalogSection: React.FC<Props> = ({
     alert_threshold_percent: 20,
     uom: 'Pcs',
     specs: '',
-    selectedSuppliers: (suppliers[0] ? [
+    selectedCompanies: (companies[0] ? [
       {
-        supplier_id: suppliers[0].id,
+        company_id: companies[0].id,
         unit_price: 150,
         rfq_quoted_price: 150,
         moq: 10,
@@ -227,20 +227,20 @@ export const CatalogSection: React.FC<Props> = ({
     procurement_status: 'TO_BE_ORDERED' as OrderStatus,
     image_drive_url: ''
   });
-  const [supplierValidationMsg, setSupplierValidationMsg] = useState<string | null>(null);
+  const [companyValidationMsg, setCompanyValidationMsg] = useState<string | null>(null);
 
-  const handleAddSupplierToForm = (supplierId: string) => {
-    if (!supplierId) return;
-    if (catalogForm.selectedSuppliers.some(s => s.supplier_id === supplierId)) return;
-    const supp = suppliers.find(s => s.id === supplierId);
+  const handleAddCompanyToForm = (companyId: string) => {
+    if (!companyId) return;
+    if (catalogForm.selectedCompanies.some(s => s.company_id === companyId)) return;
+    const supp = companies.find(s => s.id === companyId);
     if (!supp) return;
 
     setCatalogForm(prev => ({
       ...prev,
-      selectedSuppliers: [
-        ...prev.selectedSuppliers,
+      selectedCompanies: [
+        ...prev.selectedCompanies,
         {
-          supplier_id: supplierId,
+          company_id: companyId,
           unit_price: Number(prev.preset_price) || 150,
           rfq_quoted_price: Number(prev.preset_price) || 150,
           moq: Number(prev.target_qty) || 10,
@@ -249,20 +249,20 @@ export const CatalogSection: React.FC<Props> = ({
         }
       ]
     }));
-    setSupplierValidationMsg(null);
+    setCompanyValidationMsg(null);
   };
 
-  const handleRemoveSupplierFromForm = (supplierId: string) => {
+  const handleRemoveCompanyFromForm = (companyId: string) => {
     setCatalogForm(prev => ({
       ...prev,
-      selectedSuppliers: prev.selectedSuppliers.filter(s => s.supplier_id !== supplierId)
+      selectedCompanies: prev.selectedCompanies.filter(s => s.company_id !== companyId)
     }));
   };
 
-  const handleUpdateSupplierMapping = (supplierId: string, updates: Record<string, any>) => {
+  const handleUpdateCompanyMapping = (companyId: string, updates: Record<string, any>) => {
     setCatalogForm(prev => ({
       ...prev,
-      selectedSuppliers: prev.selectedSuppliers.map(s => (s.supplier_id === supplierId ? { ...s, ...updates } : s))
+      selectedCompanies: prev.selectedCompanies.map(s => (s.company_id === companyId ? { ...s, ...updates } : s))
     }));
   };
 
@@ -317,9 +317,9 @@ export const CatalogSection: React.FC<Props> = ({
     e.preventDefault();
     if (!catalogForm.name.trim()) return;
 
-    // Requirement: Ensure form validation requires at least 1 supplier
-    if (catalogForm.selectedSuppliers.length === 0) {
-      setSupplierValidationMsg('Please associate at least 1 supplier for this component.');
+    // Requirement: Ensure form validation requires at least 1 company
+    if (catalogForm.selectedCompanies.length === 0) {
+      setCompanyValidationMsg('Please associate at least 1 company for this component.');
       return;
     }
 
@@ -334,10 +334,10 @@ export const CatalogSection: React.FC<Props> = ({
         specs: catalogForm.specs.trim(),
         uom: catalogForm.uom || 'Pcs',
         preset_price: Number(catalogForm.preset_price) || 0,
-        supplier_id: catalogForm.selectedSuppliers[0]?.supplier_id || '',
-        supplier_ids: catalogForm.selectedSuppliers.map(s => s.supplier_id),
-        supplier_mappings: catalogForm.selectedSuppliers.map(s => ({
-          supplier_id: s.supplier_id,
+        company_id: catalogForm.selectedCompanies[0]?.company_id || '',
+        company_ids: catalogForm.selectedCompanies.map(s => s.company_id),
+        company_mappings: catalogForm.selectedCompanies.map(s => ({
+          company_id: s.company_id,
           unit_price: Number(s.unit_price) || Number(catalogForm.preset_price) || 0,
           rfq_quoted_price: Number(s.rfq_quoted_price) || Number(s.unit_price) || Number(catalogForm.preset_price) || 0,
           moq: Number(s.moq) || Number(catalogForm.target_qty) || 1,
@@ -360,9 +360,9 @@ export const CatalogSection: React.FC<Props> = ({
         alert_threshold_percent: 20,
         uom: 'Pcs',
         specs: '',
-        selectedSuppliers: suppliers[0] ? [
+        selectedCompanies: companies[0] ? [
           {
-            supplier_id: suppliers[0].id,
+            company_id: companies[0].id,
             unit_price: 150,
             rfq_quoted_price: 150,
             moq: 10,
@@ -373,9 +373,9 @@ export const CatalogSection: React.FC<Props> = ({
         procurement_status: 'TO_BE_ORDERED',
         image_drive_url: ''
       });
-      setSupplierValidationMsg(null);
+      setCompanyValidationMsg(null);
       setIsAddCatalogOpen(false);
-      setToastFeedback({ type: 'success', message: `Component "${catalogForm.name}" added with ${catalogForm.selectedSuppliers.length} supplier(s)!` });
+      setToastFeedback({ type: 'success', message: `Component "${catalogForm.name}" added with ${catalogForm.selectedCompanies.length} company(s)!` });
       setTimeout(() => setToastFeedback(null), 3500);
     } catch (err: any) {
       console.error('Failed to add component:', err);
@@ -866,7 +866,7 @@ export const CatalogSection: React.FC<Props> = ({
 
         <div className="flex flex-col space-y-2">
           {filteredCatalog.map(item => {
-            const supplier = suppliers.find(s => s.id === item.supplier_id);
+            const company = companies.find(s => s.id === item.company_id);
             const isBottleneck = isStockBottleneck(item);
 
             return (
@@ -874,7 +874,7 @@ export const CatalogSection: React.FC<Props> = ({
                 key={item.id}
                 className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all"
               >
-                {/* Left: Checkbox, Component Name, Category, Specs, Supplier */}
+                {/* Left: Checkbox, Component Name, Category, Specs, Company */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <input
                     type="checkbox"
@@ -974,14 +974,14 @@ export const CatalogSection: React.FC<Props> = ({
                         <Building2 className="w-3 h-3 text-emerald-600 shrink-0" />
                         <span className="truncate">
                           {(() => {
-                            const linkedSupps = componentSuppliers.filter(cs => cs.component_id === item.id);
+                            const linkedSupps = componentCompanies.filter(cs => cs.component_id === item.id);
                             const count = linkedSupps.length > 0
                               ? linkedSupps.length
-                              : (item.supplier_ids?.length || (item.supplier_id ? 1 : 0));
+                              : (item.company_ids?.length || (item.company_id ? 1 : 0));
                             if (count > 1) {
-                              return `${supplier?.name || 'Primary'} +${count - 1} more`;
+                              return `${company?.name || 'Primary'} +${count - 1} more`;
                             }
-                            return supplier?.name || 'General Supplier';
+                            return company?.name || 'General Company';
                           })()}
                         </span>
                       </span>
@@ -1036,12 +1036,12 @@ export const CatalogSection: React.FC<Props> = ({
                     </button>
                   </div>
 
-                  {/* Multi-Supplier Sourcing / Compare Trigger (Enabled if 2+ suppliers, else Disabled with Tooltip) */}
+                  {/* Multi-Company Sourcing / Compare Trigger (Enabled if 2+ companies, else Disabled with Tooltip) */}
                   {(() => {
-                    const linked = componentSuppliers.filter(cs => cs.component_id === item.id);
+                    const linked = componentCompanies.filter(cs => cs.component_id === item.id);
                     const sCount = linked.length > 0 
                       ? linked.length 
-                      : (item.supplier_ids?.length || (item.supplier_id ? 1 : 0));
+                      : (item.company_ids?.length || (item.company_id ? 1 : 0));
                     const canCompare = sCount >= 2;
 
                     if (canCompare) {
@@ -1053,7 +1053,7 @@ export const CatalogSection: React.FC<Props> = ({
                             onOpenComparisonDrawer?.(item);
                           }}
                           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-teal-600/15 hover:bg-teal-600/25 text-teal-950 border border-teal-600/40 text-[10px] font-black transition-all cursor-pointer shadow-2xs active:scale-95 group"
-                          title={`Compare ${sCount} suppliers, RFQ prices & verified ratings`}
+                          title={`Compare ${sCount} companies, RFQ prices & verified ratings`}
                         >
                           <Building2 className="w-3.5 h-3.5 text-teal-700 group-hover:scale-110 transition-transform" />
                           <span>Compare ({sCount})</span>
@@ -1072,7 +1072,7 @@ export const CatalogSection: React.FC<Props> = ({
                           <span>Compare ({sCount})</span>
                         </button>
                         <div className="absolute bottom-full right-0 mb-1.5 hidden group-hover:block w-44 p-1.5 bg-[#0B192C] text-white text-[10px] rounded-lg shadow-xl text-center z-30 font-medium pointer-events-none border border-slate-700">
-                          Add 2+ suppliers to compare
+                          Add 2+ companies to compare
                         </div>
                       </div>
                     );
@@ -1209,40 +1209,40 @@ export const CatalogSection: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* Multi-Supplier Sourcing Association (Tag / Pill UI + Commercial Parameters) */}
+              {/* Multi-Company Sourcing Association (Tag / Pill UI + Commercial Parameters) */}
               <div className="space-y-3 p-4 bg-[#FDF6E3] rounded-2xl border border-[#D6D1B1] shadow-2xs">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <div>
                     <label className="block font-bold text-xs text-[#073642] uppercase tracking-wider flex items-center gap-1.5">
                       <Building2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Associated Sourcing Suppliers *</span>
+                      <span>Associated Sourcing Companies *</span>
                     </label>
                     <p className="text-[11px] text-[#586E75] mt-0.5">
-                      Associate 1 or more suppliers. Associating 2+ vendors enables the <strong>"Compare Suppliers"</strong> AI engine.
+                      Associate 1 or more companies. Associating 2+ vendors enables the <strong>"Compare Companies"</strong> AI engine.
                     </p>
                   </div>
-                  {catalogForm.selectedSuppliers.length >= 2 && (
+                  {catalogForm.selectedCompanies.length >= 2 && (
                     <span className="self-start sm:self-auto flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-600/15 text-emerald-900 border border-emerald-500/30 text-[10px] font-black animate-in fade-in">
                       <Sparkles className="w-3 h-3 text-emerald-600" />
-                      <span>Comparison Enabled ({catalogForm.selectedSuppliers.length} Vendors)</span>
+                      <span>Comparison Enabled ({catalogForm.selectedCompanies.length} Vendors)</span>
                     </span>
                   )}
                 </div>
 
-                {/* Searchable Add Supplier Dropdown */}
+                {/* Searchable Add Company Dropdown */}
                 <div className="flex gap-2">
                   <select
                     value=""
                     onChange={e => {
                       if (e.target.value) {
-                        handleAddSupplierToForm(e.target.value);
+                        handleAddCompanyToForm(e.target.value);
                       }
                     }}
                     className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
                   >
-                    <option value="">+ Click to add a supplier to this component...</option>
-                    {suppliers
-                      .filter(s => !catalogForm.selectedSuppliers.some(sel => sel.supplier_id === s.id))
+                    <option value="">+ Click to add a company to this component...</option>
+                    {companies
+                      .filter(s => !catalogForm.selectedCompanies.some(sel => sel.company_id === s.id))
                       .map(s => (
                         <option key={s.id} value={s.id}>
                           {s.name} — {s.contact_person || s.category} {s.rating ? `(★ ${s.rating})` : ''}
@@ -1252,25 +1252,25 @@ export const CatalogSection: React.FC<Props> = ({
                 </div>
 
                 {/* Validation Error Banner */}
-                {supplierValidationMsg && (
+                {companyValidationMsg && (
                   <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 flex items-center gap-2 text-red-700 text-xs font-semibold">
                     <AlertCircle className="w-4 h-4 shrink-0" />
-                    <span>{supplierValidationMsg}</span>
+                    <span>{companyValidationMsg}</span>
                   </div>
                 )}
 
-                {/* Selected Suppliers Pill/Chip UI with Search + Remove 'x' */}
-                {catalogForm.selectedSuppliers.length > 0 ? (
+                {/* Selected Companies Pill/Chip UI with Search + Remove 'x' */}
+                {catalogForm.selectedCompanies.length > 0 ? (
                   <div className="flex flex-wrap gap-1.5 pt-1">
-                    {catalogForm.selectedSuppliers.map((item, idx) => {
-                      const supp = suppliers.find(s => s.id === item.supplier_id);
+                    {catalogForm.selectedCompanies.map((item, idx) => {
+                      const supp = companies.find(s => s.id === item.company_id);
                       return (
                         <span
-                          key={item.supplier_id}
+                          key={item.company_id}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-[#073642] border border-[#D6D1B1] text-xs font-bold shadow-2xs group"
                         >
                           <Building2 className="w-3 h-3 text-emerald-600" />
-                          <span className="truncate max-w-[140px]">{supp?.name || item.supplier_id}</span>
+                          <span className="truncate max-w-[140px]">{supp?.name || item.company_id}</span>
                           {idx === 0 && (
                             <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-100 text-emerald-800 font-semibold">
                               Primary
@@ -1278,9 +1278,9 @@ export const CatalogSection: React.FC<Props> = ({
                           )}
                           <button
                             type="button"
-                            onClick={() => handleRemoveSupplierFromForm(item.supplier_id)}
+                            onClick={() => handleRemoveCompanyFromForm(item.company_id)}
                             className="p-0.5 rounded-full hover:bg-red-100 text-[#586E75] hover:text-red-700 transition-all cursor-pointer ml-1"
-                            title="Remove supplier"
+                            title="Remove company"
                           >
                             <X className="w-3 h-3" />
                           </button>
@@ -1291,37 +1291,37 @@ export const CatalogSection: React.FC<Props> = ({
                 ) : (
                   <div className="text-xs text-amber-800 bg-amber-50 p-2.5 rounded-xl border border-amber-200 flex items-center gap-2 font-medium">
                     <AlertCircle className="w-4 h-4 shrink-0 text-amber-600" />
-                    <span>No supplier selected yet. Please select at least 1 supplier above.</span>
+                    <span>No company selected yet. Please select at least 1 company above.</span>
                   </div>
                 )}
 
-                {/* Multi-Supplier Highlighting Callout */}
-                {catalogForm.selectedSuppliers.length >= 2 ? (
+                {/* Multi-Company Highlighting Callout */}
+                {catalogForm.selectedCompanies.length >= 2 ? (
                   <div className="p-3 rounded-xl bg-teal-50 border border-teal-200 text-xs text-teal-950 flex items-start gap-2">
                     <Sparkles className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="font-bold">Multi-Vendor Sourcing Active:</strong> You can tune individual RFQ quoted rates, MOQ, and lead times per supplier below. These metrics feed directly into algorithmic pre-scoring & Gemini 3.6 Flash recommendations.
+                      <strong className="font-bold">Multi-Vendor Sourcing Active:</strong> You can tune individual RFQ quoted rates, MOQ, and lead times per company below. These metrics feed directly into algorithmic pre-scoring & Gemini 3.6 Flash recommendations.
                     </div>
                   </div>
-                ) : catalogForm.selectedSuppliers.length === 1 ? (
+                ) : catalogForm.selectedCompanies.length === 1 ? (
                   <p className="text-[11px] text-[#586E75] italic">
-                    💡 Tip: Add a 2nd supplier to unlock side-by-side RFQ comparison & AI supplier ranking.
+                    💡 Tip: Add a 2nd company to unlock side-by-side RFQ comparison & AI company ranking.
                   </p>
                 ) : null}
 
-                {/* Dynamic Nested Fields / Compact Inline List per Selected Supplier */}
-                {catalogForm.selectedSuppliers.length > 0 && (
+                {/* Dynamic Nested Fields / Compact Inline List per Selected Company */}
+                {catalogForm.selectedCompanies.length > 0 && (
                   <div className="space-y-2 mt-2 pt-2 border-t border-[#D6D1B1]/60">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-[#586E75] block">
-                      Supplier Commercial Parameters & RFQ Metrics:
+                      Company Commercial Parameters & RFQ Metrics:
                     </span>
 
                     <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                      {catalogForm.selectedSuppliers.map((item, idx) => {
-                        const supp = suppliers.find(s => s.id === item.supplier_id);
+                      {catalogForm.selectedCompanies.map((item, idx) => {
+                        const supp = companies.find(s => s.id === item.company_id);
                         return (
                           <div
-                            key={item.supplier_id}
+                            key={item.company_id}
                             className="p-3 rounded-xl bg-[#EEE8D5] border border-[#D6D1B1] space-y-2"
                           >
                             <div className="flex items-center justify-between text-xs">
@@ -1338,7 +1338,7 @@ export const CatalogSection: React.FC<Props> = ({
                               </div>
                               <button
                                 type="button"
-                                onClick={() => handleRemoveSupplierFromForm(item.supplier_id)}
+                                onClick={() => handleRemoveCompanyFromForm(item.company_id)}
                                 className="text-[#586E75] hover:text-red-700 text-[11px] font-semibold flex items-center gap-0.5 cursor-pointer"
                               >
                                 <X className="w-3.5 h-3.5" />
@@ -1346,7 +1346,7 @@ export const CatalogSection: React.FC<Props> = ({
                               </button>
                             </div>
 
-                            {/* Dynamic 4-field grid per supplier */}
+                            {/* Dynamic 4-field grid per company */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                               <div>
                                 <label className="block text-[10px] font-semibold text-[#586E75] mb-0.5">RFQ Quoted Price (₹)</label>
@@ -1355,7 +1355,7 @@ export const CatalogSection: React.FC<Props> = ({
                                   min={0}
                                   step="0.01"
                                   value={item.rfq_quoted_price ?? item.unit_price}
-                                  onChange={e => handleUpdateSupplierMapping(item.supplier_id, {
+                                  onChange={e => handleUpdateCompanyMapping(item.company_id, {
                                     rfq_quoted_price: Number(e.target.value) || 0,
                                     unit_price: Number(e.target.value) || 0
                                   })}
@@ -1370,7 +1370,7 @@ export const CatalogSection: React.FC<Props> = ({
                                   type="number"
                                   min={1}
                                   value={item.moq}
-                                  onChange={e => handleUpdateSupplierMapping(item.supplier_id, {
+                                  onChange={e => handleUpdateCompanyMapping(item.company_id, {
                                     moq: Number(e.target.value) || 1
                                   })}
                                   className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#073642] focus:outline-none focus:border-emerald-500"
@@ -1384,7 +1384,7 @@ export const CatalogSection: React.FC<Props> = ({
                                   type="number"
                                   min={1}
                                   value={item.lead_time_days}
-                                  onChange={e => handleUpdateSupplierMapping(item.supplier_id, {
+                                  onChange={e => handleUpdateCompanyMapping(item.company_id, {
                                     lead_time_days: Number(e.target.value) || 7
                                   })}
                                   className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#073642] focus:outline-none focus:border-emerald-500"
@@ -1397,7 +1397,7 @@ export const CatalogSection: React.FC<Props> = ({
                                 <input
                                   type="text"
                                   value={item.part_number_vendor || ''}
-                                  onChange={e => handleUpdateSupplierMapping(item.supplier_id, {
+                                  onChange={e => handleUpdateCompanyMapping(item.company_id, {
                                     part_number_vendor: e.target.value
                                   })}
                                   className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2 py-1 text-xs font-mono text-[#073642] focus:outline-none focus:border-emerald-500"
@@ -1505,7 +1505,7 @@ export const CatalogSection: React.FC<Props> = ({
         <ReOrderConfirmationModal
           item={reOrderConfirmData.item}
           quantity={reOrderConfirmData.qty}
-          supplier={suppliers.find(s => s.id === reOrderConfirmData.item.supplier_id)}
+          company={companies.find(s => s.id === reOrderConfirmData.item.company_id)}
           onClose={() => setReOrderConfirmData(null)}
           onConfirm={handleConfirmReOrder}
           onOpenWebmail={onOpenWebmail}
@@ -1517,14 +1517,14 @@ export const CatalogSection: React.FC<Props> = ({
       {editingComponent && (
         <EditComponentModal
           item={editingComponent}
-          suppliers={suppliers}
+          companies={companies}
           categories={categories}
-          componentSuppliers={componentSuppliers}
+          componentCompanies={componentCompanies}
           onClose={() => setEditingComponent(null)}
-          onSaveSupplierMappings={(componentId, mappings) => {
-            // Propagate supplier mapping updates to the parent via onUpdateCatalogItem
-            // The parent App.tsx will handle persisting to component_suppliers table
-            const updatedItem = { ...editingComponent, supplier_mappings: mappings, supplier_ids: mappings.map(m => m.supplier_id), supplier_id: mappings[0]?.supplier_id || editingComponent.supplier_id };
+          onSaveCompanyMappings={(componentId, mappings) => {
+            // Propagate company mapping updates to the parent via onUpdateCatalogItem
+            // The parent App.tsx will handle persisting to component_companies table
+            const updatedItem = { ...editingComponent, company_mappings: mappings, company_ids: mappings.map(m => m.company_id), company_id: mappings[0]?.company_id || editingComponent.company_id };
             if (onUpdateCatalogItem) onUpdateCatalogItem(updatedItem);
           }}
           onSave={updatedItem => {
@@ -1637,10 +1637,10 @@ export const CatalogSection: React.FC<Props> = ({
         <BatchSendPOsModal
           folder={batchSendFolder}
           catalog={catalog}
-          suppliers={suppliers}
+          companies={companies}
           orders={orders}
           onClose={() => setBatchSendFolder(null)}
-          onLogOrders={async (drafts: MultiSupplierPODraft[]) => {
+          onLogOrders={async (drafts: MultiCompanyPODraft[]) => {
             if (onLogOrders) {
               await onLogOrders(drafts);
             }
@@ -1717,7 +1717,7 @@ export const CatalogSection: React.FC<Props> = ({
       {editingComponent && (
         <EditComponentModal
           item={editingComponent}
-          suppliers={suppliers}
+          companies={companies}
           categories={categories}
           onClose={() => setEditingComponent(null)}
           onSave={async (updatedItem) => {

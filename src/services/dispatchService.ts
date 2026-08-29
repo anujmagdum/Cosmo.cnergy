@@ -1,7 +1,7 @@
 import { ProcurementOrder } from '../types';
 
 export const dispatchWhatsApp = (order: ProcurementOrder): void => {
-  const phone = order.supplier?.whatsapp || order.supplier?.phone || '';
+  const phone = order.company?.whatsapp || order.company?.phone || '';
   const cleanPhone = phone.replace(/[^0-9]/g, '');
 
   const itemsList = (order.items || [])
@@ -12,7 +12,7 @@ export const dispatchWhatsApp = (order: ProcurementOrder): void => {
 ----------------------------------------
 📄 *${order.type === 'RFQ' ? 'REQUEST FOR QUOTATION' : 'PURCHASE ORDER'}*
 🔢 *Order No:* ${order.order_number}
-🏢 *Vendor:* ${order.supplier?.name}
+🏢 *Vendor:* ${order.company?.name}
 📅 *Date:* ${new Date(order.created_at).toLocaleDateString('en-IN')}
 
 📦 *ITEMS ORDERED:*
@@ -40,14 +40,14 @@ export const dispatchEmail = async (order: ProcurementOrder): Promise<{ success:
     .map(i => `- ${i.item?.name || 'Item'}: ${i.quantity} ${i.item?.uom || 'Pcs'} @ ₹${i.unit_price}/unit = ₹${i.total_price}`)
     .join('\n');
 
-  const emailBody = `Dear ${order.supplier?.contact_person || order.supplier?.name},\n\nPlease find details for our ${order.type === 'RFQ' ? 'Request for Quotation' : 'Purchase Order'} below:\n\nOrder Number: ${order.order_number}\nDate: ${new Date(order.created_at).toLocaleDateString('en-IN')}\n\nItems:\n${itemsList}\n\nTotal Amount: ₹${Number(order.total_amount).toLocaleString('en-IN')}\n\nNotes:\n${order.notes || 'N/A'}\n\nBest regards,\n${order.created_by}\n${companyName}`;
+  const emailBody = `Dear ${order.company?.contact_person || order.company?.name},\n\nPlease find details for our ${order.type === 'RFQ' ? 'Request for Quotation' : 'Purchase Order'} below:\n\nOrder Number: ${order.order_number}\nDate: ${new Date(order.created_at).toLocaleDateString('en-IN')}\n\nItems:\n${itemsList}\n\nTotal Amount: ₹${Number(order.total_amount).toLocaleString('en-IN')}\n\nNotes:\n${order.notes || 'N/A'}\n\nBest regards,\n${order.created_by}\n${companyName}`;
 
   try {
     const res = await fetch('/api/send-email', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        to: order.supplier?.email,
+        to: order.company?.email,
         subject,
         text: emailBody,
         order
@@ -62,7 +62,7 @@ export const dispatchEmail = async (order: ProcurementOrder): Promise<{ success:
   }
 
   // Fallback to mailto link
-  const mailtoUrl = `mailto:${order.supplier?.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+  const mailtoUrl = `mailto:${order.company?.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
   window.open(mailtoUrl, '_blank');
 
   return { success: true, message: 'Opened direct email draft for sending!' };

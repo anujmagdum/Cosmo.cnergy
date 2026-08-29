@@ -14,12 +14,12 @@ interface Props {
   onLogout: () => void;
   ordersCount?: number;
   catalogCount?: number;
-  suppliersCount?: number;
+  companiesCount?: number;
   alertsCount?: number;
   mailQueueCount?: number;
   onOpenAddFolder?: () => void;
   onOpenAddCatalog?: () => void;
-  onOpenAddSupplier?: () => void;
+  onOpenAddCompany?: () => void;
 }
 
 export const Header: React.FC<Props> = ({
@@ -33,12 +33,12 @@ export const Header: React.FC<Props> = ({
   onLogout,
   ordersCount = 0,
   catalogCount = 0,
-  suppliersCount = 0,
+  companiesCount = 0,
   alertsCount = 0,
   mailQueueCount = 0,
   onOpenAddFolder,
   onOpenAddCatalog,
-  onOpenAddSupplier
+  onOpenAddCompany
 }) => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -73,7 +73,7 @@ export const Header: React.FC<Props> = ({
   const navItems = [
     { id: 'procurement' as const, label: 'Procurement', icon: History, isAi: false, count: ordersCount, alert: false },
     { id: 'inventory' as const, label: 'Inventory', icon: Layers, isAi: false, count: catalogCount, alert: alertsCount > 0 },
-    { id: 'companies' as const, label: 'Companies', icon: Building2, isAi: false, count: suppliersCount, alert: false },
+    { id: 'companies' as const, label: 'Companies', icon: Building2, isAi: false, count: companiesCount, alert: false },
     { id: 'webmail' as const, label: 'Webmail', icon: Mail, isAi: false, count: mailQueueCount > 0 ? mailQueueCount : undefined, alert: mailQueueCount > 0 },
     { id: 'ai' as const, label: 'AI Studio', icon: Sparkles, isAi: true, count: undefined, alert: false },
   ];
@@ -213,7 +213,7 @@ export const Header: React.FC<Props> = ({
             <button
               onClick={onOpenBOMModal}
               className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs shadow-md shadow-emerald-500/25 active:scale-95 transition-all whitespace-nowrap border border-emerald-400/30"
-              title="1-Tap Multi-Supplier BOM Procurement Engine"
+              title="1-Tap Multi-Company BOM Procurement Engine"
             >
               <PlusCircle className="w-3.5 h-3.5" />
               <span className="hidden md:inline">1-Tap BOM PO</span>
@@ -334,13 +334,13 @@ export const Header: React.FC<Props> = ({
               </>
             )}
 
-            {activeTab === 'companies' && onOpenAddSupplier && (
+            {activeTab === 'companies' && onOpenAddCompany && (
               <button
-                onClick={onOpenAddSupplier}
+                onClick={onOpenAddCompany}
                 className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition-all shadow-xs"
               >
                 <Plus className="w-3 h-3" />
-                <span>+ Supplier</span>
+                <span>+ Company</span>
               </button>
             )}
 

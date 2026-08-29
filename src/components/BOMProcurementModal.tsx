@@ -1,23 +1,23 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { CatalogItem, ProductBOM, Supplier, MultiSupplierPODraft, ProductFolder, ProcurementOrder, formatProcurementSubject, QueuedMailDraft } from '../types';
+import { CatalogItem, ProductBOM, Company, MultiCompanyPODraft, ProductFolder, ProcurementOrder, formatProcurementSubject, QueuedMailDraft } from '../types';
 import { Layers, Rocket, Calculator, Check, ArrowRight, Zap, RefreshCw, X, Building2, Package, Mail, MessageSquare } from 'lucide-react';
 
 interface Props {
   catalog: CatalogItem[];
   boms: ProductBOM[];
-  suppliers: Supplier[];
+  companies: Company[];
   folders?: ProductFolder[];
   orders?: ProcurementOrder[];
   onClose: () => void;
-  onDispatchOrders: (orders: MultiSupplierPODraft[], type: 'PO' | 'RFQ') => Promise<void>;
-  onOpenWebmail?: (supplier: Supplier, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
+  onDispatchOrders: (orders: MultiCompanyPODraft[], type: 'PO' | 'RFQ') => Promise<void>;
+  onOpenWebmail?: (company: Company, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
   onEnqueueMailDrafts?: (drafts: QueuedMailDraft[], openFirstImmediately?: boolean) => void;
 }
 
 export const BOMProcurementModal: React.FC<Props> = ({
   catalog,
   boms,
-  suppliers,
+  companies,
   folders = [],
   orders = [],
   onClose,
@@ -60,15 +60,15 @@ export const BOMProcurementModal: React.FC<Props> = ({
   const [packQuantity, setPackQuantity] = useState<number>(5);
   const [orderType, setOrderType] = useState<'PO' | 'RFQ'>('PO');
   const [isDispatching, setIsDispatching] = useState(false);
-  const [activeTabSupplierId, setActiveTabSupplierId] = useState<string | null>(null);
+  const [activeTabCompanyId, setActiveTabCompanyId] = useState<string | null>(null);
 
   const currentSelection = useMemo(() => {
     return allSelectableProducts.find(p => p.code === selectedProductCode) || allSelectableProducts[0];
   }, [allSelectableProducts, selectedProductCode]);
 
   // 1-TAP BOM AUTO-CALCULATION & MULTI-SUPPLIER AUTO-SPLITTING LOGIC
-  const splitDrafts = useMemo<MultiSupplierPODraft[]>(() => {
-    const supplierMap = new Map<string, MultiSupplierPODraft>();
+  const splitDrafts = useMemo<MultiCompanyPODraft[]>(() => {
+    const companyMap = new Map<string, MultiCompanyPODraft>();
 
     if (currentSelection?.isFolder) {
       const currentFolder = folders.find(f => f.id === currentSelection.code || f.name === currentSelection.name);
@@ -79,8 +79,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
           const rawItem = catalog.find(c => c.id === comp.item_id);
           if (!rawItem) return;
 
-          const supplier = suppliers.find(s => s.id === rawItem.supplier_id) || {
-            id: rawItem.supplier_id || 'unknown',
+          const company = companies.find(s => s.id === rawItem.company_id) || {
+            id: rawItem.company_id || 'unknown',
             name: 'General Vendor',
             email: 'sales@vendor.com',
             phone: '+91 98765 43210',
@@ -88,15 +88,15 @@ export const BOMProcurementModal: React.FC<Props> = ({
             contact_person: 'Sales Dept'
           };
 
-          if (!supplierMap.has(supplier.id)) {
-            supplierMap.set(supplier.id, {
-              supplier,
+          if (!companyMap.has(company.id)) {
+            companyMap.set(company.id, {
+              company,
               items: [],
               total_amount: 0
             });
           }
 
-          const draft = supplierMap.get(supplier.id)!;
+          const draft = companyMap.get(company.id)!;
           const totalItemQty = comp.qty_per_unit * packQuantity;
           const unitPrice = rawItem.preset_price || 100;
           const subtotal = totalItemQty * unitPrice;
@@ -114,8 +114,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
       else if (currentFolder?.linked_po_ids && currentFolder.linked_po_ids.length > 0) {
         const linkedPOs = orders.filter(o => currentFolder.linked_po_ids.includes(o.id));
         linkedPOs.forEach(po => {
-          const supplier = po.supplier || suppliers.find(s => s.id === po.supplier_id) || {
-            id: po.supplier_id || 'unknown',
+          const company = po.company || companies.find(s => s.id === po.company_id) || {
+            id: po.company_id || 'unknown',
             name: 'General Vendor',
             email: 'sales@vendor.com',
             phone: '+91 98765 43210',
@@ -123,15 +123,15 @@ export const BOMProcurementModal: React.FC<Props> = ({
             contact_person: 'Sales Department'
           };
 
-          if (!supplierMap.has(supplier.id)) {
-            supplierMap.set(supplier.id, {
-              supplier,
+          if (!companyMap.has(company.id)) {
+            companyMap.set(company.id, {
+              company,
               items: [],
               total_amount: 0
             });
           }
 
-          const draft = supplierMap.get(supplier.id)!;
+          const draft = companyMap.get(company.id)!;
           (po.items || []).forEach(poItem => {
             const item = poItem.item || catalog.find(c => c.id === poItem.item_id);
             if (!item) return;
@@ -153,7 +153,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
     }
 
     // Path C: Fallback to registered BOM items if folder didn't populate or BOM was selected
-    if (supplierMap.size === 0) {
+    if (companyMap.size === 0) {
       const targetBOMItems = boms.filter(
         b => b.product_code === selectedProductCode || b.product_name === currentSelection?.name
       );
@@ -162,8 +162,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
         const rawItem = catalog.find(c => c.id === bom.raw_material_id) || bom.raw_material;
         if (!rawItem) return;
 
-        const supplier = suppliers.find(s => s.id === rawItem.supplier_id) || {
-          id: rawItem.supplier_id || 'unknown',
+        const company = companies.find(s => s.id === rawItem.company_id) || {
+          id: rawItem.company_id || 'unknown',
           name: 'General Vendor',
           email: 'sales@vendor.com',
           phone: '+91 98765 43210',
@@ -171,15 +171,15 @@ export const BOMProcurementModal: React.FC<Props> = ({
           contact_person: 'Sales Dept'
         };
 
-        if (!supplierMap.has(supplier.id)) {
-          supplierMap.set(supplier.id, {
-            supplier,
+        if (!companyMap.has(company.id)) {
+          companyMap.set(company.id, {
+            company,
             items: [],
             total_amount: 0
           });
         }
 
-        const draft = supplierMap.get(supplier.id)!;
+        const draft = companyMap.get(company.id)!;
         const totalItemQty = bom.qty_per_unit * packQuantity;
         const unitPrice = rawItem.preset_price || 100;
         const subtotal = totalItemQty * unitPrice;
@@ -194,12 +194,12 @@ export const BOMProcurementModal: React.FC<Props> = ({
       });
     }
 
-    return Array.from(supplierMap.values());
-  }, [selectedProductCode, packQuantity, boms, catalog, suppliers, currentSelection, orders, folders]);
+    return Array.from(companyMap.values());
+  }, [selectedProductCode, packQuantity, boms, catalog, companies, currentSelection, orders, folders]);
 
   // Set default active tab
-  if (!activeTabSupplierId && splitDrafts.length > 0) {
-    setActiveTabSupplierId(splitDrafts[0].supplier.id);
+  if (!activeTabCompanyId && splitDrafts.length > 0) {
+    setActiveTabCompanyId(splitDrafts[0].company.id);
   }
 
   const totalCalculatedCost = useMemo(() => {
@@ -213,26 +213,26 @@ export const BOMProcurementModal: React.FC<Props> = ({
   useEffect(() => {
     const map: Record<string, { email: string; phone: string }> = {};
     splitDrafts.forEach(d => {
-      map[d.supplier.id] = {
-        email: d.supplier.email || '',
-        phone: d.supplier.whatsapp || d.supplier.phone || ''
+      map[d.company.id] = {
+        email: d.company.email || '',
+        phone: d.company.whatsapp || d.company.phone || ''
       };
     });
     setEditableContacts(map);
   }, [splitDrafts]);
 
-  const handleContactChange = (supplierId: string, field: 'email' | 'phone', value: string) => {
+  const handleContactChange = (companyId: string, field: 'email' | 'phone', value: string) => {
     setEditableContacts(prev => ({
       ...prev,
-      [supplierId]: {
-        ...prev[supplierId],
+      [companyId]: {
+        ...prev[companyId],
         [field]: value
       }
     }));
   };
 
   // Helper to format itemized PO list for a vendor draft
-  const formatVendorItemsList = (draft: MultiSupplierPODraft) => {
+  const formatVendorItemsList = (draft: MultiCompanyPODraft) => {
     return draft.items
       .map(
         (it, i) =>
@@ -242,23 +242,23 @@ export const BOMProcurementModal: React.FC<Props> = ({
   };
 
   // Helper to format full email subject & body for a vendor draft
-  const buildVendorEmailData = (draft: MultiSupplierPODraft) => {
-    const contact = editableContacts[draft.supplier.id] || { email: draft.supplier.email, phone: draft.supplier.phone };
+  const buildVendorEmailData = (draft: MultiCompanyPODraft) => {
+    const contact = editableContacts[draft.company.id] || { email: draft.company.email, phone: draft.company.phone };
     const itemsList = formatVendorItemsList(draft);
     const subject = `${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} - ${currentSelection?.name || 'Assembly'}`;
-    const body = `Dear ${draft.supplier.contact_person || draft.supplier.name},\n\nPlease accept our formal ${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} for the "${currentSelection?.name || 'Assembly'}" (Batch x${packQuantity}):\n\n${itemsList}\n\nTotal PO Amount: ₹${draft.total_amount.toLocaleString('en-IN')}\n\nDelivery Location: Unit 4, Energy Tech Park, Pune Plant\nPayment Terms: 30 Days Net on QC Inspection\n\nPlease confirm order acceptance and dispatch schedule at your earliest convenience.\n\nBest regards,\nProcurement Department\nCosmo Cnergy Procurement Ltd.`;
+    const body = `Dear ${draft.company.contact_person || draft.company.name},\n\nPlease accept our formal ${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} for the "${currentSelection?.name || 'Assembly'}" (Batch x${packQuantity}):\n\n${itemsList}\n\nTotal PO Amount: ₹${draft.total_amount.toLocaleString('en-IN')}\n\nDelivery Location: Unit 4, Energy Tech Park, Pune Plant\nPayment Terms: 30 Days Net on QC Inspection\n\nPlease confirm order acceptance and dispatch schedule at your earliest convenience.\n\nBest regards,\nProcurement Department\nCosmo Cnergy Procurement Ltd.`;
     const mailtoUrl = `mailto:${encodeURIComponent(contact.email || '')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    return { to: contact.email || draft.supplier.email || '', subject, body, mailtoUrl };
+    return { to: contact.email || draft.company.email || '', subject, body, mailtoUrl };
   };
 
   // Helper to format WhatsApp message & URL for a vendor draft
-  const buildVendorWhatsAppUrl = (draft: MultiSupplierPODraft) => {
-    const contact = editableContacts[draft.supplier.id] || { email: draft.supplier.email, phone: draft.supplier.phone };
+  const buildVendorWhatsAppUrl = (draft: MultiCompanyPODraft) => {
+    const contact = editableContacts[draft.company.id] || { email: draft.company.email, phone: draft.company.phone };
     const cleanPhone = (contact.phone || '').replace(/[^0-9]/g, '');
     const itemsList = draft.items
       .map(i => `• ${i.catalogItem.name}: ${i.quantity} ${i.catalogItem.uom} @ ₹${i.unit_price} = ₹${i.total_price}`)
       .join('\n');
-    const message = `*COSMOCNERGY 1-TAP PROCUREMENT*\n----------------------------------------\n📄 *Type:* ${orderType}\n🏢 *Vendor:* ${draft.supplier.name}\n📦 *Items:*\n${itemsList}\n💰 *Total:* ₹${draft.total_amount.toLocaleString('en-IN')}`;
+    const message = `*COSMOCNERGY 1-TAP PROCUREMENT*\n----------------------------------------\n📄 *Type:* ${orderType}\n🏢 *Vendor:* ${draft.company.name}\n📦 *Items:*\n${itemsList}\n💰 *Total:* ₹${draft.total_amount.toLocaleString('en-IN')}`;
     const waUrl = cleanPhone
       ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`
       : `https://wa.me/?text=${encodeURIComponent(message)}`;
@@ -266,17 +266,17 @@ export const BOMProcurementModal: React.FC<Props> = ({
   };
 
   // Dispatch a single vendor draft via Webmail or mailto:
-  const handleDispatchSingleVendorWebmail = (draft: MultiSupplierPODraft) => {
+  const handleDispatchSingleVendorWebmail = (draft: MultiCompanyPODraft) => {
     const emailData = buildVendorEmailData(draft);
     if (!emailData.to) {
-      alert(`Please enter a valid Email Address for ${draft.supplier.name}`);
+      alert(`Please enter a valid Email Address for ${draft.company.name}`);
       return;
     }
 
     if (onEnqueueMailDrafts) {
       const queuedDraft: QueuedMailDraft = {
-        id: `bom-single-${draft.supplier.id}-${Date.now()}`,
-        supplier: { ...draft.supplier, email: emailData.to },
+        id: `bom-single-${draft.company.id}-${Date.now()}`,
+        company: { ...draft.company, email: emailData.to },
         to: emailData.to,
         subject: emailData.subject,
         body: emailData.body,
@@ -290,7 +290,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
       onClose();
     } else if (onOpenWebmail) {
       onOpenWebmail(
-        { ...draft.supplier, email: emailData.to },
+        { ...draft.company, email: emailData.to },
         currentSelection?.name || 'Assembly',
         emailData.body,
         draft.total_amount,
@@ -304,10 +304,10 @@ export const BOMProcurementModal: React.FC<Props> = ({
   };
 
   // Dispatch a single vendor draft via WhatsApp
-  const handleDispatchSingleVendorWhatsApp = (draft: MultiSupplierPODraft) => {
+  const handleDispatchSingleVendorWhatsApp = (draft: MultiCompanyPODraft) => {
     const { waUrl, cleanPhone } = buildVendorWhatsAppUrl(draft);
     if (!cleanPhone) {
-      alert(`Please enter a valid WhatsApp/Phone Number for ${draft.supplier.name}`);
+      alert(`Please enter a valid WhatsApp/Phone Number for ${draft.company.name}`);
       return;
     }
     window.open(waUrl, '_blank');
@@ -319,15 +319,15 @@ export const BOMProcurementModal: React.FC<Props> = ({
   const handleMasterDispatch = async () => {
     // 1. Validation of contact info
     for (const draft of splitDrafts) {
-      const contact = editableContacts[draft.supplier.id];
+      const contact = editableContacts[draft.company.id];
       if (dispatchChannel === 'webmail' && !contact?.email) {
-        alert(`Please enter Email Address for supplier ${draft.supplier.name} before dispatching.`);
-        setActiveTabSupplierId(draft.supplier.id);
+        alert(`Please enter Email Address for company ${draft.company.name} before dispatching.`);
+        setActiveTabCompanyId(draft.company.id);
         return;
       }
       if (dispatchChannel === 'whatsapp' && !contact?.phone) {
-        alert(`Please enter WhatsApp/Phone Number for supplier ${draft.supplier.name} before dispatching.`);
-        setActiveTabSupplierId(draft.supplier.id);
+        alert(`Please enter WhatsApp/Phone Number for company ${draft.company.name} before dispatching.`);
+        setActiveTabCompanyId(draft.company.id);
         return;
       }
     }
@@ -345,8 +345,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
         const allQueuedDrafts: QueuedMailDraft[] = splitDrafts.map((draft, idx) => {
           const emailData = buildVendorEmailData(draft);
           return {
-            id: `bom-queue-${draft.supplier.id}-${Date.now()}-${idx}`,
-            supplier: { ...draft.supplier, email: emailData.to },
+            id: `bom-queue-${draft.company.id}-${Date.now()}-${idx}`,
+            company: { ...draft.company, email: emailData.to },
             to: emailData.to,
             subject: emailData.subject,
             body: emailData.body,
@@ -368,7 +368,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
         } else if (onOpenWebmail) {
           const first = allQueuedDrafts[0];
           onOpenWebmail(
-            first.supplier,
+            first.company,
             first.productName,
             first.body,
             first.totalAmount,
@@ -396,7 +396,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
     }
   };
 
-  const selectedDraft = splitDrafts.find(d => d.supplier.id === activeTabSupplierId) || splitDrafts[0];
+  const selectedDraft = splitDrafts.find(d => d.company.id === activeTabCompanyId) || splitDrafts[0];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
@@ -417,7 +417,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-300">
-                Select pack assembly & batch multiplier — auto-calculates quantities, aggregates suppliers, and executes 1-tap POs.
+                Select pack assembly & batch multiplier — auto-calculates quantities, aggregates companies, and executes 1-tap POs.
               </p>
             </div>
           </div>
@@ -440,7 +440,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 <span>1. Production Assembly Target & Multiplier</span>
               </span>
               <span className="text-xs text-[#586E75] font-semibold">
-                Auto-splits into <strong className="text-emerald-800">{splitDrafts.length} distinct supplier POs</strong>
+                Auto-splits into <strong className="text-emerald-800">{splitDrafts.length} distinct company POs</strong>
               </span>
             </div>
 
@@ -544,20 +544,20 @@ export const BOMProcurementModal: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Step 3: Multi-Supplier Auto-Split Breakdown Tabs */}
+          {/* Step 3: Multi-Company Auto-Split Breakdown Tabs */}
           <div className="space-y-3">
             <span className="text-xs font-bold text-[#586E75] uppercase tracking-wider block">
               2. Multi-Vendor Auto-Split Breakdown ({splitDrafts.length} Vendors)
             </span>
 
-            {/* Supplier Tabs */}
+            {/* Company Tabs */}
             <div className="flex items-center gap-2 overflow-x-auto pb-1">
               {splitDrafts.map(draft => {
-                const isActive = (selectedDraft?.supplier.id === draft.supplier.id);
+                const isActive = (selectedDraft?.company.id === draft.company.id);
                 return (
                   <button
-                    key={draft.supplier.id}
-                    onClick={() => setActiveTabSupplierId(draft.supplier.id)}
+                    key={draft.company.id}
+                    onClick={() => setActiveTabCompanyId(draft.company.id)}
                     className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-2 border transition-all ${
                       isActive
                         ? 'bg-emerald-600 text-white shadow-md border-emerald-500'
@@ -565,7 +565,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                     }`}
                   >
                     <Building2 className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-emerald-600'}`} />
-                    <span>{draft.supplier.name}</span>
+                    <span>{draft.company.name}</span>
                     <span className="opacity-80 font-mono text-[10px]">
                       (₹{draft.total_amount.toLocaleString('en-IN')})
                     </span>
@@ -574,19 +574,19 @@ export const BOMProcurementModal: React.FC<Props> = ({
               })}
             </div>
 
-            {/* Active Supplier PO Content */}
+            {/* Active Company PO Content */}
             {selectedDraft && (
               <div className="bg-[#EEE8D5] rounded-2xl p-5 border border-[#D6D1B1] space-y-4 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#D6D1B1] pb-3 text-xs">
                   <div>
                     <h4 className="font-bold text-sm text-[#073642] flex items-center gap-2">
-                      <span>{selectedDraft.supplier.name}</span>
+                      <span>{selectedDraft.company.name}</span>
                       <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold">
                         {selectedDraft.items.length} Line Item(s)
                       </span>
                     </h4>
                     <p className="text-[#586E75] mt-0.5">
-                      Attn: {selectedDraft.supplier.contact_person || 'Sales Department'} ({selectedDraft.supplier.email})
+                      Attn: {selectedDraft.company.contact_person || 'Sales Department'} ({selectedDraft.company.email})
                     </p>
                   </div>
 
@@ -635,12 +635,12 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 <div className="pt-2 border-t border-[#D6D1B1]/60 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   <div>
                     <label className="block text-[10px] font-bold text-[#586E75] uppercase mb-0.5">
-                      Vendor Email {!editableContacts[selectedDraft.supplier.id]?.email && <span className="text-red-600 font-bold">*Required</span>}
+                      Vendor Email {!editableContacts[selectedDraft.company.id]?.email && <span className="text-red-600 font-bold">*Required</span>}
                     </label>
                     <input
                       type="email"
-                      value={editableContacts[selectedDraft.supplier.id]?.email || ''}
-                      onChange={e => handleContactChange(selectedDraft.supplier.id, 'email', e.target.value)}
+                      value={editableContacts[selectedDraft.company.id]?.email || ''}
+                      onChange={e => handleContactChange(selectedDraft.company.id, 'email', e.target.value)}
                       placeholder="sales@vendor.com"
                       className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-xl px-3 py-1.5 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
                     />
@@ -648,12 +648,12 @@ export const BOMProcurementModal: React.FC<Props> = ({
 
                   <div>
                     <label className="block text-[10px] font-bold text-[#586E75] uppercase mb-0.5">
-                      WhatsApp / Phone {!editableContacts[selectedDraft.supplier.id]?.phone && <span className="text-red-600 font-bold">*Required</span>}
+                      WhatsApp / Phone {!editableContacts[selectedDraft.company.id]?.phone && <span className="text-red-600 font-bold">*Required</span>}
                     </label>
                     <input
                       type="text"
-                      value={editableContacts[selectedDraft.supplier.id]?.phone || ''}
-                      onChange={e => handleContactChange(selectedDraft.supplier.id, 'phone', e.target.value)}
+                      value={editableContacts[selectedDraft.company.id]?.phone || ''}
+                      onChange={e => handleContactChange(selectedDraft.company.id, 'phone', e.target.value)}
                       placeholder="+91 98765 43210"
                       className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-xl px-3 py-1.5 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
                     />
@@ -663,7 +663,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 {/* Individual Vendor Send PO Action Bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#D6D1B1]/60">
                   <span className="text-xs text-[#586E75]">
-                    Transmit this specific PO to <strong className="text-[#073642]">{selectedDraft.supplier.name}</strong>:
+                    Transmit this specific PO to <strong className="text-[#073642]">{selectedDraft.company.name}</strong>:
                   </span>
                   <div className="flex items-center gap-2">
                     <button

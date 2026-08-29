@@ -19,7 +19,7 @@ export interface Database {
           specs: string | null
           uom: string | null
           preset_price: number | null
-          supplier_id: string | null
+          company_id: string | null
           min_order_qty: number | null
           in_stock_qty: number | null
           procurement_status: string | null
@@ -37,7 +37,7 @@ export interface Database {
           specs?: string | null
           uom?: string | null
           preset_price?: number | null
-          supplier_id?: string | null
+          company_id?: string | null
           min_order_qty?: number | null
           in_stock_qty?: number | null
           procurement_status?: string | null
@@ -55,7 +55,7 @@ export interface Database {
           specs?: string | null
           uom?: string | null
           preset_price?: number | null
-          supplier_id?: string | null
+          company_id?: string | null
           min_order_qty?: number | null
           in_stock_qty?: number | null
           procurement_status?: string | null
@@ -65,7 +65,7 @@ export interface Database {
           updated_at?: string | null
         }
       }
-      suppliers: {
+      companies: {
         Row: {
           id: string
           name: string
@@ -115,11 +115,11 @@ export interface Database {
           updated_at?: string | null
         }
       }
-      component_suppliers: {
+      component_companies: {
         Row: {
           id: string
           component_id: string
-          supplier_id: string
+          company_id: string
           unit_price: number
           rfq_quoted_price: number | null
           moq: number
@@ -134,7 +134,7 @@ export interface Database {
         Insert: {
           id?: string
           component_id: string
-          supplier_id: string
+          company_id: string
           unit_price: number
           rfq_quoted_price?: number | null
           moq?: number
@@ -149,7 +149,7 @@ export interface Database {
         Update: {
           id?: string
           component_id?: string
-          supplier_id?: string
+          company_id?: string
           unit_price?: number
           rfq_quoted_price?: number | null
           moq?: number
@@ -166,8 +166,8 @@ export interface Database {
         Row: {
           id: string
           po_number: string
-          supplier_id: string | null
-          supplier_name: string | null
+          company_id: string | null
+          company_name: string | null
           items: Json
           status: string
           total_amount: number
@@ -177,8 +177,8 @@ export interface Database {
         Insert: {
           id?: string
           po_number: string
-          supplier_id?: string | null
-          supplier_name?: string | null
+          company_id?: string | null
+          company_name?: string | null
           items: Json
           status?: string
           total_amount?: number
@@ -188,8 +188,8 @@ export interface Database {
         Update: {
           id?: string
           po_number?: string
-          supplier_id?: string | null
-          supplier_name?: string | null
+          company_id?: string | null
+          company_name?: string | null
           items?: Json
           status?: string
           total_amount?: number
