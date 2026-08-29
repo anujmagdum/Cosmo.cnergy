@@ -30,6 +30,7 @@ import {
   Trash2,
   Building2,
   ChevronRight,
+  ChevronDown,
   X,
   Check,
   Layers,
@@ -104,6 +105,7 @@ export const CatalogSection: React.FC<Props> = ({
   onOpenComparisonDrawer
 }) => {
   const navigate = useNavigate();
+  const [isFoldersExpanded, setIsFoldersExpanded] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [lightboxData, setLightboxData] = useState<{ url: string; name: string } | null>(null);
   
@@ -720,119 +722,154 @@ export const CatalogSection: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* SUBSECTION 1: PRODUCT FOLDERS (Strict Vertical Ladder List View) */}
-      <div className="space-y-2">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2">
-          <div>
-            <h3 className="text-sm font-bold text-[#073642] flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={filteredFolders.length > 0 && selectedFolderIds.length === filteredFolders.length}
-                onChange={handleSelectAllFolders}
-                className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+      {/* SUBSECTION 1: PRODUCT FOLDERS (Collapsible Accordion Header - Collapsed by Default) */}
+      <div className="bg-[#FDF6E3] border border-[#D6D1B1] rounded-2xl p-3.5 shadow-2xs transition-all">
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setIsFoldersExpanded(prev => !prev)}
+            className="flex items-center gap-2.5 text-left text-sm font-bold text-[#073642] hover:text-emerald-800 transition-colors cursor-pointer group py-0.5 select-none"
+            title={isFoldersExpanded ? "Click to collapse Product Folders" : "Click to expand Product Folders"}
+          >
+            <div className="w-6 h-6 rounded-lg bg-[#EEE8D5] border border-[#D6D1B1] flex items-center justify-center text-[#586E75] group-hover:bg-emerald-100 group-hover:text-emerald-800 group-hover:border-emerald-300 transition-all">
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  isFoldersExpanded ? 'rotate-180 text-emerald-700' : 'text-[#586E75]'
+                }`}
               />
-              <Folder className="w-4 h-4 text-emerald-600" />
-              <span>Product Folders & Pack Assemblies ({filteredFolders.length})</span>
-            </h3>
-            <span className="text-[11px] text-[#586E75] ml-6">Dense ladder list with multi-select bulk delete</span>
-          </div>
+            </div>
 
-          {selectedFolderIds.length > 0 && (
-            <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-emerald-500 animate-in fade-in">
-              <span className="text-xs font-bold text-[#073642] px-2">{selectedFolderIds.length} Selected</span>
+            <Folder className="w-4 h-4 text-emerald-600" />
+            <span>Product Folders & Pack Assemblies</span>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#EEE8D5] text-[#073642] border border-[#D6D1B1]">
+              {filteredFolders.length}
+            </span>
+            <span className="text-[11px] font-normal text-[#586E75] hidden sm:inline-block">
+              {isFoldersExpanded ? '(Click to collapse)' : '(Click to expand assemblies)'}
+            </span>
+          </button>
+
+          {/* Right side of header: If expanded and has selected folders, show bulk delete actions */}
+          {isFoldersExpanded && selectedFolderIds.length > 0 && (
+            <div className="flex items-center gap-2 animate-in fade-in">
+              <span className="text-xs font-bold text-[#073642]">{selectedFolderIds.length} Selected</span>
               <button
                 onClick={handleBulkDeleteFolders}
                 disabled={isBulkDeletingFolders}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-1 px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
               >
-                <Trash2 className="w-3.5 h-3.5" />
-                {isBulkDeletingFolders ? 'Deleting...' : 'Delete Folders'}
+                <Trash2 className="w-3 h-3" />
+                <span>{isBulkDeletingFolders ? 'Deleting...' : 'Delete'}</span>
               </button>
             </div>
           )}
         </div>
 
-        <div className="flex flex-col space-y-2">
-          {filteredFolders.map(folder => {
-            const componentsCount = (folder.components || []).length;
+        {/* Inline Expandable Body (Expands strictly inline, no modal or overlay) */}
+        {isFoldersExpanded && (
+          <div className="mt-3 pt-3 border-t border-[#D6D1B1]/60 space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
+            <div className="flex items-center justify-between text-xs text-[#586E75] pb-1 px-1">
+              <label className="flex items-center gap-2 cursor-pointer select-none font-semibold">
+                <input
+                  type="checkbox"
+                  checked={filteredFolders.length > 0 && selectedFolderIds.length === filteredFolders.length}
+                  onChange={handleSelectAllFolders}
+                  className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+                />
+                <span>Select All Assemblies</span>
+              </label>
+              <span className="text-[11px] text-[#586E75] hidden md:inline-block">Click an assembly folder to manage recipe components</span>
+            </div>
 
-            return (
-              <div
-                key={folder.id}
-                onClick={() => setActiveDetailFolder(folder)}
-                className="w-full group bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500/70 hover:shadow-xs transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-              >
-                {/* Left: Checkbox, Folder Name & Description & Components Count */}
-                <div className="flex items-center gap-3 min-w-0">
-                  <input
-                    type="checkbox"
-                    checked={selectedFolderIds.includes(folder.id)}
-                    onChange={e => {
-                      e.stopPropagation();
-                      toggleSelectOneFolder(folder.id);
-                    }}
-                    onClick={e => e.stopPropagation()}
-                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
-                  />
+            <div className="flex flex-col space-y-2">
+              {filteredFolders.map(folder => {
+                const componentsCount = (folder.components || []).length;
 
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 flex items-center justify-center shrink-0">
-                    <Folder className="w-4 h-4" />
-                  </div>
+                return (
+                  <div
+                    key={folder.id}
+                    onClick={() => setActiveDetailFolder(folder)}
+                    className="w-full group bg-[#EEE8D5]/60 hover:bg-[#EEE8D5] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500/70 hover:shadow-xs transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  >
+                    {/* Left: Checkbox, Folder Name & Description & Components Count */}
+                    <div className="flex items-center gap-3 min-w-0">
+                      <input
+                        type="checkbox"
+                        checked={selectedFolderIds.includes(folder.id)}
+                        onChange={e => {
+                          e.stopPropagation();
+                          toggleSelectOneFolder(folder.id);
+                        }}
+                        onClick={e => e.stopPropagation()}
+                        className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
+                      />
 
-                  <div className="truncate min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-[#073642] text-xs md:text-sm group-hover:text-emerald-800 transition-colors truncate">
-                        {folder.name}
-                      </h4>
-                      <span className="px-2 py-0.5 rounded text-[10px] bg-[#EEE8D5] text-[#073642] font-semibold border border-[#D6D1B1] shrink-0">
-                        {componentsCount} Components
-                      </span>
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                        <Folder className="w-4 h-4" />
+                      </div>
+
+                      <div className="truncate min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-[#073642] text-xs md:text-sm group-hover:text-emerald-800 transition-colors truncate">
+                            {folder.name}
+                          </h4>
+                          <span className="px-2 py-0.5 rounded text-[10px] bg-[#FDF6E3] text-[#073642] font-semibold border border-[#D6D1B1] shrink-0">
+                            {componentsCount} Components
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-[#586E75] block truncate">
+                          {folder.description || 'LFP Battery Pack Assembly Recipe'}
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-[11px] text-[#586E75] block truncate">
-                      {folder.description || 'LFP Battery Pack Assembly Recipe'}
-                    </span>
+
+                    {/* Right: Actions */}
+                    <div className="flex items-center gap-2 shrink-0 pt-1 sm:pt-0" onClick={e => e.stopPropagation()}>
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          setRecipeFolder(folder);
+                        }}
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 font-bold text-xs border border-emerald-500/30 transition-all active:scale-95 cursor-pointer"
+                      >
+                        <PlusCircle className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>+ Component</span>
+                      </button>
+
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          setBatchSendFolder(folder);
+                        }}
+                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-xs active:scale-95 transition-all cursor-pointer"
+                      >
+                        <Send className="w-3 h-3 fill-white text-white" />
+                        <span>Send POs</span>
+                      </button>
+
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          setFolderToDelete(folder);
+                        }}
+                        className="text-[#586E75] hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-colors ml-1 cursor-pointer"
+                        title="Delete Folder"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
+                );
+              })}
+
+              {filteredFolders.length === 0 && (
+                <div className="p-4 text-center text-xs text-[#586E75] italic">
+                  No product folders found matching current filter.
                 </div>
-
-                {/* Right: Actions */}
-                <div className="flex items-center gap-2 shrink-0 pt-1 sm:pt-0">
-                  <button
-                    onClick={e => {
-                      e.stopPropagation();
-                      setRecipeFolder(folder);
-                    }}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 font-bold text-xs border border-emerald-500/30 transition-all active:scale-95 cursor-pointer"
-                  >
-                    <PlusCircle className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>+ Component</span>
-                  </button>
-
-                  <button
-                    onClick={e => {
-                      e.stopPropagation();
-                      setBatchSendFolder(folder);
-                    }}
-                    className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-xs active:scale-95 transition-all cursor-pointer"
-                  >
-                    <Send className="w-3 h-3 fill-white text-white" />
-                    <span>Send POs</span>
-                  </button>
-
-                  <button
-                    onClick={e => {
-                      e.stopPropagation();
-                      setFolderToDelete(folder);
-                    }}
-                    className="text-[#586E75] hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-colors ml-1 cursor-pointer"
-                    title="Delete Folder"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* SUBSECTION 2: COMPONENTS (Strict Vertical Ladder List View) */}
