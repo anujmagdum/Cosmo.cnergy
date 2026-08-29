@@ -82,7 +82,8 @@ export interface Supplier {
   whatsapp?: string;
   buying_url?: string;
   address?: string;
-  category?: string;
+  category?: string;        // primary / legacy single-category (backward compat)
+  categories?: string[];    // multi-category array (new)
   category_id?: string;
   rating?: number;
   gstin?: string;

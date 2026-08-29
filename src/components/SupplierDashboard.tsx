@@ -57,7 +57,8 @@ export const SupplierDashboard: React.FC<Props> = ({
     address: '',
     gstin: '',
     payment_terms: 'Net 30 Days',
-    category: 'Battery Cells'
+    category: 'Battery Cells',    // primary / legacy
+    categories: ['Battery Cells'] // multi-category
   });
 
   const allCategoryNames = useMemo(() => {
@@ -81,15 +82,23 @@ export const SupplierDashboard: React.FC<Props> = ({
         s.name.toLowerCase().includes(term) ||
         s.contact_person.toLowerCase().includes(term) ||
         (s.address && s.address.toLowerCase().includes(term)) ||
-        (s.category && s.category.toLowerCase().includes(term));
+        (s.category && s.category.toLowerCase().includes(term)) ||
+        (s.categories && s.categories.some(c => c.toLowerCase().includes(term)));
 
       let matchesCategory = activeCat === 'all';
       if (!matchesCategory) {
-        const suppCat = (s.category || '').toLowerCase().trim();
-        const relationalCatName = s.category_id
-          ? (categories.find(cat => cat.id === s.category_id)?.name || '').toLowerCase().trim()
-          : '';
-        matchesCategory = suppCat === activeCat || relationalCatName === activeCat;
+        // Check multi-category array first
+        if (s.categories && s.categories.length > 0) {
+          matchesCategory = s.categories.some(c => c.toLowerCase().trim() === activeCat);
+        }
+        // Fallback to single category field
+        if (!matchesCategory) {
+          const suppCat = (s.category || '').toLowerCase().trim();
+          const relationalCatName = s.category_id
+            ? (categories.find(cat => cat.id === s.category_id)?.name || '').toLowerCase().trim()
+            : '';
+          matchesCategory = suppCat === activeCat || relationalCatName === activeCat;
+        }
       }
 
       return matchesSearch && matchesCategory;
@@ -100,11 +109,14 @@ export const SupplierDashboard: React.FC<Props> = ({
     e.preventDefault();
     if (!formData.name || !formData.email) return;
 
-    const matchedCat = categories.find(c => c.name.toLowerCase() === formData.category.toLowerCase());
+    const primaryCat = formData.categories[0] || formData.category;
+    const matchedCat = categories.find(c => c.name.toLowerCase() === primaryCat.toLowerCase());
 
     try {
       await onAddSupplier({
         ...formData,
+        category: primaryCat,
+        categories: formData.categories,
         category_id: matchedCat?.id
       });
 
@@ -118,7 +130,8 @@ export const SupplierDashboard: React.FC<Props> = ({
         address: '',
         gstin: '',
         payment_terms: 'Net 30 Days',
-        category: 'Battery Cells'
+        category: 'Battery Cells',
+        categories: ['Battery Cells']
       });
       setIsAddModalOpen(false);
       setToastFeedback({ type: 'success', message: `Supplier "${formData.name}" added successfully.` });
@@ -134,12 +147,17 @@ export const SupplierDashboard: React.FC<Props> = ({
     e.preventDefault();
     if (!editingSupplier) return;
 
-    const matchedCat = categories.find(c => c.name.toLowerCase() === (editingSupplier.category || '').toLowerCase());
+    const primaryCat = (editingSupplier.categories && editingSupplier.categories.length > 0)
+      ? editingSupplier.categories[0]
+      : (editingSupplier.category || '');
+    const matchedCat = categories.find(c => c.name.toLowerCase() === primaryCat.toLowerCase());
 
     try {
       if (onUpdateSupplier) {
         await onUpdateSupplier({
           ...editingSupplier,
+          category: primaryCat || editingSupplier.category,
+          categories: editingSupplier.categories || (editingSupplier.category ? [editingSupplier.category] : []),
           category_id: matchedCat?.id || editingSupplier.category_id
         });
       }
@@ -383,13 +401,22 @@ export const SupplierDashboard: React.FC<Props> = ({
                   </div>
 
                   <div className="truncate min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h4 className="text-xs md:text-sm font-bold text-[#073642] truncate">{supplier.name}</h4>
-                      <span className="px-2 py-0.2 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">
-                        {supplier.category || 'General Supplier'}
-                      </span>
+                      {/* Multi-category pills — show up to 2 then "+N more" */}
+                      {(supplier.categories && supplier.categories.length > 0
+                        ? supplier.categories
+                        : [supplier.category || 'General Supplier']
+                      ).slice(0, 2).map((cat, i) => (
+                        <span key={i} className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">{cat}</span>
+                      ))}
+                      {supplier.categories && supplier.categories.length > 2 && (
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#EEE8D5] text-[#073642] border border-[#D6D1B1] shrink-0">
+                          +{supplier.categories.length - 2} more
+                        </span>
+                      )}
                       {supplier.gstin && (
-                        <span className="hidden md:inline-block text-[9px] font-mono font-bold bg-[#EEE8D5] text-[#073642] px-1.5 py-0.2 rounded border border-[#D6D1B1] shrink-0">
+                        <span className="hidden md:inline-block text-[9px] font-mono font-bold bg-[#EEE8D5] text-[#073642] px-1.5 py-0.5 rounded border border-[#D6D1B1] shrink-0">
                           GST: {supplier.gstin}
                         </span>
                       )}
@@ -537,21 +564,47 @@ export const SupplierDashboard: React.FC<Props> = ({
                     className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
-                <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Category</label>
-                  <select
-                    value={formData.category}
-                    onChange={e => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-semibold"
-                  >
-                    {DEFAULT_CATEGORIES.map(cat => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
+
+              {/* Multi-Category Selector */}
+              <div>
+                <label className="block font-semibold text-[#073642] mb-1.5">
+                  Categories <span className="text-[10px] text-[#586E75] font-normal ml-1">(Select all that apply)</span>
+                </label>
+                <div className="p-3 bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl space-y-2 max-h-36 overflow-y-auto">
+                  {DEFAULT_CATEGORIES.map(cat => (
+                    <label key={cat} className="flex items-center gap-2.5 cursor-pointer hover:text-emerald-800 group">
+                      <input
+                        type="checkbox"
+                        checked={formData.categories.includes(cat)}
+                        onChange={e => {
+                          const next = e.target.checked
+                            ? [...formData.categories, cat]
+                            : formData.categories.filter(c => c !== cat);
+                          setFormData({ ...formData, categories: next, category: next[0] || cat });
+                        }}
+                        className="w-4 h-4 rounded text-emerald-600 accent-emerald-600 cursor-pointer shrink-0"
+                      />
+                      <span className="text-xs font-medium text-[#073642] group-hover:text-emerald-800">{cat}</span>
+                    </label>
+                  ))}
+                </div>
+                {/* Selected pills */}
+                {formData.categories.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {formData.categories.map((cat, i) => (
+                      <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold">
+                        {cat}
+                        {i === 0 && <span className="text-[9px] opacity-70">(primary)</span>}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {formData.categories.length === 0 && (
+                  <p className="text-[11px] text-amber-700 mt-1">Please select at least one category.</p>
+                )}
+              </div>
+
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -661,7 +714,7 @@ export const SupplierDashboard: React.FC<Props> = ({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 <div>
                   <label className="block font-semibold text-[#073642] mb-1">Contact Person *</label>
                   <input
@@ -672,21 +725,49 @@ export const SupplierDashboard: React.FC<Props> = ({
                     className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
-                <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Category</label>
-                  <select
-                    value={editingSupplier.category || 'General Supplier'}
-                    onChange={e => setEditingSupplier({ ...editingSupplier, category: e.target.value })}
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-semibold"
-                  >
-                    {DEFAULT_CATEGORIES.map(cat => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
+
+              {/* Multi-Category Selector (Edit) */}
+              <div>
+                <label className="block font-semibold text-[#073642] mb-1.5">
+                  Categories <span className="text-[10px] text-[#586E75] font-normal ml-1">(Select all that apply)</span>
+                </label>
+                <div className="p-3 bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl space-y-2 max-h-36 overflow-y-auto">
+                  {DEFAULT_CATEGORIES.map(cat => {
+                    const currentCats = editingSupplier.categories || (editingSupplier.category ? [editingSupplier.category] : ['General Supplier']);
+                    return (
+                      <label key={cat} className="flex items-center gap-2.5 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={currentCats.includes(cat)}
+                          onChange={e => {
+                            const next = e.target.checked
+                              ? [...currentCats, cat]
+                              : currentCats.filter(c => c !== cat);
+                            setEditingSupplier({ ...editingSupplier, categories: next, category: next[0] || cat });
+                          }}
+                          className="w-4 h-4 rounded text-emerald-600 accent-emerald-600 cursor-pointer shrink-0"
+                        />
+                        <span className="text-xs font-medium text-[#073642] group-hover:text-emerald-800">{cat}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+                {/* Selected pills */}
+                {(() => {
+                  const currentCats = editingSupplier.categories || (editingSupplier.category ? [editingSupplier.category] : []);
+                  return currentCats.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {currentCats.map((cat, i) => (
+                        <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold">
+                          {cat}{i === 0 && <span className="text-[9px] opacity-70">(primary)</span>}
+                        </span>
+                      ))}
+                    </div>
+                  ) : <p className="text-[11px] text-amber-700 mt-1">Please select at least one category.</p>;
+                })()}
+              </div>
+
 
               <div className="grid grid-cols-2 gap-3">
                 <div>

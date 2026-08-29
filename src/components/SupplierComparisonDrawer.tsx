@@ -48,10 +48,14 @@ export const SupplierComparisonDrawer: React.FC<Props> = ({
   const linkedRecords: ComponentSupplier[] = React.useMemo(() => {
     const directLinks = componentSuppliers.filter(cs => cs.component_id === component.id);
     if (directLinks.length > 0) {
-      return directLinks.map(cs => ({
-        ...cs,
-        supplier: cs.supplier || suppliers.find(s => s.id === cs.supplier_id)
-      }));
+      // Deduplicate by supplier_id (in case multi-category causes duplicate junction entries)
+      const seen = new Set<string>();
+      return directLinks
+        .filter(cs => { const dup = seen.has(cs.supplier_id); seen.add(cs.supplier_id); return !dup; })
+        .map(cs => ({
+          ...cs,
+          supplier: cs.supplier || suppliers.find(s => s.id === cs.supplier_id)
+        }));
     }
 
     // Fallback 1: If component carries supplier_mappings or supplier_ids directly

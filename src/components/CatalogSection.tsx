@@ -1151,18 +1151,21 @@ export const CatalogSection: React.FC<Props> = ({
         </div>
       )}
 
-      {/* Add Component Modal */}
+      {/* Add Component Modal — Responsive: bottom-sheet on mobile, centered on desktop */}
       {isAddCatalogOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-[#FDF6E3] w-full max-w-lg rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-4 my-8 text-[#073642]">
-            <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-3">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-[#FDF6E3] w-full sm:max-w-xl sm:rounded-3xl rounded-t-3xl border border-[#D6D1B1] shadow-2xl flex flex-col max-h-[90vh] text-[#073642]">
+            {/* Sticky Header */}
+            <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 px-5 py-4 shrink-0">
               <h3 className="text-lg font-bold text-[#073642]">Add Component to Catalog</h3>
-              <button onClick={() => setIsAddCatalogOpen(false)} className="text-[#586E75] hover:text-[#073642] font-bold">
-                ✕
+              <button onClick={() => setIsAddCatalogOpen(false)} className="text-[#586E75] hover:text-[#073642] font-bold p-1">
+                <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleCatalogSubmit} className="space-y-3 text-xs">
+            {/* Scrollable Form Body */}
+            <form onSubmit={handleCatalogSubmit} className="flex flex-col flex-1 overflow-hidden">
+              <div className="overflow-y-auto flex-1 px-5 py-4 space-y-3 text-xs">
               {/* Component Name (ONLY REQUIRED FIELD) */}
               <div>
                 <label className="block font-semibold text-[#073642] mb-1">Component Name *</label>
@@ -1410,30 +1413,17 @@ export const CatalogSection: React.FC<Props> = ({
                 )}
               </div>
 
-              {/* Price & Stock Quantity (Optional) */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Price (₹ INR, Optional)</label>
-                  <input
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    value={catalogForm.preset_price}
-                    onChange={e => setCatalogForm({ ...catalogForm, preset_price: Number(e.target.value) || 0 })}
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] font-mono font-bold focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
 
-                <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Stock Quantity (In-Stock)</label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={catalogForm.in_stock_qty}
-                    onChange={e => setCatalogForm({ ...catalogForm, in_stock_qty: Number(e.target.value) || 0 })}
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] font-mono font-bold focus:outline-none focus:border-emerald-500"
-                  />
-                </div>
+              {/* Stock Quantity */}
+              <div>
+                <label className="block font-semibold text-[#073642] mb-1">Stock Quantity (In-Stock)</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={catalogForm.in_stock_qty}
+                  onChange={e => setCatalogForm({ ...catalogForm, in_stock_qty: Number(e.target.value) || 0 })}
+                  className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] font-mono font-bold focus:outline-none focus:border-emerald-500"
+                />
               </div>
 
               {/* Custom Stock Alert Threshold Slider */}
@@ -1485,7 +1475,10 @@ export const CatalogSection: React.FC<Props> = ({
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#D6D1B1]/60">
+              </div>{/* end scrollable body */}
+
+              {/* Sticky Footer Action Buttons */}
+              <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-[#D6D1B1]/60 shrink-0 bg-[#FDF6E3] sm:rounded-b-3xl rounded-b-none">
                 <button
                   type="button"
                   onClick={() => setIsAddCatalogOpen(false)}
@@ -1506,6 +1499,7 @@ export const CatalogSection: React.FC<Props> = ({
         </div>
       )}
 
+
       {/* 1-Tap Re-Order Workflow Modal */}
       {reOrderConfirmData && (
         <ReOrderConfirmationModal
@@ -1525,7 +1519,14 @@ export const CatalogSection: React.FC<Props> = ({
           item={editingComponent}
           suppliers={suppliers}
           categories={categories}
+          componentSuppliers={componentSuppliers}
           onClose={() => setEditingComponent(null)}
+          onSaveSupplierMappings={(componentId, mappings) => {
+            // Propagate supplier mapping updates to the parent via onUpdateCatalogItem
+            // The parent App.tsx will handle persisting to component_suppliers table
+            const updatedItem = { ...editingComponent, supplier_mappings: mappings, supplier_ids: mappings.map(m => m.supplier_id), supplier_id: mappings[0]?.supplier_id || editingComponent.supplier_id };
+            if (onUpdateCatalogItem) onUpdateCatalogItem(updatedItem);
+          }}
           onSave={updatedItem => {
             if (onUpdateCatalogItem) {
               onUpdateCatalogItem(updatedItem);
