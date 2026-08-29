@@ -910,14 +910,24 @@ export const CatalogSection: React.FC<Props> = ({
             const isBottleneck = isStockBottleneck(item);
 
             return (
-              <div key={item.id} onClick={() => navigate(`/inventory/component/${item.id}`)} className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500 hover:shadow-md cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all group/card"
+              <div
+                key={item.id}
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.closest('button, input, select, textarea, [data-stop-nav]')) {
+                    return;
+                  }
+                  navigate(`/inventory/component/${item.id}`);
+                }}
+                className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500 hover:shadow-md cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all group/card"
               >
                 {/* Left: Checkbox, Component Name, Category, Specs, Company */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <input
                     type="checkbox"
                     checked={selectedComponentIds.includes(item.id)}
-                    onChange={() => toggleSelectOneComponent(item.id)}
+                    onChange={(e) => { e.stopPropagation(); toggleSelectOneComponent(item.id); }}
+                    onClick={(e) => e.stopPropagation()}
                     className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
                   />
 
@@ -1067,7 +1077,7 @@ export const CatalogSection: React.FC<Props> = ({
                       title="Override quantity"
                     />
                     <button
-                      onClick={() => setReOrderConfirmData({ item, qty: reorderQtyMap[item.id] || item.min_order_qty || 10 })}
+                      onClick={(e) => { e.stopPropagation(); setReOrderConfirmData({ item, qty: reorderQtyMap[item.id] || item.min_order_qty || 10 }); }}
                       className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
                     >
                       Reorder
@@ -1097,7 +1107,7 @@ export const CatalogSection: React.FC<Props> = ({
                   <div className="flex items-center gap-1">
                     <button
                       type="button"
-                      onClick={() => setEditingComponent(item)}
+                      onClick={(e) => { e.stopPropagation(); setEditingComponent(item); }}
                       className="p-1.5 rounded bg-[#EEE8D5] hover:bg-emerald-100 text-[#586E75] hover:text-emerald-800 border border-[#D6D1B1] transition-all cursor-pointer"
                       title="Edit Component"
                     >
@@ -1106,7 +1116,7 @@ export const CatalogSection: React.FC<Props> = ({
 
                     <button
                       type="button"
-                      onClick={() => setComponentToDelete(item)}
+                      onClick={(e) => { e.stopPropagation(); setComponentToDelete(item); }}
                       className="p-1.5 rounded bg-[#EEE8D5] hover:bg-red-100 text-[#586E75] hover:text-red-700 border border-[#D6D1B1] transition-all cursor-pointer"
                       title="Delete Component"
                     >
