@@ -1023,9 +1023,23 @@ export const CatalogSection: React.FC<Props> = ({
                         <span className="truncate">
                           {(() => {
                             const linkedSupps = componentCompanies.filter(cs => cs.component_id === item.id);
-                            const count = linkedSupps.length > 0
-                              ? linkedSupps.length
-                              : (item.company_ids?.length || (item.company_id ? 1 : 0));
+                            if (linkedSupps.length > 0) {
+                              // Deterministic sort by lowest RFQ quoted price (lowest first, no AI)
+                              const sorted = [...linkedSupps].sort((a, b) => {
+                                const pA = (a.rfq_quoted_price ?? a.unit_price ?? 0);
+                                const pB = (b.rfq_quoted_price ?? b.unit_price ?? 0);
+                                return pA - pB;
+                              });
+                              const lowest = sorted[0];
+                              const lowestComp = companies.find(c => c.id === lowest.company_id);
+                              const price = lowest.rfq_quoted_price ?? lowest.unit_price;
+                              const name = lowestComp?.name || 'Default Company';
+                              if (linkedSupps.length > 1) {
+                                return `${name} (Lowest ₹${price}) +${linkedSupps.length - 1} more`;
+                              }
+                              return `${name} (₹${price})`;
+                            }
+                            const count = item.company_ids?.length || (item.company_id ? 1 : 0);
                             if (count > 1) {
                               return `${company?.name || 'Primary'} +${count - 1} more`;
                             }

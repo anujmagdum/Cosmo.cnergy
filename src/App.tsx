@@ -1353,6 +1353,7 @@ export const App: React.FC = () => {
           companies={companies}
           folders={folders}
           orders={orders}
+          componentCompanies={componentCompanies}
           onClose={() => setIsBOMModalOpen(false)}
           onDispatchOrders={handleDispatchOrders}
           onOpenWebmail={handleOpenWebmail}

@@ -1,6 +1,30 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { CatalogItem, ProductBOM, Company, MultiCompanyPODraft, ProductFolder, ProcurementOrder, formatProcurementSubject, QueuedMailDraft } from '../types';
-import { Layers, Rocket, Calculator, Check, ArrowRight, Zap, RefreshCw, X, Building2, Package, Mail, MessageSquare } from 'lucide-react';
+import {
+  CatalogItem,
+  ProductBOM,
+  Company,
+  MultiCompanyPODraft,
+  ProductFolder,
+  ProcurementOrder,
+  formatProcurementSubject,
+  QueuedMailDraft,
+  ComponentCompany
+} from '../types';
+import {
+  Layers,
+  Rocket,
+  Calculator,
+  Check,
+  ArrowRight,
+  Zap,
+  RefreshCw,
+  X,
+  Building2,
+  Package,
+  Mail,
+  MessageSquare,
+  Search
+} from 'lucide-react';
 
 interface Props {
   catalog: CatalogItem[];
@@ -8,9 +32,17 @@ interface Props {
   companies: Company[];
   folders?: ProductFolder[];
   orders?: ProcurementOrder[];
+  componentCompanies?: ComponentCompany[];
   onClose: () => void;
   onDispatchOrders: (orders: MultiCompanyPODraft[], type: 'PO' | 'RFQ') => Promise<void>;
-  onOpenWebmail?: (company: Company, itemName?: string, specs?: string, qty?: number | string, context?: string, statusState?: string) => void;
+  onOpenWebmail?: (
+    company: Company,
+    itemName?: string,
+    specs?: string,
+    qty?: number | string,
+    context?: string,
+    statusState?: string
+  ) => void;
   onEnqueueMailDrafts?: (drafts: QueuedMailDraft[], openFirstImmediately?: boolean) => void;
 }
 
@@ -20,11 +52,15 @@ export const BOMProcurementModal: React.FC<Props> = ({
   companies,
   folders = [],
   orders = [],
+  componentCompanies = [],
   onClose,
   onDispatchOrders,
   onOpenWebmail,
   onEnqueueMailDrafts
 }) => {
+  // Navigation Tabs: Whole Product Assembly vs Selected Components
+  const [activeBOMTab, setActiveBOMTab] = useState<'whole_product' | 'selected_components'>('whole_product');
+
   // Option list combining Product Folders and registered BOM finished products
   const folderNames = folders.map(f => ({
     code: f.id,
@@ -62,12 +98,63 @@ export const BOMProcurementModal: React.FC<Props> = ({
   const [isDispatching, setIsDispatching] = useState(false);
   const [activeTabCompanyId, setActiveTabCompanyId] = useState<string | null>(null);
 
+  // Per-item quantity overrides for Whole Product Assembly and Selected Components
+  const [rowQtyOverrides, setRowQtyOverrides] = useState<Record<string, number>>({});
+  const [selectedCompQtyOverrides, setSelectedCompQtyOverrides] = useState<Record<string, number>>({});
+
+  // Selected Components State
+  const [selectedCompIds, setSelectedCompIds] = useState<string[]>(() => {
+    return catalog.slice(0, 4).map(c => c.id);
+  });
+  const [compSearchQuery, setCompSearchQuery] = useState('');
+
   const currentSelection = useMemo(() => {
     return allSelectableProducts.find(p => p.code === selectedProductCode) || allSelectableProducts[0];
   }, [allSelectableProducts, selectedProductCode]);
 
-  // 1-TAP BOM AUTO-CALCULATION & MULTI-SUPPLIER AUTO-SPLITTING LOGIC
-  const splitDrafts = useMemo<MultiCompanyPODraft[]>(() => {
+  // Helper to pick default company for a component by lowest RFQ price (pure deterministic sorting, no AI)
+  const getLowestPriceCompanyForItem = (item: CatalogItem): { company: Company; rfqPrice: number; moq: number } => {
+    const linked = componentCompanies.filter(cc => cc.component_id === item.id);
+    if (linked.length > 0) {
+      // Sort by RFQ price (lowest) then MOQ (lowest)
+      const sorted = [...linked].sort((a, b) => {
+        const priceA = a.rfq_quoted_price ?? a.unit_price;
+        const priceB = b.rfq_quoted_price ?? b.unit_price;
+        if (priceA !== priceB) return priceA - priceB;
+        return a.moq - b.moq;
+      });
+      const bestLink = sorted[0];
+      const comp = companies.find(c => c.id === bestLink.company_id) || companies[0];
+      return {
+        company: comp || {
+          id: bestLink.company_id,
+          name: 'Primary Sourcing Partner',
+          email: 'sales@vendor.com',
+          phone: '+91 98765 43210',
+          contact_person: 'Sales Team'
+        },
+        rfqPrice: bestLink.rfq_quoted_price ?? bestLink.unit_price,
+        moq: bestLink.moq || item.min_order_qty || 1
+      };
+    }
+
+    const comp = companies.find(s => s.id === item.company_id) || companies[0] || {
+      id: item.company_id || 'unknown',
+      name: 'General Vendor',
+      email: 'sales@vendor.com',
+      phone: '+91 98765 43210',
+      contact_person: 'Sales Dept'
+    };
+
+    return {
+      company: comp,
+      rfqPrice: item.preset_price || 100,
+      moq: item.min_order_qty || 1
+    };
+  };
+
+  // 1-TAP BOM AUTO-CALCULATION FOR WHOLE PRODUCT ASSEMBLY
+  const wholeProductDrafts = useMemo<MultiCompanyPODraft[]>(() => {
     const companyMap = new Map<string, MultiCompanyPODraft>();
 
     if (currentSelection?.isFolder) {
@@ -79,14 +166,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
           const rawItem = catalog.find(c => c.id === comp.item_id);
           if (!rawItem) return;
 
-          const company = companies.find(s => s.id === rawItem.company_id) || {
-            id: rawItem.company_id || 'unknown',
-            name: 'General Vendor',
-            email: 'sales@vendor.com',
-            phone: '+91 98765 43210',
-            whatsapp: '919876543210',
-            contact_person: 'Sales Dept'
-          };
+          const winner = getLowestPriceCompanyForItem(rawItem);
+          const company = winner.company;
 
           if (!companyMap.has(company.id)) {
             companyMap.set(company.id, {
@@ -97,8 +178,9 @@ export const BOMProcurementModal: React.FC<Props> = ({
           }
 
           const draft = companyMap.get(company.id)!;
-          const totalItemQty = comp.qty_per_unit * packQuantity;
-          const unitPrice = rawItem.preset_price || 100;
+          const defaultTotalQty = comp.qty_per_unit * packQuantity;
+          const totalItemQty = rowQtyOverrides[rawItem.id] !== undefined ? rowQtyOverrides[rawItem.id] : defaultTotalQty;
+          const unitPrice = winner.rfqPrice;
           const subtotal = totalItemQty * unitPrice;
 
           draft.items.push({
@@ -136,7 +218,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
             const item = poItem.item || catalog.find(c => c.id === poItem.item_id);
             if (!item) return;
 
-            const qty = poItem.quantity * packQuantity;
+            const defaultQty = poItem.quantity * packQuantity;
+            const qty = rowQtyOverrides[item.id] !== undefined ? rowQtyOverrides[item.id] : defaultQty;
             const uPrice = poItem.unit_price || item.preset_price || 100;
             const tPrice = qty * uPrice;
 
@@ -162,14 +245,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
         const rawItem = catalog.find(c => c.id === bom.raw_material_id) || bom.raw_material;
         if (!rawItem) return;
 
-        const company = companies.find(s => s.id === rawItem.company_id) || {
-          id: rawItem.company_id || 'unknown',
-          name: 'General Vendor',
-          email: 'sales@vendor.com',
-          phone: '+91 98765 43210',
-          whatsapp: '919876543210',
-          contact_person: 'Sales Dept'
-        };
+        const winner = getLowestPriceCompanyForItem(rawItem);
+        const company = winner.company;
 
         if (!companyMap.has(company.id)) {
           companyMap.set(company.id, {
@@ -180,8 +257,9 @@ export const BOMProcurementModal: React.FC<Props> = ({
         }
 
         const draft = companyMap.get(company.id)!;
-        const totalItemQty = bom.qty_per_unit * packQuantity;
-        const unitPrice = rawItem.preset_price || 100;
+        const defaultTotalQty = bom.qty_per_unit * packQuantity;
+        const totalItemQty = rowQtyOverrides[rawItem.id] !== undefined ? rowQtyOverrides[rawItem.id] : defaultTotalQty;
+        const unitPrice = winner.rfqPrice;
         const subtotal = totalItemQty * unitPrice;
 
         draft.items.push({
@@ -195,16 +273,62 @@ export const BOMProcurementModal: React.FC<Props> = ({
     }
 
     return Array.from(companyMap.values());
-  }, [selectedProductCode, packQuantity, boms, catalog, companies, currentSelection, orders, folders]);
+  }, [selectedProductCode, packQuantity, rowQtyOverrides, boms, catalog, companies, componentCompanies, currentSelection, orders, folders]);
 
-  // Set default active tab
-  if (!activeTabCompanyId && splitDrafts.length > 0) {
-    setActiveTabCompanyId(splitDrafts[0].company.id);
-  }
+  // SELECTED COMPONENTS AUTO-SPLIT ENGINE
+  const selectedComponentsDrafts = useMemo<MultiCompanyPODraft[]>(() => {
+    const compMap = new Map<string, MultiCompanyPODraft>();
+
+    selectedCompIds.forEach(id => {
+      const item = catalog.find(c => c.id === id);
+      if (!item) return;
+
+      const winner = getLowestPriceCompanyForItem(item);
+      const company = winner.company;
+
+      if (!compMap.has(company.id)) {
+        compMap.set(company.id, {
+          company,
+          items: [],
+          total_amount: 0
+        });
+      }
+
+      const draft = compMap.get(company.id)!;
+      const defaultQty = winner.moq || item.min_order_qty || 10;
+      const qty = selectedCompQtyOverrides[item.id] !== undefined ? selectedCompQtyOverrides[item.id] : defaultQty;
+      const unitPrice = winner.rfqPrice;
+      const subtotal = qty * unitPrice;
+
+      draft.items.push({
+        catalogItem: item,
+        quantity: qty,
+        unit_price: unitPrice,
+        total_price: subtotal
+      });
+      draft.total_amount += subtotal;
+    });
+
+    return Array.from(compMap.values());
+  }, [selectedCompIds, selectedCompQtyOverrides, catalog, componentCompanies, companies]);
+
+  // Active drafts based on current mode
+  const activeDrafts = activeBOMTab === 'whole_product' ? wholeProductDrafts : selectedComponentsDrafts;
+
+  // Sync active company tab
+  useEffect(() => {
+    if (activeDrafts.length > 0) {
+      if (!activeTabCompanyId || !activeDrafts.some(d => d.company.id === activeTabCompanyId)) {
+        setActiveTabCompanyId(activeDrafts[0].company.id);
+      }
+    } else {
+      setActiveTabCompanyId(null);
+    }
+  }, [activeDrafts, activeTabCompanyId]);
 
   const totalCalculatedCost = useMemo(() => {
-    return splitDrafts.reduce((sum, d) => sum + d.total_amount, 0);
-  }, [splitDrafts]);
+    return activeDrafts.reduce((sum, d) => sum + d.total_amount, 0);
+  }, [activeDrafts]);
 
   // State to track missing vendor contact details
   const [editableContacts, setEditableContacts] = useState<Record<string, { email: string; phone: string }>>({});
@@ -212,14 +336,14 @@ export const BOMProcurementModal: React.FC<Props> = ({
 
   useEffect(() => {
     const map: Record<string, { email: string; phone: string }> = {};
-    splitDrafts.forEach(d => {
+    activeDrafts.forEach(d => {
       map[d.company.id] = {
         email: d.company.email || '',
         phone: d.company.whatsapp || d.company.phone || ''
       };
     });
     setEditableContacts(map);
-  }, [splitDrafts]);
+  }, [activeDrafts]);
 
   const handleContactChange = (companyId: string, field: 'email' | 'phone', value: string) => {
     setEditableContacts(prev => ({
@@ -231,7 +355,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
     }));
   };
 
-  // Helper to format itemized PO list for a vendor draft
+  // Helper to format itemized list for a vendor draft
   const formatVendorItemsList = (draft: MultiCompanyPODraft) => {
     return draft.items
       .map(
@@ -245,8 +369,9 @@ export const BOMProcurementModal: React.FC<Props> = ({
   const buildVendorEmailData = (draft: MultiCompanyPODraft) => {
     const contact = editableContacts[draft.company.id] || { email: draft.company.email, phone: draft.company.phone };
     const itemsList = formatVendorItemsList(draft);
-    const subject = `${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} - ${currentSelection?.name || 'Assembly'}`;
-    const body = `Dear ${draft.company.contact_person || draft.company.name},\n\nPlease accept our formal ${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} for the "${currentSelection?.name || 'Assembly'}" (Batch x${packQuantity}):\n\n${itemsList}\n\nTotal PO Amount: ₹${draft.total_amount.toLocaleString('en-IN')}\n\nDelivery Location: Unit 4, Energy Tech Park, Pune Plant\nPayment Terms: 30 Days Net on QC Inspection\n\nPlease confirm order acceptance and dispatch schedule at your earliest convenience.\n\nBest regards,\nProcurement Department\nCosmo Cnergy Procurement Ltd.`;
+    const contextName = activeBOMTab === 'whole_product' ? (currentSelection?.name || 'Assembly') : 'Selected Components Batch';
+    const subject = `${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} - ${contextName}`;
+    const body = `Dear ${draft.company.contact_person || draft.company.name},\n\nPlease accept our formal ${orderType === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} for the "${contextName}":\n\n${itemsList}\n\nTotal PO Amount: ₹${draft.total_amount.toLocaleString('en-IN')}\n\nDelivery Location: Unit 4, Energy Tech Park, Pune Plant\nPayment Terms: 30 Days Net on QC Inspection\n\nPlease confirm order acceptance and dispatch schedule at your earliest convenience.\n\nBest regards,\nProcurement Department\nCosmo Cnergy Procurement Ltd.`;
     const mailtoUrl = `mailto:${encodeURIComponent(contact.email || '')}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     return { to: contact.email || draft.company.email || '', subject, body, mailtoUrl };
   };
@@ -258,7 +383,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
     const itemsList = draft.items
       .map(i => `• ${i.catalogItem.name}: ${i.quantity} ${i.catalogItem.uom} @ ₹${i.unit_price} = ₹${i.total_price}`)
       .join('\n');
-    const message = `*COSMOCNERGY 1-TAP PROCUREMENT*\n----------------------------------------\n📄 *Type:* ${orderType}\n🏢 *Vendor:* ${draft.company.name}\n📦 *Items:*\n${itemsList}\n💰 *Total:* ₹${draft.total_amount.toLocaleString('en-IN')}`;
+    const contextName = activeBOMTab === 'whole_product' ? (currentSelection?.name || 'Assembly') : 'Selected Components Batch';
+    const message = `*COSMOCNERGY 1-TAP PROCUREMENT*\n----------------------------------------\n📄 *Type:* ${orderType}\n🏢 *Vendor:* ${draft.company.name}\n📦 *Context:* ${contextName}\n*Items:*\n${itemsList}\n💰 *Total:* ₹${draft.total_amount.toLocaleString('en-IN')}`;
     const waUrl = cleanPhone
       ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`
       : `https://wa.me/?text=${encodeURIComponent(message)}`;
@@ -273,6 +399,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
       return;
     }
 
+    const contextName = activeBOMTab === 'whole_product' ? (currentSelection?.name || 'Assembly') : 'Selected Components Batch';
+
     if (onEnqueueMailDrafts) {
       const queuedDraft: QueuedMailDraft = {
         id: `bom-single-${draft.company.id}-${Date.now()}`,
@@ -280,7 +408,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
         to: emailData.to,
         subject: emailData.subject,
         body: emailData.body,
-        productName: currentSelection?.name || 'Assembly',
+        productName: contextName,
         totalAmount: draft.total_amount,
         itemsCount: draft.items.length,
         context: 'CATALOG_BOM',
@@ -291,7 +419,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
     } else if (onOpenWebmail) {
       onOpenWebmail(
         { ...draft.company, email: emailData.to },
-        currentSelection?.name || 'Assembly',
+        contextName,
         emailData.body,
         draft.total_amount,
         'CATALOG_BOM',
@@ -315,10 +443,9 @@ export const BOMProcurementModal: React.FC<Props> = ({
 
   const [autoRecordOrders, setAutoRecordOrders] = useState<boolean>(true);
 
-  // Master Dispatch Handler — maps through POs, triggers Webmail/WhatsApp, and confirms DB mutation
+  // Master Dispatch Handler
   const handleMasterDispatch = async () => {
-    // 1. Validation of contact info
-    for (const draft of splitDrafts) {
+    for (const draft of activeDrafts) {
       const contact = editableContacts[draft.company.id];
       if (dispatchChannel === 'webmail' && !contact?.email) {
         alert(`Please enter Email Address for company ${draft.company.name} before dispatching.`);
@@ -335,14 +462,13 @@ export const BOMProcurementModal: React.FC<Props> = ({
     setIsDispatching(true);
     try {
       if (dispatchChannel === 'whatsapp') {
-        // Dispatch via WhatsApp Deep Links
-        splitDrafts.forEach(draft => {
+        activeDrafts.forEach(draft => {
           const { waUrl } = buildVendorWhatsAppUrl(draft);
           window.open(waUrl, '_blank');
         });
-      } else if (dispatchChannel === 'webmail' && splitDrafts.length > 0) {
-        // Construct comprehensive PO drafts for ALL vendors
-        const allQueuedDrafts: QueuedMailDraft[] = splitDrafts.map((draft, idx) => {
+      } else if (dispatchChannel === 'webmail' && activeDrafts.length > 0) {
+        const contextName = activeBOMTab === 'whole_product' ? (currentSelection?.name || 'Assembly') : 'Selected Components Batch';
+        const allQueuedDrafts: QueuedMailDraft[] = activeDrafts.map((draft, idx) => {
           const emailData = buildVendorEmailData(draft);
           return {
             id: `bom-queue-${draft.company.id}-${Date.now()}-${idx}`,
@@ -350,7 +476,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
             to: emailData.to,
             subject: emailData.subject,
             body: emailData.body,
-            productName: currentSelection?.name || 'Assembly',
+            productName: contextName,
             totalAmount: draft.total_amount,
             itemsCount: draft.items.length,
             context: 'CATALOG_BOM',
@@ -358,7 +484,6 @@ export const BOMProcurementModal: React.FC<Props> = ({
           };
         });
 
-        // Store remaining in session recovery
         try {
           sessionStorage.setItem('cosmo_pending_pos_queue', JSON.stringify(allQueuedDrafts.slice(1)));
         } catch {}
@@ -376,16 +501,14 @@ export const BOMProcurementModal: React.FC<Props> = ({
             'ORDERED'
           );
         } else {
-          // Fallback to mailto: for first vendor
-          const first = splitDrafts[0];
+          const first = activeDrafts[0];
           const emailData = buildVendorEmailData(first);
           window.location.href = emailData.mailtoUrl;
         }
       }
 
-      // Record orders to database if user opted in or confirms
       if (autoRecordOrders && onDispatchOrders) {
-        await onDispatchOrders(splitDrafts, orderType);
+        await onDispatchOrders(activeDrafts, orderType);
       }
 
       onClose();
@@ -396,7 +519,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
     }
   };
 
-  const selectedDraft = splitDrafts.find(d => d.company.id === activeTabCompanyId) || splitDrafts[0];
+  const selectedDraft = activeDrafts.find(d => d.company.id === activeTabCompanyId) || activeDrafts[0];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
@@ -417,90 +540,190 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-300">
-                Select pack assembly & batch multiplier — auto-calculates quantities, aggregates companies, and executes 1-tap POs.
+                Procure complete product assemblies or customized component batches — edit quantities inline and send RFQ or POs.
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-all font-bold"
+            className="text-slate-400 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-all font-bold cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-          {/* Step 1: Select Pack & Multiplier Card */}
-          <div className="bg-[#EEE8D5] p-5 rounded-2xl border border-[#D6D1B1] space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#586E75] uppercase tracking-wider flex items-center gap-1.5">
-                <Calculator className="w-4 h-4 text-emerald-600" />
-                <span>1. Production Assembly Target & Multiplier</span>
-              </span>
-              <span className="text-xs text-[#586E75] font-semibold">
-                Auto-splits into <strong className="text-emerald-800">{splitDrafts.length} distinct company POs</strong>
-              </span>
-            </div>
+        <div className="p-6 space-y-5 max-h-[72vh] overflow-y-auto">
+          {/* Split Navigation Bar: Whole Product vs Selected Components */}
+          <div className="flex items-center gap-2 bg-[#EEE8D5] p-1.5 rounded-2xl border border-[#D6D1B1]">
+            <button
+              type="button"
+              onClick={() => setActiveBOMTab('whole_product')}
+              className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                activeBOMTab === 'whole_product'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-[#586E75] hover:text-[#073642] hover:bg-white/50'
+              }`}
+            >
+              <Package className="w-4 h-4" />
+              <span>Whole Product Assembly</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveBOMTab('selected_components')}
+              className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                activeBOMTab === 'selected_components'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'text-[#586E75] hover:text-[#073642] hover:bg-white/50'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              <span>Selected Components ({selectedCompIds.length})</span>
+            </button>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Product Selection */}
-              <div className="md:col-span-2">
-                <label className="block text-xs font-bold text-[#073642] mb-1">
-                  Finished Product / Battery Pack Assembly:
-                </label>
-                <select
-                  value={selectedProductCode}
-                  onChange={e => setSelectedProductCode(e.target.value)}
-                  className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-xl px-4 py-2.5 text-sm text-[#073642] font-semibold focus:outline-none focus:border-emerald-500 shadow-sm"
-                >
-                  {allSelectableProducts.map(p => (
-                    <option key={p.code} value={p.code}>
-                      {p.isFolder ? `📁 [Product Folder] ${p.name}` : `📦 [BOM Model] ${p.name}`}
-                    </option>
-                  ))}
-                </select>
+          {/* Step 1: Whole Product vs Selected Components Selection View */}
+          {activeBOMTab === 'whole_product' ? (
+            <div className="bg-[#EEE8D5] p-5 rounded-2xl border border-[#D6D1B1] space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#586E75] uppercase tracking-wider flex items-center gap-1.5">
+                  <Calculator className="w-4 h-4 text-emerald-600" />
+                  <span>1. Production Assembly Target & Multiplier</span>
+                </span>
+                <span className="text-xs text-[#586E75] font-semibold">
+                  Auto-splits into <strong className="text-emerald-800">{activeDrafts.length} distinct company POs</strong>
+                </span>
               </div>
 
-              {/* Quantity Multiplier */}
-              <div>
-                <label className="block text-xs font-bold text-[#073642] mb-1">
-                  Batch Multiplier (Packs to Build):
-                </label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Product Selection */}
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-[#073642] mb-1">
+                    Finished Product / Battery Pack Assembly:
+                  </label>
+                  <select
+                    value={selectedProductCode}
+                    onChange={e => setSelectedProductCode(e.target.value)}
+                    className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-xl px-4 py-2.5 text-sm text-[#073642] font-semibold focus:outline-none focus:border-emerald-500 shadow-sm"
+                  >
+                    {allSelectableProducts.map(p => (
+                      <option key={p.code} value={p.code}>
+                        {p.isFolder ? `📁 [Product Folder] ${p.name}` : `📦 [BOM Model] ${p.name}`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Quantity Multiplier */}
+                <div>
+                  <label className="block text-xs font-bold text-[#073642] mb-1">
+                    Batch Multiplier (Packs to Build):
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={1}
+                      max={1000}
+                      value={packQuantity}
+                      onChange={e => setPackQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-xl px-4 py-2.5 text-sm text-[#073642] font-mono font-bold focus:outline-none focus:border-emerald-500 shadow-sm text-center"
+                    />
+                    <span className="text-xs font-bold text-[#586E75]">Packs</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Multiplier Pills */}
+              <div className="flex items-center gap-2 pt-1 text-xs">
+                <span className="text-[#586E75] font-semibold">Quick Set:</span>
+                {[1, 5, 10, 20, 50, 100].map(val => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => setPackQuantity(val)}
+                    className={`px-3 py-1 rounded-lg font-bold font-mono transition-all cursor-pointer ${
+                      packQuantity === val
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : 'bg-[#FDF6E3] text-[#073642] hover:bg-[#E4DDC7] border border-[#D6D1B1]'
+                    }`}
+                  >
+                    x{val}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="bg-[#EEE8D5] p-5 rounded-2xl border border-[#D6D1B1] space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#586E75] uppercase tracking-wider flex items-center gap-1.5">
+                  <Layers className="w-4 h-4 text-emerald-600" />
+                  <span>1. Select Components for On-Demand Batch ({selectedCompIds.length} Selected)</span>
+                </span>
+                <span className="text-xs text-[#586E75] font-semibold">
+                  Auto-splits into <strong className="text-emerald-800">{activeDrafts.length} lowest-price company orders</strong>
+                </span>
+              </div>
+
+              {/* Component Search & Selector */}
+              <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    min={1}
-                    max={1000}
-                    value={packQuantity}
-                    onChange={e => setPackQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-xl px-4 py-2.5 text-sm text-[#073642] font-mono font-bold focus:outline-none focus:border-emerald-500 shadow-sm text-center"
-                  />
-                  <span className="text-xs font-bold text-[#586E75]">Packs</span>
+                  <div className="relative flex-1">
+                    <Search className="w-4 h-4 text-[#839496] absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      placeholder="Search components to add to procurement batch..."
+                      value={compSearchQuery}
+                      onChange={e => setCompSearchQuery(e.target.value)}
+                      className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-xl pl-9 pr-3 py-2 text-xs text-[#073642] focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCompIds(catalog.map(c => c.id))}
+                    className="px-3 py-2 bg-[#FDF6E3] hover:bg-[#E4DDC7] text-[#073642] border border-[#D6D1B1] rounded-xl text-xs font-bold transition-all cursor-pointer"
+                  >
+                    Select All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCompIds([])}
+                    className="px-3 py-2 bg-[#FDF6E3] hover:bg-[#E4DDC7] text-[#073642] border border-[#D6D1B1] rounded-xl text-xs font-bold transition-all cursor-pointer"
+                  >
+                    Clear
+                  </button>
+                </div>
+
+                {/* Component Selection Pills */}
+                <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-2.5 bg-[#FDF6E3] rounded-xl border border-[#D6D1B1]">
+                  {catalog
+                    .filter(c => !compSearchQuery || c.name.toLowerCase().includes(compSearchQuery.toLowerCase()))
+                    .map(c => {
+                      const isSelected = selectedCompIds.includes(c.id);
+                      return (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedCompIds(prev =>
+                              isSelected ? prev.filter(id => id !== c.id) : [...prev, c.id]
+                            );
+                          }}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
+                            isSelected
+                              ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+                              : 'bg-white text-[#586E75] border-[#D6D1B1] hover:text-[#073642] hover:bg-slate-50'
+                          }`}
+                        >
+                          <span className="font-mono">{isSelected ? '✓' : '+'}</span>
+                          <span>{c.name}</span>
+                        </button>
+                      );
+                    })}
                 </div>
               </div>
             </div>
-
-            {/* Quick Multiplier Pills */}
-            <div className="flex items-center gap-2 pt-1 text-xs">
-              <span className="text-[#586E75] font-semibold">Quick Set:</span>
-              {[1, 5, 10, 20, 50, 100].map(val => (
-                <button
-                  key={val}
-                  type="button"
-                  onClick={() => setPackQuantity(val)}
-                  className={`px-3 py-1 rounded-lg font-bold font-mono transition-all ${
-                    packQuantity === val
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'bg-[#FDF6E3] text-[#073642] hover:bg-[#E4DDC7] border border-[#D6D1B1]'
-                  }`}
-                >
-                  x{val}
-                </button>
-              ))}
-            </div>
-          </div>
+          )}
 
           {/* Step 2: PO vs RFQ Toggle & Total Cost Summary */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-[#EEE8D5] border border-[#D6D1B1]">
@@ -510,7 +733,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={() => setOrderType('PO')}
-                  className={`px-4 py-1.5 rounded-lg font-bold transition-all ${
+                  className={`px-4 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                     orderType === 'PO'
                       ? 'bg-emerald-600 text-white shadow-sm'
                       : 'text-[#586E75] hover:text-[#073642]'
@@ -521,7 +744,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={() => setOrderType('RFQ')}
-                  className={`px-4 py-1.5 rounded-lg font-bold transition-all ${
+                  className={`px-4 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                     orderType === 'RFQ'
                       ? 'bg-emerald-600 text-white shadow-sm'
                       : 'text-[#586E75] hover:text-[#073642]'
@@ -546,19 +769,24 @@ export const BOMProcurementModal: React.FC<Props> = ({
 
           {/* Step 3: Multi-Company Auto-Split Breakdown Tabs */}
           <div className="space-y-3">
-            <span className="text-xs font-bold text-[#586E75] uppercase tracking-wider block">
-              2. Multi-Vendor Auto-Split Breakdown ({splitDrafts.length} Vendors)
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-[#586E75] uppercase tracking-wider block">
+                2. Multi-Vendor Auto-Split Breakdown ({activeDrafts.length} Vendors)
+              </span>
+              <span className="text-[11px] text-[#586E75] italic">
+                Tip: You can edit individual item quantities directly in the table below
+              </span>
+            </div>
 
             {/* Company Tabs */}
             <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              {splitDrafts.map(draft => {
+              {activeDrafts.map(draft => {
                 const isActive = (selectedDraft?.company.id === draft.company.id);
                 return (
                   <button
                     key={draft.company.id}
                     onClick={() => setActiveTabCompanyId(draft.company.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-2 border transition-all ${
+                    className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-2 border transition-all cursor-pointer ${
                       isActive
                         ? 'bg-emerald-600 text-white shadow-md border-emerald-500'
                         : 'bg-[#EEE8D5] text-[#073642] hover:bg-[#E4DDC7] border-[#D6D1B1]'
@@ -604,7 +832,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                       <tr className="text-[#586E75] border-b border-[#D6D1B1]">
                         <th className="pb-2 font-bold">Raw Material Item</th>
                         <th className="pb-2 font-bold text-center">Unit Price</th>
-                        <th className="pb-2 font-bold text-center">Calculated Qty</th>
+                        <th className="pb-2 font-bold text-center">Quantity (Editable)</th>
                         <th className="pb-2 font-bold text-right">Subtotal</th>
                       </tr>
                     </thead>
@@ -619,9 +847,31 @@ export const BOMProcurementModal: React.FC<Props> = ({
                             ₹{item.unit_price.toLocaleString('en-IN')}
                           </td>
                           <td className="py-2.5 text-center">
-                            <span className="px-2 py-1 rounded bg-[#FDF6E3] text-emerald-800 font-bold border border-[#D6D1B1]">
-                              {item.quantity} {item.catalogItem.uom}
-                            </span>
+                            {/* Inline Editable Quantity Field */}
+                            <div className="inline-flex items-center gap-1">
+                              <input
+                                type="number"
+                                min={1}
+                                value={
+                                  activeBOMTab === 'whole_product'
+                                    ? (rowQtyOverrides[item.catalogItem.id] ?? item.quantity)
+                                    : (selectedCompQtyOverrides[item.catalogItem.id] ?? item.quantity)
+                                }
+                                onChange={e => {
+                                  const val = Math.max(1, Number(e.target.value) || 1);
+                                  if (activeBOMTab === 'whole_product') {
+                                    setRowQtyOverrides(prev => ({ ...prev, [item.catalogItem.id]: val }));
+                                  } else {
+                                    setSelectedCompQtyOverrides(prev => ({ ...prev, [item.catalogItem.id]: val }));
+                                  }
+                                }}
+                                className="w-20 px-2 py-1 text-xs font-mono font-bold bg-[#FDF6E3] text-[#073642] border border-[#D6D1B1] rounded-lg text-center focus:outline-none focus:border-emerald-500 shadow-2xs"
+                                title="Edit quantity to satisfy MOQ or batch adjustments"
+                              />
+                              <span className="text-[10px] text-[#586E75] font-semibold">
+                                {item.catalogItem.uom || 'Pcs'}
+                              </span>
+                            </div>
                           </td>
                           <td className="py-2.5 text-right font-bold text-emerald-800 font-mono">
                             ₹{item.total_price.toLocaleString('en-IN')}
@@ -648,7 +898,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
 
                   <div>
                     <label className="block text-[10px] font-bold text-[#586E75] uppercase mb-0.5">
-                      WhatsApp / Phone {!editableContacts[selectedDraft.company.id]?.phone && <span className="text-red-600 font-bold">*Required</span>}
+                      Vendor WhatsApp/Phone {!editableContacts[selectedDraft.company.id]?.phone && <span className="text-red-600 font-bold">*Required</span>}
                     </label>
                     <input
                       type="text"
@@ -660,106 +910,76 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   </div>
                 </div>
 
-                {/* Individual Vendor Send PO Action Bar */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#D6D1B1]/60">
-                  <span className="text-xs text-[#586E75]">
-                    Transmit this specific PO to <strong className="text-[#073642]">{selectedDraft.company.name}</strong>:
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => handleDispatchSingleVendorWebmail(selectedDraft)}
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
-                    >
-                      <Mail className="w-3.5 h-3.5" />
-                      <span>Send PO via Webmail</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDispatchSingleVendorWhatsApp(selectedDraft)}
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#FDF6E3] hover:bg-[#E4DDC7] text-[#073642] font-bold text-xs border border-[#D6D1B1] shadow-xs active:scale-95 transition-all cursor-pointer"
-                    >
-                      <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Send via WhatsApp</span>
-                    </button>
-                  </div>
+                {/* Individual Dispatch Actions */}
+                <div className="flex items-center justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => handleDispatchSingleVendorWebmail(selectedDraft)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0B192C] hover:bg-[#1e3e62] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  >
+                    <Mail className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Send this {orderType} via Webmail</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleDispatchSingleVendorWhatsApp(selectedDraft)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 fill-white text-white" />
+                    <span>Send via WhatsApp</span>
+                  </button>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Modal Footer & MASTER DISPATCH BUTTON */}
-        <div className="bg-[#EEE8D5] p-5 border-t border-[#D6D1B1] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-4">
-            {/* Channel Selector */}
-            <div className="flex items-center gap-2 bg-[#FDF6E3] p-1 rounded-xl border border-[#D6D1B1] text-xs">
-              <button
-                type="button"
-                onClick={() => setDispatchChannel('webmail')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all ${
-                  dispatchChannel === 'webmail'
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'text-[#586E75] hover:text-[#073642]'
-                }`}
-              >
-                <Mail className="w-3.5 h-3.5" />
-                <span>Internal Webmail</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setDispatchChannel('whatsapp')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition-all ${
-                  dispatchChannel === 'whatsapp'
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'text-[#586E75] hover:text-[#073642]'
-                }`}
-              >
-                <MessageSquare className="w-3.5 h-3.5" />
-                <span>WhatsApp</span>
-              </button>
-            </div>
-
-            {/* Optional Database Recording Toggle */}
-            <label className="flex items-center gap-2 text-xs font-semibold text-[#073642] cursor-pointer select-none">
+        {/* Modal Footer Controls */}
+        <div className="p-6 bg-[#EEE8D5] border-t border-[#D6D1B1]/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4 text-xs">
+            <label className="flex items-center gap-2 cursor-pointer font-semibold select-none">
               <input
                 type="checkbox"
                 checked={autoRecordOrders}
                 onChange={e => setAutoRecordOrders(e.target.checked)}
-                className="w-4 h-4 text-emerald-600 rounded border-[#D6D1B1] focus:ring-emerald-500 accent-emerald-600 cursor-pointer"
+                className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 accent-emerald-600 cursor-pointer"
               />
-              <span>Record orders in database</span>
+              <span>Record dispatched {orderType}s to Database Timeline</span>
             </label>
+
+            <div className="flex items-center gap-2 border-l border-[#D6D1B1] pl-4">
+              <span className="font-bold text-[#586E75]">Bulk Channel:</span>
+              <select
+                value={dispatchChannel}
+                onChange={e => setDispatchChannel(e.target.value as any)}
+                className="bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1 text-xs font-semibold focus:outline-none focus:border-emerald-500 cursor-pointer"
+              >
+                <option value="webmail">Native Webmail (Auto-Queued)</option>
+                <option value="whatsapp">WhatsApp Direct Deep Links</option>
+              </select>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-3">
             <button
-              type="button"
               onClick={onClose}
-              className="px-5 py-3 rounded-xl bg-[#FDF6E3] hover:bg-[#E4DDC7] text-[#073642] font-semibold text-xs transition-all w-full sm:w-auto border border-[#D6D1B1]"
+              className="px-4 py-2.5 rounded-xl border border-[#D6D1B1] text-xs font-bold text-[#586E75] hover:bg-[#E4DDC7] transition-all cursor-pointer"
             >
               Cancel
             </button>
 
-            {/* MASTER DISPATCH BUTTON */}
             <button
-              type="button"
-              disabled={isDispatching || splitDrafts.length === 0}
               onClick={handleMasterDispatch}
-              className="flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all w-full sm:w-auto"
+              disabled={isDispatching || activeDrafts.length === 0}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 active:scale-95 transition-all cursor-pointer"
             >
-              {isDispatching ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Dispatching {splitDrafts.length} POs...</span>
-                </>
-              ) : (
-                <>
-                  <Rocket className="w-5 h-5 fill-white" />
-                  <span>🚀 DISPATCH ALL {splitDrafts.length} POs ({dispatchChannel === 'webmail' ? 'Webmail' : 'WhatsApp'})</span>
-                </>
-              )}
+              <Zap className="w-4 h-4 fill-white text-white" />
+              <span>
+                {isDispatching
+                  ? 'Dispatching...'
+                  : `1-Tap Dispatch ${activeDrafts.length} ${orderType}s (₹${totalCalculatedCost.toLocaleString('en-IN')})`}
+              </span>
             </button>
           </div>
         </div>
