@@ -59,7 +59,7 @@ interface Props {
   onUpdateFolderLinkedPOs: (folderId: string, poIds: string[]) => void;
   onUpdateFolderComponents?: (folderId: string, components: ProductFolderComponent[]) => void;
   onUpdateCompanyContact?: (companyId: string, email: string, phone: string) => Promise<void> | void;
-  onLogOrders?: (drafts: MultiCompanyPODraft[]) => Promise<void> | void;
+  onLogOrders?: (drafts: MultiCompanyPODraft[], type?: 'PO' | 'RFQ') => Promise<void> | void;
   onDeleteProductFolder: (folderId: string) => Promise<void> | void;
   onDeleteOrder: (orderId: string) => Promise<void> | void;
   onDeleteCatalogItem: (itemId: string) => Promise<void> | void;
@@ -189,9 +189,24 @@ export const CatalogSection: React.FC<Props> = ({
         const itemLines = items
           .map((it, i) => `  ${i + 1}. ${it.name} (SKU: ${it.sku || 'N/A'}) — Qty: ${it.min_order_qty || 1} ${it.uom || 'pcs'}`)
           .join('\n');
-        const body = `Dear ${company.contact_person || 'Sir/Madam'},
+        
+        const body = docShort === 'PO'
+          ? `Dear ${company.contact_person || 'Sir/Madam'},
 
-We would like to send you this ${docLabel} for the following items:
+Please accept our formal Purchase Order (PO) for the following items:
+
+${itemLines}
+
+Delivery Location: Unit 4, Energy Tech Park, Pune Plant
+Payment Terms: 30 Days Net on QC Inspection
+
+Please confirm order acceptance and dispatch schedule at your earliest convenience.
+
+Regards,
+Cosmo.cnergy Procurement Team`
+          : `Dear ${company.contact_person || 'Sir/Madam'},
+
+We would like to request an official quotation (RFQ) for the following items:
 
 ${itemLines}
 
@@ -199,6 +214,21 @@ Please provide your best prices, availability, lead times, and payment terms.
 
 Regards,
 Cosmo.cnergy Procurement Team`;
+
+        const poDraftItems = items.map(it => {
+          const compComp = componentCompanies.find(cc => cc.component_id === it.id && cc.company_id === company.id);
+          const price = compComp?.rfq_quoted_price ?? compComp?.unit_price ?? it.preset_price ?? 0;
+          const qty = it.min_order_qty || 1;
+          return {
+            catalogItem: it,
+            quantity: qty,
+            unit_price: price,
+            total_price: qty * price
+          };
+        });
+
+        const total_amount = poDraftItems.reduce((sum, di) => sum + di.total_price, 0);
+
         drafts.push({
           id: `bulk-${docShort}-${company.id}-${Date.now()}`,
           company,
@@ -207,7 +237,15 @@ Cosmo.cnergy Procurement Team`;
           body,
           orderType: docShort as 'PO' | 'RFQ',
           itemsCount: items.length,
-          context: 'BULK_SEND'
+          context: 'BULK_SEND',
+          orderToConfirm: {
+            drafts: [{
+              company,
+              items: poDraftItems,
+              total_amount
+            }],
+            type: docShort as 'PO' | 'RFQ'
+          }
         });
       }
       onEnqueueMailDrafts(drafts, true);
@@ -216,17 +254,52 @@ Cosmo.cnergy Procurement Team`;
 
     } else if (bulkSendChannel === 'whatsapp' && onOpenWhatsApp) {
       const entries = Array.from(byCompany.values());
+      
+      if (onLogOrders) {
+        const allDraftsForLogging: MultiCompanyPODraft[] = [];
+        for (const { company, items } of entries) {
+          const poDraftItems = items.map(it => {
+            const compComp = componentCompanies.find(cc => cc.component_id === it.id && cc.company_id === company.id);
+            const price = compComp?.rfq_quoted_price ?? compComp?.unit_price ?? it.preset_price ?? 0;
+            const qty = it.min_order_qty || 1;
+            return {
+              catalogItem: it,
+              quantity: qty,
+              unit_price: price,
+              total_price: qty * price
+            };
+          });
+          const total_amount = poDraftItems.reduce((sum, di) => sum + di.total_price, 0);
+          allDraftsForLogging.push({
+            company,
+            items: poDraftItems,
+            total_amount
+          });
+        }
+        await onLogOrders(allDraftsForLogging, docShort as 'PO' | 'RFQ');
+      }
+
       for (let idx = 0; idx < entries.length; idx++) {
         const { company, items } = entries[idx];
         const itemLines = items
           .map((it, i) => `${i + 1}. ${it.name} (Qty: ${it.min_order_qty || 1} ${it.uom || 'pcs'})`)
           .join('\n');
-        const ctx = `*${docLabel}*\n\n${itemLines}\n\nPlease send your best quote & availability.`;
+        const ctx = docShort === 'PO'
+          ? `*${docLabel}*
+
+${itemLines}
+
+Please confirm dispatch schedule & invoice.`
+          : `*${docLabel}*
+
+${itemLines}
+
+Please send your best quote & availability.`;
         setBulkSendProgress(`Opening WhatsApp for ${company.name} (${idx + 1}/${entries.length})...`);
         onOpenWhatsApp(company, ctx);
         await new Promise(r => setTimeout(r, 600));
       }
-      setBulkSendProgress(`WhatsApp opened for ${entries.length} compan${entries.length === 1 ? 'y' : 'ies'}!`);
+      setBulkSendProgress(`WhatsApp opened & ${docShort} order(s) logged for ${entries.length} compan${entries.length === 1 ? 'y' : 'ies'}!`);
       setTimeout(() => { setBulkSendProgress(null); setShowBulkSendModal(false); }, 2000);
     } else {
       setBulkSendProgress('Please configure webmail or WhatsApp first.');
@@ -234,7 +307,7 @@ Cosmo.cnergy Procurement Team`;
     }
   };
 
-    const [isAddCatalogOpen, setIsAddCatalogOpen] = useState(false);
+  const [isAddCatalogOpen, setIsAddCatalogOpen] = useState(false);
   const [isAddFolderOpen, setIsAddFolderOpen] = useState(false);
   const [newFolderNameInput, setNewFolderNameInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -1881,9 +1954,9 @@ Cosmo.cnergy Procurement Team`;
           companies={companies}
           orders={orders}
           onClose={() => setBatchSendFolder(null)}
-          onLogOrders={async (drafts: MultiCompanyPODraft[]) => {
+          onLogOrders={async (drafts: MultiCompanyPODraft[], type?: 'PO' | 'RFQ') => {
             if (onLogOrders) {
-              await onLogOrders(drafts);
+              await onLogOrders(drafts, type);
             }
             setToastFeedback({ type: 'success', message: `Logged ${drafts.length} purchase orders from folder recipe!` });
             setTimeout(() => setToastFeedback(null), 4000);

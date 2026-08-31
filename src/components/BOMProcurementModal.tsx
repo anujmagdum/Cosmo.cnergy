@@ -412,7 +412,11 @@ export const BOMProcurementModal: React.FC<Props> = ({
         totalAmount: draft.total_amount,
         itemsCount: draft.items.length,
         context: 'CATALOG_BOM',
-        orderType
+        orderType,
+        orderToConfirm: {
+          drafts: [draft],
+          type: orderType
+        }
       };
       onEnqueueMailDrafts([queuedDraft], true);
       onClose();
@@ -480,7 +484,11 @@ export const BOMProcurementModal: React.FC<Props> = ({
             totalAmount: draft.total_amount,
             itemsCount: draft.items.length,
             context: 'CATALOG_BOM',
-            orderType
+            orderType,
+            orderToConfirm: {
+              drafts: [draft],
+              type: orderType
+            }
           };
         });
 

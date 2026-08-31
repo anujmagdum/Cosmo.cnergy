@@ -1152,8 +1152,16 @@ export const App: React.FC = () => {
     if (drafts.length === 0) return;
 
     enqueue(drafts);
-    // Automatically switch to the webmail tab? We don't necessarily have to, 
-    // but we can to show them the background queue widget if we want.
+    if (openFirstImmediately && drafts[0]) {
+      setWebmailInitialCompose({
+        to: drafts[0].to,
+        subject: drafts[0].subject,
+        body: drafts[0].body,
+        context: drafts[0].context,
+        orderToConfirm: drafts[0].orderToConfirm
+      });
+    }
+    handleTabChange('webmail');
   };
   const handlePopMailDraftQueue = (id: string) => {
     setMailDraftQueue(prev => prev.filter(d => d.id !== id));
@@ -1235,7 +1243,7 @@ export const App: React.FC = () => {
               onUpdateFolderLinkedPOs={handleUpdateFolderLinkedPOs}
               onUpdateFolderComponents={handleUpdateFolderComponents}
               onUpdateCompanyContact={handleUpdateCompanyPhone}
-              onLogOrders={drafts => handleDispatchOrders(drafts, 'PO')}
+              onLogOrders={(drafts, type) => handleDispatchOrders(drafts, type || 'PO')}
               onDeleteProductFolder={handleDeleteProductFolder}
               onDeleteOrder={handleDeleteOrder}
               onDeleteCatalogItem={handleDeleteCatalogItem}
@@ -1317,7 +1325,7 @@ export const App: React.FC = () => {
               onUpdateFolderLinkedPOs={handleUpdateFolderLinkedPOs}
               onUpdateFolderComponents={handleUpdateFolderComponents}
               onUpdateCompanyContact={handleUpdateCompanyPhone}
-              onLogOrders={drafts => handleDispatchOrders(drafts, 'PO')}
+              onLogOrders={(drafts, type) => handleDispatchOrders(drafts, type || 'PO')}
               onDeleteProductFolder={handleDeleteProductFolder}
               onDeleteOrder={handleDeleteOrder}
               onDeleteCatalogItem={handleDeleteCatalogItem}

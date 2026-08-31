@@ -257,6 +257,7 @@ export const Webmail: React.FC<Props> = ({
   const [composeBody, setComposeBody] = useState('');
   const [composeAttachment, setComposeAttachment] = useState<EmailAttachment | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [composeOrderToConfirm, setComposeOrderToConfirm] = useState<any>(null);
 
   // Helper to safely reset and close compose state
   const handleCloseCompose = () => {
@@ -266,6 +267,7 @@ export const Webmail: React.FC<Props> = ({
     setComposeSubject('');
     setComposeBody('');
     setComposeAttachment(null);
+    setComposeOrderToConfirm(null);
   };
 
   // Clean up compose state on unmount to prevent persistent stale drafts
@@ -281,6 +283,7 @@ export const Webmail: React.FC<Props> = ({
       if (initialCompose.to) setComposeTo(initialCompose.to);
       if (initialCompose.subject) setComposeSubject(initialCompose.subject);
       if (initialCompose.body) setComposeBody(initialCompose.body);
+      if (initialCompose.orderToConfirm) setComposeOrderToConfirm(initialCompose.orderToConfirm);
       setIsComposeOpen(true);
       if (onClearInitialCompose) {
         onClearInitialCompose();
@@ -606,8 +609,8 @@ export const Webmail: React.FC<Props> = ({
       const resData = await response.json().catch(() => ({}));
       if (response.ok && resData.success) {
         setEmails(prev => [newMail, ...prev]);
-        if (onSendSuccess && initialCompose?.orderToConfirm) {
-          onSendSuccess(initialCompose.orderToConfirm);
+        if (onSendSuccess && composeOrderToConfirm) {
+          onSendSuccess(composeOrderToConfirm);
         }
         alert(resData.message || `Email dispatched to ${composeTo}!`);
       } else {
@@ -633,6 +636,7 @@ export const Webmail: React.FC<Props> = ({
           setComposeTo(next.to);
           setComposeSubject(next.subject);
           setComposeBody(next.body);
+          setComposeOrderToConfirm(next.orderToConfirm || null);
           setIsComposeOpen(true);
         }, 400);
       }
