@@ -56,6 +56,8 @@ export const ComponentComparisonPage: React.FC<Props> = ({
   const [editingCell, setEditingCell] = useState<EditableCellState | null>(null);
   const [cellInputValue, setCellInputValue] = useState<string>('');
   const [lastSavedCell, setLastSavedCell] = useState<string | null>(null);
+  // Local overrides: prevents parent prop re-renders from overwriting in-progress or just-saved edits
+  const [localOverrides, setLocalOverrides] = useState<Record<string, Partial<ComponentCompany>>>({});
 
   // Find component
   const component = useMemo(() => {
@@ -154,13 +156,23 @@ export const ComponentComparisonPage: React.FC<Props> = ({
     }
   };
 
-  // Sorted list of companies
+  // Sorted list of companies — apply localOverrides on top
+  const resolvedCompanies = useMemo(() => {
+    return linkedCompanies.map(lc => {
+      const override = localOverrides[lc.id];
+      if (override) {
+        return { ...lc, ...override };
+      }
+      return lc;
+    });
+  }, [linkedCompanies, localOverrides]);
+
   const sortedCompanies = useMemo(() => {
     if (!sortField || !sortOrder) {
-      return linkedCompanies;
+      return resolvedCompanies;
     }
 
-    return [...linkedCompanies].sort((a, b) => {
+    return [...resolvedCompanies].sort((a, b) => {
       let valA = 0;
       let valB = 0;
 
@@ -181,7 +193,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
         return valB - valA;
       }
     });
-  }, [linkedCompanies, sortField, sortOrder]);
+  }, [resolvedCompanies, sortField, sortOrder]);
 
   // Inline Editing Handlers
   const startEditing = (
@@ -203,7 +215,17 @@ export const ComponentComparisonPage: React.FC<Props> = ({
 
     const numValue = Math.max(0, parseFloat(cellInputValue) || 0);
 
-    // 1. Optimistic local state update
+    // 1. Optimistic local state update — persist in local override map so
+    //    parent re-renders (from prop changes) don't overwrite the edit.
+    setLocalOverrides(prev => ({
+      ...prev,
+      [linkId]: {
+        ...prev[linkId],
+        [field]: numValue,
+        ...(field === 'rfq_quoted_price' ? { unit_price: numValue } : {})
+      }
+    }));
+
     setLinkedCompanies(prev =>
       prev.map(item => {
         if (item.id === linkId) {
@@ -230,24 +252,56 @@ export const ComponentComparisonPage: React.FC<Props> = ({
     // 4. Close input mode
     setEditingCell(null);
 
-    // 5. Fire PATCH request to backend Supabase
-    if (!linkId.startsWith('synth-')) {
-      try {
-        const updatePayload: Record<string, any> = {
-          [field]: numValue,
-          updated_at: new Date().toISOString()
-        };
-        if (field === 'rfq_quoted_price') {
-          updatePayload.unit_price = numValue;
-        }
+    // 5. Fire PATCH or INSERT to Supabase
+    try {
+      const updatePayload: Record<string, any> = {
+        [field]: numValue,
+        updated_at: new Date().toISOString()
+      };
+      if (field === 'rfq_quoted_price') {
+        updatePayload.unit_price = numValue;
+      }
 
+      if (linkId.startsWith('synth-')) {
+        // For synthesized rows: find the real componentCompany record by component_id + company_id
+        const synthLink = linkedCompanies.find(l => l.id === linkId);
+        if (synthLink) {
+          // Try update first
+          const { data: existing } = await supabase
+            .from('component_companies')
+            .select('id')
+            .eq('component_id', synthLink.component_id)
+            .eq('company_id', synthLink.company_id)
+            .maybeSingle();
+
+          if (existing) {
+            await supabase
+              .from('component_companies')
+              .update(updatePayload)
+              .eq('id', existing.id);
+          } else {
+            // Insert new record
+            await supabase
+              .from('component_companies')
+              .insert({
+                component_id: synthLink.component_id,
+                company_id: synthLink.company_id,
+                unit_price: synthLink.unit_price || 0,
+                rfq_quoted_price: synthLink.rfq_quoted_price || 0,
+                moq: synthLink.moq || 1,
+                lead_time_days: synthLink.lead_time_days || 7,
+                ...updatePayload
+              });
+          }
+        }
+      } else {
         await supabase
           .from('component_companies')
           .update(updatePayload)
           .eq('id', linkId);
-      } catch (err) {
-        console.warn('Backend patch warning:', err);
       }
+    } catch (err) {
+      console.warn('Backend patch warning:', err);
     }
   };
 

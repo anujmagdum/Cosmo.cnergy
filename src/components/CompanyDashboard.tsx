@@ -454,17 +454,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     </span>
                   </div>
 
-                  {companyItems.length > 0 && onOpenComparisonDrawer && (
-                    <button
-                      type="button"
-                      onClick={() => onOpenComparisonDrawer(companyItems[0])}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-teal-600/10 hover:bg-teal-600/20 text-teal-900 border border-teal-600/30 text-[10px] font-bold transition-all cursor-pointer shadow-2xs active:scale-95"
-                      title={`Compare all companies & RFQs for ${companyItems[0].name}`}
-                    >
-                      <Building2 className="w-3 h-3 text-teal-700" />
-                      <span>Compare Parts</span>
-                    </button>
-                  )}
+
 
                   <div className="flex items-center gap-1.5">
                     <button

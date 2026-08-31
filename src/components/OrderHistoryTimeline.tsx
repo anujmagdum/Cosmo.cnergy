@@ -219,8 +219,8 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
   
           <div className="flex flex-col space-y-2">
           {filteredOrders.map(order => {
-            // Conditional Rendering: "Edit PDF" ONLY visible if status is 'ORDERED' or 'RFQ_SENT'
-            const canEditPDF = order.status === 'ORDERED' || order.status === 'RFQ_SENT';
+            // Edit PDF always available for RFQ_SENT and PO Issued/Ordered
+            const canEditPDF = order.status === 'ORDERED' || order.status === 'RFQ_SENT' || order.type === 'PO' || order.type === 'RFQ';
             const itemsCount = (order.items || []).length;
             const itemsSummary = (order.items || []).map(i => i.item?.name || 'Item').join(', ');
 
@@ -268,18 +268,16 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
 
                 {/* Right: Status Dropdown, Total Amount, Conditional Edit PDF & Delete Trash */}
                 <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#D6D1B1]/60">
-                  {/* Status Dropdown */}
-                  <select
-                    value={order.status}
-                    onChange={e => onUpdateStatus(order.id, e.target.value as OrderStatus)}
-                    className="bg-[#EEE8D5] text-xs font-bold text-[#073642] border border-[#D6D1B1] rounded-lg px-2 py-1 focus:outline-none focus:border-emerald-500 cursor-pointer"
-                  >
-                    <option value="TO_BE_ORDERED">🟡 To Be Ordered</option>
-                    <option value="RFQ_SENT">🔵 RFQ Sent</option>
-                    <option value="ORDERED">🟣 PO Issued / Ordered</option>
-                    <option value="DELIVERED">🟢 Delivered</option>
-                    <option value="ON_HOLD">🔴 On Hold</option>
-                  </select>
+                  {/* Static Status Badge — auto-determined by order type */}
+                  {(() => {
+                    const cfg = STATUS_MAP[order.status] || STATUS_MAP['RFQ_SENT'];
+                    return (
+                      <span className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${cfg.badgeBg} ${cfg.badgeText} ${cfg.badgeBorder} flex items-center gap-1.5 shrink-0`}>
+                        <span className={`w-2 h-2 rounded-full ${cfg.dotColor}`} />
+                        {cfg.label}
+                      </span>
+                    );
+                  })()}
 
                   {/* Total Amount */}
                   <div className="text-right">

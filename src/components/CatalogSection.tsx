@@ -137,10 +137,104 @@ export const CatalogSection: React.FC<Props> = ({
     handleUrlChange();
 
     window.addEventListener('popstate', handleUrlChange);
-    return () => window.removeEventListener('popstate', handleUrlChange);
+
+  return () => window.removeEventListener('popstate', handleUrlChange);
   }, []);
 
-  const [isAddCatalogOpen, setIsAddCatalogOpen] = useState(false);
+  // Helper: get lowest RFQ price company for a component
+  const getLowestPriceCompanyForComponent = (item: CatalogItem): Company | null => {
+    const links = componentCompanies.filter(cc => cc.component_id === item.id);
+    if (links.length === 0) {
+      if (item.company_id) return companies.find(c => c.id === item.company_id) || null;
+      return null;
+    }
+    const sorted = [...links].sort((a, b) => {
+      const aPrice = Number(a.rfq_quoted_price ?? a.unit_price) || 0;
+      const bPrice = Number(b.rfq_quoted_price ?? b.unit_price) || 0;
+      return aPrice - bPrice;
+    });
+    const winner = sorted[0];
+    return companies.find(c => c.id === winner.company_id) || null;
+  };
+
+  const handleBulkSend = async () => {
+    const selectedItems = filteredCatalog.filter(i => selectedComponentIds.includes(i.id));
+    if (selectedItems.length === 0) return;
+
+    setBulkSendProgress('Building drafts...');
+
+    const byCompany = new Map<string, { company: Company; items: CatalogItem[] }>();
+
+    for (const item of selectedItems) {
+      const company = getLowestPriceCompanyForComponent(item);
+      if (!company) continue;
+      if (!byCompany.has(company.id)) {
+        byCompany.set(company.id, { company, items: [] });
+      }
+      byCompany.get(company.id)!.items.push(item);
+    }
+
+    if (byCompany.size === 0) {
+      setBulkSendProgress('No companies linked to selected components.');
+      setTimeout(() => setBulkSendProgress(null), 3000);
+      return;
+    }
+
+    const docLabel = bulkSendDocType === 'RFQ' ? 'Request for Quotation' : 'Purchase Order';
+    const docShort = bulkSendDocType;
+
+    if (bulkSendChannel === 'webmail' && onEnqueueMailDrafts) {
+      const drafts: QueuedMailDraft[] = [];
+      for (const { company, items } of byCompany.values()) {
+        const itemLines = items
+          .map((it, i) => `  ${i + 1}. ${it.name} (SKU: ${it.sku || 'N/A'}) — Qty: ${it.min_order_qty || 1} ${it.uom || 'pcs'}`)
+          .join('\n');
+        const body = `Dear ${company.contact_person || 'Sir/Madam'},
+
+We would like to send you this ${docLabel} for the following items:
+
+${itemLines}
+
+Please provide your best prices, availability, lead times, and payment terms.
+
+Regards,
+Cosmo.cnergy Procurement Team`;
+        drafts.push({
+          id: `bulk-${docShort}-${company.id}-${Date.now()}`,
+          company,
+          to: company.email,
+          subject: `${docShort}: ${items.map(i => i.name).join(', ')} — Cosmo.cnergy`,
+          body,
+          orderType: docShort as 'PO' | 'RFQ',
+          itemsCount: items.length,
+          context: 'BULK_SEND'
+        });
+      }
+      onEnqueueMailDrafts(drafts, true);
+      setBulkSendProgress(`${drafts.length} ${docShort} mail draft(s) queued!`);
+      setTimeout(() => { setBulkSendProgress(null); setShowBulkSendModal(false); }, 2000);
+
+    } else if (bulkSendChannel === 'whatsapp' && onOpenWhatsApp) {
+      const entries = Array.from(byCompany.values());
+      for (let idx = 0; idx < entries.length; idx++) {
+        const { company, items } = entries[idx];
+        const itemLines = items
+          .map((it, i) => `${i + 1}. ${it.name} (Qty: ${it.min_order_qty || 1} ${it.uom || 'pcs'})`)
+          .join('\n');
+        const ctx = `*${docLabel}*\n\n${itemLines}\n\nPlease send your best quote & availability.`;
+        setBulkSendProgress(`Opening WhatsApp for ${company.name} (${idx + 1}/${entries.length})...`);
+        onOpenWhatsApp(company, ctx);
+        await new Promise(r => setTimeout(r, 600));
+      }
+      setBulkSendProgress(`WhatsApp opened for ${entries.length} compan${entries.length === 1 ? 'y' : 'ies'}!`);
+      setTimeout(() => { setBulkSendProgress(null); setShowBulkSendModal(false); }, 2000);
+    } else {
+      setBulkSendProgress('Please configure webmail or WhatsApp first.');
+      setTimeout(() => setBulkSendProgress(null), 3000);
+    }
+  };
+
+    const [isAddCatalogOpen, setIsAddCatalogOpen] = useState(false);
   const [isAddFolderOpen, setIsAddFolderOpen] = useState(false);
   const [newFolderNameInput, setNewFolderNameInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -172,6 +266,12 @@ export const CatalogSection: React.FC<Props> = ({
   const [isBulkDeletingFolders, setIsBulkDeletingFolders] = useState(false);
   const [selectedComponentIds, setSelectedComponentIds] = useState<string[]>([]);
   const [isBulkDeletingComponents, setIsBulkDeletingComponents] = useState(false);
+
+  // Bulk Send RFQ/PO modal state
+  const [showBulkSendModal, setShowBulkSendModal] = useState(false);
+  const [bulkSendDocType, setBulkSendDocType] = useState<'RFQ' | 'PO'>('RFQ');
+  const [bulkSendChannel, setBulkSendChannel] = useState<'webmail' | 'whatsapp'>('webmail');
+  const [bulkSendProgress, setBulkSendProgress] = useState<string | null>(null);
 
   // 1-Tap Re-Order Modal State & Toast
   const [reOrderConfirmData, setReOrderConfirmData] = useState<{ item: CatalogItem; qty: number } | null>(null);
@@ -893,6 +993,13 @@ export const CatalogSection: React.FC<Props> = ({
             <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-emerald-500 animate-in fade-in">
               <span className="text-xs font-bold text-[#073642] px-2">{selectedComponentIds.length} Selected</span>
               <button
+                onClick={() => setShowBulkSendModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+              >
+                <Send className="w-3.5 h-3.5" />
+                Send RFQ / PO
+              </button>
+              <button
                 onClick={handleBulkDeleteComponents}
                 disabled={isBulkDeletingComponents}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
@@ -900,6 +1007,101 @@ export const CatalogSection: React.FC<Props> = ({
                 <Trash2 className="w-3.5 h-3.5" />
                 {isBulkDeletingComponents ? 'Deleting...' : 'Delete Components'}
               </button>
+            </div>
+          )}
+
+          {/* Bulk Send RFQ/PO Modal */}
+          {showBulkSendModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+              <div className="bg-[#FDF6E3] w-full max-w-sm rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-5 text-[#073642]">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base font-extrabold text-[#073642] flex items-center gap-2">
+                    <Send className="w-4 h-4 text-emerald-700" />
+                    Send RFQ / PO
+                  </h3>
+                  <button
+                    onClick={() => { setShowBulkSendModal(false); setBulkSendProgress(null); }}
+                    className="p-1.5 rounded-lg hover:bg-[#EEE8D5] text-[#586E75] cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <p className="text-xs text-[#586E75]">
+                  Sending for <span className="font-bold text-emerald-800">{selectedComponentIds.length} component(s)</span>. 
+                  Each will be routed to its lowest RFQ price supplier.
+                </p>
+
+                {/* Document Type */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#586E75] uppercase block mb-1.5">Document Type</label>
+                  <div className="flex gap-2">
+                    {(['RFQ', 'PO'] as const).map(t => (
+                      <button
+                        key={t}
+                        onClick={() => setBulkSendDocType(t)}
+                        className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
+                          bulkSendDocType === t
+                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
+                            : 'bg-[#EEE8D5] text-[#073642] border-[#D6D1B1] hover:border-emerald-500'
+                        }`}
+                      >
+                        {t === 'RFQ' ? '📋 Request for Quotation' : '📄 Purchase Order'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Channel */}
+                <div>
+                  <label className="text-[11px] font-bold text-[#586E75] uppercase block mb-1.5">Send via</label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setBulkSendChannel('webmail')}
+                      className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
+                        bulkSendChannel === 'webmail'
+                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
+                          : 'bg-[#EEE8D5] text-[#073642] border-[#D6D1B1] hover:border-emerald-500'
+                      }`}
+                    >
+                      ✉️ Webmail
+                    </button>
+                    <button
+                      onClick={() => setBulkSendChannel('whatsapp')}
+                      className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
+                        bulkSendChannel === 'whatsapp'
+                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
+                          : 'bg-[#EEE8D5] text-[#073642] border-[#D6D1B1] hover:border-emerald-500'
+                      }`}
+                    >
+                      💬 WhatsApp
+                    </button>
+                  </div>
+                </div>
+
+                {bulkSendProgress && (
+                  <div className="px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold">
+                    {bulkSendProgress}
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={() => { setShowBulkSendModal(false); setBulkSendProgress(null); }}
+                    className="flex-1 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] text-xs font-semibold hover:bg-[#E4DDC7] cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleBulkSend}
+                    disabled={!!bulkSendProgress}
+                    className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all disabled:opacity-60 cursor-pointer"
+                  >
+                    <Send className="w-3.5 h-3.5 inline mr-1.5" />
+                    Send {bulkSendDocType}
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
