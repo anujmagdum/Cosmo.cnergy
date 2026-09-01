@@ -1122,9 +1122,7 @@ export const App: React.FC = () => {
     setOrders(prev => [...newOrders, ...prev]);
     handleTabChange('procurement');
 
-    if (newOrders.length === 1) {
-      setSingleChoiceOrder(newOrders[0]);
-    }
+    // Removed singleChoiceOrder modal popup per user specification
   };
 
   // Immediate PO Dispatch from Sourcing Comparison Drawer

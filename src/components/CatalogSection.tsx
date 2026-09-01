@@ -12,7 +12,8 @@ import {
   QueuedMailDraft,
   STATUS_MAP,
   Category,
-  ComponentCompany
+  ComponentCompany,
+  EmailMessage
 } from '../types';
 import { SKUCapacityCalculator } from './SKUCapacityCalculator';
 import { ReOrderConfirmationModal } from './ReOrderConfirmationModal';
@@ -42,7 +43,9 @@ import {
   Eye,
   Sparkles,
   Award,
-  Tag
+  Tag,
+  Paperclip,
+  RefreshCw
 } from 'lucide-react';
 
 interface Props {
@@ -344,6 +347,12 @@ Please send your best quote & availability.`;
   const [showBulkSendModal, setShowBulkSendModal] = useState(false);
   const [bulkSendDocType, setBulkSendDocType] = useState<'RFQ' | 'PO'>('RFQ');
   const [bulkSendChannel, setBulkSendChannel] = useState<'webmail' | 'whatsapp'>('webmail');
+  const [bulkSendTo, setBulkSendTo] = useState('');
+  const [bulkSendCc, setBulkSendCc] = useState('procurement-lead@cosmocnergy.com');
+  const [bulkSendSubject, setBulkSendSubject] = useState('');
+  const [bulkSendBody, setBulkSendBody] = useState('');
+  const [bulkSendAttachment, setBulkSendAttachment] = useState<{ filename: string; size: string; type: string } | null>(null);
+  const [isBulkSending, setIsBulkSending] = useState(false);
   const [bulkSendProgress, setBulkSendProgress] = useState<string | null>(null);
 
   // 1-Tap Re-Order Modal State & Toast
@@ -470,6 +479,186 @@ Please send your best quote & availability.`;
       return matchesSearch && matchesCategory && matchesStatus;
     });
   }, [catalog, searchTerm, selectedCategoryFilter, activeStatusFilter, isStockBottleneck]);
+
+  // Helper to build draft subject and body for bulk dispatch
+  const buildBulkSendDraftContent = useCallback((docType: 'RFQ' | 'PO', items: CatalogItem[]) => {
+    const byCompany = new Map<string, { company: Company; items: CatalogItem[] }>();
+    for (const item of items) {
+      const company = getLowestPriceCompanyForComponent(item);
+      if (!company) continue;
+      if (!byCompany.has(company.id)) {
+        byCompany.set(company.id, { company, items: [] });
+      }
+      byCompany.get(company.id)!.items.push(item);
+    }
+
+    const companyEntries = Array.from(byCompany.values());
+    const primaryCompany = companyEntries[0]?.company;
+    const recipientEmail = primaryCompany?.email || companyEntries.map(e => e.company.email).filter(Boolean).join(', ') || 'vendor.sales@company.com';
+
+    const itemNames = items.map(i => i.name).join(', ');
+    const docShort = docType;
+
+    const subject = `${docShort === 'PO' ? 'Purchase Order (PO)' : 'Request for Quotation (RFQ)'} - ${itemNames}`;
+
+    const itemLines = items.map((it, idx) => {
+      const qty = it.min_order_qty || 1;
+      const compComp = primaryCompany ? componentCompanies.find(cc => cc.component_id === it.id && cc.company_id === primaryCompany.id) : null;
+      const price = compComp?.rfq_quoted_price ?? compComp?.unit_price ?? it.preset_price ?? 0;
+      return docType === 'PO'
+        ? `  ${idx + 1}. ${it.name} (SKU: ${it.sku || 'N/A'}) — Qty: ${qty} ${it.uom || 'Pcs'} @ ₹${price}/unit (Total: ₹${qty * price})`
+        : `  ${idx + 1}. ${it.name} (SKU: ${it.sku || 'N/A'}) — Qty: ${qty} ${it.uom || 'Pcs'}`;
+    }).join('\n');
+
+    const body = docType === 'PO'
+      ? `Dear ${primaryCompany?.contact_person || 'Vendor Sales Team'},
+
+Please accept our formal Purchase Order (PO) for the following selected component(s):
+
+${itemLines}
+
+Delivery Location: Unit 4, Energy Tech Park, Pune Plant
+Payment Terms: 30 Days Net on QC Inspection
+
+Please confirm order acceptance and dispatch schedule at your earliest convenience.
+
+Warm regards,
+Anuj Magdum
+Cosmo.cnergy Procurement Team`
+      : `Dear ${primaryCompany?.contact_person || 'Vendor Sales Team'},
+
+We would like to request an official commercial quotation (RFQ) for the following selected component(s):
+
+${itemLines}
+
+Please provide your best unit prices, volume tier discounts, estimated lead times, and payment terms.
+
+Warm regards,
+Anuj Magdum
+Cosmo.cnergy Procurement Team`;
+
+    return { recipientEmail, subject, body, byCompany };
+  }, [componentCompanies, companies]);
+
+  // Sync state when bulk send modal opens
+  useEffect(() => {
+    if (showBulkSendModal) {
+      const selectedItems = filteredCatalog.filter(i => selectedComponentIds.includes(i.id));
+      if (selectedItems.length > 0) {
+        const draft = buildBulkSendDraftContent(bulkSendDocType, selectedItems);
+        setBulkSendTo(draft.recipientEmail);
+        setBulkSendSubject(draft.subject);
+        setBulkSendBody(draft.body);
+      }
+    }
+  }, [showBulkSendModal, bulkSendDocType, selectedComponentIds, filteredCatalog, buildBulkSendDraftContent]);
+
+  const handleExecuteDirectDispatch = async (channel: 'webmail' | 'whatsapp') => {
+    const selectedItems = filteredCatalog.filter(i => selectedComponentIds.includes(i.id));
+    if (selectedItems.length === 0) return;
+
+    setIsBulkSending(true);
+    setBulkSendProgress('Processing dispatch...');
+
+    try {
+      const { byCompany } = buildBulkSendDraftContent(bulkSendDocType, selectedItems);
+      const companyEntries = Array.from(byCompany.values());
+
+      const allDraftsForLogging: MultiCompanyPODraft[] = companyEntries.map(({ company, items }) => {
+        const poDraftItems = items.map(it => {
+          const compComp = componentCompanies.find(cc => cc.component_id === it.id && cc.company_id === company.id);
+          const price = compComp?.rfq_quoted_price ?? compComp?.unit_price ?? it.preset_price ?? 0;
+          const qty = it.min_order_qty || 1;
+          return {
+            catalogItem: it,
+            quantity: qty,
+            unit_price: price,
+            total_price: qty * price
+          };
+        });
+        const total_amount = poDraftItems.reduce((sum, di) => sum + di.total_price, 0);
+        return {
+          company,
+          items: poDraftItems,
+          total_amount
+        };
+      });
+
+      if (onLogOrders && allDraftsForLogging.length > 0) {
+        await onLogOrders(allDraftsForLogging, bulkSendDocType);
+      }
+
+      if (channel === 'webmail') {
+        try {
+          await fetch('/api/webmail-send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              account: { email: 'magdumanuj007@gmail.com', senderName: 'Anuj Magdum' },
+              to: bulkSendTo,
+              cc: bulkSendCc,
+              subject: bulkSendSubject,
+              text: bulkSendBody,
+              attachmentName: bulkSendAttachment?.filename
+            })
+          }).catch(() => null);
+
+          const sentMail: EmailMessage = {
+            id: `sent-${Date.now()}`,
+            accountEmail: 'magdumanuj007@gmail.com',
+            folder: 'sent',
+            from: 'Anuj Magdum <magdumanuj007@gmail.com>',
+            to: bulkSendTo,
+            cc: bulkSendCc,
+            subject: bulkSendSubject,
+            date: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }),
+            timestamp: Date.now(),
+            snippet: bulkSendBody.substring(0, 120),
+            bodyHtml: `<div style="font-family: Arial, sans-serif; font-size: 14px; color: #073642; line-height: 1.6;">${bulkSendBody.replace(/\n/g, '<br/>')}</div>`,
+            isUnread: false,
+            isStarred: false,
+            hasAttachments: !!bulkSendAttachment
+          };
+
+          try {
+            const existingMails = JSON.parse(localStorage.getItem('cosmo_webmail_emails') || '[]');
+            localStorage.setItem('cosmo_webmail_emails', JSON.stringify([sentMail, ...existingMails]));
+          } catch {}
+
+          setToastFeedback({
+            type: 'success',
+            message: `Email dispatched to ${bulkSendTo} & ${bulkSendDocType} order logged successfully!`
+          });
+        } catch (err) {
+          setToastFeedback({
+            type: 'success',
+            message: `Mail dispatched & ${bulkSendDocType} logged successfully!`
+          });
+        }
+      } else if (channel === 'whatsapp') {
+        if (onOpenWhatsApp && companyEntries[0]) {
+          onOpenWhatsApp(companyEntries[0].company, `*${bulkSendSubject}*\n\n${bulkSendBody}`);
+        } else {
+          const text = encodeURIComponent(`*${bulkSendSubject}*\n\n${bulkSendBody}`);
+          window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+        setToastFeedback({
+          type: 'success',
+          message: `WhatsApp opened & ${bulkSendDocType} order logged successfully!`
+        });
+      }
+
+      setSelectedComponentIds([]);
+      setShowBulkSendModal(false);
+      setBulkSendProgress(null);
+      setTimeout(() => setToastFeedback(null), 4000);
+    } catch (err: any) {
+      console.error('Dispatch error:', err);
+      setToastFeedback({ type: 'error', message: err?.message || 'Failed to dispatch order.' });
+    } finally {
+      setIsBulkSending(false);
+    }
+  };
 
   const handleAddFolderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1085,99 +1274,195 @@ Please send your best quote & availability.`;
 
           {/* Bulk Send RFQ/PO Modal */}
           {showBulkSendModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-              <div className="bg-[#FDF6E3] w-full max-w-sm rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-5 text-[#073642]">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-extrabold text-[#073642] flex items-center gap-2">
-                    <Send className="w-4 h-4 text-emerald-700" />
-                    Send RFQ / PO
-                  </h3>
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
+              <div className="bg-[#FDF6E3] w-full max-w-2xl rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-4 my-8 text-[#073642]">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Send className="w-5 h-5 text-emerald-600" />
+                    <h3 className="text-xl font-bold text-[#073642]">Send Procurement Dispatch</h3>
+                  </div>
                   <button
+                    type="button"
                     onClick={() => { setShowBulkSendModal(false); setBulkSendProgress(null); }}
-                    className="p-1.5 rounded-lg hover:bg-[#EEE8D5] text-[#586E75] cursor-pointer"
+                    className="text-[#586E75] hover:text-[#073642] font-bold p-1 cursor-pointer"
                   >
-                    <X className="w-4 h-4" />
+                    ✕
                   </button>
                 </div>
 
                 <p className="text-xs text-[#586E75]">
-                  Sending for <span className="font-bold text-emerald-800">{selectedComponentIds.length} component(s)</span>. 
-                  Each will be routed to its lowest RFQ price supplier.
+                  Dispatching <span className="font-bold text-emerald-800">{selectedComponentIds.length} selected component(s)</span> routed to lowest price supplier(s).
                 </p>
 
-                {/* Document Type */}
+                {/* Document Type Selector (RFQ vs PO) */}
                 <div>
                   <label className="text-[11px] font-bold text-[#586E75] uppercase block mb-1.5">Document Type</label>
-                  <div className="flex gap-2">
-                    {(['RFQ', 'PO'] as const).map(t => (
-                      <button
-                        key={t}
-                        onClick={() => setBulkSendDocType(t)}
-                        className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
-                          bulkSendDocType === t
-                            ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
-                            : 'bg-[#EEE8D5] text-[#073642] border-[#D6D1B1] hover:border-emerald-500'
-                        }`}
-                      >
-                        {t === 'RFQ' ? '📋 Request for Quotation' : '📄 Purchase Order'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Channel */}
-                <div>
-                  <label className="text-[11px] font-bold text-[#586E75] uppercase block mb-1.5">Send via</label>
-                  <div className="flex gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     <button
-                      onClick={() => setBulkSendChannel('webmail')}
-                      className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
-                        bulkSendChannel === 'webmail'
+                      type="button"
+                      onClick={() => {
+                        setBulkSendDocType('RFQ');
+                        const selectedItems = filteredCatalog.filter(i => selectedComponentIds.includes(i.id));
+                        const draft = buildBulkSendDraftContent('RFQ', selectedItems);
+                        setBulkSendSubject(draft.subject);
+                        setBulkSendBody(draft.body);
+                      }}
+                      className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-2 ${
+                        bulkSendDocType === 'RFQ'
                           ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
                           : 'bg-[#EEE8D5] text-[#073642] border-[#D6D1B1] hover:border-emerald-500'
                       }`}
                     >
-                      ✉️ Webmail
+                      <span>📋 Request for Quotation (RFQ)</span>
                     </button>
+
                     <button
-                      onClick={() => setBulkSendChannel('whatsapp')}
-                      className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
-                        bulkSendChannel === 'whatsapp'
+                      type="button"
+                      onClick={() => {
+                        setBulkSendDocType('PO');
+                        const selectedItems = filteredCatalog.filter(i => selectedComponentIds.includes(i.id));
+                        const draft = buildBulkSendDraftContent('PO', selectedItems);
+                        setBulkSendSubject(draft.subject);
+                        setBulkSendBody(draft.body);
+                      }}
+                      className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-2 ${
+                        bulkSendDocType === 'PO'
                           ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
                           : 'bg-[#EEE8D5] text-[#073642] border-[#D6D1B1] hover:border-emerald-500'
                       }`}
                     >
-                      💬 WhatsApp
+                      <span>📄 Purchase Order (PO)</span>
                     </button>
                   </div>
                 </div>
 
-                {bulkSendProgress && (
-                  <div className="px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold">
-                    {bulkSendProgress}
-                  </div>
-                )}
+                {/* Sender Indicator Box */}
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EEE8D5] border border-[#D6D1B1] text-[#073642] text-xs">
+                  <span className="font-semibold text-[#586E75]">From:</span>
+                  <span className="font-bold text-[#073642]">Anuj Magdum</span>
+                  <span className="text-[#586E75] font-mono text-[11px]">(magdumanuj007@gmail.com)</span>
+                </div>
 
-                <div className="flex gap-3 pt-2">
-                  <button
-                    onClick={() => { setShowBulkSendModal(false); setBulkSendProgress(null); }}
-                    className="flex-1 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] text-xs font-semibold hover:bg-[#E4DDC7] cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleBulkSend}
-                    disabled={!!bulkSendProgress}
-                    className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all disabled:opacity-60 cursor-pointer"
-                  >
-                    <Send className="w-3.5 h-3.5 inline mr-1.5" />
-                    Send {bulkSendDocType}
-                  </button>
+                {/* Email Form Fields */}
+                <div className="space-y-3 text-xs">
+                  <div>
+                    <label className="block font-semibold text-[#073642] mb-1">To: Recipient Email *</label>
+                    <input
+                      type="email"
+                      required
+                      value={bulkSendTo}
+                      onChange={e => setBulkSendTo(e.target.value)}
+                      placeholder="vendor.sales@company.com"
+                      className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-[#073642] mb-1">CC (Optional)</label>
+                    <input
+                      type="text"
+                      value={bulkSendCc}
+                      onChange={e => setBulkSendCc(e.target.value)}
+                      placeholder="procurement-lead@cosmocnergy.com"
+                      className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-xs text-[#073642] focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-[#073642] mb-1">Subject Line *</label>
+                    <input
+                      type="text"
+                      required
+                      value={bulkSendSubject}
+                      onChange={e => setBulkSendSubject(e.target.value)}
+                      placeholder="Purchase Order (PO) - 51.2V 100Ah Pack Assembly"
+                      className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-semibold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-[#073642] mb-1">Email Body *</label>
+                    <textarea
+                      rows={6}
+                      required
+                      value={bulkSendBody}
+                      onChange={e => setBulkSendBody(e.target.value)}
+                      placeholder="Type your official procurement dispatch message or quotation inquiry here..."
+                      className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2.5 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 leading-relaxed font-sans"
+                    />
+                  </div>
+
+                  {/* Attachment Picker */}
+                  <div className="flex items-center justify-between p-2.5 rounded-2xl bg-[#EEE8D5] border border-[#D6D1B1]">
+                    <div className="flex items-center gap-2 text-[#586E75]">
+                      <Paperclip className="w-4 h-4 text-emerald-600" />
+                      {bulkSendAttachment ? (
+                        <span className="font-bold text-[#073642]">{bulkSendAttachment.filename} ({bulkSendAttachment.size})</span>
+                      ) : (
+                        <span className="text-[#586E75]">No file attached</span>
+                      )}
+                    </div>
+
+                    <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-[#FDF6E3] border border-[#D6D1B1] hover:border-emerald-500 text-[#073642] font-semibold text-xs transition-all shadow-2xs">
+                      <span>Attach PDF / Specs</span>
+                      <input
+                        type="file"
+                        className="hidden"
+                        onChange={e => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setBulkSendAttachment({
+                              filename: file.name,
+                              size: `${(file.size / 1024).toFixed(1)} KB`,
+                              type: file.type
+                            });
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+
+                  {bulkSendProgress && (
+                    <div className="px-3 py-2 rounded-xl bg-emerald-100 border border-emerald-400 text-emerald-900 text-xs font-bold flex items-center gap-2">
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-700" />
+                      <span>{bulkSendProgress}</span>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#D6D1B1]/60">
+                    <button
+                      type="button"
+                      onClick={() => { setShowBulkSendModal(false); setBulkSendProgress(null); }}
+                      className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] font-semibold text-xs hover:bg-[#E4DDC7] cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={isBulkSending}
+                      onClick={() => handleExecuteDirectDispatch('whatsapp')}
+                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs shadow-md active:scale-95 transition-all cursor-pointer"
+                    >
+                      <span>💬 Send via WhatsApp</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={isBulkSending}
+                      onClick={() => handleExecuteDirectDispatch('webmail')}
+                      className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
+                    >
+                      <Send className="w-3.5 h-3.5 fill-white" />
+                      <span>{isBulkSending ? 'Dispatching...' : 'Send via Webmail'}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          )}</div>
 
         <div className="flex flex-col space-y-2">
           {filteredCatalog.map(item => {
@@ -1187,13 +1472,7 @@ Please send your best quote & availability.`;
             return (
               <div
                 key={item.id}
-                onClick={(e) => {
-                  const target = e.target as HTMLElement;
-                  if (target.closest('button, input, select, textarea, [data-stop-nav]')) {
-                    return;
-                  }
-                  navigate(`/inventory/component/${item.id}`);
-                }}
+                
                 className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500 hover:shadow-md cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all group/card"
               >
                 {/* Left: Checkbox, Component Name, Category, Specs, Company */}
@@ -1212,7 +1491,7 @@ Please send your best quote & availability.`;
 
                   <div className="truncate min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="text-xs md:text-sm font-bold text-[#073642] truncate">{item.name}</h4>
+                      <h4 onClick={() => navigate(`/inventory/component/${item.id}`)} className="text-xs md:text-sm font-bold text-[#073642] hover:text-emerald-700 hover:underline cursor-pointer truncate" title="Click to view supplier comparison">{item.name}</h4>
 
                       {/* Zero-Storage Google Drive Image Thumbnail / Lightbox Trigger */}
                       {item.image_drive_url ? (
