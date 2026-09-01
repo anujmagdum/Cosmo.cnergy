@@ -816,6 +816,55 @@ export const App: React.FC = () => {
     // Optimistic UI state update
     setCatalog(prev => prev.map(c => (c.id === normalizedItem.id ? normalizedItem : c)));
 
+    // Sync component_companies state and Supabase table if mappings/ids exist
+    const mappings = normalizedItem.company_mappings || (normalizedItem.company_ids ? normalizedItem.company_ids.map(cid => ({
+      company_id: cid,
+      unit_price: normalizedItem.preset_price ?? 0,
+      rfq_quoted_price: normalizedItem.preset_price ?? 0,
+      moq: normalizedItem.min_order_qty ?? 1,
+      lead_time_days: 7,
+      part_number_vendor: 'OEM-SPEC'
+    })) : []);
+
+    if (mappings.length > 0) {
+      const newJunctions: ComponentCompany[] = mappings.map(m => {
+        const companyObj = companies.find(s => s.id === m.company_id);
+        return {
+          id: `cc-${normalizedItem.id}-${m.company_id}`,
+          component_id: normalizedItem.id,
+          company_id: m.company_id,
+          unit_price: m.unit_price ?? m.rfq_quoted_price ?? normalizedItem.preset_price ?? 0,
+          rfq_quoted_price: m.rfq_quoted_price ?? m.unit_price ?? normalizedItem.preset_price ?? 0,
+          moq: m.moq ?? normalizedItem.min_order_qty ?? 1,
+          lead_time_days: m.lead_time_days ?? 7,
+          part_number_vendor: m.part_number_vendor ?? 'OEM-SPEC',
+          external_rating: companyObj?.rating || 4.5,
+          review_summary: `Directly associated vendor for ${normalizedItem.name}.`,
+          company: companyObj
+        };
+      });
+
+      // Update componentCompanies state immediately
+      setComponentCompanies(prev => {
+        const filtered = prev.filter(cc => cc.component_id !== normalizedItem.id);
+        const updated = [...newJunctions, ...filtered];
+        try {
+          localStorage.setItem('cosmo_component_companies', JSON.stringify(updated));
+        } catch {}
+        return updated;
+      });
+
+      // Update component_companies in Supabase
+      if (isSupabaseConfigured()) {
+        try {
+          await supabase.from('component_companies').delete().eq('component_id', normalizedItem.id);
+          await supabase.from('component_companies').upsert(newJunctions);
+        } catch (csErr) {
+          console.warn('[Supabase component_companies update error]:', csErr);
+        }
+      }
+    }
+
     // Explicit Supabase UPDATE query with resilience
     if (isSupabaseConfigured()) {
       try {

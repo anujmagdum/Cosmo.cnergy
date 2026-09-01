@@ -1660,14 +1660,19 @@ Cosmo.cnergy Procurement Team`;
                       : (item.company_ids?.length || (item.company_id ? 1 : 0));
 
                     return (
-                      <div
-                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600/10 text-emerald-950 border border-emerald-500/30 text-[10px] font-bold shrink-0 group-hover/card:bg-emerald-600/20 transition-colors"
-                        title="Click to view dedicated company comparison page"
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/inventory/component/${item.id}`);
+                        }}
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-950 border border-emerald-500/30 text-[10px] font-bold shrink-0 transition-colors cursor-pointer"
+                        title="Click to open Company Quotation & Commercial Parameters"
                       >
                         <Building2 className="w-3.5 h-3.5 text-emerald-700" />
                         <span>{sCount} {sCount === 1 ? 'Company' : 'Companies'}</span>
                         <ChevronRight className="w-3 h-3 text-emerald-600 group-hover/card:translate-x-0.5 transition-transform" />
-                      </div>
+                      </button>
                     );
                   })()}
 
@@ -2306,22 +2311,7 @@ Cosmo.cnergy Procurement Team`;
         </div>
       )}
 
-      {/* Edit Component Modal */}
-      {editingComponent && (
-        <EditComponentModal
-          item={editingComponent}
-          companies={companies}
-          categories={categories}
-          onClose={() => setEditingComponent(null)}
-          onSave={async (updatedItem) => {
-            if (onUpdateCatalogItem) {
-              await onUpdateCatalogItem(updatedItem);
-            }
-            setToastFeedback({ type: 'success', message: `Component "${updatedItem.name}" updated successfully!` });
-            setTimeout(() => setToastFeedback(null), 3500);
-          }}
-        />
-      )}
+      
 
       {/* Zero-Storage Google Drive Image Lightbox Modal */}
       {lightboxData && (
