@@ -919,54 +919,104 @@ export const App: React.FC = () => {
 
   // CSV Import Batch Handlers
   const handleImportComponents = async (rows: any[]): Promise<number> => {
-    const importedItems: CatalogItem[] = rows.map((row, idx) => {
+    const importedItems: CatalogItem[] = [];
+    const newJunctions: ComponentCompany[] = [];
+
+    rows.forEach((row, idx) => {
       let suppId = row.company_id;
       if (!suppId && row.company_name) {
         const found = companies.find(s => s.name.toLowerCase() === row.company_name.toLowerCase());
         if (found) suppId = found.id;
       }
-      return {
-        id: `cat-${Date.now()}-${idx}`,
+
+      const itemId = `cat-${Date.now()}-${idx}`;
+      const presetPrice = Number(row.preset_price) || 0;
+      const moq = Number(row.min_order_qty) || 1;
+      const matchedCat = categories.find(c => c.name.toLowerCase() === (row.category || '').toLowerCase());
+
+      const item: CatalogItem = {
+        id: itemId,
         name: row.name,
-        category: row.category || 'Battery Cells',
+        category: row.category || matchedCat?.name || 'Battery Cells',
+        category_id: matchedCat?.id,
+        sku: row.sku || `SKU-${Date.now().toString().slice(-4)}-${idx + 1}`,
         specs: row.specs || '',
         uom: row.uom || 'Pcs',
-        preset_price: Number(row.preset_price) || 0,
+        preset_price: presetPrice,
         in_stock_qty: Number(row.in_stock_qty) || 100,
-        min_order_qty: Number(row.min_order_qty) || 1,
+        min_order_qty: moq,
         company_id: suppId || companies[0]?.id || '',
-        procurement_status: row.procurement_status || 'TO_BE_ORDERED'
+        company_ids: suppId ? [suppId] : (companies[0]?.id ? [companies[0].id] : []),
+        procurement_status: row.procurement_status || 'TO_BE_ORDERED',
+        image_drive_url: row.image_drive_url || undefined
       };
+
+      importedItems.push(item);
+
+      const targetCompanyId = item.company_id;
+      if (targetCompanyId) {
+        const companyObj = companies.find(s => s.id === targetCompanyId);
+        newJunctions.push({
+          id: `cc-${itemId}-${targetCompanyId}`,
+          component_id: itemId,
+          company_id: targetCompanyId,
+          unit_price: presetPrice,
+          rfq_quoted_price: presetPrice,
+          moq: moq,
+          lead_time_days: 7,
+          part_number_vendor: item.sku || 'OEM-SPEC',
+          external_rating: companyObj?.rating || 4.8,
+          review_summary: `Imported via CSV for ${item.name}`,
+          company: companyObj
+        });
+      }
     });
+
+    if (importedItems.length === 0) return 0;
 
     if (isSupabaseConfigured()) {
       try {
         await supabase.from('catalog_items').upsert(importedItems);
+        if (newJunctions.length > 0) {
+          await supabase.from('component_companies').upsert(newJunctions);
+        }
       } catch (e) {
         console.warn('Batch insert catalog_items to Supabase error:', e);
       }
     }
 
     setCatalog(prev => [...importedItems, ...prev]);
+    if (newJunctions.length > 0) {
+      setComponentCompanies(prev => [...newJunctions, ...prev]);
+    }
     return importedItems.length;
   };
 
   const handleImportOrders = async (rows: any[]): Promise<number> => {
     const importedOrders: ProcurementOrder[] = rows.map((row, idx) => {
-      const supp = companies.find(s => s.id === row.company_id || s.name.toLowerCase() === (row.company_name || '').toLowerCase());
+      const supp = companies.find(s => 
+        (row.company_id && s.id === row.company_id) || 
+        (row.company_name && s.name.toLowerCase() === row.company_name.toLowerCase())
+      );
+
+      const type = (row.type || 'PO').toUpperCase() === 'RFQ' ? 'RFQ' : 'PO';
+      const orderNum = row.order_number || `${type}-${new Date().getFullYear()}-${String(orders.length + idx + 1).padStart(4, '0')}`;
+
       return {
         id: `po-${Date.now()}-${idx}`,
-        order_number: row.order_number,
+        order_number: orderNum,
         company_id: supp?.id || companies[0]?.id || '',
         company: supp || companies[0],
-        type: row.type || 'PO',
-        status: row.status || 'ORDERED',
+        type,
+        status: (row.status || (type === 'RFQ' ? 'RFQ_SENT' : 'ORDERED')) as OrderStatus,
         total_amount: Number(row.total_amount) || 0,
-        notes: row.notes || 'Imported via CSV',
+        notes: row.notes || row.item_details || 'Imported via CSV',
         created_by: row.created_by || userName,
-        created_at: new Date().toISOString()
+        created_at: row.created_at || new Date().toISOString()
       };
     });
+
+    if (importedOrders.length === 0) return 0;
 
     if (isSupabaseConfigured()) {
       try {
@@ -995,10 +1045,10 @@ export const App: React.FC = () => {
     const importedSupps: Company[] = rows.map((row, idx) => ({
       id: `supp-${Date.now()}-${idx}`,
       name: row.name,
-      contact_person: row.contact_person || 'Sales Dept',
-      email: row.email,
-      phone: row.phone,
-      whatsapp: row.whatsapp || row.phone,
+      contact_person: row.contact_person || 'Sales Department',
+      email: row.email || 'sales@company.com',
+      phone: row.phone || '+91 98765 43210',
+      whatsapp: row.whatsapp || row.phone || '+91 98765 43210',
       category: row.category || 'General Company',
       gstin: row.gstin || '',
       payment_terms: row.payment_terms || 'Net 30 Days',
@@ -1006,6 +1056,8 @@ export const App: React.FC = () => {
       buying_url: row.buying_url || '',
       rating: Number(row.rating) || 4.8
     }));
+
+    if (importedSupps.length === 0) return 0;
 
     if (isSupabaseConfigured()) {
       try {
