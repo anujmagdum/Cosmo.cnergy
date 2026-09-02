@@ -140,23 +140,23 @@ export const Header: React.FC<Props> = ({
               const Icon = item.icon;
               const isActive = activeTab === item.id;
 
-              // Standout styling for AI Studio
+              // Clean calm styling for AI Studio (no reflection or distracting pings)
               if (item.isAi) {
                 return (
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all relative group overflow-hidden ${
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                       isActive
-                        ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-500 text-white shadow-lg shadow-purple-500/40 ring-2 ring-pink-400/60 scale-[1.03]'
-                        : 'bg-gradient-to-r from-purple-950/70 via-indigo-950/70 to-pink-950/70 hover:from-purple-900 hover:via-indigo-900 hover:to-pink-900 text-purple-200 hover:text-white border border-purple-500/40 shadow-sm shadow-purple-500/20 hover:scale-[1.02]'
+                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30 ring-1 ring-indigo-400/50'
+                        : 'bg-indigo-950/40 hover:bg-indigo-900/50 text-indigo-300 hover:text-white border border-indigo-500/30'
                     }`}
                   >
-                    <Icon className={`w-3.5 h-3.5 text-pink-300 group-hover:rotate-12 transition-transform ${isActive ? 'animate-spin-slow' : ''}`} />
-                    <span className="bg-gradient-to-r from-purple-200 via-pink-200 to-white bg-clip-text text-transparent font-black">
-                      {item.label}
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-indigo-400'}`} />
+                    <span>{item.label}</span>
+                    <span className="px-1.5 py-0.2 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-[9px] font-extrabold uppercase tracking-wider">
+                      PRO
                     </span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-ping absolute top-1.5 right-1.5" />
                   </button>
                 );
               }
