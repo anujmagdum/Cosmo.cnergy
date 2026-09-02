@@ -21,12 +21,23 @@ interface Props {
 }
 
 const DEFAULT_CATEGORIES = [
-  'Battery Cells',
-  'Electronics / BMS',
-  'Connectors & Busbars',
-  'Metal Enclosures',
-  'Wiring & Harnesses',
-  'General Company'
+  'Capacitor',
+  'Resistor',
+  'Diode',
+  'IC',
+  'IGBT',
+  'Transistor',
+  'Mosfet',
+  'Micro-Controller',
+  'Triac',
+  'IC Base',
+  'Connector',
+  'Push Button',
+  'MOV',
+  'Coil',
+  'Regulator',
+  'Fuse',
+  'Drill Bit'
 ];
 
 export const EditComponentModal: React.FC<Props> = ({
@@ -80,7 +91,7 @@ export const EditComponentModal: React.FC<Props> = ({
 
   const [formData, setFormData] = useState({
     name: item.name || '',
-    category: item.category || 'Battery Cells',
+    category: item.category || 'Capacitor',
     preset_price: item.preset_price !== undefined ? item.preset_price : 0,
     in_stock_qty: item.in_stock_qty !== undefined ? item.in_stock_qty : 100,
     min_order_qty: item.min_order_qty || 1,

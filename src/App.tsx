@@ -91,12 +91,23 @@ export const App: React.FC = () => {
 
   // Core Data States
   const [categories, setCategories] = useState<Category[]>([
-    { id: 'cat-1', name: 'Battery Cells' },
-    { id: 'cat-2', name: 'Electronics / BMS' },
-    { id: 'cat-3', name: 'Connectors & Busbars' },
-    { id: 'cat-4', name: 'Metal Enclosures' },
-    { id: 'cat-5', name: 'Wiring & Harnesses' },
-    { id: 'cat-6', name: 'General Company' }
+    { id: 'cat-1', name: 'Capacitor' },
+    { id: 'cat-2', name: 'Resistor' },
+    { id: 'cat-3', name: 'Diode' },
+    { id: 'cat-4', name: 'IC' },
+    { id: 'cat-5', name: 'IGBT' },
+    { id: 'cat-6', name: 'Transistor' },
+    { id: 'cat-7', name: 'Mosfet' },
+    { id: 'cat-8', name: 'Micro-Controller' },
+    { id: 'cat-9', name: 'Triac' },
+    { id: 'cat-10', name: 'IC Base' },
+    { id: 'cat-11', name: 'Connector' },
+    { id: 'cat-12', name: 'Push Button' },
+    { id: 'cat-13', name: 'MOV' },
+    { id: 'cat-14', name: 'Coil' },
+    { id: 'cat-15', name: 'Regulator' },
+    { id: 'cat-16', name: 'Fuse' },
+    { id: 'cat-17', name: 'Drill Bit' }
   ]);
   const [catalog, setCatalog] = useState<CatalogItem[]>(() => {
     const saved = localStorage.getItem('cosmo_catalog');
@@ -320,7 +331,7 @@ export const App: React.FC = () => {
       if (loadedCats) {
         const normalizedCats = loadedCats.map((c: any) => ({
           ...c,
-          category: c.cat_rel?.name || c.category || 'Battery Cells',
+          category: c.cat_rel?.name || c.category || 'Capacitor',
           category_id: c.cat_rel?.id || c.category_id
         }));
         normalizedCats.forEach((c: any) => delete c.cat_rel);
@@ -694,7 +705,7 @@ export const App: React.FC = () => {
 
     const payload: any = {
       name: itemData.name,
-      category: itemData.category || 'Battery Cells',
+      category: itemData.category || 'Capacitor',
       category_id: categoryId || null,
       specs: itemData.specs || '',
       uom: itemData.uom || 'Pcs',
@@ -728,7 +739,7 @@ export const App: React.FC = () => {
 
         savedItem = {
           ...data,
-          category: itemData.category || 'Battery Cells',
+          category: itemData.category || 'Capacitor',
           company_ids: itemData.company_ids,
           company_mappings: itemData.company_mappings,
           image_drive_url: itemData.image_drive_url
@@ -738,14 +749,14 @@ export const App: React.FC = () => {
         savedItem = {
           id: `cat-${Date.now()}`,
           ...itemData,
-          category: itemData.category || 'Battery Cells'
+          category: itemData.category || 'Capacitor'
         };
       }
     } else {
       savedItem = {
         id: `cat-${Date.now()}`,
         ...itemData,
-        category: itemData.category || 'Battery Cells'
+        category: itemData.category || 'Capacitor'
       };
     }
 
@@ -805,7 +816,7 @@ export const App: React.FC = () => {
       c => c.id === updatedItem.category_id || c.name.toLowerCase() === (updatedItem.category || '').toLowerCase()
     );
     const resolvedCatId = matchedCat?.id || updatedItem.category_id || null;
-    const resolvedCatName = updatedItem.category || matchedCat?.name || 'Battery Cells';
+    const resolvedCatName = updatedItem.category || matchedCat?.name || 'Capacitor';
 
     const normalizedItem: CatalogItem = {
       ...updatedItem,
@@ -937,7 +948,7 @@ export const App: React.FC = () => {
       const item: CatalogItem = {
         id: itemId,
         name: row.name,
-        category: row.category || matchedCat?.name || 'Battery Cells',
+        category: row.category || matchedCat?.name || 'Capacitor',
         category_id: matchedCat?.id,
         sku: row.sku || `SKU-${Date.now().toString().slice(-4)}-${idx + 1}`,
         specs: row.specs || '',

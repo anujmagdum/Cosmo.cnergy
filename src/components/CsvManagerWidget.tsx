@@ -25,7 +25,7 @@ const SECTION_SCHEMAS: Record<CsvSectionType, SchemaHeaderConfig> = {
       { key: 'name', label: 'Component Name', example: '3.2V 100Ah LFP Grade A Cell' }
     ],
     optionalHeaders: [
-      { key: 'category', label: 'Category', example: 'Battery Cells' },
+      { key: 'category', label: 'Category', example: 'Capacitor' },
       { key: 'sku', label: 'SKU / Part Code', example: 'LFP-100AH-32V' },
       { key: 'preset_price', label: 'Unit Price (INR)', example: '2850' },
       { key: 'in_stock_qty', label: 'Stock Qty', example: '640' },
@@ -39,7 +39,7 @@ const SECTION_SCHEMAS: Record<CsvSectionType, SchemaHeaderConfig> = {
     sampleRows: [
       {
         name: '3.2V 100Ah LFP Grade A Cell',
-        category: 'Battery Cells',
+        category: 'Capacitor',
         sku: 'LFP-100AH-32V',
         preset_price: '2850',
         in_stock_qty: '640',
@@ -272,7 +272,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
         headers = allHeaders.map(h => escapeCsv(h.label));
         rows = data.map(item => [
           escapeCsv(item.name || ''),
-          escapeCsv(item.category || 'Battery Cells'),
+          escapeCsv(item.category || 'Capacitor'),
           escapeCsv(item.sku || ''),
           escapeCsv(item.preset_price ?? 0),
           escapeCsv(item.in_stock_qty ?? 0),

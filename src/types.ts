@@ -316,3 +316,24 @@ export interface SearchResultItem {
     phone?: string;
   };
 }
+
+
+export const DEFAULT_CATEGORIES: string[] = [
+  'Capacitor',
+  'Resistor',
+  'Diode',
+  'IC',
+  'IGBT',
+  'Transistor',
+  'Mosfet',
+  'Micro-Controller',
+  'Triac',
+  'IC Base',
+  'Connector',
+  'Push Button',
+  'MOV',
+  'Coil',
+  'Regulator',
+  'Fuse',
+  'Drill Bit'
+];

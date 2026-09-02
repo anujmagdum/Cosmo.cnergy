@@ -75,12 +75,23 @@ interface Props {
 }
 
 const DEFAULT_CATEGORIES = [
-  'Battery Cells',
-  'Electronics / BMS',
-  'Connectors & Busbars',
-  'Metal Enclosures',
-  'Wiring & Harnesses',
-  'General Company'
+  'Capacitor',
+  'Resistor',
+  'Diode',
+  'IC',
+  'IGBT',
+  'Transistor',
+  'Mosfet',
+  'Micro-Controller',
+  'Triac',
+  'IC Base',
+  'Connector',
+  'Push Button',
+  'MOV',
+  'Coil',
+  'Regulator',
+  'Fuse',
+  'Drill Bit'
 ];
 
 export const CatalogSection: React.FC<Props> = ({
@@ -394,7 +405,7 @@ Please send your best quote & availability.`;
   // Add Component Form State supporting Multi-Company Association
   const [catalogForm, setCatalogForm] = useState({
     name: '',
-    category: 'Battery Cells',
+    category: 'Capacitor',
     target_qty: 10,
     preset_price: 150,
     in_stock_qty: 100,
@@ -720,7 +731,7 @@ Cosmo.cnergy Procurement Team`;
 
       setCatalogForm({
         name: '',
-        category: 'Battery Cells',
+        category: 'Capacitor',
         target_qty: 10,
         preset_price: 150,
         in_stock_qty: 100,
@@ -1526,7 +1537,7 @@ Cosmo.cnergy Procurement Team`;
                           item.category_id ||
                           categories.find(c => c.name.toLowerCase() === (item.category || '').toLowerCase())?.id ||
                           item.category ||
-                          'Battery Cells'
+                          'Capacitor'
                         }
                         onChange={async e => {
                           const selectedVal = e.target.value;
@@ -2189,7 +2200,7 @@ Cosmo.cnergy Procurement Team`;
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-xs text-[#073642]">{catItem?.name || 'Raw Material Component'}</span>
                           <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-300">
-                            {catItem?.category || 'Battery Cells'}
+                            {catItem?.category || 'Capacitor'}
                           </span>
                         </div>
 
