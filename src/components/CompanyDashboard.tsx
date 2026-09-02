@@ -17,12 +17,23 @@ interface Props {
 }
 
 const DEFAULT_CATEGORIES = [
-  'Battery Cells',
-  'Electronics / BMS',
-  'Connectors & Busbars',
-  'Metal Enclosures',
-  'Wiring & Harnesses',
-  'General Company'
+  'Capacitor',
+  'Resistor',
+  'Diode',
+  'IC',
+  'IGBT',
+  'Transistor',
+  'Mosfet',
+  'Micro-Controller',
+  'Triac',
+  'IC Base',
+  'Connector',
+  'Push Button',
+  'MOV',
+  'Coil',
+  'Regulator',
+  'Fuse',
+  'Drill Bit'
 ];
 
 export const CompanyDashboard: React.FC<Props> = ({
@@ -57,8 +68,8 @@ export const CompanyDashboard: React.FC<Props> = ({
     address: '',
     gstin: '',
     payment_terms: 'Net 30 Days',
-    category: 'Battery Cells',    // primary / legacy
-    categories: ['Battery Cells'] // multi-category
+    category: 'Capacitor',    // primary / legacy
+    categories: ['Capacitor'] // multi-category
   });
 
   const allCategoryNames = useMemo(() => {
@@ -130,8 +141,8 @@ export const CompanyDashboard: React.FC<Props> = ({
         address: '',
         gstin: '',
         payment_terms: 'Net 30 Days',
-        category: 'Battery Cells',
-        categories: ['Battery Cells']
+        category: 'Capacitor',
+        categories: ['Capacitor']
       });
       setIsAddModalOpen(false);
       setToastFeedback({ type: 'success', message: `Company "${formData.name}" added successfully.` });
