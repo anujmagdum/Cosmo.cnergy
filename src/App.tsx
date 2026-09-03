@@ -1624,7 +1624,7 @@ export const App: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsSearchOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#0B192C] hover:bg-[#12243d] border border-emerald-500/60 hover:border-emerald-400 text-white shadow-2xl shadow-black/50 active:scale-95 transition-all group cursor-pointer"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2 sm:gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl bg-[#0B192C] hover:bg-[#12243d] border border-emerald-500/60 hover:border-emerald-400 text-white shadow-2xl shadow-black/70 active:scale-95 transition-all group cursor-pointer"
         title="Master Data Universal Search (Ctrl + K)"
       >
         <div className="w-6 h-6 rounded-lg bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">

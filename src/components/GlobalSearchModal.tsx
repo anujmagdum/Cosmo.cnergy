@@ -117,8 +117,8 @@ export const GlobalSearchModal: React.FC<Props> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/75 backdrop-blur-md p-4 sm:p-6 overflow-y-auto pt-16">
-      <div className="bg-[#FDF6E3] w-full max-w-4xl rounded-3xl border border-[#D6D1B1] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-[#073642]">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/80 backdrop-blur-md p-2 sm:p-6 overflow-y-auto pt-3 sm:pt-14">
+      <div className="bg-[#FDF6E3] w-full max-w-4xl rounded-2xl sm:rounded-3xl border border-[#D6D1B1] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-[#073642] flex flex-col max-h-[94vh]">
         {/* Top Search Input Bar */}
         <div className="p-5 border-b border-[#D6D1B1]/60 bg-[#0B192C] text-white flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shrink-0 shadow-md shadow-emerald-500/20">

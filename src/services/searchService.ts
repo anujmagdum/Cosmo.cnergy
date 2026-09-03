@@ -10,8 +10,39 @@ export interface SearchResultSet {
 }
 
 /**
+ * Normalizes text for resilient fuzzy matching by stripping non-alphanumeric characters,
+ * spaces, dashes, slashes, and symbols.
+ * Example: "LiFePO4-48V-100Ah" -> "lifepo448v100ah"
+ */
+export function normalizeFuzzy(text: string): string {
+  return (text || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+/**
+ * Multi-token & fuzzy substring matcher.
+ * Matches if:
+ * 1. Target contains the full normalized query (handles dashes/spaces variations e.g. "lifepo4 48v" matches "LiFePO4-48V-100Ah")
+ * 2. Every whitespace/delimiter token in the query matches in target
+ */
+export function isFuzzyMatch(targetText: string, queryTokens: string[], normalizedQuery: string): boolean {
+  if (!targetText) return false;
+  const normalizedTarget = normalizeFuzzy(targetText);
+  if (normalizedTarget.includes(normalizedQuery)) return true;
+
+  if (queryTokens.length > 1) {
+    return queryTokens.every(token => {
+      const normToken = normalizeFuzzy(token);
+      return normToken ? normalizedTarget.includes(normToken) : true;
+    });
+  }
+
+  return false;
+}
+
+/**
  * Universal Master Data Cross-Entity Relational Search Engine
- * Searches Components, Product Folders, Companies, and Procurement Orders/Invoices.
+ * Features resilient fuzzy part-number & multi-term matching across Components,
+ * Companies, Product Folders, and Procurement Orders.
  */
 export function executeUniversalSearch(
   query: string,
@@ -22,8 +53,10 @@ export function executeUniversalSearch(
   orders: ProcurementOrder[] = []
 ): SearchResultSet {
   const cleanQuery = (query || '').trim().toLowerCase();
+  const normalizedQuery = normalizeFuzzy(cleanQuery);
+  const queryTokens = cleanQuery.split(/[\s\-_/,.+:]+/).filter(Boolean);
 
-  if (!cleanQuery) {
+  if (!cleanQuery || !normalizedQuery) {
     return {
       query: '',
       components: [],
@@ -34,20 +67,19 @@ export function executeUniversalSearch(
     };
   }
 
-  // 1. Search Components with Relational Company Expansion
+  // 1. Search Components with Fuzzy Part Number & Relational Company Expansion
   const matchingComponents: SearchResultItem[] = [];
 
   catalog.forEach(item => {
-    const nameMatch = (item.name || '').toLowerCase().includes(cleanQuery);
-    const skuMatch = (item.sku || '').toLowerCase().includes(cleanQuery);
-    const specsMatch = (item.specs || '').toLowerCase().includes(cleanQuery);
-    const catMatch = (item.category || '').toLowerCase().includes(cleanQuery);
-    const companyMatch = companies.some(
-      s => s.id === item.company_id && (s.name || '').toLowerCase().includes(cleanQuery)
-    );
+    const combinedSearchable = `${item.name} ${item.sku || ''} ${item.specs || ''} ${item.category || ''}`;
+    const primaryCompany = companies.find(s => s.id === item.company_id);
+    const fullText = `${combinedSearchable} ${primaryCompany?.name || ''}`;
 
-    if (nameMatch || skuMatch || specsMatch || catMatch || companyMatch) {
-      const primaryCompany = companies.find(s => s.id === item.company_id);
+    const isMatch =
+      fullText.toLowerCase().includes(cleanQuery) ||
+      isFuzzyMatch(fullText, queryTokens, normalizedQuery);
+
+    if (isMatch) {
       const associatedCompanies: SearchResultCompany[] = [];
 
       if (primaryCompany) {
@@ -107,15 +139,19 @@ export function executeUniversalSearch(
   const matchingFolders: SearchResultItem[] = [];
 
   folders.forEach(folder => {
-    const nameMatch = (folder.name || '').toLowerCase().includes(cleanQuery);
-    const descMatch = (folder.description || '').toLowerCase().includes(cleanQuery);
+    const fullFolderText = `${folder.name} ${folder.description || ''}`;
+    const folderMatch =
+      fullFolderText.toLowerCase().includes(cleanQuery) ||
+      isFuzzyMatch(fullFolderText, queryTokens, normalizedQuery);
 
     const hasMatchingChild = (folder.components || []).some(comp => {
       const cat = catalog.find(c => c.id === comp.item_id);
-      return cat && (cat.name.toLowerCase().includes(cleanQuery) || (cat.sku || '').toLowerCase().includes(cleanQuery));
+      if (!cat) return false;
+      const childText = `${cat.name} ${cat.sku || ''}`;
+      return childText.toLowerCase().includes(cleanQuery) || isFuzzyMatch(childText, queryTokens, normalizedQuery);
     });
 
-    if (nameMatch || descMatch || hasMatchingChild) {
+    if (folderMatch || hasMatchingChild) {
       matchingFolders.push({
         id: folder.id,
         type: 'PRODUCT_FOLDER',
@@ -135,14 +171,12 @@ export function executeUniversalSearch(
   const matchingCompanies: SearchResultItem[] = [];
 
   companies.forEach(company => {
-    const nameMatch = (company.name || '').toLowerCase().includes(cleanQuery);
-    const contactMatch = (company.contact_person || '').toLowerCase().includes(cleanQuery);
-    const emailMatch = (company.email || '').toLowerCase().includes(cleanQuery);
-    const categoryMatch = (company.category || '').toLowerCase().includes(cleanQuery);
-    const phoneMatch = (company.phone || '').includes(cleanQuery);
-    const gstinMatch = (company.gstin || '').toLowerCase().includes(cleanQuery);
+    const fullCompanyText = `${company.name} ${company.contact_person || ''} ${company.email || ''} ${company.phone || ''} ${company.category || ''} ${company.gstin || ''} ${company.address || ''}`;
+    const companyMatch =
+      fullCompanyText.toLowerCase().includes(cleanQuery) ||
+      isFuzzyMatch(fullCompanyText, queryTokens, normalizedQuery);
 
-    if (nameMatch || contactMatch || emailMatch || categoryMatch || phoneMatch || gstinMatch) {
+    if (companyMatch) {
       matchingCompanies.push({
         id: company.id,
         type: 'SUPPLIER',
@@ -163,14 +197,12 @@ export function executeUniversalSearch(
   const matchingOrders: SearchResultItem[] = [];
 
   orders.forEach(order => {
-    const numMatch = (order.order_number || '').toLowerCase().includes(cleanQuery);
-    const suppMatch = (order.company?.name || '').toLowerCase().includes(cleanQuery);
-    const notesMatch = (order.notes || '').toLowerCase().includes(cleanQuery);
-    const creatorMatch = (order.created_by || '').toLowerCase().includes(cleanQuery);
-    const statusMatch = (order.status || '').toLowerCase().includes(cleanQuery);
-    const amountMatch = (order.total_amount || '').toString().includes(cleanQuery);
+    const fullOrderText = `${order.order_number} ${order.company?.name || ''} ${order.notes || ''} ${order.created_by || ''} ${order.status} ${order.type} ${order.total_amount}`;
+    const orderMatch =
+      fullOrderText.toLowerCase().includes(cleanQuery) ||
+      isFuzzyMatch(fullOrderText, queryTokens, normalizedQuery);
 
-    if (numMatch || suppMatch || notesMatch || creatorMatch || statusMatch || amountMatch) {
+    if (orderMatch) {
       matchingOrders.push({
         id: order.id,
         type: 'ORDER',
