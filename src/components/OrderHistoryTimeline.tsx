@@ -2,7 +2,28 @@ import React, { useState, useMemo } from 'react';
 import { ProcurementOrder, OrderStatus, STATUS_MAP, Company } from '../types';
 import { PDFEditorModal } from './PDFEditorModal';
 import { CsvManagerWidget } from './CsvManagerWidget';
-import { History, Calendar, User, Search, CheckCircle, Edit3, Trash2, AlertCircle } from 'lucide-react';
+import { generateOrderPDF } from '../services/pdfService';
+import {
+  History,
+  Calendar,
+  User,
+  Search,
+  CheckCircle,
+  FileEdit,
+  Download,
+  StickyNote,
+  Mail,
+  Trash2,
+  AlertCircle,
+  Building2,
+  DollarSign,
+  TrendingUp,
+  Receipt,
+  FileSpreadsheet,
+  X,
+  Save,
+  MessageSquare
+} from 'lucide-react';
 
 interface Props {
   orders: ProcurementOrder[];
@@ -28,9 +49,48 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
   const [toastFeedback, setToastFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [editingPDFOrder, setEditingPDFOrder] = useState<ProcurementOrder | null>(null);
   const [orderToDelete, setOrderToDelete] = useState<ProcurementOrder | null>(null);
+  const [noteOrder, setNoteOrder] = useState<ProcurementOrder | null>(null);
+  const [noteText, setNoteText] = useState<string>('');
   const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState<string | null>(null);
 
+  // Filtered orders list
+  const filteredOrders = useMemo(() => {
+    return orders.filter(o => {
+      const term = searchTerm.toLowerCase().trim();
+      const matchesSearch =
+        !term ||
+        o.order_number.toLowerCase().includes(term) ||
+        (o.company?.name || '').toLowerCase().includes(term) ||
+        (o.created_by || '').toLowerCase().includes(term) ||
+        (o.notes || '').toLowerCase().includes(term);
+      const matchesStatus = filterStatus === 'ALL' || o.status === filterStatus;
+      return matchesSearch && matchesStatus;
+    });
+  }, [orders, searchTerm, filterStatus]);
+
+  // Financial Metrics Summary (Datlion Cnergy Finance Style)
+  const financialSummary = useMemo(() => {
+    const totalCount = filteredOrders.length;
+    const grossTotal = filteredOrders.reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+    const taxableSubtotal = grossTotal / 1.18;
+    const estimatedGst = grossTotal - taxableSubtotal;
+    const poCount = filteredOrders.filter(o => o.type === 'PO').length;
+    const rfqCount = filteredOrders.filter(o => o.type === 'RFQ').length;
+
+    return {
+      totalCount,
+      grossTotal,
+      taxableSubtotal,
+      estimatedGst,
+      poCount,
+      rfqCount
+    };
+  }, [filteredOrders]);
+
+  // Checkbox handlers
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
       setSelectedOrderIds(filteredOrders.map(o => o.id));
@@ -45,6 +105,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
     );
   };
 
+  // Bulk Delete
   const handleBulkDelete = async () => {
     if (!onDeleteOrder) return;
     if (!confirm(`Are you sure you want to delete ${selectedOrderIds.length} orders?`)) return;
@@ -63,22 +124,8 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
       setIsBulkDeleting(false);
     }
   };
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  const filteredOrders = useMemo(() => {
-    return orders.filter(o => {
-      const term = searchTerm.toLowerCase().trim();
-      const matchesSearch =
-        !term ||
-        o.order_number.toLowerCase().includes(term) ||
-        (o.company?.name || '').toLowerCase().includes(term) ||
-        (o.created_by || '').toLowerCase().includes(term);
-      const matchesStatus = filterStatus === 'ALL' || o.status === filterStatus;
-      return matchesSearch && matchesStatus;
-    });
-  }, [orders, searchTerm, filterStatus]);
-
-  // Synchronous Delete Order Handler
+  // Synchronous Delete Single Order Handler
   const confirmDeleteOrder = async (order: ProcurementOrder) => {
     if (!onDeleteOrder) return;
     setIsDeleting(true);
@@ -94,6 +141,64 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  // One-Click Direct PDF Download via jsPDF & jspdf-autotable
+  const handleDownloadDirectPDF = async (order: ProcurementOrder) => {
+    setIsDownloadingPdf(order.id);
+    try {
+      await generateOrderPDF(order);
+      setToastFeedback({ type: 'success', message: `PDF for ${order.order_number} generated & downloaded successfully!` });
+      setTimeout(() => setToastFeedback(null), 3500);
+    } catch (err: any) {
+      console.error('Failed to download PDF:', err);
+      setToastFeedback({ type: 'error', message: 'PDF Download failed: ' + (err.message || err) });
+      setTimeout(() => setToastFeedback(null), 4000);
+    } finally {
+      setIsDownloadingPdf(null);
+    }
+  };
+
+  // Open Note Modal
+  const handleOpenNoteModal = (order: ProcurementOrder) => {
+    setNoteOrder(order);
+    setNoteText(order.notes || '');
+  };
+
+  // Save Note
+  const handleSaveNote = () => {
+    if (!noteOrder || !onUpdateOrder) return;
+    const updated: ProcurementOrder = {
+      ...noteOrder,
+      notes: noteText
+    };
+    onUpdateOrder(updated);
+    setNoteOrder(null);
+    setToastFeedback({ type: 'success', message: `Notes updated for ${noteOrder.order_number}` });
+    setTimeout(() => setToastFeedback(null), 3000);
+  };
+
+  // Direct Send Mail Trigger
+  const handleSendMail = (order: ProcurementOrder) => {
+    if (!onOpenWebmail) return;
+    const company = order.company || {
+      id: order.company_id || 'comp-unknown',
+      name: 'Vendor Partner',
+      email: 'vendor.sales@company.com',
+      contact_person: 'Sales Lead',
+      phone: '+91 98765 43210'
+    };
+    const itemsSummary = (order.items || []).map(i => i.item?.name || 'Component').join(', ');
+    const qtySummary = (order.items || []).reduce((acc, i) => acc + (i.quantity || 0), 0);
+
+    onOpenWebmail(
+      company,
+      itemsSummary || `${order.type} Order ${order.order_number}`,
+      `Order ${order.order_number} - Total ₹${Number(order.total_amount).toLocaleString('en-IN')}`,
+      qtySummary || 100,
+      order.type,
+      order.status
+    );
   };
 
   return (
@@ -115,11 +220,80 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-3">
             <History className="w-7 h-7 text-emerald-400" />
-            <span>Orders & Procurement Timeline</span>
+            <span>Procurement & Invoice Summary</span>
           </h2>
           <p className="text-xs text-slate-300 mt-1">
-            Ultra-dense ladder order tracking, status management, vector PDF editor, and audit logs.
+            Datlion Cnergy finance registry, vector PDF generation (jsPDF / autotable), note logging, and dispatch actions.
           </p>
+        </div>
+      </div>
+
+      {/* Datlion Cnergy Finance Summary KPI Section */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {/* Total Invoices / Orders */}
+        <div className="bg-[#FDF6E3] p-4 rounded-2xl border border-[#D6D1B1] shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#586E75]">Total Orders / Invoices</span>
+            <div className="p-2 rounded-xl bg-emerald-100 text-emerald-800">
+              <Receipt className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2">
+            <div className="text-xl md:text-2xl font-black text-[#073642] font-mono">{financialSummary.totalCount}</div>
+            <div className="text-[11px] text-[#586E75] mt-0.5 flex items-center gap-1.5 font-semibold">
+              <span className="text-purple-700">{financialSummary.poCount} POs</span>
+              <span>•</span>
+              <span className="text-emerald-700">{financialSummary.rfqCount} RFQs</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Taxable Subtotal (Excl. GST) */}
+        <div className="bg-[#FDF6E3] p-4 rounded-2xl border border-[#D6D1B1] shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#586E75]">Taxable Subtotal (Excl. GST)</span>
+            <div className="p-2 rounded-xl bg-blue-100 text-blue-800">
+              <DollarSign className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2">
+            <div className="text-xl md:text-2xl font-black text-[#073642] font-mono">
+              ₹{financialSummary.taxableSubtotal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+            </div>
+            <div className="text-[11px] text-[#586E75] mt-0.5 font-semibold">Base procurement valuation</div>
+          </div>
+        </div>
+
+        {/* Estimated GST (18%) */}
+        <div className="bg-[#FDF6E3] p-4 rounded-2xl border border-[#D6D1B1] shadow-xs flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#586E75]">Estimated GST (18%)</span>
+            <div className="p-2 rounded-xl bg-amber-100 text-amber-800">
+              <TrendingUp className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2">
+            <div className="text-xl md:text-2xl font-black text-amber-900 font-mono">
+              ₹{financialSummary.estimatedGst.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+            </div>
+            <div className="text-[11px] text-[#586E75] mt-0.5 font-semibold">Standard 18% tax credit</div>
+          </div>
+        </div>
+
+        {/* Grand Total Value */}
+        <div className="bg-gradient-to-br from-emerald-900 to-[#073642] p-4 rounded-2xl border border-emerald-600/40 text-white shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300">Grand Total Spend</span>
+            <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-300">
+              <DollarSign className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="mt-2">
+            <div className="text-xl md:text-2xl font-black text-emerald-300 font-mono">
+              ₹{financialSummary.grossTotal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
+            </div>
+            <div className="text-[11px] text-emerald-200/70 mt-0.5 font-semibold">Gross dispatched order volume</div>
+          </div>
         </div>
       </div>
 
@@ -138,13 +312,13 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
       {/* Status Filter Bar & Search */}
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+          <Search className="w-4 h-4 text-[#586E75] absolute left-3.5 top-3" />
           <input
             type="text"
-            placeholder="Search order #, company, author..."
+            placeholder="Search order #, issuer, receiver, notes..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-xl pl-10 pr-4 py-2 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 transition-all shadow-sm font-medium"
+            className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-xl pl-10 pr-4 py-2 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 transition-all shadow-xs font-medium placeholder-[#586E75]"
           />
         </div>
 
@@ -154,7 +328,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             onClick={() => setFilterStatus('ALL')}
             className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               filterStatus === 'ALL'
-                ? 'bg-emerald-600 text-white font-bold shadow-md'
+                ? 'bg-emerald-600 text-white font-bold shadow-xs'
                 : 'bg-[#FDF6E3] text-[#586E75] hover:bg-[#EEE8D5] border border-[#D6D1B1]'
             }`}
           >
@@ -184,153 +358,300 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Orders Ladder List (Strict Vertical Ladder Layout) */}
-      <div className="space-y-2">
-        <div className="bg-[#EEE8D5] rounded-3xl p-4 sm:p-6 border border-[#D6D1B1] shadow-xl">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4">
-            <div>
-              <h3 className="font-bold text-[#073642] text-sm md:text-base flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={filteredOrders.length > 0 && selectedOrderIds.length === filteredOrders.length}
-                  onChange={handleSelectAll}
-                  className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
-                />
-                <History className="w-4 h-4 text-emerald-600" />
-                Procurement Document Registry ({filteredOrders.length})
-              </h3>
-              <span className="text-[11px] text-[#586E75] ml-6">Maximized density ladder view with bulk selection</span>
-            </div>
-
-            {selectedOrderIds.length > 0 && (
-              <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-emerald-500 animate-in fade-in">
-                <span className="text-xs font-bold text-[#073642] px-2">{selectedOrderIds.length} Selected</span>
-                <button
-                  onClick={handleBulkDelete}
-                  disabled={isBulkDeleting}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  {isBulkDeleting ? 'Deleting...' : 'Delete'}
-                </button>
-              </div>
-            )}
+      {/* Main Datlion Cnergy Finance Summary Table Section */}
+      <div className="bg-[#EEE8D5] rounded-3xl p-4 sm:p-6 border border-[#D6D1B1] shadow-xl space-y-3">
+        {/* Table Header Controls */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#D6D1B1]">
+          <div className="flex items-center gap-2">
+            <Receipt className="w-5 h-5 text-emerald-700" />
+            <h3 className="font-bold text-[#073642] text-sm md:text-base">
+              Finance & Procurement Summary Registry ({filteredOrders.length})
+            </h3>
           </div>
-  
-          <div className="flex flex-col space-y-2">
-          {filteredOrders.map(order => {
-            // Edit PDF always available for RFQ_SENT and PO Issued/Ordered
-            const canEditPDF = order.status === 'ORDERED' || order.status === 'RFQ_SENT' || order.type === 'PO' || order.type === 'RFQ';
-            const itemsCount = (order.items || []).length;
-            const itemsSummary = (order.items || []).map(i => i.item?.name || 'Item').join(', ');
 
-            return (
-              <div
-                key={order.id}
-                className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all"
+          {selectedOrderIds.length > 0 && (
+            <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-xl shadow-xs border border-emerald-500 animate-in fade-in">
+              <span className="text-xs font-bold text-[#073642]">{selectedOrderIds.length} Selected</span>
+              <button
+                onClick={handleBulkDelete}
+                disabled={isBulkDeleting}
+                className="flex items-center gap-1.5 px-3 py-1 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer disabled:opacity-50"
               >
-                {/* Left: Checkbox, Order Type, Order #, Company, Items Summary */}
-                <div className="flex items-center gap-3 min-w-0 flex-1">
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>{isBulkDeleting ? 'Deleting...' : 'Delete'}</span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Responsive Table Container */}
+        <div className="overflow-x-auto rounded-2xl border border-[#D6D1B1] bg-[#FDF6E3]">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-[#E4DDC7] text-[#073642] font-black uppercase text-[10px] tracking-wider border-b border-[#D6D1B1]">
+                <th className="py-3 px-3 w-10 text-center">
                   <input
                     type="checkbox"
-                    checked={selectedOrderIds.includes(order.id)}
-                    onChange={() => toggleSelectOne(order.id)}
-                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
+                    checked={filteredOrders.length > 0 && selectedOrderIds.length === filteredOrders.length}
+                    onChange={handleSelectAll}
+                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
                   />
+                </th>
+                <th className="py-3 px-3.5">Date</th>
+                <th className="py-3 px-3.5">Issuer</th>
+                <th className="py-3 px-3.5">Receiver</th>
+                <th className="py-3 px-3.5">Inv #</th>
+                <th className="py-3 px-3.5 text-right">Taxable</th>
+                <th className="py-3 px-3.5 text-right">Total</th>
+                <th className="py-3 px-3.5 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#D6D1B1]/60">
+              {filteredOrders.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="py-8 text-center text-[#586E75] font-semibold text-xs">
+                    No procurement orders or invoices match your filter.
+                  </td>
+                </tr>
+              ) : (
+                filteredOrders.map(order => {
+                  const gross = Number(order.total_amount) || 0;
+                  const taxable = gross / 1.18;
+                  const dateObj = order.created_at ? new Date(order.created_at) : new Date();
+                  const formattedDate = dateObj.toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                  });
+                  const issuerName = order.created_by || 'Cosmo Cnergy Lead';
+                  const receiverName = order.company?.name || 'General Supplier';
+                  const statusCfg = STATUS_MAP[order.status] || STATUS_MAP['RFQ_SENT'];
 
-                  <span
-                    className={`px-2 py-0.5 rounded text-[10px] font-extrabold shrink-0 ${
-                      order.type === 'PO' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
-                    }`}
-                  >
-                    {order.type}
-                  </span>
-
-                  <div className="truncate min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-xs md:text-sm font-bold text-[#073642] font-mono truncate">{order.order_number}</h4>
-                      <span className="text-[#586E75] text-[11px]">to</span>
-                      <span className="text-emerald-800 text-xs font-bold truncate">{order.company?.name || 'General Company'}</span>
-                      <span className="px-1.5 py-0.2 rounded text-[10px] bg-[#EEE8D5] text-[#073642] font-semibold border border-[#D6D1B1] shrink-0">
-                        {itemsCount} item{itemsCount !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-[11px] text-[#586E75] truncate mt-0.5">
-                      <span className="truncate max-w-[240px]">{itemsSummary || 'Standard components'}</span>
-                      <span>•</span>
-                      <span>{new Date(order.created_at).toLocaleDateString('en-IN')}</span>
-                      <span>•</span>
-                      <span className="truncate">{order.created_by}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right: Status Dropdown, Total Amount, Conditional Edit PDF & Delete Trash */}
-                <div className="flex items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#D6D1B1]/60">
-                  {/* Static Status Badge — auto-determined by order type */}
-                  {(() => {
-                    const cfg = STATUS_MAP[order.status] || STATUS_MAP['RFQ_SENT'];
-                    return (
-                      <span className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold border ${cfg.badgeBg} ${cfg.badgeText} ${cfg.badgeBorder} flex items-center gap-1.5 shrink-0`}>
-                        <span className={`w-2 h-2 rounded-full ${cfg.dotColor}`} />
-                        {cfg.label}
-                      </span>
-                    );
-                  })()}
-
-                  {/* Total Amount */}
-                  <div className="text-right">
-                    <span className="text-[9px] text-[#586E75] uppercase font-semibold block">Total</span>
-                    <span className="text-xs font-extrabold text-emerald-800 font-mono">
-                      ₹{Number(order.total_amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                    </span>
-                  </div>
-
-                  {/* Actions: Edit PDF and Delete Trash Button */}
-                  <div className="flex items-center gap-1">
-                    {canEditPDF && (
-                      <button
-                        onClick={() => setEditingPDFOrder(order)}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#0B192C] hover:bg-[#1E3E62] text-white text-xs font-bold transition-all shadow-xs active:scale-95 shrink-0 cursor-pointer"
-                        title="Launch interactive vector PDF editor"
-                      >
-                        <Edit3 className="w-3 h-3 text-emerald-400" />
-                        <span>Edit PDF</span>
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => setOrderToDelete(order)}
-                      className="p-1.5 rounded-lg bg-[#EEE8D5] hover:bg-red-100 text-[#586E75] hover:text-red-700 border border-[#D6D1B1] transition-all cursor-pointer"
-                      title="Delete Order Record"
+                  return (
+                    <tr
+                      key={order.id}
+                      className="hover:bg-[#EEE8D5]/60 transition-colors group/row"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-                </div>
-              );
-            })}
-          </div>
+                      {/* Checkbox */}
+                      <td className="py-3 px-3 text-center align-middle">
+                        <input
+                          type="checkbox"
+                          checked={selectedOrderIds.includes(order.id)}
+                          onChange={() => toggleSelectOne(order.id)}
+                          className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+                        />
+                      </td>
+
+                      {/* Date */}
+                      <td className="py-3 px-3.5 align-middle whitespace-nowrap">
+                        <div className="flex items-center gap-1.5 font-bold text-[#073642]">
+                          <Calendar className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                          <span>{formattedDate}</span>
+                        </div>
+                      </td>
+
+                      {/* Issuer */}
+                      <td className="py-3 px-3.5 align-middle">
+                        <div className="flex items-center gap-1.5">
+                          <User className="w-3.5 h-3.5 text-[#586E75] shrink-0" />
+                          <span className="font-bold text-[#073642] truncate max-w-[140px]" title={issuerName}>
+                            {issuerName}
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-[#586E75] block truncate">Cosmo.cnergy HQ</span>
+                      </td>
+
+                      {/* Receiver */}
+                      <td className="py-3 px-3.5 align-middle">
+                        <div className="flex items-center gap-1.5">
+                          <Building2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                          <span className="font-bold text-emerald-900 truncate max-w-[170px]" title={receiverName}>
+                            {receiverName}
+                          </span>
+                        </div>
+                        {order.company?.contact_person && (
+                          <span className="text-[10px] text-[#586E75] block truncate">
+                            Attn: {order.company.contact_person}
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Inv # / Order # */}
+                      <td className="py-3 px-3.5 align-middle whitespace-nowrap">
+                        <div className="flex items-center gap-1.5">
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
+                              order.type === 'PO'
+                                ? 'bg-purple-100 text-purple-800 border border-purple-300'
+                                : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                            }`}
+                          >
+                            {order.type}
+                          </span>
+                          <span className="font-mono font-bold text-[#073642] text-xs">{order.order_number}</span>
+                        </div>
+                        <div className="mt-1">
+                          <span
+                            className={`inline-flex items-center gap-1 px-2 py-0.2 rounded-md text-[9px] font-extrabold border ${statusCfg.badgeBg} ${statusCfg.badgeText} ${statusCfg.badgeBorder}`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dotColor}`} />
+                            {statusCfg.label}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Taxable */}
+                      <td className="py-3 px-3.5 align-middle text-right whitespace-nowrap font-mono">
+                        <span className="text-xs font-bold text-[#073642]">
+                          ₹{taxable.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                        <span className="text-[9px] text-[#586E75] block">excl. 18% GST</span>
+                      </td>
+
+                      {/* Total */}
+                      <td className="py-3 px-3.5 align-middle text-right whitespace-nowrap font-mono">
+                        <span className="text-xs font-black text-emerald-800">
+                          ₹{gross.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                        <span className="text-[9px] text-emerald-600 font-semibold block">incl. GST</span>
+                      </td>
+
+                      {/* Actions: Edit PDF, Download PDF, Add Note, Send Mail */}
+                      <td className="py-3 px-3.5 align-middle text-center whitespace-nowrap">
+                        <div className="flex items-center justify-center gap-1">
+                          {/* 1. Edit PDF Icon (uses jsPDF, jspdf-autotable, html2pdf.js) */}
+                          <button
+                            type="button"
+                            onClick={() => setEditingPDFOrder(order)}
+                            className="p-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 shadow-2xs active:scale-95 transition-all cursor-pointer"
+                            title="Edit PDF (Interactive vector editor with jsPDF & autotable)"
+                          >
+                            <FileEdit className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* 2. Download PDF Icon */}
+                          <button
+                            type="button"
+                            disabled={isDownloadingPdf === order.id}
+                            onClick={() => handleDownloadDirectPDF(order)}
+                            className="p-1.5 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-900 border border-blue-300 shadow-2xs active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+                            title="Download Vector PDF"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* 3. Add / View Note Icon */}
+                          <button
+                            type="button"
+                            onClick={() => handleOpenNoteModal(order)}
+                            className={`p-1.5 rounded-lg border shadow-2xs active:scale-95 transition-all cursor-pointer ${
+                              order.notes && order.notes.trim().length > 0
+                                ? 'bg-amber-200 text-amber-950 border-amber-400 font-bold'
+                                : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-200'
+                            }`}
+                            title={order.notes ? `View/Edit Note: "${order.notes}"` : 'Add Note / Logistics Instructions'}
+                          >
+                            <StickyNote className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* 4. Send Mail Icon */}
+                          <button
+                            type="button"
+                            onClick={() => handleSendMail(order)}
+                            className="p-1.5 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 shadow-2xs active:scale-95 transition-all cursor-pointer"
+                            title="Compose & Send Webmail to Vendor"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                          </button>
+
+                          {/* 5. Delete Order Icon */}
+                          <button
+                            type="button"
+                            onClick={() => setOrderToDelete(order)}
+                            className="p-1.5 rounded-lg bg-[#EEE8D5] hover:bg-red-100 text-[#586E75] hover:text-red-700 border border-[#D6D1B1] shadow-2xs active:scale-95 transition-all cursor-pointer"
+                            title="Delete Order Record"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 
+      {/* Quick Add Note / Remarks Modal */}
+      {noteOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="bg-[#FDF6E3] w-full max-w-lg rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-4 text-[#073642] animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-2 border-b border-[#D6D1B1]">
+              <div className="flex items-center gap-2">
+                <StickyNote className="w-5 h-5 text-amber-600" />
+                <h3 className="text-base font-bold text-[#073642]">
+                  Order Notes & Instructions — <span className="font-mono">{noteOrder.order_number}</span>
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setNoteOrder(null)}
+                className="p-1.5 rounded-xl hover:bg-[#EEE8D5] text-[#586E75] cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-[#586E75] block mb-1.5">
+                Remarks, Delivery Instructions, Logistics Tracking & Internal Notes
+              </label>
+              <textarea
+                rows={5}
+                value={noteText}
+                onChange={e => setNoteText(e.target.value)}
+                placeholder="Enter special procurement instructions, GST invoices, courier tracking numbers, or dispatch notes..."
+                className="w-full bg-white border border-[#D6D1B1] rounded-2xl p-3.5 text-xs text-[#073642] focus:outline-none focus:border-amber-500 shadow-inner font-sans"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#D6D1B1]">
+              <button
+                type="button"
+                onClick={() => setNoteOrder(null)}
+                className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] text-xs font-bold hover:bg-[#E4DDC7] cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveNote}
+                className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-md shadow-amber-500/25 transition-all cursor-pointer"
+              >
+                <Save className="w-4 h-4" />
+                <span>Save Note</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Delete Order Confirmation Dialog */}
       {orderToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#FDF6E3] w-full max-w-md rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-4 text-[#073642]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="bg-[#FDF6E3] w-full max-w-md rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-4 text-[#073642] animate-in fade-in zoom-in-95">
             <h3 className="text-lg font-bold text-red-700">Delete Procurement Order</h3>
             <p className="text-xs text-[#586E75]">
-              Are you sure you want to delete order <span className="font-mono font-bold text-[#073642]">"{orderToDelete.order_number}"</span>? This will permanently delete the order and associated line items.
+              Are you sure you want to delete order <span className="font-mono font-bold text-[#073642]">"{orderToDelete.order_number}"</span>? This will permanently delete the order record from the registry.
             </p>
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setOrderToDelete(null)}
-                className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] text-xs font-semibold hover:bg-[#E4DDC7]"
+                className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] text-xs font-bold hover:bg-[#E4DDC7] cursor-pointer"
               >
                 Cancel
               </button>
@@ -338,7 +659,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                 type="button"
                 disabled={isDeleting}
                 onClick={() => confirmDeleteOrder(orderToDelete)}
-                className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-md shadow-red-500/25 transition-all disabled:opacity-50"
+                className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-md shadow-red-500/25 transition-all disabled:opacity-50 cursor-pointer"
               >
                 {isDeleting ? 'Deleting...' : 'Confirm Delete'}
               </button>
@@ -347,7 +668,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         </div>
       )}
 
-      {/* Interactive PDF Editor Modal */}
+      {/* Interactive PDF Editor Modal (using jsPDF, jspdf-autotable, html2pdf.js) */}
       {editingPDFOrder && (
         <PDFEditorModal
           order={editingPDFOrder}
@@ -357,6 +678,8 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
               onUpdateOrder(updatedOrder);
             }
             setEditingPDFOrder(null);
+            setToastFeedback({ type: 'success', message: `Order "${updatedOrder.order_number}" PDF updated successfully!` });
+            setTimeout(() => setToastFeedback(null), 3500);
           }}
         />
       )}
