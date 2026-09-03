@@ -3,6 +3,8 @@ import { CatalogItem, ProductFolder, Company, ProductBOM, SearchResultItem, Sear
 import { executeUniversalSearch, SearchResultSet } from '../services/searchService';
 import { Search, X, Package, Folder, Truck, ExternalLink, Mail, MessageSquare, ChevronDown, ChevronUp, Sparkles, Building2, Send, CheckCircle2, ArrowRight } from 'lucide-react';
 
+import { ProcurementOrder } from '../types';
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -10,6 +12,7 @@ interface Props {
   folders: ProductFolder[];
   companies: Company[];
   boms: ProductBOM[];
+  orders?: ProcurementOrder[];
   onNavigateTab: (tab: NavigationTab) => void;
   onDraftPO?: (company: Company, item: CatalogItem, qty?: number) => void;
   onOpenWhatsApp?: (company: Company, context?: string) => void;
@@ -24,6 +27,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
   folders,
   companies,
   boms,
+  orders = [],
   onNavigateTab,
   onDraftPO,
   onOpenWhatsApp,
@@ -33,7 +37,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [expandedComponentIds, setExpandedComponentIds] = useState<Record<string, boolean>>({});
-  const [activeCategoryFilter, setActiveCategoryFilter] = useState<'ALL' | 'COMPONENTS' | 'FOLDERS' | 'SUPPLIERS'>('ALL');
+  const [activeCategoryFilter, setActiveCategoryFilter] = useState<'ALL' | 'COMPONENTS' | 'FOLDERS' | 'SUPPLIERS' | 'ORDERS'>('ALL');
 
   // Keystroke debounce (300ms)
   useEffect(() => {
@@ -45,8 +49,8 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
   // Execute universal search
   const results: SearchResultSet = useMemo(() => {
-    return executeUniversalSearch(debouncedQuery, catalog, folders, companies, boms);
-  }, [debouncedQuery, catalog, folders, companies, boms]);
+    return executeUniversalSearch(debouncedQuery, catalog, folders, companies, boms, orders);
+  }, [debouncedQuery, catalog, folders, companies, boms, orders]);
 
   // Auto-expand components when there are 3 or fewer results
   useEffect(() => {
@@ -127,7 +131,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               autoFocus
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              placeholder="Search components, MPN, SKUs, product folders, companies..."
+              placeholder="Master Data Search: components, SKUs, MPN, companies, folders, orders & invoices..."
               className="w-full bg-[#12243d] border border-slate-700 text-white placeholder-slate-400 rounded-2xl px-4 py-2.5 text-sm md:text-base focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 font-medium"
             />
             {searchTerm && (
@@ -395,6 +399,53 @@ export const GlobalSearchModal: React.FC<Props> = ({
                               className="flex items-center gap-1 font-bold text-emerald-800 hover:text-emerald-900"
                             >
                               <span>Open Folder</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                            {/* SUBSECTION 4: ORDERS & INVOICES */}
+              {(activeCategoryFilter === 'ALL' || activeCategoryFilter === 'ORDERS') &&
+                (results.orders || []).length > 0 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#586E75] uppercase tracking-wider">
+                      <Send className="w-4 h-4 text-emerald-600" />
+                      <span>Procurement Orders & Invoices ({results.orders.length})</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {results.orders.map(orderItem => (
+                        <div
+                          key={orderItem.id}
+                          className="p-4 bg-[#EEE8D5] rounded-2xl border border-[#D6D1B1] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <h4 className="font-bold text-[#073642] text-sm font-mono">{orderItem.title}</h4>
+                              <p className="text-xs text-[#586E75]">{orderItem.subtitle}</p>
+                            </div>
+                            <span className="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
+                              {orderItem.metadata?.status}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-2 border-t border-[#D6D1B1]/60 text-xs">
+                            <span className="text-emerald-800 font-bold font-mono">
+                              ₹{Number(orderItem.metadata?.totalAmount || 0).toLocaleString('en-IN')}
+                            </span>
+
+                            <button
+                              onClick={() => {
+                                onNavigateTab('procurement');
+                                onClose();
+                              }}
+                              className="flex items-center gap-1 font-bold text-emerald-800 hover:text-emerald-900 cursor-pointer"
+                            >
+                              <span>View in Procurement</span>
                               <ArrowRight className="w-3.5 h-3.5" />
                             </button>
                           </div>

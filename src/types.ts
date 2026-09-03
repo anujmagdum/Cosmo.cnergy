@@ -294,7 +294,7 @@ export interface SearchResultCompany {
 
 export interface SearchResultItem {
   id: string;
-  type: 'COMPONENT' | 'PRODUCT_FOLDER' | 'SUPPLIER';
+  type: 'COMPONENT' | 'PRODUCT_FOLDER' | 'SUPPLIER' | 'ORDER';
   title: string;
   subtitle?: string;
   category?: string;
@@ -314,6 +314,12 @@ export interface SearchResultItem {
     contactPerson?: string;
     email?: string;
     phone?: string;
+    orderNumber?: string;
+    orderType?: string;
+    status?: string;
+    totalAmount?: number;
+    notes?: string;
+    companyName?: string;
   };
 }
 

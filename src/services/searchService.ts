@@ -1,23 +1,25 @@
-import { CatalogItem, ProductFolder, Company, ProductBOM, SearchResultItem, SearchResultCompany } from '../types';
+import { CatalogItem, ProductFolder, Company, ProductBOM, ProcurementOrder, SearchResultItem, SearchResultCompany } from '../types';
 
 export interface SearchResultSet {
   query: string;
   components: SearchResultItem[];
   folders: SearchResultItem[];
   companies: SearchResultItem[];
+  orders: SearchResultItem[];
   totalCount: number;
 }
 
 /**
- * Universal Cross-Entity Relational Search Engine
- * Searches Components, Product Folders, and Companies with relational multi-company expansion.
+ * Universal Master Data Cross-Entity Relational Search Engine
+ * Searches Components, Product Folders, Companies, and Procurement Orders/Invoices.
  */
 export function executeUniversalSearch(
   query: string,
   catalog: CatalogItem[],
   folders: ProductFolder[],
   companies: Company[],
-  boms: ProductBOM[] = []
+  boms: ProductBOM[] = [],
+  orders: ProcurementOrder[] = []
 ): SearchResultSet {
   const cleanQuery = (query || '').trim().toLowerCase();
 
@@ -27,6 +29,7 @@ export function executeUniversalSearch(
       components: [],
       folders: [],
       companies: [],
+      orders: [],
       totalCount: 0
     };
   }
@@ -38,18 +41,15 @@ export function executeUniversalSearch(
     const nameMatch = (item.name || '').toLowerCase().includes(cleanQuery);
     const skuMatch = (item.sku || '').toLowerCase().includes(cleanQuery);
     const specsMatch = (item.specs || '').toLowerCase().includes(cleanQuery);
+    const catMatch = (item.category || '').toLowerCase().includes(cleanQuery);
     const companyMatch = companies.some(
       s => s.id === item.company_id && (s.name || '').toLowerCase().includes(cleanQuery)
     );
 
-    if (nameMatch || skuMatch || specsMatch || companyMatch) {
-      // Find primary company
+    if (nameMatch || skuMatch || specsMatch || catMatch || companyMatch) {
       const primaryCompany = companies.find(s => s.id === item.company_id);
-
-      // Relational Expansion: Find ALL companies supplying this component or similar category
       const associatedCompanies: SearchResultCompany[] = [];
 
-      // 1. Primary registered company
       if (primaryCompany) {
         associatedCompanies.push({
           companyId: primaryCompany.id,
@@ -64,17 +64,10 @@ export function executeUniversalSearch(
         });
       }
 
-      // 2. Cross-match other companies in the system providing similar materials / components
       companies.forEach(s => {
         if (s.id !== item.company_id) {
-          // Check if company has same category or name keywords
-          const isCategoryMatch = s.category && item.specs && item.specs.toLowerCase().includes(s.category.toLowerCase());
-          const isNameMatch = item.name.toLowerCase().includes('cell') && s.name.toLowerCase().includes('tech');
-          const isBMSMatch = item.name.toLowerCase().includes('bms') && s.name.toLowerCase().includes('bms');
-          const isBusbarMatch = item.name.toLowerCase().includes('busbar') && s.name.toLowerCase().includes('busbar');
-          const isEnclosureMatch = item.name.toLowerCase().includes('enclosure') && s.name.toLowerCase().includes('sheet');
-
-          if (isCategoryMatch || isNameMatch || isBMSMatch || isBusbarMatch || isEnclosureMatch) {
+          const isCategoryMatch = s.category && item.category && s.category.toLowerCase() === item.category.toLowerCase();
+          if (isCategoryMatch) {
             associatedCompanies.push({
               companyId: s.id,
               companyName: s.name,
@@ -90,30 +83,12 @@ export function executeUniversalSearch(
         }
       });
 
-      // Ensure at least 2 alternate companies for robust multi-vendor selection demo if available
-      if (associatedCompanies.length === 1 && companies.length > 1) {
-        const alternate = companies.find(s => s.id !== primaryCompany?.id);
-        if (alternate) {
-          associatedCompanies.push({
-            companyId: alternate.id,
-            companyName: alternate.name,
-            unitPrice: Math.round((item.preset_price || 0) * 1.05),
-            leadTime: '7 Days',
-            isPrimary: false,
-            email: alternate.email,
-            phone: alternate.phone,
-            whatsapp: alternate.whatsapp,
-            contactPerson: alternate.contact_person
-          });
-        }
-      }
-
       matchingComponents.push({
         id: item.id,
         type: 'COMPONENT',
         title: item.name,
-        subtitle: `${item.sku || 'SKU'} • ${item.specs || ''}`,
-        category: 'Raw Materials & Parts',
+        subtitle: `${item.sku || 'SKU'} • ${item.category || 'Component'} • ${item.specs || ''}`,
+        category: item.category || 'Component',
         metadata: {
           partNumber: item.sku,
           sku: item.sku,
@@ -135,7 +110,6 @@ export function executeUniversalSearch(
     const nameMatch = (folder.name || '').toLowerCase().includes(cleanQuery);
     const descMatch = (folder.description || '').toLowerCase().includes(cleanQuery);
 
-    // Check if any child component inside folder matches
     const hasMatchingChild = (folder.components || []).some(comp => {
       const cat = catalog.find(c => c.id === comp.item_id);
       return cat && (cat.name.toLowerCase().includes(cleanQuery) || (cat.sku || '').toLowerCase().includes(cleanQuery));
@@ -146,7 +120,7 @@ export function executeUniversalSearch(
         id: folder.id,
         type: 'PRODUCT_FOLDER',
         title: folder.name,
-        subtitle: folder.description || 'Battery Pack Finished Assembly Folder',
+        subtitle: folder.description || 'Product Recipe Folder',
         category: 'Product Folders & BOMs',
         metadata: {
           folderPath: `/catalog-bom/product-folder/${folder.id}`,
@@ -166,13 +140,14 @@ export function executeUniversalSearch(
     const emailMatch = (company.email || '').toLowerCase().includes(cleanQuery);
     const categoryMatch = (company.category || '').toLowerCase().includes(cleanQuery);
     const phoneMatch = (company.phone || '').includes(cleanQuery);
+    const gstinMatch = (company.gstin || '').toLowerCase().includes(cleanQuery);
 
-    if (nameMatch || contactMatch || emailMatch || categoryMatch || phoneMatch) {
+    if (nameMatch || contactMatch || emailMatch || categoryMatch || phoneMatch || gstinMatch) {
       matchingCompanies.push({
         id: company.id,
         type: 'SUPPLIER',
         title: company.name,
-        subtitle: `${company.contact_person || 'Sales Contact'} • ${company.email}`,
+        subtitle: `${company.contact_person || 'Sales'} • ${company.category || 'Vendor'} • ${company.email}`,
         category: company.category || 'Vendor Partner',
         metadata: {
           rating: company.rating || 4.8,
@@ -184,13 +159,44 @@ export function executeUniversalSearch(
     }
   });
 
-  const totalCount = matchingComponents.length + matchingFolders.length + matchingCompanies.length;
+  // 4. Search Procurement Orders & Invoices
+  const matchingOrders: SearchResultItem[] = [];
+
+  orders.forEach(order => {
+    const numMatch = (order.order_number || '').toLowerCase().includes(cleanQuery);
+    const suppMatch = (order.company?.name || '').toLowerCase().includes(cleanQuery);
+    const notesMatch = (order.notes || '').toLowerCase().includes(cleanQuery);
+    const creatorMatch = (order.created_by || '').toLowerCase().includes(cleanQuery);
+    const statusMatch = (order.status || '').toLowerCase().includes(cleanQuery);
+    const amountMatch = (order.total_amount || '').toString().includes(cleanQuery);
+
+    if (numMatch || suppMatch || notesMatch || creatorMatch || statusMatch || amountMatch) {
+      matchingOrders.push({
+        id: order.id,
+        type: 'ORDER',
+        title: `${order.type} #${order.order_number}`,
+        subtitle: `To: ${order.company?.name || 'Vendor'} • Total: ₹${Number(order.total_amount).toLocaleString('en-IN')} • Status: ${order.status}`,
+        category: 'Procurement Order',
+        metadata: {
+          orderNumber: order.order_number,
+          orderType: order.type,
+          status: order.status,
+          totalAmount: order.total_amount,
+          notes: order.notes,
+          companyName: order.company?.name
+        }
+      });
+    }
+  });
+
+  const totalCount = matchingComponents.length + matchingFolders.length + matchingCompanies.length + matchingOrders.length;
 
   return {
     query: cleanQuery,
     components: matchingComponents,
     folders: matchingFolders,
     companies: matchingCompanies,
+    orders: matchingOrders,
     totalCount
   };
 }

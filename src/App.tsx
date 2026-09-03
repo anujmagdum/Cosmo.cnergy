@@ -1,3 +1,4 @@
+import { Search } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import {
   CatalogItem,
@@ -1603,6 +1604,7 @@ export const App: React.FC = () => {
         folders={folders}
         companies={companies}
         boms={boms}
+        orders={orders}
         onNavigateTab={tab => handleTabChange(tab)}
         onOpenWebmail={handleOpenWebmail}
       />
@@ -1617,6 +1619,24 @@ export const App: React.FC = () => {
           }}
         />
       )}
+
+      {/* Floating Bottom-Right Master Data Search Button (Datlion Cnergy Style) */}
+      <button
+        type="button"
+        onClick={() => setIsSearchOpen(true)}
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#0B192C] hover:bg-[#12243d] border border-emerald-500/60 hover:border-emerald-400 text-white shadow-2xl shadow-black/50 active:scale-95 transition-all group cursor-pointer"
+        title="Master Data Universal Search (Ctrl + K)"
+      >
+        <div className="w-6 h-6 rounded-lg bg-emerald-600/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+          <Search className="w-3.5 h-3.5" />
+        </div>
+        <span className="font-bold text-xs tracking-wide text-slate-100 group-hover:text-white">
+          Master Data Search
+        </span>
+        <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-md bg-slate-800/90 border border-slate-700 font-mono text-[10px] text-emerald-400 font-bold">
+          Ctrl+K
+        </kbd>
+      </button>
     </div>
   );
 };

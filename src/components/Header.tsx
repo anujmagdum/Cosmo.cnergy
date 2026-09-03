@@ -194,20 +194,7 @@ export const Header: React.FC<Props> = ({
 
           {/* Right: Master Search + BOM Action + Profile Badge */}
           <div className="flex items-center justify-end gap-2.5 shrink-0" ref={dropdownRef}>
-            {/* Master Search Widget */}
-            <button
-              onClick={onOpenSearch}
-              className="hidden sm:flex items-center justify-between gap-2.5 px-3 py-1.5 rounded-xl bg-[#071322] hover:bg-[#10243E] border border-slate-700/80 hover:border-emerald-500/60 text-slate-300 hover:text-white transition-all text-xs group shadow-inner"
-              title="Open Master Search (Ctrl + K)"
-            >
-              <div className="flex items-center gap-2">
-                <Search className="w-3.5 h-3.5 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
-                <span className="font-medium text-slate-300 group-hover:text-white">Quick Search</span>
-              </div>
-              <kbd className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-slate-800 border border-slate-700 font-mono text-[10px] text-emerald-400 font-bold">
-                Ctrl+K
-              </kbd>
-            </button>
+
 
             {/* 1-Tap BOM Procurement Button (Enhanced Datlion Style) */}
             <button
