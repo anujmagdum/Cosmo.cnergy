@@ -52,11 +52,15 @@ export const App: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
-    const path = location.pathname;
-    if (path.includes('companies')) setActiveTab('companies');
-    else if (path.includes('ai')) setActiveTab('ai');
-    else if (path.includes('procurement')) setActiveTab('procurement');
-    else if (path.includes('webmail')) setActiveTab('webmail');
+    const rawPath = location.pathname.toLowerCase();
+    const segments = rawPath.split('/').filter(Boolean);
+    const firstSegment = segments[0] || '';
+
+    if (firstSegment === 'companies') setActiveTab('companies');
+    else if (firstSegment === 'ai') setActiveTab('ai');
+    else if (firstSegment === 'procurement') setActiveTab('procurement');
+    else if (firstSegment === 'webmail') setActiveTab('webmail');
+    else if (firstSegment === 'inventory' || firstSegment === '') setActiveTab('inventory');
     else setActiveTab('inventory');
   }, [location.pathname]);
 
