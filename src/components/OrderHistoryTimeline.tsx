@@ -335,7 +335,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             All ({orders.length})
           </button>
 
-          {(Object.keys(STATUS_MAP) as OrderStatus[]).map(statusKey => {
+          {(['RFQ_SENT', 'ORDERED'] as OrderStatus[]).map(statusKey => {
             const cfg = STATUS_MAP[statusKey];
             const count = orders.filter(o => o.status === statusKey).length;
 

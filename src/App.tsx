@@ -111,11 +111,38 @@ export const App: React.FC = () => {
   ]);
   const [catalog, setCatalog] = useState<CatalogItem[]>(() => {
     const saved = localStorage.getItem('cosmo_catalog');
-    return saved ? JSON.parse(saved) : INITIAL_CATALOG;
+    let items: CatalogItem[] = saved ? JSON.parse(saved) : INITIAL_CATALOG;
+    const catRemap: Record<string, string> = {
+      'Battery Cells': 'Capacitor',
+      'Electronics / BMS': 'Micro-Controller',
+      'Connectors & Busbars': 'Connector',
+      'Metal Enclosures': 'Push Button',
+      'Wiring & Harnesses': 'Connector',
+      'General Company': 'Capacitor',
+      'General Supplier': 'Capacitor'
+    };
+    return items.map(it => ({
+      ...it,
+      category: catRemap[it.category || ''] || it.category || 'Capacitor'
+    }));
   });
   const [companies, setCompanies] = useState<Company[]>(() => {
     const saved = localStorage.getItem('cosmo_companies');
-    return saved ? JSON.parse(saved) : INITIAL_SUPPLIERS;
+    let items: Company[] = saved ? JSON.parse(saved) : INITIAL_SUPPLIERS;
+    const catRemap: Record<string, string> = {
+      'Battery Cells': 'Capacitor',
+      'Electronics / BMS': 'Micro-Controller',
+      'Connectors & Busbars': 'Connector',
+      'Metal Enclosures': 'Push Button',
+      'Wiring & Harnesses': 'Connector',
+      'General Company': 'Capacitor',
+      'General Supplier': 'Capacitor'
+    };
+    return items.map(s => ({
+      ...s,
+      category: catRemap[s.category || ''] || s.category || 'Capacitor',
+      categories: (s.categories || [s.category || 'Capacitor']).map(c => catRemap[c] || c)
+    }));
   });
   const [boms, setBoms] = useState<ProductBOM[]>(() => {
     const saved = localStorage.getItem('cosmo_boms');
@@ -290,9 +317,29 @@ export const App: React.FC = () => {
     try {
       const { data: catgs, error: catgsErr } = await supabase.from('categories').select('*').order('name');
       if (catgsErr) console.error('[fetchSupabaseData] categories error:', catgsErr);
+      const legacyToExclude = new Set([
+        'Battery Cells',
+        'Connectors & Busbars',
+        'Electronics / BMS',
+        'General Supplier',
+        'General Company',
+        'Metal Enclosures',
+        'Wiring & Harnesses'
+      ]);
+      const catRemap: Record<string, string> = {
+        'Battery Cells': 'Capacitor',
+        'Electronics / BMS': 'Micro-Controller',
+        'Connectors & Busbars': 'Connector',
+        'Metal Enclosures': 'Push Button',
+        'Wiring & Harnesses': 'Connector',
+        'General Company': 'Capacitor',
+        'General Supplier': 'Capacitor'
+      };
+
       if (catgs && catgs.length > 0) {
-        setCategories(catgs);
-        try { localStorage.setItem('cosmo_categories', JSON.stringify(catgs)); } catch {}
+        const filteredCatgs = catgs.filter((c: any) => !legacyToExclude.has(c.name));
+        setCategories(filteredCatgs.length > 0 ? filteredCatgs : catgs);
+        try { localStorage.setItem('cosmo_categories', JSON.stringify(filteredCatgs)); } catch {}
       }
 
       // 1. Fetch Companies (with graceful fallback if join fails)
@@ -307,11 +354,20 @@ export const App: React.FC = () => {
       }
 
       if (loadedSupps) {
-        const normalizedSupps = loadedSupps.map((s: any) => ({
-          ...s,
-          category: s.cat_rel?.name || s.category || 'General Company',
-          category_id: s.cat_rel?.id || s.category_id
-        }));
+        const normalizedSupps = loadedSupps.map((s: any) => {
+          const rawCat = s.cat_rel?.name || s.category || 'Capacitor';
+          const cleanCat = catRemap[rawCat] || rawCat;
+          const cleanCats = (s.categories || [cleanCat])
+            .map((c: string) => catRemap[c] || c)
+            .filter((c: string) => !legacyToExclude.has(c));
+
+          return {
+            ...s,
+            category: cleanCat,
+            categories: cleanCats.length > 0 ? cleanCats : ['Capacitor'],
+            category_id: s.cat_rel?.id || s.category_id
+          };
+        });
         normalizedSupps.forEach((s: any) => delete s.cat_rel);
         setCompanies(normalizedSupps);
         try { localStorage.setItem('cosmo_companies', JSON.stringify(normalizedSupps)); } catch {}
@@ -329,11 +385,15 @@ export const App: React.FC = () => {
       }
 
       if (loadedCats) {
-        const normalizedCats = loadedCats.map((c: any) => ({
-          ...c,
-          category: c.cat_rel?.name || c.category || 'Capacitor',
-          category_id: c.cat_rel?.id || c.category_id
-        }));
+        const normalizedCats = loadedCats.map((c: any) => {
+          const rawCat = c.cat_rel?.name || c.category || 'Capacitor';
+          const cleanCat = catRemap[rawCat] || rawCat;
+          return {
+            ...c,
+            category: cleanCat,
+            category_id: c.cat_rel?.id || c.category_id
+          };
+        });
         normalizedCats.forEach((c: any) => delete c.cat_rel);
         setCatalog(normalizedCats);
         try { localStorage.setItem('cosmo_catalog', JSON.stringify(normalizedCats)); } catch {}

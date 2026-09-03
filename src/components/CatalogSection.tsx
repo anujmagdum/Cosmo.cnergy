@@ -372,11 +372,20 @@ Please send your best quote & availability.`;
   const [reorderQtyMap, setReorderQtyMap] = useState<Record<string, number>>({});
 
   const allCategoryNames = useMemo<string[]>(() => {
+    const legacyToExclude = new Set([
+      'Battery Cells',
+      'Connectors & Busbars',
+      'Electronics / BMS',
+      'General Supplier',
+      'General Company',
+      'Metal Enclosures',
+      'Wiring & Harnesses'
+    ]);
     const names: string[] = [
       ...DEFAULT_CATEGORIES,
       ...categories.map(c => c.name),
       ...catalog.map(c => c.category || '').filter(Boolean)
-    ];
+    ].filter(cat => !legacyToExclude.has(cat));
     return Array.from(new Set(names)).filter(Boolean);
   }, [categories, catalog]);
 

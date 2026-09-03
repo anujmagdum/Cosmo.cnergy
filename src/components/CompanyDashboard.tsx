@@ -72,15 +72,22 @@ export const CompanyDashboard: React.FC<Props> = ({
     categories: ['Capacitor'] // multi-category
   });
 
-  const allCategoryNames = useMemo(() => {
-    return Array.from(
-      new Set([
-        'ALL',
-        ...DEFAULT_CATEGORIES,
-        ...categories.map(c => c.name),
-        ...companies.map(s => s.category).filter(Boolean)
-      ])
-    );
+  const allCategoryNames = useMemo<string[]>(() => {
+    const legacyToExclude = new Set([
+      'Battery Cells',
+      'Connectors & Busbars',
+      'Electronics / BMS',
+      'General Supplier',
+      'General Company',
+      'Metal Enclosures',
+      'Wiring & Harnesses'
+    ]);
+    const names: string[] = [
+      ...DEFAULT_CATEGORIES,
+      ...categories.map(c => c.name),
+      ...companies.map(s => s.category || '').filter(Boolean)
+    ].filter((cat): cat is string => Boolean(cat) && !legacyToExclude.has(cat));
+    return ['ALL', ...Array.from(new Set(names))];
   }, [categories, companies]);
 
   const filteredCompanies = useMemo(() => {

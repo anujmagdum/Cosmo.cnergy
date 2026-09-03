@@ -10,7 +10,7 @@ export const INITIAL_SUPPLIERS: Company[] = [
     whatsapp: '919876543210',
     buying_url: 'https://celltechenergy.com/portal',
     address: 'Plot 45, Electronics City Phase 1, Bengaluru',
-    category: 'Battery Cells',
+    category: 'Capacitor',
     rating: 4.8
   },
   {
@@ -22,7 +22,7 @@ export const INITIAL_SUPPLIERS: Company[] = [
     whatsapp: '919812345678',
     buying_url: 'https://bmsmasters.com/b2b',
     address: 'Sector 62, Tech Zone, Noida',
-    category: 'Electronics / BMS',
+    category: 'Micro-Controller',
     rating: 4.9
   },
   {
@@ -34,7 +34,7 @@ export const INITIAL_SUPPLIERS: Company[] = [
     whatsapp: '919988776655',
     buying_url: 'https://busbarcorp.com/store',
     address: 'GIDC Industrial Estate, Vadodara',
-    category: 'Connectors & Busbars',
+    category: 'Connector',
     rating: 4.6
   },
   {
@@ -46,7 +46,7 @@ export const INITIAL_SUPPLIERS: Company[] = [
     whatsapp: '919765432109',
     buying_url: 'https://thermalshield.in/portal',
     address: 'Ambattur Industrial Estate, Chennai',
-    category: 'Metal Enclosures',
+    category: 'Push Button',
     rating: 4.7
   }
 ];
@@ -56,7 +56,7 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     id: 'c1111111-1111-1111-1111-111111111111',
     sku: 'CELL-3.2V-100AH',
     name: '3.2V 100Ah LFP Grade A Cell',
-    category: 'Battery Cells',
+    category: 'Capacitor',
     category_id: 'catg-1',
     specs: 'LiFePO4, 3.2V, 100Ah, 6000 Cycles, M6 Terminals',
     uom: 'Pcs',
@@ -71,7 +71,7 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     id: 'c2222222-2222-2222-2222-222222222222',
     sku: 'BMS-16S-100A',
     name: '16S 100A Smart Bluetooth BMS',
-    category: 'Electronics / BMS',
+    category: 'Micro-Controller',
     category_id: 'catg-2',
     specs: 'UART/CAN Bus, Active Balancing 1A, Temp Sensors',
     uom: 'Pcs',
@@ -86,7 +86,7 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     id: 'c3333333-3333-3333-3333-333333333333',
     sku: 'BUS-CU-100A',
     name: 'Flexible Copper Busbar 100A',
-    category: 'Connectors & Busbars',
+    category: 'Connector',
     category_id: 'catg-3',
     specs: 'Nickel Plated Copper, Hole Pitch 65mm',
     uom: 'Pcs',
@@ -100,7 +100,7 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     id: 'c4444444-4444-4444-4444-444444444444',
     sku: 'ENC-51V-METAL',
     name: 'Heavy Duty Steel Cabinet 51.2V',
-    category: 'Metal Enclosures',
+    category: 'Push Button',
     category_id: 'catg-4',
     specs: 'IP65 Rated, Powder Coated, Handles & Display Cutout',
     uom: 'Set',
@@ -115,7 +115,7 @@ export const INITIAL_CATALOG: CatalogItem[] = [
     id: 'c5555555-5555-5555-5555-555555555555',
     sku: 'WIRE-HARN-100A',
     name: 'High Current Wire Harness 4AWG',
-    category: 'Wiring & Harnesses',
+    category: 'Connector',
     category_id: 'catg-5',
     specs: 'Silicone Insulated, Amphenol Connectors',
     uom: 'Set',
