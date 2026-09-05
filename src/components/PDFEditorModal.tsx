@@ -164,13 +164,13 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             <div className="hidden sm:flex md:hidden items-center bg-slate-800 p-1 rounded-xl text-xs">
               <button
                 onClick={() => setActiveTab('editor')}
-                className={`px-3 py-1 rounded-lg font-bold transition-all ${activeTab === 'editor' ? 'bg-emerald-600 text-white' : 'text-slate-400'}`}
+                className={`px-3 py-1 rounded-lg font-bold transition-all ${activeTab === 'editor' ? 'bg-emerald-600 text-white' : 'text-slate-800'}`}
               >
                 Editor
               </button>
               <button
                 onClick={() => setActiveTab('preview')}
-                className={`px-3 py-1 rounded-lg font-bold transition-all ${activeTab === 'preview' ? 'bg-emerald-600 text-white' : 'text-slate-400'}`}
+                className={`px-3 py-1 rounded-lg font-bold transition-all ${activeTab === 'preview' ? 'bg-emerald-600 text-white' : 'text-slate-800'}`}
               >
                 Live Preview
               </button>
@@ -178,7 +178,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
 
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-all font-bold"
+              className="text-slate-800 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-all font-bold"
             >
               <X className="w-5 h-5" />
             </button>

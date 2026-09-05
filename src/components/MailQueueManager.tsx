@@ -38,7 +38,7 @@ export const MailQueueManager: React.FC = () => {
           <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
             {queue.length} Tasks
           </span>
-          <button onClick={clearQueue} className="text-slate-400 hover:text-white p-1" title="Clear Queue">
+          <button onClick={clearQueue} className="text-slate-800 hover:text-white p-1" title="Clear Queue">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -91,23 +91,23 @@ export const MailQueueManager: React.FC = () => {
         {queue.map((item, index) => (
           <div key={item.id} className="p-3 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="shrink-0 text-slate-400 font-mono text-[10px]">
+              <div className="shrink-0 text-slate-800 font-mono text-[10px]">
                 {(index + 1).toString().padStart(2, '0')}
               </div>
               <div className="min-w-0">
                 <div className="font-bold text-slate-200 truncate">{item.company.name}</div>
-                <div className="text-slate-400 text-[10px] truncate">{item.subject}</div>
+                <div className="text-slate-800 text-[10px] truncate">{item.subject}</div>
                 {item.error && <div className="text-red-400 text-[10px] mt-0.5 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {item.error}</div>}
               </div>
             </div>
 
             <div className="flex items-center gap-2 shrink-0">
-              {item.status === 'pending' && <Clock className="w-4 h-4 text-slate-500" />}
+              {item.status === 'pending' && <Clock className="w-4 h-4 text-slate-700" />}
               {item.status === 'sending' && <span className="w-4 h-4 rounded-full border-2 border-t-emerald-500 border-slate-600 animate-spin" />}
               {item.status === 'success' && <CheckCircle className="w-4 h-4 text-emerald-500" />}
               {item.status === 'failed' && <XCircle className="w-4 h-4 text-red-500" />}
               
-              <button onClick={() => removeQueueItem(item.id)} className="text-slate-500 hover:text-red-400 p-0.5">
+              <button onClick={() => removeQueueItem(item.id)} className="text-slate-700 hover:text-red-400 p-0.5">
                 <X className="w-3.5 h-3.5" />
               </button>
             </div>

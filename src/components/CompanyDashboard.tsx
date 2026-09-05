@@ -262,7 +262,7 @@ export const CompanyDashboard: React.FC<Props> = ({
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeCompanyTab === 'all_companies'
               ? 'bg-[#0B192C] text-white shadow-md'
-              : 'text-[#0f172a] hover:bg-[white]'
+              : 'text-[#020617] hover:bg-[white]'
           }`}
         >
           <Building2 className="w-4 h-4 text-emerald-400" />
@@ -274,7 +274,7 @@ export const CompanyDashboard: React.FC<Props> = ({
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeCompanyTab === 'find_new'
               ? 'bg-emerald-600 text-white shadow-md'
-              : 'text-[#0f172a] hover:bg-emerald-50 hover:text-emerald-800'
+              : 'text-[#020617] hover:bg-emerald-50 hover:text-emerald-800'
           }`}
         >
           <Search className="w-4 h-4 text-cyan-400" />
@@ -336,13 +336,13 @@ export const CompanyDashboard: React.FC<Props> = ({
       {/* Filter & Search Bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-[#64748b] absolute left-3.5 top-3" />
+          <Search className="w-4 h-4 text-[#1e293b] absolute left-3.5 top-3" />
           <input
             type="text"
             placeholder="Search companies, contacts, locations..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full bg-[white] border border-[#e2e8f0] rounded-xl pl-10 pr-4 py-2 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500 transition-all shadow-sm font-medium placeholder-[#64748b]"
+            className="w-full bg-[white] border border-[#e2e8f0] rounded-xl pl-10 pr-4 py-2 text-xs text-[#020617] focus:outline-none focus:border-emerald-500 transition-all shadow-sm font-medium placeholder-[#64748b]"
           />
         </div>
 
@@ -355,7 +355,7 @@ export const CompanyDashboard: React.FC<Props> = ({
               className={`px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-[white] text-[#0f172a] hover:bg-[white] border border-[#e2e8f0]'
+                  : 'bg-[white] text-[#020617] hover:bg-[white] border border-[#e2e8f0]'
               }`}
             >
               {cat}
@@ -368,7 +368,7 @@ export const CompanyDashboard: React.FC<Props> = ({
       <div className="space-y-2">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2">
           <div>
-            <h3 className="text-sm font-bold text-[#0f172a] flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#020617] flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={filteredCompanies.length > 0 && selectedCompanyIds.length === filteredCompanies.length}
@@ -378,12 +378,12 @@ export const CompanyDashboard: React.FC<Props> = ({
               <Building2 className="w-4 h-4 text-emerald-600" />
               <span>Verified Vendors ({filteredCompanies.length})</span>
             </h3>
-            <span className="text-[11px] text-[#64748b] ml-6">Maximized density ladder view with bulk selection</span>
+            <span className="text-[11px] text-[#1e293b] ml-6">Maximized density ladder view with bulk selection</span>
           </div>
 
           {selectedCompanyIds.length > 0 && (
             <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-emerald-500 animate-in fade-in">
-              <span className="text-xs font-bold text-[#0f172a] px-2">{selectedCompanyIds.length} Selected</span>
+              <span className="text-xs font-bold text-[#020617] px-2">{selectedCompanyIds.length} Selected</span>
               <button
                 onClick={handleBulkDelete}
                 disabled={isBulkDeleting}
@@ -420,7 +420,7 @@ export const CompanyDashboard: React.FC<Props> = ({
 
                   <div className="truncate min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h4 className="text-xs md:text-sm font-bold text-[#0f172a] truncate">{company.name}</h4>
+                      <h4 className="text-xs md:text-sm font-bold text-[#020617] truncate">{company.name}</h4>
                       {/* Multi-category pills — show up to 2 then "+N more" */}
                       {(company.categories && company.categories.length > 0
                         ? company.categories
@@ -429,19 +429,19 @@ export const CompanyDashboard: React.FC<Props> = ({
                         <span key={i} className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">{cat}</span>
                       ))}
                       {company.categories && company.categories.length > 2 && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[white] text-[#0f172a] border border-[#e2e8f0] shrink-0">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[white] text-[#020617] border border-[#e2e8f0] shrink-0">
                           +{company.categories.length - 2} more
                         </span>
                       )}
                       {company.gstin && (
-                        <span className="hidden md:inline-block text-[9px] font-mono font-bold bg-[white] text-[#0f172a] px-1.5 py-0.5 rounded border border-[#e2e8f0] shrink-0">
+                        <span className="hidden md:inline-block text-[9px] font-mono font-bold bg-[white] text-[#020617] px-1.5 py-0.5 rounded border border-[#e2e8f0] shrink-0">
                           GST: {company.gstin}
                         </span>
                       )}
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#64748b] truncate mt-0.5">
-                      <span className="font-semibold text-[#0f172a]">{company.contact_person}</span>
+                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#1e293b] truncate mt-0.5">
+                      <span className="font-semibold text-[#020617]">{company.contact_person}</span>
                       <span>•</span>
                       <span className="flex items-center gap-1">
                         <Mail className="w-3 h-3 text-emerald-600 shrink-0" />
@@ -460,13 +460,13 @@ export const CompanyDashboard: React.FC<Props> = ({
                 <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#e2e8f0]/60">
                   {company.payment_terms && (
                     <div className="text-right hidden sm:block">
-                      <span className="text-[9px] text-[#64748b] uppercase font-semibold block">Terms</span>
-                      <span className="text-xs font-semibold text-[#0f172a]">{company.payment_terms}</span>
+                      <span className="text-[9px] text-[#1e293b] uppercase font-semibold block">Terms</span>
+                      <span className="text-xs font-semibold text-[#020617]">{company.payment_terms}</span>
                     </div>
                   )}
 
                   <div className="text-right">
-                    <span className="text-[9px] text-[#64748b] uppercase font-semibold block">Parts</span>
+                    <span className="text-[9px] text-[#1e293b] uppercase font-semibold block">Parts</span>
                     <span className="text-xs font-bold text-emerald-800 font-mono">
                       {companyItems.length} items
                     </span>
@@ -488,7 +488,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => setCompanyToDelete(company)}
-                      className="p-1.5 rounded-lg bg-[white] hover:bg-red-100 text-[#64748b] hover:text-red-700 border border-[#e2e8f0] transition-all cursor-pointer"
+                      className="p-1.5 rounded-lg bg-[white] hover:bg-red-100 text-[#1e293b] hover:text-red-700 border border-[#e2e8f0] transition-all cursor-pointer"
                       title="Delete Company"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -506,17 +506,17 @@ export const CompanyDashboard: React.FC<Props> = ({
       {/* Delete Company Confirmation Modal */}
       {companyToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[white] w-full max-w-md rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 text-[#0f172a]">
+          <div className="bg-[white] w-full max-w-md rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 text-[#020617]">
             <h3 className="text-lg font-bold text-red-700">Delete Company</h3>
-            <p className="text-xs text-[#64748b]">
-              Are you sure you want to delete company <span className="font-bold text-[#0f172a]">"{companyToDelete.name}"</span>? This will remove vendor profile from the directory.
+            <p className="text-xs text-[#1e293b]">
+              Are you sure you want to delete company <span className="font-bold text-[#020617]">"{companyToDelete.name}"</span>? This will remove vendor profile from the directory.
             </p>
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setCompanyToDelete(null)}
-                className="px-4 py-2 rounded-xl bg-[white] text-[#0f172a] text-xs font-semibold hover:bg-[#e2e8f0]"
+                className="px-4 py-2 rounded-xl bg-[white] text-[#020617] text-xs font-semibold hover:bg-[#e2e8f0]"
               >
                 Cancel
               </button>
@@ -536,12 +536,12 @@ export const CompanyDashboard: React.FC<Props> = ({
       {/* Add Company Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-[white] w-full max-w-lg rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 my-8 text-[#0f172a]">
+          <div className="bg-[white] w-full max-w-lg rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 my-8 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 pb-3">
-              <h3 className="text-xl font-bold text-[#0f172a]">Add New Company</h3>
+              <h3 className="text-xl font-bold text-[#020617]">Add New Company</h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
-                className="text-[#64748b] hover:text-[#0f172a] text-lg font-bold"
+                className="text-[#1e293b] hover:text-[#020617] text-lg font-bold"
               >
                 ✕
               </button>
@@ -549,34 +549,34 @@ export const CompanyDashboard: React.FC<Props> = ({
 
             <form onSubmit={handleAddSubmit} className="space-y-3 text-xs">
               <div>
-                <label className="block font-semibold text-[#0f172a] mb-1">Company Company Name *</label>
+                <label className="block font-semibold text-[#020617] mb-1">Company Company Name *</label>
                 <input
                   type="text"
                   required
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g. Acme Components Ltd."
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Contact Person (Optional)</label>
+                  <label className="block font-semibold text-[#020617] mb-1">Contact Person (Optional)</label>
                   <input
                     type="text"
                     value={formData.contact_person}
                     onChange={e => setFormData({ ...formData, contact_person: e.target.value })}
                     placeholder="e.g. Rajesh Sharma"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
               </div>
 
               {/* Multi-Category Selector */}
               <div>
-                <label className="block font-semibold text-[#0f172a] mb-1.5">
-                  Categories <span className="text-[10px] text-[#64748b] font-normal ml-1">(Select all that apply)</span>
+                <label className="block font-semibold text-[#020617] mb-1.5">
+                  Categories <span className="text-[10px] text-[#1e293b] font-normal ml-1">(Select all that apply)</span>
                 </label>
                 <div className="p-3 bg-[white] border border-[#e2e8f0] rounded-xl space-y-2 max-h-36 overflow-y-auto">
                   {DEFAULT_CATEGORIES.map(cat => (
@@ -592,7 +592,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                         }}
                         className="w-4 h-4 rounded text-emerald-600 accent-emerald-600 cursor-pointer shrink-0"
                       />
-                      <span className="text-xs font-medium text-[#0f172a] group-hover:text-emerald-800">{cat}</span>
+                      <span className="text-xs font-medium text-[#020617] group-hover:text-emerald-800">{cat}</span>
                     </label>
                   ))}
                 </div>
@@ -615,58 +615,58 @@ export const CompanyDashboard: React.FC<Props> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Email Address (Optional)</label>
+                  <label className="block font-semibold text-[#020617] mb-1">Email Address (Optional)</label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
                     placeholder="sales@company.com"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Phone Number (Optional)</label>
+                  <label className="block font-semibold text-[#020617] mb-1">Phone Number (Optional)</label>
                   <input
                     type="text"
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+91 98765 43210"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-mono"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">GSTIN (Optional)</label>
+                  <label className="block font-semibold text-[#020617] mb-1">GSTIN (Optional)</label>
                   <input
                     type="text"
                     value={formData.gstin}
                     onChange={e => setFormData({ ...formData, gstin: e.target.value })}
                     placeholder="27AABCC1234F1Z5"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] uppercase font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] uppercase font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Payment Terms (Optional)</label>
+                  <label className="block font-semibold text-[#020617] mb-1">Payment Terms (Optional)</label>
                   <input
                     type="text"
                     value={formData.payment_terms}
                     onChange={e => setFormData({ ...formData, payment_terms: e.target.value })}
                     placeholder="Net 30 Days"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a]"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-[#0f172a] mb-1">Office / Plant Address (Optional)</label>
+                <label className="block font-semibold text-[#020617] mb-1">Office / Plant Address (Optional)</label>
                 <textarea
                   rows={2}
                   value={formData.address}
                   onChange={e => setFormData({ ...formData, address: e.target.value })}
                   placeholder="Plot 45, Electronics City, Industrial Zone..."
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
@@ -674,7 +674,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[white] text-[#0f172a] font-semibold hover:bg-[#e2e8f0]"
+                  className="px-4 py-2 rounded-xl bg-[white] text-[#020617] font-semibold hover:bg-[#e2e8f0]"
                 >
                   Cancel
                 </button>
@@ -693,15 +693,15 @@ export const CompanyDashboard: React.FC<Props> = ({
       {/* Edit Company Modal */}
       {editingCompany && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-[white] w-full max-w-lg rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 my-8 text-[#0f172a]">
+          <div className="bg-[white] w-full max-w-lg rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 my-8 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 pb-3">
               <div className="flex items-center gap-2">
                 <Edit2 className="w-5 h-5 text-emerald-600" />
-                <h3 className="text-xl font-bold text-[#0f172a]">Edit Company Attributes</h3>
+                <h3 className="text-xl font-bold text-[#020617]">Edit Company Attributes</h3>
               </div>
               <button
                 onClick={() => setEditingCompany(null)}
-                className="text-[#64748b] hover:text-[#0f172a] text-lg font-bold"
+                className="text-[#1e293b] hover:text-[#020617] text-lg font-bold"
               >
                 ✕
               </button>
@@ -709,32 +709,32 @@ export const CompanyDashboard: React.FC<Props> = ({
 
             <form onSubmit={handleEditSubmit} className="space-y-3 text-xs">
               <div>
-                <label className="block font-semibold text-[#0f172a] mb-1">Company Name *</label>
+                <label className="block font-semibold text-[#020617] mb-1">Company Name *</label>
                 <input
                   type="text"
                   required
                   value={editingCompany.name}
                   onChange={e => setEditingCompany({ ...editingCompany, name: e.target.value })}
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
 
               <div className="grid grid-cols-1 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Contact Person (Optional)</label>
+                  <label className="block font-semibold text-[#020617] mb-1">Contact Person (Optional)</label>
                   <input
                     type="text"
                     value={editingCompany.contact_person}
                     onChange={e => setEditingCompany({ ...editingCompany, contact_person: e.target.value })}
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
               </div>
 
               {/* Multi-Category Selector (Edit) */}
               <div>
-                <label className="block font-semibold text-[#0f172a] mb-1.5">
-                  Categories <span className="text-[10px] text-[#64748b] font-normal ml-1">(Select all that apply)</span>
+                <label className="block font-semibold text-[#020617] mb-1.5">
+                  Categories <span className="text-[10px] text-[#1e293b] font-normal ml-1">(Select all that apply)</span>
                 </label>
                 <div className="p-3 bg-[white] border border-[#e2e8f0] rounded-xl space-y-2 max-h-36 overflow-y-auto">
                   {DEFAULT_CATEGORIES.map(cat => {
@@ -752,7 +752,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                           }}
                           className="w-4 h-4 rounded text-emerald-600 accent-emerald-600 cursor-pointer shrink-0"
                         />
-                        <span className="text-xs font-medium text-[#0f172a] group-hover:text-emerald-800">{cat}</span>
+                        <span className="text-xs font-medium text-[#020617] group-hover:text-emerald-800">{cat}</span>
                       </label>
                     );
                   })}
@@ -775,67 +775,67 @@ export const CompanyDashboard: React.FC<Props> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Email Address (Optional)</label>
+                  <label className="block font-semibold text-[#020617] mb-1">Email Address (Optional)</label>
                   <input
                     type="email"
                     value={editingCompany.email}
                     onChange={e => setEditingCompany({ ...editingCompany, email: e.target.value })}
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Phone Number (Optional)</label>
+                  <label className="block font-semibold text-[#020617] mb-1">Phone Number (Optional)</label>
                   <input
                     type="text"
                     value={editingCompany.phone}
                     onChange={e => setEditingCompany({ ...editingCompany, phone: e.target.value })}
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-mono"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">GSTIN (Optional)</label>
+                  <label className="block font-semibold text-[#020617] mb-1">GSTIN (Optional)</label>
                   <input
                     type="text"
                     value={editingCompany.gstin || ''}
                     onChange={e => setEditingCompany({ ...editingCompany, gstin: e.target.value })}
                     placeholder="27AABCC1234F1Z5"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] uppercase font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] uppercase font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Payment Terms (Optional)</label>
+                  <label className="block font-semibold text-[#020617] mb-1">Payment Terms (Optional)</label>
                   <input
                     type="text"
                     value={editingCompany.payment_terms || ''}
                     onChange={e => setEditingCompany({ ...editingCompany, payment_terms: e.target.value })}
                     placeholder="Net 30 Days"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a]"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-[#0f172a] mb-1">Office / Plant Address (Optional)</label>
+                <label className="block font-semibold text-[#020617] mb-1">Office / Plant Address (Optional)</label>
                 <textarea
                   rows={2}
                   value={editingCompany.address || ''}
                   onChange={e => setEditingCompany({ ...editingCompany, address: e.target.value })}
                   placeholder="Street, Industrial Area, City..."
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-[#0f172a] mb-1">Buying Portal URL (Optional)</label>
+                <label className="block font-semibold text-[#020617] mb-1">Buying Portal URL (Optional)</label>
                 <input
                   type="url"
                   value={editingCompany.buying_url || ''}
                   onChange={e => setEditingCompany({ ...editingCompany, buying_url: e.target.value })}
                   placeholder="https://..."
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a]"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617]"
                 />
               </div>
 
@@ -843,7 +843,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={() => setEditingCompany(null)}
-                  className="px-4 py-2 rounded-xl bg-[white] text-[#0f172a] font-semibold hover:bg-[#e2e8f0]"
+                  className="px-4 py-2 rounded-xl bg-[white] text-[#020617] font-semibold hover:bg-[#e2e8f0]"
                 >
                   Cancel
                 </button>

@@ -468,7 +468,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200 font-semibold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
           title={`Download sample CSV template for ${sectionType}`}
         >
-          <FileDown className="w-3.5 h-3.5 text-slate-600" />
+          <FileDown className="w-3.5 h-3.5 text-slate-800" />
           <span>Download Template</span>
         </button>
 
@@ -482,7 +482,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200 font-semibold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
             title="Hover or click to view required and optional columns"
           >
-            <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
+            <HelpCircle className="w-3.5 h-3.5 text-slate-700" />
             <span>View Required Columns</span>
           </button>
 
@@ -494,11 +494,11 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
               className="absolute left-0 top-full mt-2 w-80 sm:w-96 p-4 rounded-xl bg-white border border-slate-200 shadow-2xl z-50 text-xs text-slate-800 space-y-2.5 animate-in fade-in zoom-in-95 duration-150"
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                <span className="font-bold text-slate-950 flex items-center gap-1.5">
                   <Info className="w-3.5 h-3.5 text-emerald-600" />
                   <span>{schema.title}</span>
                 </span>
-                <span className="text-[10px] font-mono text-slate-400">RFC 4180</span>
+                <span className="text-[10px] font-mono text-slate-800">RFC 4180</span>
               </div>
 
               <div>
@@ -518,7 +518,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
               </div>
 
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700 block mb-1">
                   Supported Optional Headers:
                 </span>
                 <div className="flex flex-wrap gap-1 max-h-36 overflow-y-auto pr-1">
@@ -534,7 +534,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
                 </div>
               </div>
 
-              <div className="pt-1 text-[11px] text-slate-500 border-t border-slate-100">
+              <div className="pt-1 text-[11px] text-slate-700 border-t border-slate-100">
                 Headers are case-insensitive and spaces/dashes are normalized automatically.
               </div>
             </div>

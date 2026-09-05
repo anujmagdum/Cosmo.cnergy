@@ -233,14 +233,14 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         {/* Total Invoices / Orders */}
         <div className="bg-[white] p-4 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b]">Total Orders / Invoices</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#1e293b]">Total Orders / Invoices</span>
             <div className="p-2 rounded-xl bg-emerald-100 text-emerald-800">
               <Receipt className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl md:text-2xl font-black text-[#0f172a] font-mono">{financialSummary.totalCount}</div>
-            <div className="text-[11px] text-[#64748b] mt-0.5 flex items-center gap-1.5 font-semibold">
+            <div className="text-xl md:text-2xl font-black text-[#020617] font-mono">{financialSummary.totalCount}</div>
+            <div className="text-[11px] text-[#1e293b] mt-0.5 flex items-center gap-1.5 font-semibold">
               <span className="text-purple-700">{financialSummary.poCount} POs</span>
               <span>•</span>
               <span className="text-emerald-700">{financialSummary.rfqCount} RFQs</span>
@@ -251,23 +251,23 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         {/* Taxable Subtotal (Excl. GST) */}
         <div className="bg-[white] p-4 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b]">Taxable Subtotal (Excl. GST)</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#1e293b]">Taxable Subtotal (Excl. GST)</span>
             <div className="p-2 rounded-xl bg-blue-100 text-blue-800">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl md:text-2xl font-black text-[#0f172a] font-mono">
+            <div className="text-xl md:text-2xl font-black text-[#020617] font-mono">
               ₹{financialSummary.taxableSubtotal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
-            <div className="text-[11px] text-[#64748b] mt-0.5 font-semibold">Base procurement valuation</div>
+            <div className="text-[11px] text-[#1e293b] mt-0.5 font-semibold">Base procurement valuation</div>
           </div>
         </div>
 
         {/* Estimated GST (18%) */}
         <div className="bg-[white] p-4 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b]">Estimated GST (18%)</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#1e293b]">Estimated GST (18%)</span>
             <div className="p-2 rounded-xl bg-amber-100 text-amber-800">
               <TrendingUp className="w-4 h-4" />
             </div>
@@ -276,7 +276,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             <div className="text-xl md:text-2xl font-black text-amber-900 font-mono">
               ₹{financialSummary.estimatedGst.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
-            <div className="text-[11px] text-[#64748b] mt-0.5 font-semibold">Standard 18% tax credit</div>
+            <div className="text-[11px] text-[#1e293b] mt-0.5 font-semibold">Standard 18% tax credit</div>
           </div>
         </div>
 
@@ -312,13 +312,13 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
       {/* Status Filter Bar & Search */}
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-[#64748b] absolute left-3.5 top-3" />
+          <Search className="w-4 h-4 text-[#1e293b] absolute left-3.5 top-3" />
           <input
             type="text"
             placeholder="Search order #, issuer, receiver, notes..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full bg-[white] border border-[#e2e8f0] rounded-xl pl-10 pr-4 py-2 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500 transition-all shadow-xs font-medium placeholder-[#64748b]"
+            className="w-full bg-[white] border border-[#e2e8f0] rounded-xl pl-10 pr-4 py-2 text-xs text-[#020617] focus:outline-none focus:border-emerald-500 transition-all shadow-xs font-medium placeholder-[#64748b]"
           />
         </div>
 
@@ -329,7 +329,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               filterStatus === 'ALL'
                 ? 'bg-emerald-600 text-white font-bold shadow-xs'
-                : 'bg-[white] text-[#64748b] hover:bg-[white] border border-[#e2e8f0]'
+                : 'bg-[white] text-[#1e293b] hover:bg-[white] border border-[#e2e8f0]'
             }`}
           >
             All ({orders.length})
@@ -346,7 +346,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                 className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 border transition-all cursor-pointer ${
                   filterStatus === statusKey
                     ? `${cfg.badgeBg} ${cfg.badgeText} ${cfg.badgeBorder} font-bold shadow-xs`
-                    : 'bg-[white] text-[#64748b] hover:bg-[white] border-[#e2e8f0]'
+                    : 'bg-[white] text-[#1e293b] hover:bg-[white] border-[#e2e8f0]'
                 }`}
               >
                 <span className={`w-2 h-2 rounded-full ${cfg.dotColor}`} />
@@ -364,14 +364,14 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#e2e8f0]">
           <div className="flex items-center gap-2">
             <Receipt className="w-5 h-5 text-emerald-700" />
-            <h3 className="font-bold text-[#0f172a] text-sm md:text-base">
+            <h3 className="font-bold text-[#020617] text-sm md:text-base">
               Finance & Procurement Summary Registry ({filteredOrders.length})
             </h3>
           </div>
 
           {selectedOrderIds.length > 0 && (
             <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-xl shadow-xs border border-emerald-500 animate-in fade-in">
-              <span className="text-xs font-bold text-[#0f172a]">{selectedOrderIds.length} Selected</span>
+              <span className="text-xs font-bold text-[#020617]">{selectedOrderIds.length} Selected</span>
               <button
                 onClick={handleBulkDelete}
                 disabled={isBulkDeleting}
@@ -388,7 +388,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         <div className="overflow-x-auto rounded-2xl border border-[#e2e8f0] bg-[white]">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-[#e2e8f0] text-[#0f172a] font-black uppercase text-[10px] tracking-wider border-b border-[#e2e8f0]">
+              <tr className="bg-[#e2e8f0] text-[#020617] font-black uppercase text-[10px] tracking-wider border-b border-[#e2e8f0]">
                 <th className="py-3 px-3 w-10 text-center">
                   <input
                     type="checkbox"
@@ -409,7 +409,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             <tbody className="divide-y divide-[#e2e8f0]/60">
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-8 text-center text-[#64748b] font-semibold text-xs">
+                  <td colSpan={8} className="py-8 text-center text-[#1e293b] font-semibold text-xs">
                     No procurement orders or invoices match your filter.
                   </td>
                 </tr>
@@ -444,7 +444,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
 
                       {/* Date */}
                       <td className="py-3 px-3.5 align-middle whitespace-nowrap">
-                        <div className="flex items-center gap-1.5 font-bold text-[#0f172a]">
+                        <div className="flex items-center gap-1.5 font-bold text-[#020617]">
                           <Calendar className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
                           <span>{formattedDate}</span>
                         </div>
@@ -453,12 +453,12 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                       {/* Issuer */}
                       <td className="py-3 px-3.5 align-middle">
                         <div className="flex items-center gap-1.5">
-                          <User className="w-3.5 h-3.5 text-[#64748b] shrink-0" />
-                          <span className="font-bold text-[#0f172a] truncate max-w-[140px]" title={issuerName}>
+                          <User className="w-3.5 h-3.5 text-[#1e293b] shrink-0" />
+                          <span className="font-bold text-[#020617] truncate max-w-[140px]" title={issuerName}>
                             {issuerName}
                           </span>
                         </div>
-                        <span className="text-[10px] text-[#64748b] block truncate">Cosmo.cnergy HQ</span>
+                        <span className="text-[10px] text-[#1e293b] block truncate">Cosmo.cnergy HQ</span>
                       </td>
 
                       {/* Receiver */}
@@ -470,7 +470,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                           </span>
                         </div>
                         {order.company?.contact_person && (
-                          <span className="text-[10px] text-[#64748b] block truncate">
+                          <span className="text-[10px] text-[#1e293b] block truncate">
                             Attn: {order.company.contact_person}
                           </span>
                         )}
@@ -488,7 +488,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                           >
                             {order.type}
                           </span>
-                          <span className="font-mono font-bold text-[#0f172a] text-xs">{order.order_number}</span>
+                          <span className="font-mono font-bold text-[#020617] text-xs">{order.order_number}</span>
                         </div>
                         <div className="mt-1">
                           <span
@@ -502,10 +502,10 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
 
                       {/* Taxable */}
                       <td className="py-3 px-3.5 align-middle text-right whitespace-nowrap font-mono">
-                        <span className="text-xs font-bold text-[#0f172a]">
+                        <span className="text-xs font-bold text-[#020617]">
                           ₹{taxable.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
-                        <span className="text-[9px] text-[#64748b] block">excl. 18% GST</span>
+                        <span className="text-[9px] text-[#1e293b] block">excl. 18% GST</span>
                       </td>
 
                       {/* Total */}
@@ -568,7 +568,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                           <button
                             type="button"
                             onClick={() => setOrderToDelete(order)}
-                            className="p-1.5 rounded-lg bg-[white] hover:bg-red-100 text-[#64748b] hover:text-red-700 border border-[#e2e8f0] shadow-2xs active:scale-95 transition-all cursor-pointer"
+                            className="p-1.5 rounded-lg bg-[white] hover:bg-red-100 text-[#1e293b] hover:text-red-700 border border-[#e2e8f0] shadow-2xs active:scale-95 transition-all cursor-pointer"
                             title="Delete Order Record"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -587,25 +587,25 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
       {/* Quick Add Note / Remarks Modal */}
       {noteOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="bg-[white] w-full max-w-lg rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 text-[#0f172a] animate-in fade-in zoom-in-95">
+          <div className="bg-[white] w-full max-w-lg rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 text-[#020617] animate-in fade-in zoom-in-95">
             <div className="flex items-center justify-between pb-2 border-b border-[#e2e8f0]">
               <div className="flex items-center gap-2">
                 <StickyNote className="w-5 h-5 text-amber-600" />
-                <h3 className="text-base font-bold text-[#0f172a]">
+                <h3 className="text-base font-bold text-[#020617]">
                   Order Notes & Instructions — <span className="font-mono">{noteOrder.order_number}</span>
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setNoteOrder(null)}
-                className="p-1.5 rounded-xl hover:bg-[white] text-[#64748b] cursor-pointer"
+                className="p-1.5 rounded-xl hover:bg-[white] text-[#1e293b] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div>
-              <label className="text-xs font-bold text-[#64748b] block mb-1.5">
+              <label className="text-xs font-bold text-[#1e293b] block mb-1.5">
                 Remarks, Delivery Instructions, Logistics Tracking & Internal Notes
               </label>
               <textarea
@@ -613,7 +613,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                 value={noteText}
                 onChange={e => setNoteText(e.target.value)}
                 placeholder="Enter special procurement instructions, GST invoices, courier tracking numbers, or dispatch notes..."
-                className="w-full bg-white border border-[#e2e8f0] rounded-2xl p-3.5 text-xs text-[#0f172a] focus:outline-none focus:border-amber-500 shadow-inner font-sans"
+                className="w-full bg-white border border-[#e2e8f0] rounded-2xl p-3.5 text-xs text-[#020617] focus:outline-none focus:border-amber-500 shadow-inner font-sans"
               />
             </div>
 
@@ -621,7 +621,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
               <button
                 type="button"
                 onClick={() => setNoteOrder(null)}
-                className="px-4 py-2 rounded-xl bg-[white] text-[#0f172a] text-xs font-bold hover:bg-[#e2e8f0] cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[white] text-[#020617] text-xs font-bold hover:bg-[#e2e8f0] cursor-pointer"
               >
                 Cancel
               </button>
@@ -641,17 +641,17 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
       {/* Delete Order Confirmation Dialog */}
       {orderToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="bg-[white] w-full max-w-md rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 text-[#0f172a] animate-in fade-in zoom-in-95">
+          <div className="bg-[white] w-full max-w-md rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 text-[#020617] animate-in fade-in zoom-in-95">
             <h3 className="text-lg font-bold text-red-700">Delete Procurement Order</h3>
-            <p className="text-xs text-[#64748b]">
-              Are you sure you want to delete order <span className="font-mono font-bold text-[#0f172a]">"{orderToDelete.order_number}"</span>? This will permanently delete the order record from the registry.
+            <p className="text-xs text-[#1e293b]">
+              Are you sure you want to delete order <span className="font-mono font-bold text-[#020617]">"{orderToDelete.order_number}"</span>? This will permanently delete the order record from the registry.
             </p>
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setOrderToDelete(null)}
-                className="px-4 py-2 rounded-xl bg-[white] text-[#0f172a] text-xs font-bold hover:bg-[#e2e8f0] cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[white] text-[#020617] text-xs font-bold hover:bg-[#e2e8f0] cursor-pointer"
               >
                 Cancel
               </button>

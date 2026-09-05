@@ -6,12 +6,16 @@
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-color: #ffffff;
-    color: #0f172a;
+    color: #020617;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', 'Inter', sans-serif;
+    color: #020617;
+    font-weight: 700;
   }
 }
 
