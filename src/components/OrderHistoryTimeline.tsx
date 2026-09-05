@@ -329,7 +329,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               filterStatus === 'ALL'
                 ? 'bg-emerald-600 text-white font-bold shadow-xs'
-                : 'bg-[white] text-[#64748b] hover:bg-[#f8fafc] border border-[#e2e8f0]'
+                : 'bg-[white] text-[#64748b] hover:bg-[white] border border-[#e2e8f0]'
             }`}
           >
             All ({orders.length})
@@ -346,7 +346,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                 className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 border transition-all cursor-pointer ${
                   filterStatus === statusKey
                     ? `${cfg.badgeBg} ${cfg.badgeText} ${cfg.badgeBorder} font-bold shadow-xs`
-                    : 'bg-[white] text-[#64748b] hover:bg-[#f8fafc] border-[#e2e8f0]'
+                    : 'bg-[white] text-[#64748b] hover:bg-[white] border-[#e2e8f0]'
                 }`}
               >
                 <span className={`w-2 h-2 rounded-full ${cfg.dotColor}`} />
@@ -359,7 +359,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
       </div>
 
       {/* Main Datlion Cnergy Finance Summary Table Section */}
-      <div className="bg-[#f8fafc] rounded-3xl p-4 sm:p-6 border border-[#e2e8f0] shadow-xl space-y-3">
+      <div className="bg-[white] rounded-3xl p-4 sm:p-6 border border-[#e2e8f0] shadow-xl space-y-3">
         {/* Table Header Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#e2e8f0]">
           <div className="flex items-center gap-2">
@@ -430,7 +430,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                   return (
                     <tr
                       key={order.id}
-                      className="hover:bg-[#f8fafc]/60 transition-colors group/row"
+                      className="hover:bg-[white]/60 transition-colors group/row"
                     >
                       {/* Checkbox */}
                       <td className="py-3 px-3 text-center align-middle">
@@ -568,7 +568,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                           <button
                             type="button"
                             onClick={() => setOrderToDelete(order)}
-                            className="p-1.5 rounded-lg bg-[#f8fafc] hover:bg-red-100 text-[#64748b] hover:text-red-700 border border-[#e2e8f0] shadow-2xs active:scale-95 transition-all cursor-pointer"
+                            className="p-1.5 rounded-lg bg-[white] hover:bg-red-100 text-[#64748b] hover:text-red-700 border border-[#e2e8f0] shadow-2xs active:scale-95 transition-all cursor-pointer"
                             title="Delete Order Record"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -598,7 +598,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
               <button
                 type="button"
                 onClick={() => setNoteOrder(null)}
-                className="p-1.5 rounded-xl hover:bg-[#f8fafc] text-[#64748b] cursor-pointer"
+                className="p-1.5 rounded-xl hover:bg-[white] text-[#64748b] cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -621,7 +621,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
               <button
                 type="button"
                 onClick={() => setNoteOrder(null)}
-                className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#0f172a] text-xs font-bold hover:bg-[#e2e8f0] cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[white] text-[#0f172a] text-xs font-bold hover:bg-[#e2e8f0] cursor-pointer"
               >
                 Cancel
               </button>
@@ -651,7 +651,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setOrderToDelete(null)}
-                className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#0f172a] text-xs font-bold hover:bg-[#e2e8f0] cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[white] text-[#0f172a] text-xs font-bold hover:bg-[#e2e8f0] cursor-pointer"
               >
                 Cancel
               </button>

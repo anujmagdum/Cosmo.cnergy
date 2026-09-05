@@ -153,7 +153,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
         </div>
 
         {/* Filter Pills Bar */}
-        <div className="px-6 py-3 bg-[#f8fafc] border-b border-[#e2e8f0] flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="px-6 py-3 bg-[white] border-b border-[#e2e8f0] flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setActiveCategoryFilter('ALL')}
@@ -219,7 +219,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                   <button
                     key={sample}
                     onClick={() => setSearchTerm(sample)}
-                    className="px-2.5 py-1 rounded-lg bg-[#f8fafc] hover:bg-emerald-100 text-[#0f172a] hover:text-emerald-800 border border-[#e2e8f0] font-mono text-xs font-bold transition-all"
+                    className="px-2.5 py-1 rounded-lg bg-[white] hover:bg-emerald-100 text-[#0f172a] hover:text-emerald-800 border border-[#e2e8f0] font-mono text-xs font-bold transition-all"
                   >
                     {sample}
                   </button>
@@ -253,10 +253,10 @@ export const GlobalSearchModal: React.FC<Props> = ({
                         return (
                           <div
                             key={item.id}
-                            className="bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] shadow-sm overflow-hidden hover:border-emerald-500 transition-all"
+                            className="bg-[white] rounded-2xl border border-[#e2e8f0] shadow-sm overflow-hidden hover:border-emerald-500 transition-all"
                           >
                             {/* Component Summary Card */}
-                            <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#f8fafc]">
+                            <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[white]">
                               <div className="space-y-1 flex-1">
                                 <div className="flex items-center gap-2">
                                   <h4 className="font-bold text-[#0f172a] text-sm">{item.title}</h4>
@@ -308,7 +308,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                   {companiesList.map(supp => (
                                     <div
                                       key={supp.companyId}
-                                      className="p-3 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:shadow-xs transition-all"
+                                      className="p-3 bg-[white] rounded-xl border border-[#e2e8f0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:shadow-xs transition-all"
                                     >
                                       <div className="space-y-0.5">
                                         <div className="flex items-center gap-2">
@@ -374,7 +374,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                       {results.folders.map(folder => (
                         <div
                           key={folder.id}
-                          className="p-4 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] hover:border-emerald-500 shadow-sm space-y-2.5 transition-all"
+                          className="p-4 bg-[white] rounded-2xl border border-[#e2e8f0] hover:border-emerald-500 shadow-sm space-y-2.5 transition-all"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
@@ -421,7 +421,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                       {results.orders.map(orderItem => (
                         <div
                           key={orderItem.id}
-                          className="p-4 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
+                          className="p-4 bg-[white] rounded-2xl border border-[#e2e8f0] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
@@ -468,7 +468,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                       {results.companies.map(supp => (
                         <div
                           key={supp.id}
-                          className="p-4 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
+                          className="p-4 bg-[white] rounded-2xl border border-[#e2e8f0] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
@@ -506,7 +506,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-[#f8fafc] border-t border-[#e2e8f0] flex items-center justify-between text-xs text-[#64748b]">
+        <div className="p-4 bg-[white] border-t border-[#e2e8f0] flex items-center justify-between text-xs text-[#64748b]">
           <div className="flex items-center gap-2">
             <span className="px-2 py-0.5 rounded bg-[white] text-[#0f172a] font-mono font-bold text-[10px] border border-[#e2e8f0]">
               Ctrl+K

@@ -19,7 +19,7 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, unreadWebmailCount, onOpenBOMModal, onOpenSearch, userName, onOpenAuth, onLogout, ordersCount, catalogCount, companiesCount }) => {
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans">
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}

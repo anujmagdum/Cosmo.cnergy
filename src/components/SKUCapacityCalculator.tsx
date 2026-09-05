@@ -236,7 +236,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
               placeholder="Filter recipes..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
+              className="w-full bg-[white] border border-[#e2e8f0] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
             />
           </div>
 
@@ -248,7 +248,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
                 setSelectedProduct(e.target.value);
                 setCalculatedResult(null);
               }}
-              className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-1.5 text-xs text-[#0f172a] font-semibold focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-1.5 text-xs text-[#0f172a] font-semibold focus:outline-none focus:border-emerald-500"
             >
               {filteredProducts.map(prod => (
                 <option key={prod} value={prod}>
@@ -271,7 +271,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
             {calculatedResult !== null && (
               <button
                 onClick={handleResetCalculator}
-                className="py-1.5 px-2.5 rounded-xl bg-[#f8fafc] hover:bg-[#E4DDC7] text-[#0f172a] font-bold text-xs border border-[#e2e8f0] transition-all flex items-center justify-center gap-1 cursor-pointer"
+                className="py-1.5 px-2.5 rounded-xl bg-[white] hover:bg-[#E4DDC7] text-[#0f172a] font-bold text-xs border border-[#e2e8f0] transition-all flex items-center justify-center gap-1 cursor-pointer"
                 title="Reset"
               >
                 <RefreshCw className="w-3 h-3" />
@@ -284,7 +284,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
         {/* Calculation Results Details */}
         {calculatedResult && (
           <div className="pt-1 space-y-2.5">
-            <div className="p-3.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-3.5 rounded-xl bg-[white] border border-[#e2e8f0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <span className="text-[10px] font-bold text-[#64748b] uppercase tracking-wider">
                   Max Buildable Finished Units:
@@ -318,7 +318,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
                       className={`p-2 rounded-lg border flex items-center justify-between text-xs ${
                         d.buildable === calculatedResult.maxUnits
                           ? 'bg-red-50 border-red-300 text-red-900 font-semibold'
-                          : 'bg-[#f8fafc]/70 border-[#e2e8f0] text-[#0f172a]'
+                          : 'bg-[white]/70 border-[#e2e8f0] text-[#0f172a]'
                       }`}
                     >
                       <div className="truncate pr-2">

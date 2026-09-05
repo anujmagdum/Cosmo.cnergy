@@ -511,7 +511,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                           className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
                             sup.isShortlisted
                               ? 'bg-amber-400 text-slate-950 font-black shadow-xs'
-                              : 'bg-white border border-[#D6D1B1] text-[#073642] hover:bg-slate-50'
+                              : 'bg-white border border-[#D6D1B1] text-[#073642] hover:bg-white'
                           }`}
                         >
                           {sup.isShortlisted ? '✓ Shortlisted' : '+ Shortlist'}

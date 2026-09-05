@@ -363,7 +363,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                         <div className="w-12 bg-slate-200 rounded-full h-2 overflow-hidden border border-slate-300">
                           <div
                             className={`h-full ${
-                              matchScore >= 80 ? 'bg-emerald-600' : matchScore >= 60 ? 'bg-amber-500' : 'bg-slate-500'
+                              matchScore >= 80 ? 'bg-emerald-600' : matchScore >= 60 ? 'bg-amber-500' : 'bg-white0'
                             }`}
                             style={{ width: `${matchScore}%` }}
                           />

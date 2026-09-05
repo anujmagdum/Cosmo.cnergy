@@ -744,7 +744,7 @@ export const Webmail: React.FC<Props> = ({
       {/* Main 3-Pane Webmail Interface (Solarized Light Theme) */}
       <div className="glass-card bg-[white] rounded-3xl border border-[#e2e8f0] shadow-sm overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[680px]">
         {/* Left Folder Sidebar (3 Cols) */}
-        <div className="lg:col-span-3 bg-[#f8fafc] p-4 border-r border-[#e2e8f0] flex flex-col justify-between">
+        <div className="lg:col-span-3 bg-[white] p-4 border-r border-[#e2e8f0] flex flex-col justify-between">
           <div className="space-y-4">
             {/* Compose Quick Trigger */}
             <button
@@ -865,7 +865,7 @@ export const Webmail: React.FC<Props> = ({
         {/* Middle Email List Pane (4 Cols) */}
         <div className="lg:col-span-4 border-r border-[#e2e8f0] flex flex-col bg-[white]">
           {/* Universal Search Header */}
-          <div className="p-3.5 border-b border-[#e2e8f0]/60 bg-[#f8fafc]">
+          <div className="p-3.5 border-b border-[#e2e8f0]/60 bg-[white]">
             <div className="relative">
               <Search className="w-4 h-4 text-[#64748b] absolute left-3 top-2.5" />
               <input
@@ -896,8 +896,8 @@ export const Webmail: React.FC<Props> = ({
                       isSelected
                         ? 'bg-emerald-50/90 border-l-4 border-l-emerald-600'
                         : mail.isUnread
-                        ? 'bg-[white] hover:bg-[#f8fafc] font-semibold'
-                        : 'bg-[#FAF4E6] hover:bg-[#f8fafc] text-[#64748b]'
+                        ? 'bg-[white] hover:bg-[white] font-semibold'
+                        : 'bg-[#FAF4E6] hover:bg-[white] text-[#64748b]'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1">
@@ -989,7 +989,7 @@ export const Webmail: React.FC<Props> = ({
 
               {/* Attachments Section */}
               {selectedEmail.attachments && selectedEmail.attachments.length > 0 && (
-                <div className="p-3 rounded-2xl bg-[#f8fafc] border border-[#e2e8f0] space-y-2">
+                <div className="p-3 rounded-2xl bg-[white] border border-[#e2e8f0] space-y-2">
                   <div className="text-[11px] font-bold text-[#64748b] uppercase tracking-wider flex items-center gap-1.5">
                     <Paperclip className="w-3.5 h-3.5 text-emerald-600" />
                     <span>Attachments ({selectedEmail.attachments.length})</span>
@@ -1026,7 +1026,7 @@ export const Webmail: React.FC<Props> = ({
                     setComposeBody(`\n\n--- On ${selectedEmail.date}, ${selectedEmail.from} wrote:\n> ${selectedEmail.snippet}`);
                     setIsComposeOpen(true);
                   }}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#0f172a] font-semibold text-xs transition-all active:scale-95 border border-[#e2e8f0]"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[white] hover:bg-[#e2e8f0] text-[#0f172a] font-semibold text-xs transition-all active:scale-95 border border-[#e2e8f0]"
                 >
                   <Reply className="w-3.5 h-3.5 text-emerald-600" />
                   <span>Reply</span>
@@ -1038,7 +1038,7 @@ export const Webmail: React.FC<Props> = ({
                     setComposeBody(`\n\n--- Forwarded Message ---\nFrom: ${selectedEmail.from}\nDate: ${selectedEmail.date}\nSubject: ${selectedEmail.subject}\n\n${selectedEmail.snippet}`);
                     setIsComposeOpen(true);
                   }}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#0f172a] font-semibold text-xs transition-all active:scale-95 border border-[#e2e8f0]"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[white] hover:bg-[#e2e8f0] text-[#0f172a] font-semibold text-xs transition-all active:scale-95 border border-[#e2e8f0]"
                 >
                   <Forward className="w-3.5 h-3.5 text-emerald-600" />
                   <span>Forward</span>
@@ -1080,7 +1080,7 @@ export const Webmail: React.FC<Props> = ({
                     required
                     value={settingsForm.email}
                     onChange={e => setSettingsForm({ ...settingsForm, email: e.target.value })}
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
 
@@ -1091,7 +1091,7 @@ export const Webmail: React.FC<Props> = ({
                     required
                     value={settingsForm.senderName}
                     onChange={e => setSettingsForm({ ...settingsForm, senderName: e.target.value })}
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-semibold"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-semibold"
                   />
                 </div>
               </div>
@@ -1105,7 +1105,7 @@ export const Webmail: React.FC<Props> = ({
                     value={settingsForm.imapHost}
                     onChange={e => setSettingsForm({ ...settingsForm, imapHost: e.target.value })}
                     placeholder="mail.cosmocnergy.com"
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono"
                   />
                 </div>
 
@@ -1117,7 +1117,7 @@ export const Webmail: React.FC<Props> = ({
                     value={settingsForm.imapPort}
                     onChange={e => setSettingsForm({ ...settingsForm, imapPort: Number(e.target.value) || 993 })}
                     placeholder="993"
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono"
                   />
                 </div>
               </div>
@@ -1131,7 +1131,7 @@ export const Webmail: React.FC<Props> = ({
                     value={settingsForm.smtpHost}
                     onChange={e => setSettingsForm({ ...settingsForm, smtpHost: e.target.value })}
                     placeholder="mail.cosmocnergy.com"
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono"
                   />
                 </div>
 
@@ -1143,7 +1143,7 @@ export const Webmail: React.FC<Props> = ({
                     value={settingsForm.smtpPort}
                     onChange={e => setSettingsForm({ ...settingsForm, smtpPort: Number(e.target.value) || 465 })}
                     placeholder="465"
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono"
                   />
                 </div>
               </div>
@@ -1156,7 +1156,7 @@ export const Webmail: React.FC<Props> = ({
                     required
                     value={settingsForm.username}
                     onChange={e => setSettingsForm({ ...settingsForm, username: e.target.value })}
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -1167,7 +1167,7 @@ export const Webmail: React.FC<Props> = ({
                     value={settingsForm.password || ''}
                     onChange={e => setSettingsForm({ ...settingsForm, password: e.target.value })}
                     placeholder="••••••••••••"
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
@@ -1194,7 +1194,7 @@ export const Webmail: React.FC<Props> = ({
                   type="button"
                   onClick={handleTestConnection}
                   disabled={isTestingConn}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#0f172a] font-semibold text-xs border border-[#e2e8f0]"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[white] hover:bg-[#e2e8f0] text-[#0f172a] font-semibold text-xs border border-[#e2e8f0]"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${isTestingConn ? 'animate-spin' : ''}`} />
                   <span>{isTestingConn ? 'Testing...' : 'Test Connection'}</span>
@@ -1204,7 +1204,7 @@ export const Webmail: React.FC<Props> = ({
                   <button
                     type="button"
                     onClick={() => setIsSettingsOpen(false)}
-                    className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#0f172a] font-semibold text-xs hover:bg-[#e2e8f0]"
+                    className="px-4 py-2 rounded-xl bg-[white] text-[#0f172a] font-semibold text-xs hover:bg-[#e2e8f0]"
                   >
                     Cancel
                   </button>
@@ -1260,7 +1260,7 @@ export const Webmail: React.FC<Props> = ({
                   type="email"
                   required
                   placeholder="e.g. operations@cosmocnergy.com"
-                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] font-medium"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] font-medium"
                 />
               </div>
 
@@ -1271,7 +1271,7 @@ export const Webmail: React.FC<Props> = ({
                   type="text"
                   required
                   placeholder="e.g. CosmoCnergy Operations"
-                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] font-medium"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] font-medium"
                 />
               </div>
 
@@ -1282,7 +1282,7 @@ export const Webmail: React.FC<Props> = ({
                     name="imapHost"
                     type="text"
                     defaultValue="mail.cosmocnergy.com"
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] font-mono"
                   />
                 </div>
                 <div>
@@ -1291,7 +1291,7 @@ export const Webmail: React.FC<Props> = ({
                     name="imapPort"
                     type="number"
                     defaultValue={993}
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] font-mono"
                   />
                 </div>
               </div>
@@ -1303,7 +1303,7 @@ export const Webmail: React.FC<Props> = ({
                     name="smtpHost"
                     type="text"
                     defaultValue="mail.cosmocnergy.com"
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] font-mono"
                   />
                 </div>
                 <div>
@@ -1312,7 +1312,7 @@ export const Webmail: React.FC<Props> = ({
                     name="smtpPort"
                     type="number"
                     defaultValue={465}
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] font-mono"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] font-mono"
                   />
                 </div>
               </div>
@@ -1325,7 +1325,7 @@ export const Webmail: React.FC<Props> = ({
                     type="text"
                     required
                     placeholder="user@domain.com"
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a]"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a]"
                   />
                 </div>
                 <div>
@@ -1335,7 +1335,7 @@ export const Webmail: React.FC<Props> = ({
                     type="password"
                     required
                     placeholder="••••••••"
-                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a]"
+                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a]"
                   />
                 </div>
               </div>
@@ -1344,7 +1344,7 @@ export const Webmail: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={() => setIsAddAccountOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#0f172a] font-semibold hover:bg-[#e2e8f0]"
+                  className="px-4 py-2 rounded-xl bg-[white] text-[#0f172a] font-semibold hover:bg-[#e2e8f0]"
                 >
                   Cancel
                 </button>
@@ -1375,7 +1375,7 @@ export const Webmail: React.FC<Props> = ({
             </div>
 
             <form onSubmit={handleSendMail} className="space-y-3 text-xs">
-              <div className="flex items-center gap-2 p-2 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#0f172a]">
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-[white] border border-[#e2e8f0] text-[#0f172a]">
                 <span className="font-semibold text-[#64748b]">From:</span>
                 <span className="font-bold text-[#0f172a]">{activeAccount.senderName}</span>
                 <span className="text-[#64748b] font-mono text-[11px]">({activeAccount.email})</span>
@@ -1389,7 +1389,7 @@ export const Webmail: React.FC<Props> = ({
                   value={composeTo}
                   onChange={e => setComposeTo(e.target.value)}
                   placeholder="vendor.sales@company.com"
-                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
 
@@ -1400,7 +1400,7 @@ export const Webmail: React.FC<Props> = ({
                   value={composeCc}
                   onChange={e => setComposeCc(e.target.value)}
                   placeholder="procurement-lead@cosmocnergy.com"
-                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
@@ -1412,7 +1412,7 @@ export const Webmail: React.FC<Props> = ({
                   value={composeSubject}
                   onChange={e => setComposeSubject(e.target.value)}
                   placeholder="Purchase Order (PO) - 51.2V 100Ah Pack Assembly"
-                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-semibold"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-semibold"
                 />
               </div>
 
@@ -1424,12 +1424,12 @@ export const Webmail: React.FC<Props> = ({
                   value={composeBody}
                   onChange={e => setComposeBody(e.target.value)}
                   placeholder="Type your official procurement dispatch message or quotation inquiry here..."
-                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2.5 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500 leading-relaxed font-sans"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2.5 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500 leading-relaxed font-sans"
                 />
               </div>
 
               {/* Attachment Picker */}
-              <div className="flex items-center justify-between p-3 rounded-2xl bg-[#f8fafc] border border-[#e2e8f0]">
+              <div className="flex items-center justify-between p-3 rounded-2xl bg-[white] border border-[#e2e8f0]">
                 <div className="flex items-center gap-2 text-[#64748b]">
                   <Paperclip className="w-4 h-4 text-emerald-600" />
                   {composeAttachment ? (
@@ -1462,7 +1462,7 @@ export const Webmail: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={handleCloseCompose}
-                  className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#0f172a] font-semibold text-xs hover:bg-[#e2e8f0]"
+                  className="px-4 py-2 rounded-xl bg-[white] text-[#0f172a] font-semibold text-xs hover:bg-[#e2e8f0]"
                 >
                   Discard Draft
                 </button>

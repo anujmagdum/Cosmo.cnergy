@@ -197,14 +197,14 @@ export const EditComponentModal: React.FC<Props> = ({
               <input type="text" required value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                 placeholder="e.g. 3.2V 100Ah LFP Cell"
-                className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-semibold" />
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-semibold" />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block font-semibold text-[#0f172a] mb-1">Category</label>
                 <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-bold">
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-bold">
                   {allCategoryNames.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
               </div>
@@ -213,7 +213,7 @@ export const EditComponentModal: React.FC<Props> = ({
                 <input type="text" value={formData.uom}
                   onChange={e => setFormData({ ...formData, uom: e.target.value })}
                   placeholder="Pcs, Sets, Kg, etc."
-                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium" />
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium" />
               </div>
             </div>
 
@@ -235,7 +235,7 @@ export const EditComponentModal: React.FC<Props> = ({
               </div>
 
               <select value="" onChange={e => { if (e.target.value) handleAddCompany(e.target.value); }}
-                className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium cursor-pointer">
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium cursor-pointer">
                 <option value="">+ Click to add a company to this component...</option>
                 {companies.filter(s => !selectedCompanies.some(sel => sel.company_id === s.id)).map(s => (
                   <option key={s.id} value={s.id}>{s.name} — {s.contact_person || s.category} {s.rating ? ['(★', s.rating, ')'].join(' ') : ''}</option>
@@ -278,7 +278,7 @@ export const EditComponentModal: React.FC<Props> = ({
                     {selectedCompanies.map((s, idx) => {
                       const supp = companies.find(sup => sup.id === s.company_id);
                       return (
-                        <div key={s.company_id} className="p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] space-y-2">
+                        <div key={s.company_id} className="p-3 rounded-xl bg-[white] border border-[#e2e8f0] space-y-2">
                           <div className="flex items-center gap-1.5 text-xs font-bold text-[#0f172a]">
                             <span className="w-4 h-4 rounded-full bg-emerald-600 text-white text-[9px] flex items-center justify-center font-mono">{idx + 1}</span>
                             <span>{supp?.name}</span>
@@ -323,20 +323,20 @@ export const EditComponentModal: React.FC<Props> = ({
                 <label className="block font-semibold text-[#0f172a] mb-1">Price (Rs. INR, Optional)</label>
                 <input type="number" min={0} step="0.01" value={formData.preset_price}
                   onChange={e => setFormData({ ...formData, preset_price: Number(e.target.value) || 0 })}
-                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] font-mono font-bold focus:outline-none focus:border-emerald-500" />
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] font-mono font-bold focus:outline-none focus:border-emerald-500" />
               </div>
               <div>
                 <label className="block font-semibold text-[#0f172a] mb-1">Stock Quantity (In-Stock)</label>
                 <input type="number" min={0} value={formData.in_stock_qty}
                   onChange={e => setFormData({ ...formData, in_stock_qty: Number(e.target.value) || 0 })}
-                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] font-mono font-bold focus:outline-none focus:border-emerald-500" />
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] font-mono font-bold focus:outline-none focus:border-emerald-500" />
               </div>
             </div>
 
             <div>
               <label className="block font-semibold text-[#0f172a] mb-1">Procurement Status</label>
               <select value={formData.procurement_status} onChange={e => setFormData({ ...formData, procurement_status: e.target.value as OrderStatus })}
-                className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-bold">
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-bold">
                 <option value="TO_BE_ORDERED">To be ordered (Amber)</option>
                 <option value="RFQ_SENT">RFQ sent (Blue)</option>
                 <option value="ORDERED">Ordered / PO issued (Purple)</option>
@@ -350,7 +350,7 @@ export const EditComponentModal: React.FC<Props> = ({
               <input type="url" value={formData.image_drive_url}
                 onChange={e => setFormData({ ...formData, image_drive_url: e.target.value })}
                 placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
-                className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono text-xs" />
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono text-xs" />
               <p className="text-[11px] text-[#64748b] mt-1 italic">(Ensure link permissions are set to "Anyone with the link can view")</p>
             </div>
 
@@ -358,13 +358,13 @@ export const EditComponentModal: React.FC<Props> = ({
               <label className="block font-semibold text-[#0f172a] mb-1">Technical Specification (Optional)</label>
               <textarea rows={2} value={formData.specs} onChange={e => setFormData({ ...formData, specs: e.target.value })}
                 placeholder="Technical specs, grade, pinout, voltage..."
-                className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500" />
             </div>
 
           </div>
 
           <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-[#e2e8f0]/60 shrink-0 bg-[white] sm:rounded-b-3xl">
-            <button type="button" onClick={onClose} className="px-4 py-2 rounded-xl bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#0f172a] font-semibold">Cancel</button>
+            <button type="button" onClick={onClose} className="px-4 py-2 rounded-xl bg-[white] hover:bg-[#e2e8f0] text-[#0f172a] font-semibold">Cancel</button>
             <button type="submit" className="px-6 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-500/20 active:scale-95 transition-all">Update Component</button>
           </div>
         </form>

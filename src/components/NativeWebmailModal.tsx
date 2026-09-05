@@ -162,7 +162,7 @@ Cosmo Cnergy`;
                 value={toEmail}
                 onChange={e => setToEmail(e.target.value)}
                 placeholder="sales@vendor.com"
-                className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
               />
             </div>
 
@@ -174,7 +174,7 @@ Cosmo Cnergy`;
                 required
                 value={subject}
                 onChange={e => setSubject(e.target.value)}
-                className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
               />
             </div>
 
@@ -186,7 +186,7 @@ Cosmo Cnergy`;
                 required
                 value={bodyText}
                 onChange={e => setBodyText(e.target.value)}
-                className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl p-3 text-xs text-[#0f172a] font-mono focus:outline-none focus:border-emerald-500 leading-relaxed resize-none"
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl p-3 text-xs text-[#0f172a] font-mono focus:outline-none focus:border-emerald-500 leading-relaxed resize-none"
               />
             </div>
 
@@ -194,7 +194,7 @@ Cosmo Cnergy`;
             <div>
               <label className="block font-semibold text-[#0f172a] mb-1">Attachments</label>
               <div className="flex items-center gap-2">
-                <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#f8fafc] hover:bg-[#e2e8f0] border border-[#e2e8f0] text-[#0f172a] cursor-pointer text-xs font-semibold">
+                <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[white] hover:bg-[#e2e8f0] border border-[#e2e8f0] text-[#0f172a] cursor-pointer text-xs font-semibold">
                   <Paperclip className="w-3.5 h-3.5 text-emerald-600" />
                   <span>Attach Document</span>
                   <input type="file" multiple onChange={handleFileChange} className="hidden" />
@@ -209,7 +209,7 @@ Cosmo Cnergy`;
                   {attachedFiles.map((file, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-1.5 bg-[#f8fafc] border border-[#e2e8f0] px-2.5 py-1 rounded-lg text-xs"
+                      className="flex items-center gap-1.5 bg-[white] border border-[#e2e8f0] px-2.5 py-1 rounded-lg text-xs"
                     >
                       <FileText className="w-3 h-3 text-emerald-600" />
                       <span className="truncate max-w-[120px] font-medium">{file.name}</span>
@@ -227,7 +227,7 @@ Cosmo Cnergy`;
             </div>
 
             {/* Corporate Auto Signature Card */}
-            <div className="bg-[#f8fafc] p-3 rounded-xl border border-[#e2e8f0] space-y-1 text-[11px] text-[#64748b]">
+            <div className="bg-[white] p-3 rounded-xl border border-[#e2e8f0] space-y-1 text-[11px] text-[#64748b]">
               <span className="font-bold text-[#0f172a] block">Verified Procurement Footprint:</span>
               <p>CosmoCnergy Procurement Ltd. • Unit 4, Energy Tech Park, Pune / New Delhi, India</p>
             </div>
@@ -237,7 +237,7 @@ Cosmo Cnergy`;
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#0f172a] font-semibold hover:bg-[#e2e8f0]"
+                className="px-4 py-2 rounded-xl bg-[white] text-[#0f172a] font-semibold hover:bg-[#e2e8f0]"
               >
                 Cancel
               </button>
