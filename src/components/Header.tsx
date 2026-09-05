@@ -96,7 +96,7 @@ export const Header: React.FC<Props> = ({
                 <span className="font-extrabold text-lg tracking-tight text-white font-sans">
                   COSMO<span className="text-emerald-400">CNERGY</span>
                 </span>
-                <span className="hidden sm:inline-block ml-2 text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-950/80 px-1.5 py-0.5 rounded border border-emerald-500/30">
+                <span className="hidden sm:inline-block ml-2 text-[10px] font-medium tracking-wide text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700/60">
                   Procurement OS
                 </span>
               </div>
@@ -154,7 +154,7 @@ export const Header: React.FC<Props> = ({
                   >
                     <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-indigo-400'}`} />
                     <span>{item.label}</span>
-                    <span className="px-1.5 py-0.2 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-[9px] font-extrabold uppercase tracking-wider">
+                    <span className="px-1.5 py-0.5 rounded-md bg-slate-800/70 text-slate-400 border border-slate-700 text-[9px] font-medium tracking-wider">
                       PRO
                     </span>
                   </button>
@@ -178,7 +178,7 @@ export const Header: React.FC<Props> = ({
                       className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
                         isActive
                           ? 'bg-white/20 text-white'
-                          : 'bg-slate-800 text-emerald-400 border border-emerald-500/30'
+                          : 'bg-slate-800 text-slate-400 border border-slate-700'
                       }`}
                     >
                       {item.count}
@@ -205,7 +205,7 @@ export const Header: React.FC<Props> = ({
               <PlusCircle className="w-3.5 h-3.5" />
               <span className="hidden md:inline">1-Tap BOM PO</span>
               <span className="md:hidden">BOM PO</span>
-              <span className="px-1.5 py-0.2 rounded bg-white/20 text-[9px] font-mono font-black">FAST</span>
+              
             </button>
 
             {/* User Profile Badge (Desktop) */}
@@ -285,78 +285,7 @@ export const Header: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Datlion Cnergy-Inspired Contextual Sub-Navigation Bar */}
-      <div className="bg-[#071322] border-t border-slate-800/80 px-4 lg:px-8 py-1.5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto scrollbar-hide text-xs gap-3">
-          {/* Active Section Context Indicator */}
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Active View:</span>
-            <span className="px-2.5 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 font-extrabold text-[11px] border border-emerald-500/20 capitalize">
-              {activeTab === 'inventory' ? 'Inventory' : activeTab === 'companies' ? 'Companies' : activeTab === 'procurement' ? 'Procurement' : activeTab === 'ai' ? 'AI Procurement Studio' : 'Webmail'}
-            </span>
-          </div>
 
-          {/* Contextual Quick Actions per Active Tab */}
-          <div className="flex items-center gap-2 shrink-0">
-            {activeTab === 'inventory' && (
-              <>
-                {onOpenAddFolder && (
-                  <button
-                    onClick={onOpenAddFolder}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#10243E] hover:bg-[#1E3E62] text-slate-200 hover:text-white border border-slate-700 font-bold text-[11px] transition-all"
-                  >
-                    <FolderPlus className="w-3 h-3 text-emerald-400" />
-                    <span>+ Folder</span>
-                  </button>
-                )}
-                {onOpenAddCatalog && (
-                  <button
-                    onClick={onOpenAddCatalog}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition-all shadow-xs"
-                  >
-                    <Plus className="w-3 h-3" />
-                    <span>+ Component</span>
-                  </button>
-                )}
-              </>
-            )}
-
-            {activeTab === 'companies' && onOpenAddCompany && (
-              <button
-                onClick={onOpenAddCompany}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition-all shadow-xs"
-              >
-                <Plus className="w-3 h-3" />
-                <span>+ Company</span>
-              </button>
-            )}
-
-            {activeTab === 'procurement' && (
-              <button
-                onClick={onOpenBOMModal}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition-all shadow-xs"
-              >
-                <PlusCircle className="w-3 h-3" />
-                <span>+ Create 1-Tap PO</span>
-              </button>
-            )}
-
-            {activeTab === 'webmail' && (
-              <span className="text-[11px] text-slate-400 flex items-center gap-1.5 font-medium">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                Background Dispatch Active
-              </span>
-            )}
-
-            {activeTab === 'ai' && (
-              <span className="text-[11px] text-purple-300 flex items-center gap-1.5 font-medium">
-                <Sparkles className="w-3 h-3 text-pink-400" />
-                Gemini & OpenRouter Engine Active
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
 
       {/* Mobile Profile Dropdown Menu Drawer */}
       {isProfileDropdownOpen && userName && (

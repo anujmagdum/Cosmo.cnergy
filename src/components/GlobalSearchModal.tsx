@@ -118,9 +118,9 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/80 backdrop-blur-md p-2 sm:p-6 overflow-y-auto pt-3 sm:pt-14">
-      <div className="bg-[#FDF6E3] w-full max-w-4xl rounded-2xl sm:rounded-3xl border border-[#D6D1B1] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-[#073642] flex flex-col max-h-[94vh]">
+      <div className="bg-[white] w-full max-w-4xl rounded-2xl sm:rounded-3xl border border-[#e2e8f0] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-[#0f172a] flex flex-col max-h-[94vh]">
         {/* Top Search Input Bar */}
-        <div className="p-5 border-b border-[#D6D1B1]/60 bg-[#0B192C] text-white flex items-center gap-3">
+        <div className="p-5 border-b border-[#e2e8f0]/60 bg-[#0B192C] text-white flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shrink-0 shadow-md shadow-emerald-500/20">
             <Search className="w-5 h-5" />
           </div>
@@ -153,14 +153,14 @@ export const GlobalSearchModal: React.FC<Props> = ({
         </div>
 
         {/* Filter Pills Bar */}
-        <div className="px-6 py-3 bg-[#EEE8D5] border-b border-[#D6D1B1] flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div className="px-6 py-3 bg-[#f8fafc] border-b border-[#e2e8f0] flex flex-wrap items-center justify-between gap-2 text-xs">
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setActiveCategoryFilter('ALL')}
               className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                 activeCategoryFilter === 'ALL'
                   ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-[#FDF6E3] text-[#073642] hover:bg-[#E4DDC7] border border-[#D6D1B1]'
+                  : 'bg-[white] text-[#0f172a] hover:bg-[#e2e8f0] border border-[#e2e8f0]'
               }`}
             >
               All Results ({results.totalCount})
@@ -171,7 +171,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                 activeCategoryFilter === 'COMPONENTS'
                   ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-[#FDF6E3] text-[#073642] hover:bg-[#E4DDC7] border border-[#D6D1B1]'
+                  : 'bg-[white] text-[#0f172a] hover:bg-[#e2e8f0] border border-[#e2e8f0]'
               }`}
             >
               Components ({results.components.length})
@@ -182,7 +182,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                 activeCategoryFilter === 'FOLDERS'
                   ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-[#FDF6E3] text-[#073642] hover:bg-[#E4DDC7] border border-[#D6D1B1]'
+                  : 'bg-[white] text-[#0f172a] hover:bg-[#e2e8f0] border border-[#e2e8f0]'
               }`}
             >
               Product Folders ({results.folders.length})
@@ -193,14 +193,14 @@ export const GlobalSearchModal: React.FC<Props> = ({
               className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                 activeCategoryFilter === 'SUPPLIERS'
                   ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-[#FDF6E3] text-[#073642] hover:bg-[#E4DDC7] border border-[#D6D1B1]'
+                  : 'bg-[white] text-[#0f172a] hover:bg-[#e2e8f0] border border-[#e2e8f0]'
               }`}
             >
               Companies ({results.companies.length})
             </button>
           </div>
 
-          <span className="text-[11px] text-[#586E75] font-semibold hidden sm:inline">
+          <span className="text-[11px] text-[#64748b] font-semibold hidden sm:inline">
             300ms Real-time Cross-Entity Search
           </span>
         </div>
@@ -208,18 +208,18 @@ export const GlobalSearchModal: React.FC<Props> = ({
         {/* Results Body */}
         <div className="p-6 space-y-6 max-h-[65vh] overflow-y-auto">
           {!debouncedQuery ? (
-            <div className="py-12 text-center space-y-3 text-[#586E75]">
+            <div className="py-12 text-center space-y-3 text-[#64748b]">
               <Sparkles className="w-10 h-10 text-emerald-600 mx-auto opacity-80" />
-              <p className="text-sm font-semibold text-[#073642]">
+              <p className="text-sm font-semibold text-[#0f172a]">
                 Type any component name, part number, SKU, product folder, or company name.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs">
-                <span className="text-[#586E75]">Try searching:</span>
+                <span className="text-[#64748b]">Try searching:</span>
                 {['3.2V LFP', 'Smart BMS', 'Copper Busbar', '51.2V', 'CellTech'].map(sample => (
                   <button
                     key={sample}
                     onClick={() => setSearchTerm(sample)}
-                    className="px-2.5 py-1 rounded-lg bg-[#EEE8D5] hover:bg-emerald-100 text-[#073642] hover:text-emerald-800 border border-[#D6D1B1] font-mono text-xs font-bold transition-all"
+                    className="px-2.5 py-1 rounded-lg bg-[#f8fafc] hover:bg-emerald-100 text-[#0f172a] hover:text-emerald-800 border border-[#e2e8f0] font-mono text-xs font-bold transition-all"
                   >
                     {sample}
                   </button>
@@ -227,10 +227,10 @@ export const GlobalSearchModal: React.FC<Props> = ({
               </div>
             </div>
           ) : results.totalCount === 0 ? (
-            <div className="py-12 text-center space-y-2 text-[#586E75]">
+            <div className="py-12 text-center space-y-2 text-[#64748b]">
               <Package className="w-10 h-10 text-[#93A1A1] mx-auto" />
-              <h4 className="font-bold text-[#073642]">No results found for "{debouncedQuery}"</h4>
-              <p className="text-xs text-[#586E75]">
+              <h4 className="font-bold text-[#0f172a]">No results found for "{debouncedQuery}"</h4>
+              <p className="text-xs text-[#64748b]">
                 Check for typos or try searching a broader term like "Cell", "BMS", or "Pack".
               </p>
             </div>
@@ -240,7 +240,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               {(activeCategoryFilter === 'ALL' || activeCategoryFilter === 'COMPONENTS') &&
                 results.components.length > 0 && (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#586E75] uppercase tracking-wider">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#64748b] uppercase tracking-wider">
                       <Package className="w-4 h-4 text-emerald-600" />
                       <span>Components & Raw Materials ({results.components.length})</span>
                     </div>
@@ -253,24 +253,24 @@ export const GlobalSearchModal: React.FC<Props> = ({
                         return (
                           <div
                             key={item.id}
-                            className="bg-[#EEE8D5] rounded-2xl border border-[#D6D1B1] shadow-sm overflow-hidden hover:border-emerald-500 transition-all"
+                            className="bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] shadow-sm overflow-hidden hover:border-emerald-500 transition-all"
                           >
                             {/* Component Summary Card */}
-                            <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#EEE8D5]">
+                            <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#f8fafc]">
                               <div className="space-y-1 flex-1">
                                 <div className="flex items-center gap-2">
-                                  <h4 className="font-bold text-[#073642] text-sm">{item.title}</h4>
+                                  <h4 className="font-bold text-[#0f172a] text-sm">{item.title}</h4>
                                   <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                                     {item.metadata?.sku}
                                   </span>
                                 </div>
-                                <p className="text-xs text-[#586E75]">{item.metadata?.specs}</p>
-                                <div className="flex items-center gap-3 text-xs text-[#586E75] pt-1">
+                                <p className="text-xs text-[#64748b]">{item.metadata?.specs}</p>
+                                <div className="flex items-center gap-3 text-xs text-[#64748b] pt-1">
                                   <span>
                                     Preset Price: <strong className="text-emerald-800 font-mono">₹{item.metadata?.presetPrice?.toLocaleString('en-IN')}</strong> / {item.metadata?.uom}
                                   </span>
                                   <span>•</span>
-                                  <span>Stock: <strong className="text-[#073642] font-mono">{item.metadata?.inStockQty || 0}</strong> {item.metadata?.uom}</span>
+                                  <span>Stock: <strong className="text-[#0f172a] font-mono">{item.metadata?.inStockQty || 0}</strong> {item.metadata?.uom}</span>
                                 </div>
                               </div>
 
@@ -278,7 +278,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                               <div className="flex items-center gap-2">
                                 <button
                                   onClick={() => toggleComponentExpand(item.id)}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FDF6E3] hover:bg-emerald-50 text-emerald-800 border border-[#D6D1B1] text-xs font-bold transition-all"
+                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[white] hover:bg-emerald-50 text-emerald-800 border border-[#e2e8f0] text-xs font-bold transition-all"
                                 >
                                   <span>{companiesList.length} Associated Company(s)</span>
                                   {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -289,7 +289,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                     onNavigateTab('inventory');
                                     onClose();
                                   }}
-                                  className="p-2 rounded-xl bg-[#FDF6E3] hover:bg-[#E4DDC7] text-[#073642] text-xs transition-all border border-[#D6D1B1]"
+                                  className="p-2 rounded-xl bg-[white] hover:bg-[#e2e8f0] text-[#0f172a] text-xs transition-all border border-[#e2e8f0]"
                                   title="View in Inventory"
                                 >
                                   <ExternalLink className="w-3.5 h-3.5" />
@@ -299,8 +299,8 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
                             {/* RELATIONAL EXPANSION: Associated Companies List */}
                             {isExpanded && (
-                              <div className="p-4 bg-[#FDF6E3] border-t border-[#D6D1B1] space-y-2.5">
-                                <span className="text-[11px] font-bold text-[#586E75] uppercase tracking-wider block">
+                              <div className="p-4 bg-[white] border-t border-[#e2e8f0] space-y-2.5">
+                                <span className="text-[11px] font-bold text-[#64748b] uppercase tracking-wider block">
                                   Supplying Vendors for {item.title}:
                                 </span>
 
@@ -308,19 +308,19 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                   {companiesList.map(supp => (
                                     <div
                                       key={supp.companyId}
-                                      className="p-3 bg-[#EEE8D5] rounded-xl border border-[#D6D1B1] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:shadow-xs transition-all"
+                                      className="p-3 bg-[#f8fafc] rounded-xl border border-[#e2e8f0] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:shadow-xs transition-all"
                                     >
                                       <div className="space-y-0.5">
                                         <div className="flex items-center gap-2">
                                           <Building2 className="w-3.5 h-3.5 text-emerald-600" />
-                                          <span className="font-bold text-xs text-[#073642]">{supp.companyName}</span>
+                                          <span className="font-bold text-xs text-[#0f172a]">{supp.companyName}</span>
                                           {supp.isPrimary && (
                                             <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                                               Primary Vendor
                                             </span>
                                           )}
                                         </div>
-                                        <div className="text-[11px] text-[#586E75]">
+                                        <div className="text-[11px] text-[#64748b]">
                                           Rate: <strong className="text-emerald-800 font-mono">₹{supp.unitPrice?.toLocaleString('en-IN')}</strong> • Lead Time: {supp.leadTime} • Contact: {supp.contactPerson || supp.email}
                                         </div>
                                       </div>
@@ -342,7 +342,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                               const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(`Hi ${supp.companyName}, request for quote for ${item.title} (${item.metadata?.sku}).`)}`;
                                               window.open(waUrl, '_blank');
                                             }}
-                                            className="p-1.5 rounded-lg bg-[#FDF6E3] hover:bg-[#E4DDC7] text-emerald-800 border border-[#D6D1B1] text-xs transition-all"
+                                            className="p-1.5 rounded-lg bg-[white] hover:bg-[#e2e8f0] text-emerald-800 border border-[#e2e8f0] text-xs transition-all"
                                             title="WhatsApp Company"
                                           >
                                             <MessageSquare className="w-3.5 h-3.5" />
@@ -365,7 +365,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               {(activeCategoryFilter === 'ALL' || activeCategoryFilter === 'FOLDERS') &&
                 results.folders.length > 0 && (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#586E75] uppercase tracking-wider">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#64748b] uppercase tracking-wider">
                       <Folder className="w-4 h-4 text-emerald-600" />
                       <span>Product Folders & BOMs ({results.folders.length})</span>
                     </div>
@@ -374,20 +374,20 @@ export const GlobalSearchModal: React.FC<Props> = ({
                       {results.folders.map(folder => (
                         <div
                           key={folder.id}
-                          className="p-4 bg-[#EEE8D5] rounded-2xl border border-[#D6D1B1] hover:border-emerald-500 shadow-sm space-y-2.5 transition-all"
+                          className="p-4 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] hover:border-emerald-500 shadow-sm space-y-2.5 transition-all"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <h4 className="font-bold text-[#073642] text-sm">{folder.title}</h4>
-                              <p className="text-xs text-[#586E75]">{folder.subtitle}</p>
+                              <h4 className="font-bold text-[#0f172a] text-sm">{folder.title}</h4>
+                              <p className="text-xs text-[#64748b]">{folder.subtitle}</p>
                             </div>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FDF6E3] text-[#073642] border border-[#D6D1B1]">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[white] text-[#0f172a] border border-[#e2e8f0]">
                               {folder.metadata?.folderComponentsCount || 0} Components
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between pt-2 border-t border-[#D6D1B1]/60 text-xs">
-                            <span className="text-[#586E75]">
+                          <div className="flex items-center justify-between pt-2 border-t border-[#e2e8f0]/60 text-xs">
+                            <span className="text-[#64748b]">
                               Linked POs: <strong>{folder.metadata?.linkedPosCount || 0}</strong>
                             </span>
 
@@ -412,7 +412,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               {(activeCategoryFilter === 'ALL' || activeCategoryFilter === 'ORDERS') &&
                 (results.orders || []).length > 0 && (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#586E75] uppercase tracking-wider">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#64748b] uppercase tracking-wider">
                       <Send className="w-4 h-4 text-emerald-600" />
                       <span>Procurement Orders & Invoices ({results.orders.length})</span>
                     </div>
@@ -421,19 +421,19 @@ export const GlobalSearchModal: React.FC<Props> = ({
                       {results.orders.map(orderItem => (
                         <div
                           key={orderItem.id}
-                          className="p-4 bg-[#EEE8D5] rounded-2xl border border-[#D6D1B1] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
+                          className="p-4 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <h4 className="font-bold text-[#073642] text-sm font-mono">{orderItem.title}</h4>
-                              <p className="text-xs text-[#586E75]">{orderItem.subtitle}</p>
+                              <h4 className="font-bold text-[#0f172a] text-sm font-mono">{orderItem.title}</h4>
+                              <p className="text-xs text-[#64748b]">{orderItem.subtitle}</p>
                             </div>
                             <span className="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
                               {orderItem.metadata?.status}
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between pt-2 border-t border-[#D6D1B1]/60 text-xs">
+                          <div className="flex items-center justify-between pt-2 border-t border-[#e2e8f0]/60 text-xs">
                             <span className="text-emerald-800 font-bold font-mono">
                               ₹{Number(orderItem.metadata?.totalAmount || 0).toLocaleString('en-IN')}
                             </span>
@@ -459,7 +459,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               {(activeCategoryFilter === 'ALL' || activeCategoryFilter === 'SUPPLIERS') &&
                 results.companies.length > 0 && (
                   <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#586E75] uppercase tracking-wider">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#64748b] uppercase tracking-wider">
                       <Truck className="w-4 h-4 text-emerald-600" />
                       <span>Companies & Partners ({results.companies.length})</span>
                     </div>
@@ -468,20 +468,20 @@ export const GlobalSearchModal: React.FC<Props> = ({
                       {results.companies.map(supp => (
                         <div
                           key={supp.id}
-                          className="p-4 bg-[#EEE8D5] rounded-2xl border border-[#D6D1B1] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
+                          className="p-4 bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <h4 className="font-bold text-[#073642] text-sm">{supp.title}</h4>
-                              <p className="text-xs text-[#586E75]">{supp.subtitle}</p>
+                              <h4 className="font-bold text-[#0f172a] text-sm">{supp.title}</h4>
+                              <p className="text-xs text-[#64748b]">{supp.subtitle}</p>
                             </div>
                             <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
                               ★ {supp.metadata?.rating || 4.8}
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between pt-2 border-t border-[#D6D1B1]/60 text-xs">
-                            <span className="text-[#586E75] truncate max-w-[150px]">
+                          <div className="flex items-center justify-between pt-2 border-t border-[#e2e8f0]/60 text-xs">
+                            <span className="text-[#64748b] truncate max-w-[150px]">
                               {supp.metadata?.phone || supp.metadata?.email}
                             </span>
 
@@ -506,9 +506,9 @@ export const GlobalSearchModal: React.FC<Props> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-[#EEE8D5] border-t border-[#D6D1B1] flex items-center justify-between text-xs text-[#586E75]">
+        <div className="p-4 bg-[#f8fafc] border-t border-[#e2e8f0] flex items-center justify-between text-xs text-[#64748b]">
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded bg-[#FDF6E3] text-[#073642] font-mono font-bold text-[10px] border border-[#D6D1B1]">
+            <span className="px-2 py-0.5 rounded bg-[white] text-[#0f172a] font-mono font-bold text-[10px] border border-[#e2e8f0]">
               Ctrl+K
             </span>
             <span>Universal cross-entity search with company expansion</span>
@@ -516,7 +516,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-[#FDF6E3] hover:bg-[#E4DDC7] text-[#073642] font-semibold transition-all border border-[#D6D1B1]"
+            className="px-4 py-1.5 rounded-xl bg-[white] hover:bg-[#e2e8f0] text-[#0f172a] font-semibold transition-all border border-[#e2e8f0]"
           >
             Close
           </button>

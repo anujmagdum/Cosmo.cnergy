@@ -35,6 +35,7 @@ import {
   X,
   Check,
   Layers,
+  Calculator,
   PlusCircle,
   Send,
   Edit2,
@@ -370,6 +371,7 @@ Please send your best quote & availability.`;
   const [reOrderConfirmData, setReOrderConfirmData] = useState<{ item: CatalogItem; qty: number } | null>(null);
   const [toastFeedback, setToastFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [reorderQtyMap, setReorderQtyMap] = useState<Record<string, number>>({});
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
 
   const allCategoryNames = useMemo<string[]>(() => {
     const legacyToExclude = new Set([
@@ -634,7 +636,7 @@ Cosmo.cnergy Procurement Team`;
             date: new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }),
             timestamp: Date.now(),
             snippet: bulkSendBody.substring(0, 120),
-            bodyHtml: `<div style="font-family: Arial, sans-serif; font-size: 14px; color: #073642; line-height: 1.6;">${bulkSendBody.replace(/\n/g, '<br/>')}</div>`,
+            bodyHtml: `<div style="font-family: Arial, sans-serif; font-size: 14px; color: #0f172a; line-height: 1.6;">${bulkSendBody.replace(/\n/g, '<br/>')}</div>`,
             isUnread: false,
             isStarred: false,
             hasAttachments: !!bulkSendAttachment
@@ -906,24 +908,24 @@ Cosmo.cnergy Procurement Team`;
         {/* 1. To Be Ordered (Dynamic Bottleneck Alert: Stock <= 20%) */}
         <div
           onClick={() => setActiveStatusFilter(activeStatusFilter === 'TO_BE_ORDERED' ? 'ALL' : 'TO_BE_ORDERED')}
-          className={`rounded-2xl p-4 border transition-all cursor-pointer flex flex-col justify-between select-none ${
+          className={`rounded-xl p-4 border transition-all cursor-pointer flex flex-col justify-between select-none ${
             activeStatusFilter === 'TO_BE_ORDERED'
-              ? 'bg-amber-500 text-slate-950 border-amber-600 shadow-lg ring-2 ring-amber-500/40 font-bold scale-[1.01]'
-              : 'bg-[#FDF6E3] hover:bg-amber-50/80 border-[#D6D1B1] hover:border-amber-400 shadow-xs'
+              ? 'bg-amber-50 text-amber-950 border-amber-400 shadow-sm ring-2 ring-amber-400/40 font-bold scale-[1.01]'
+              : 'bg-white hover:bg-amber-50/50 border-slate-200 hover:border-amber-300 shadow-xs'
           }`}
           title="Click to filter components needing to be ordered (Stock <= 20%)"
         >
           <div className="flex items-center justify-between">
             <span
-              className={`text-[10px] sm:text-xs font-black uppercase tracking-wide flex items-center gap-1.5 ${
-                activeStatusFilter === 'TO_BE_ORDERED' ? 'text-slate-950' : 'text-[#586E75]'
+              className={`text-[10px] sm:text-xs font-bold uppercase tracking-wide flex items-center gap-1.5 ${
+                activeStatusFilter === 'TO_BE_ORDERED' ? 'text-amber-900' : 'text-slate-500'
               }`}
             >
               <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-              To Be Ordered (Stock &le; 20%)
+              Stock Bottlenecks (Stock &le; 20%)
             </span>
             {activeStatusFilter === 'TO_BE_ORDERED' && (
-              <span className="text-[10px] font-black uppercase bg-slate-950 text-amber-400 px-2 py-0.5 rounded">
+              <span className="text-[10px] font-bold uppercase bg-amber-200 text-amber-900 px-2 py-0.5 rounded-md border border-amber-300">
                 Active Filter
               </span>
             )}
@@ -931,18 +933,12 @@ Cosmo.cnergy Procurement Team`;
           <div className="flex items-end justify-between mt-3">
             <span
               className={`text-2xl sm:text-3xl font-extrabold font-mono ${
-                activeStatusFilter === 'TO_BE_ORDERED' ? 'text-slate-950' : 'text-amber-600'
+                activeStatusFilter === 'TO_BE_ORDERED' ? 'text-amber-950' : 'text-amber-600'
               }`}
             >
               {counts.to_be_ordered}
             </span>
-            <span
-              className={`w-9 h-9 rounded-xl flex items-center justify-center border text-lg ${
-                activeStatusFilter === 'TO_BE_ORDERED'
-                  ? 'bg-slate-950/20 border-slate-950/30'
-                  : 'bg-amber-200/50 border-amber-300'
-              }`}
-            >
+            <span className="w-9 h-9 rounded-xl flex items-center justify-center border border-amber-200 bg-amber-50 text-lg">
               ⏳
             </span>
           </div>
@@ -951,23 +947,23 @@ Cosmo.cnergy Procurement Team`;
         {/* 2. All Procurement Records */}
         <div
           onClick={() => setActiveStatusFilter('ALL')}
-          className={`rounded-2xl p-4 border transition-all cursor-pointer flex flex-col justify-between select-none ${
+          className={`rounded-xl p-4 border transition-all cursor-pointer flex flex-col justify-between select-none ${
             activeStatusFilter === 'ALL'
-              ? 'bg-[#0B192C] text-white border-slate-700 shadow-lg ring-2 ring-slate-600/40 font-bold scale-[1.01]'
-              : 'bg-[#FDF6E3] hover:bg-[#EEE8D5] border-[#D6D1B1] shadow-xs'
+              ? 'bg-slate-900 text-white border-slate-800 shadow-sm ring-2 ring-slate-700/50 font-bold scale-[1.01]'
+              : 'bg-white hover:bg-slate-50 border-slate-200 shadow-xs'
           }`}
-          title="Click to view all component procurement records"
+          title="Click to view all component inventory records"
         >
           <div className="flex items-center justify-between">
             <span
-              className={`text-[10px] sm:text-xs font-black uppercase tracking-wide ${
-                activeStatusFilter === 'ALL' ? 'text-slate-300' : 'text-[#586E75]'
+              className={`text-[10px] sm:text-xs font-bold uppercase tracking-wide ${
+                activeStatusFilter === 'ALL' ? 'text-slate-300' : 'text-slate-500'
               }`}
             >
-              All Procurement Records
+              Total Catalog Components
             </span>
             {activeStatusFilter === 'ALL' && (
-              <span className="text-[10px] font-black uppercase bg-emerald-500 text-white px-2 py-0.5 rounded">
+              <span className="text-[10px] font-bold uppercase bg-emerald-600 text-white px-2 py-0.5 rounded-md">
                 All View
               </span>
             )}
@@ -975,18 +971,12 @@ Cosmo.cnergy Procurement Team`;
           <div className="flex items-end justify-between mt-3">
             <span
               className={`text-2xl sm:text-3xl font-extrabold font-mono ${
-                activeStatusFilter === 'ALL' ? 'text-white' : 'text-[#073642]'
+                activeStatusFilter === 'ALL' ? 'text-white' : 'text-slate-900'
               }`}
             >
               {counts.total}
             </span>
-            <span
-              className={`w-9 h-9 rounded-xl flex items-center justify-center border text-lg ${
-                activeStatusFilter === 'ALL'
-                  ? 'bg-slate-800 border-slate-700'
-                  : 'bg-slate-200/50 border-slate-300'
-              }`}
-            >
+            <span className="w-9 h-9 rounded-xl flex items-center justify-center border border-slate-200 bg-slate-100 text-lg">
               📋
             </span>
           </div>
@@ -1006,29 +996,42 @@ Cosmo.cnergy Procurement Team`;
       )}
 
       {/* Primary Action Header Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-5 rounded-2xl bg-[#0B192C] text-white shadow-md">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-xl bg-white border border-slate-200 text-slate-900 shadow-xs">
         <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-            <Layers className="w-7 h-7 text-emerald-400" />
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2.5">
+            <Layers className="w-6 h-6 text-emerald-600" />
             <span>Components & Product Catalog</span>
           </h2>
-          <p className="text-xs text-slate-300 mt-1">
-            Ultra-dense ladder inventory, assembly folders, relational BOM recipes, and 1-Tap procurement routing.
+          <p className="text-xs text-slate-500 mt-1">
+            Component inventory, assembly folders, relational multi-vendor pricing, and 1-Tap procurement routing.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Build Capacity Drawer Trigger */}
           <button
-            onClick={() => setIsAddFolderOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
+            type="button"
+            onClick={() => setIsCalculatorOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
+            title="Open SKU Build Capacity Calculator in slide-over drawer"
           >
-            <FolderPlus className="w-4 h-4" />
+            <Calculator className="w-4 h-4 text-emerald-600" />
+            <span>Build Calculator</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsAddFolderOpen(true)}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
+          >
+            <FolderPlus className="w-4 h-4 text-slate-600" />
             <span>+ Product Folder</span>
           </button>
 
           <button
+            type="button"
             onClick={() => setIsAddCatalogOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>+ Add Component</span>
@@ -1051,82 +1054,91 @@ Cosmo.cnergy Procurement Team`;
         }}
       />
 
-      {/* SKU Capacity Calculator Widget */}
-      <SKUCapacityCalculator catalog={catalog} boms={boms} folders={folders} />
 
-      {/* Filter, Search & Category Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between py-4">
-        <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-[#586E75] absolute left-3.5 top-3" />
-          <input
-            type="text"
-            placeholder="Search components, folders, specs, categories..."
-            value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-xl pl-10 pr-4 py-2 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 transition-all shadow-sm font-medium placeholder-[#586E75]"
-          />
-        </div>
-
-        {/* Category Pills with Immediate Click-to-Filter Reactivity */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-          <button
-            onClick={() => handleSelectCategory('ALL')}
-            className={`px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-              selectedCategoryFilter.toLowerCase() === 'all'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'bg-[#FDF6E3] text-[#073642] hover:bg-[#EEE8D5] border border-[#D6D1B1]'
-            }`}
-          >
-            All ({catalog.length})
-          </button>
-
-          {allCategoryNames.map(cat => {
-            const count = catalog.filter(
-              c =>
-                (c.category || '').toLowerCase().trim() === cat.toLowerCase().trim() ||
-                (c.category_id && categories.find(ct => ct.id === c.category_id)?.name.toLowerCase().trim() === cat.toLowerCase().trim())
-            ).length;
-
-            return (
+      {/* Persistent Sticky Quick-Search & Category Filter Bar */}
+      <div className="sticky top-14 z-20 bg-[#f8fafc]/95 backdrop-blur-md py-3 space-y-2.5 border-b border-slate-200">
+        <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+          <div className="relative w-full sm:w-96">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
+            <input
+              type="text"
+              placeholder="Search by SKU, Value, Package, Name, Specs, Category..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-8 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all shadow-xs font-medium placeholder-slate-400"
+            />
+            {searchTerm && (
               <button
-                key={cat}
-                onClick={() => handleSelectCategory(cat)}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                  selectedCategoryFilter.toLowerCase() === cat.toLowerCase()
-                    ? 'bg-emerald-600 text-white font-bold shadow-sm'
-                    : 'bg-[#FDF6E3] text-[#073642] hover:bg-[#EEE8D5] border border-[#D6D1B1]'
-                }`}
+                type="button"
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-2 text-slate-400 hover:text-slate-600 text-xs font-bold"
               >
-                {cat} ({count})
+                ✕
               </button>
-            );
-          })}
+            )}
+          </div>
+
+          {/* Category Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-hide">
+            <button
+              onClick={() => handleSelectCategory('ALL')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+                selectedCategoryFilter.toLowerCase() === 'all'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+              }`}
+            >
+              All ({catalog.length})
+            </button>
+
+            {allCategoryNames.map(cat => {
+              const count = catalog.filter(
+                c =>
+                  (c.category || '').toLowerCase().trim() === cat.toLowerCase().trim() ||
+                  (c.category_id && categories.find(ct => ct.id === c.category_id)?.name.toLowerCase().trim() === cat.toLowerCase().trim())
+              ).length;
+
+              return (
+                <button
+                  key={cat}
+                  onClick={() => handleSelectCategory(cat)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                    selectedCategoryFilter.toLowerCase() === cat.toLowerCase()
+                      ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                      : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  }`}
+                >
+                  {cat} ({count})
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* SUBSECTION 1: PRODUCT FOLDERS (Collapsible Accordion Header - Collapsed by Default) */}
-      <div className="bg-[#FDF6E3] border border-[#D6D1B1] rounded-2xl p-3.5 shadow-2xs transition-all">
+      <div className="bg-[white] border border-[#e2e8f0] rounded-2xl p-3.5 shadow-2xs transition-all">
         <div className="flex items-center justify-between">
           <button
             type="button"
             onClick={() => setIsFoldersExpanded(prev => !prev)}
-            className="flex items-center gap-2.5 text-left text-sm font-bold text-[#073642] hover:text-emerald-800 transition-colors cursor-pointer group py-0.5 select-none"
+            className="flex items-center gap-2.5 text-left text-sm font-bold text-[#0f172a] hover:text-emerald-800 transition-colors cursor-pointer group py-0.5 select-none"
             title={isFoldersExpanded ? "Click to collapse Product Folders" : "Click to expand Product Folders"}
           >
-            <div className="w-6 h-6 rounded-lg bg-[#EEE8D5] border border-[#D6D1B1] flex items-center justify-center text-[#586E75] group-hover:bg-emerald-100 group-hover:text-emerald-800 group-hover:border-emerald-300 transition-all">
+            <div className="w-6 h-6 rounded-lg bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-center text-[#64748b] group-hover:bg-emerald-100 group-hover:text-emerald-800 group-hover:border-emerald-300 transition-all">
               <ChevronDown
                 className={`w-4 h-4 transition-transform duration-200 ${
-                  isFoldersExpanded ? 'rotate-180 text-emerald-700' : 'text-[#586E75]'
+                  isFoldersExpanded ? 'rotate-180 text-emerald-700' : 'text-[#64748b]'
                 }`}
               />
             </div>
 
             <Folder className="w-4 h-4 text-emerald-600" />
             <span>Product Folders & Pack Assemblies</span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#EEE8D5] text-[#073642] border border-[#D6D1B1]">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#f8fafc] text-[#0f172a] border border-[#e2e8f0]">
               {filteredFolders.length}
             </span>
-            <span className="text-[11px] font-normal text-[#586E75] hidden sm:inline-block">
+            <span className="text-[11px] font-normal text-[#64748b] hidden sm:inline-block">
               {isFoldersExpanded ? '(Click to collapse)' : '(Click to expand assemblies)'}
             </span>
           </button>
@@ -1134,7 +1146,7 @@ Cosmo.cnergy Procurement Team`;
           {/* Right side of header: If expanded and has selected folders, show bulk delete actions */}
           {isFoldersExpanded && selectedFolderIds.length > 0 && (
             <div className="flex items-center gap-2 animate-in fade-in">
-              <span className="text-xs font-bold text-[#073642]">{selectedFolderIds.length} Selected</span>
+              <span className="text-xs font-bold text-[#0f172a]">{selectedFolderIds.length} Selected</span>
               <button
                 onClick={handleBulkDeleteFolders}
                 disabled={isBulkDeletingFolders}
@@ -1149,8 +1161,8 @@ Cosmo.cnergy Procurement Team`;
 
         {/* Inline Expandable Body (Expands strictly inline, no modal or overlay) */}
         {isFoldersExpanded && (
-          <div className="mt-3 pt-3 border-t border-[#D6D1B1]/60 space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
-            <div className="flex items-center justify-between text-xs text-[#586E75] pb-1 px-1">
+          <div className="mt-3 pt-3 border-t border-[#e2e8f0]/60 space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
+            <div className="flex items-center justify-between text-xs text-[#64748b] pb-1 px-1">
               <label className="flex items-center gap-2 cursor-pointer select-none font-semibold">
                 <input
                   type="checkbox"
@@ -1160,7 +1172,7 @@ Cosmo.cnergy Procurement Team`;
                 />
                 <span>Select All Assemblies</span>
               </label>
-              <span className="text-[11px] text-[#586E75] hidden md:inline-block">Click an assembly folder to manage recipe components</span>
+              <span className="text-[11px] text-[#64748b] hidden md:inline-block">Click an assembly folder to manage recipe components</span>
             </div>
 
             <div className="flex flex-col space-y-2">
@@ -1171,7 +1183,7 @@ Cosmo.cnergy Procurement Team`;
                   <div
                     key={folder.id}
                     onClick={() => setActiveDetailFolder(folder)}
-                    className="w-full group bg-[#EEE8D5]/60 hover:bg-[#EEE8D5] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500/70 hover:shadow-xs transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                    className="w-full group bg-[#f8fafc]/60 hover:bg-[#f8fafc] rounded-xl p-3 border border-[#e2e8f0] hover:border-emerald-500/70 hover:shadow-xs transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                   >
                     {/* Left: Checkbox, Folder Name & Description & Components Count */}
                     <div className="flex items-center gap-3 min-w-0">
@@ -1192,14 +1204,14 @@ Cosmo.cnergy Procurement Team`;
 
                       <div className="truncate min-w-0">
                         <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-[#073642] text-xs md:text-sm group-hover:text-emerald-800 transition-colors truncate">
+                          <h4 className="font-bold text-[#0f172a] text-xs md:text-sm group-hover:text-emerald-800 transition-colors truncate">
                             {folder.name}
                           </h4>
-                          <span className="px-2 py-0.5 rounded text-[10px] bg-[#FDF6E3] text-[#073642] font-semibold border border-[#D6D1B1] shrink-0">
+                          <span className="px-2 py-0.5 rounded text-[10px] bg-[white] text-[#0f172a] font-semibold border border-[#e2e8f0] shrink-0">
                             {componentsCount} Components
                           </span>
                         </div>
-                        <span className="text-[11px] text-[#586E75] block truncate">
+                        <span className="text-[11px] text-[#64748b] block truncate">
                           {folder.description || 'LFP Battery Pack Assembly Recipe'}
                         </span>
                       </div>
@@ -1234,7 +1246,7 @@ Cosmo.cnergy Procurement Team`;
                           e.stopPropagation();
                           setFolderToDelete(folder);
                         }}
-                        className="text-[#586E75] hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-colors ml-1 cursor-pointer"
+                        className="text-[#64748b] hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-colors ml-1 cursor-pointer"
                         title="Delete Folder"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1245,7 +1257,7 @@ Cosmo.cnergy Procurement Team`;
               })}
 
               {filteredFolders.length === 0 && (
-                <div className="p-4 text-center text-xs text-[#586E75] italic">
+                <div className="p-4 text-center text-xs text-[#64748b] italic">
                   No product folders found matching current filter.
                 </div>
               )}
@@ -1258,7 +1270,7 @@ Cosmo.cnergy Procurement Team`;
       <div className="space-y-2 pt-2">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-2">
           <div>
-            <h3 className="text-sm font-bold text-[#073642] flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#0f172a] flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={filteredCatalog.length > 0 && selectedComponentIds.length === filteredCatalog.length}
@@ -1268,12 +1280,12 @@ Cosmo.cnergy Procurement Team`;
               <Package className="w-4 h-4 text-emerald-600" />
               <span>Components & Raw Materials ({filteredCatalog.length})</span>
             </h3>
-            <span className="text-[11px] text-[#586E75] ml-6">Maximized density ladder view with multi-select bulk delete</span>
+            <span className="text-[11px] text-[#64748b] ml-6">Maximized density ladder view with multi-select bulk delete</span>
           </div>
 
           {selectedComponentIds.length > 0 && (
             <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-emerald-500 animate-in fade-in">
-              <span className="text-xs font-bold text-[#073642] px-2">{selectedComponentIds.length} Selected</span>
+              <span className="text-xs font-bold text-[#0f172a] px-2">{selectedComponentIds.length} Selected</span>
               <button
                 onClick={() => setShowBulkSendModal(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
@@ -1295,29 +1307,29 @@ Cosmo.cnergy Procurement Team`;
           {/* Bulk Send RFQ/PO Modal */}
           {showBulkSendModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
-              <div className="bg-[#FDF6E3] w-full max-w-2xl rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-4 my-8 text-[#073642]">
+              <div className="bg-[white] w-full max-w-2xl rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 my-8 text-[#0f172a]">
                 {/* Modal Header */}
-                <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-3">
+                <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 pb-3">
                   <div className="flex items-center gap-2">
                     <Send className="w-5 h-5 text-emerald-600" />
-                    <h3 className="text-xl font-bold text-[#073642]">Send Procurement Dispatch</h3>
+                    <h3 className="text-xl font-bold text-[#0f172a]">Send Procurement Dispatch</h3>
                   </div>
                   <button
                     type="button"
                     onClick={() => { setShowBulkSendModal(false); setBulkSendProgress(null); }}
-                    className="text-[#586E75] hover:text-[#073642] font-bold p-1 cursor-pointer"
+                    className="text-[#64748b] hover:text-[#0f172a] font-bold p-1 cursor-pointer"
                   >
                     ✕
                   </button>
                 </div>
 
-                <p className="text-xs text-[#586E75]">
+                <p className="text-xs text-[#64748b]">
                   Dispatching <span className="font-bold text-emerald-800">{selectedComponentIds.length} selected component(s)</span> routed to lowest price supplier(s).
                 </p>
 
                 {/* Document Type Selector (RFQ vs PO) */}
                 <div>
-                  <label className="text-[11px] font-bold text-[#586E75] uppercase block mb-1.5">Document Type</label>
+                  <label className="text-[11px] font-bold text-[#64748b] uppercase block mb-1.5">Document Type</label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
@@ -1331,7 +1343,7 @@ Cosmo.cnergy Procurement Team`;
                       className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-2 ${
                         bulkSendDocType === 'RFQ'
                           ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
-                          : 'bg-[#EEE8D5] text-[#073642] border-[#D6D1B1] hover:border-emerald-500'
+                          : 'bg-[#f8fafc] text-[#0f172a] border-[#e2e8f0] hover:border-emerald-500'
                       }`}
                     >
                       <span>📋 Request for Quotation (RFQ)</span>
@@ -1349,7 +1361,7 @@ Cosmo.cnergy Procurement Team`;
                       className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-2 ${
                         bulkSendDocType === 'PO'
                           ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
-                          : 'bg-[#EEE8D5] text-[#073642] border-[#D6D1B1] hover:border-emerald-500'
+                          : 'bg-[#f8fafc] text-[#0f172a] border-[#e2e8f0] hover:border-emerald-500'
                       }`}
                     >
                       <span>📄 Purchase Order (PO)</span>
@@ -1358,73 +1370,73 @@ Cosmo.cnergy Procurement Team`;
                 </div>
 
                 {/* Sender Indicator Box */}
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#EEE8D5] border border-[#D6D1B1] text-[#073642] text-xs">
-                  <span className="font-semibold text-[#586E75]">From:</span>
-                  <span className="font-bold text-[#073642]">Anuj Magdum</span>
-                  <span className="text-[#586E75] font-mono text-[11px]">(magdumanuj007@gmail.com)</span>
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] text-[#0f172a] text-xs">
+                  <span className="font-semibold text-[#64748b]">From:</span>
+                  <span className="font-bold text-[#0f172a]">Anuj Magdum</span>
+                  <span className="text-[#64748b] font-mono text-[11px]">(magdumanuj007@gmail.com)</span>
                 </div>
 
                 {/* Email Form Fields */}
                 <div className="space-y-3 text-xs">
                   <div>
-                    <label className="block font-semibold text-[#073642] mb-1">To: Recipient Email *</label>
+                    <label className="block font-semibold text-[#0f172a] mb-1">To: Recipient Email *</label>
                     <input
                       type="email"
                       required
                       value={bulkSendTo}
                       onChange={e => setBulkSendTo(e.target.value)}
                       placeholder="vendor.sales@company.com"
-                      className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
+                      className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold text-[#073642] mb-1">CC (Optional)</label>
+                    <label className="block font-semibold text-[#0f172a] mb-1">CC (Optional)</label>
                     <input
                       type="text"
                       value={bulkSendCc}
                       onChange={e => setBulkSendCc(e.target.value)}
                       placeholder="procurement-lead@cosmocnergy.com"
-                      className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-xs text-[#073642] focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold text-[#073642] mb-1">Subject Line *</label>
+                    <label className="block font-semibold text-[#0f172a] mb-1">Subject Line *</label>
                     <input
                       type="text"
                       required
                       value={bulkSendSubject}
                       onChange={e => setBulkSendSubject(e.target.value)}
                       placeholder="Purchase Order (PO) - 51.2V 100Ah Pack Assembly"
-                      className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-semibold"
+                      className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-semibold"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold text-[#073642] mb-1">Email Body *</label>
+                    <label className="block font-semibold text-[#0f172a] mb-1">Email Body *</label>
                     <textarea
                       rows={6}
                       required
                       value={bulkSendBody}
                       onChange={e => setBulkSendBody(e.target.value)}
                       placeholder="Type your official procurement dispatch message or quotation inquiry here..."
-                      className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2.5 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 leading-relaxed font-sans"
+                      className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2.5 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500 leading-relaxed font-sans"
                     />
                   </div>
 
                   {/* Attachment Picker */}
-                  <div className="flex items-center justify-between p-2.5 rounded-2xl bg-[#EEE8D5] border border-[#D6D1B1]">
-                    <div className="flex items-center gap-2 text-[#586E75]">
+                  <div className="flex items-center justify-between p-2.5 rounded-2xl bg-[#f8fafc] border border-[#e2e8f0]">
+                    <div className="flex items-center gap-2 text-[#64748b]">
                       <Paperclip className="w-4 h-4 text-emerald-600" />
                       {bulkSendAttachment ? (
-                        <span className="font-bold text-[#073642]">{bulkSendAttachment.filename} ({bulkSendAttachment.size})</span>
+                        <span className="font-bold text-[#0f172a]">{bulkSendAttachment.filename} ({bulkSendAttachment.size})</span>
                       ) : (
-                        <span className="text-[#586E75]">No file attached</span>
+                        <span className="text-[#64748b]">No file attached</span>
                       )}
                     </div>
 
-                    <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-[#FDF6E3] border border-[#D6D1B1] hover:border-emerald-500 text-[#073642] font-semibold text-xs transition-all shadow-2xs">
+                    <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-[white] border border-[#e2e8f0] hover:border-emerald-500 text-[#0f172a] font-semibold text-xs transition-all shadow-2xs">
                       <span>Attach PDF / Specs</span>
                       <input
                         type="file"
@@ -1451,11 +1463,11 @@ Cosmo.cnergy Procurement Team`;
                   )}
 
                   {/* Action Buttons */}
-                  <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#D6D1B1]/60">
+                  <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#e2e8f0]/60">
                     <button
                       type="button"
                       onClick={() => { setShowBulkSendModal(false); setBulkSendProgress(null); }}
-                      className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] font-semibold text-xs hover:bg-[#E4DDC7] cursor-pointer"
+                      className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#0f172a] font-semibold text-xs hover:bg-[#e2e8f0] cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -1493,7 +1505,7 @@ Cosmo.cnergy Procurement Team`;
               <div
                 key={item.id}
                 
-                className="w-full bg-[#FDF6E3] rounded-xl p-3 border border-[#D6D1B1] hover:border-emerald-500 hover:shadow-md cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all group/card"
+                className="w-full bg-[white] rounded-xl p-3 border border-[#e2e8f0] hover:border-emerald-500 hover:shadow-md cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all group/card"
               >
                 {/* Left: Checkbox, Component Name, Category, Specs, Company */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -1505,13 +1517,13 @@ Cosmo.cnergy Procurement Team`;
                     className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
                   />
 
-                  <div className="w-8 h-8 rounded-lg bg-[#EEE8D5] text-[#073642] border border-[#D6D1B1] flex items-center justify-center font-bold text-xs shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#f8fafc] text-[#0f172a] border border-[#e2e8f0] flex items-center justify-center font-bold text-xs shrink-0">
                     <Package className="w-4 h-4 text-emerald-700" />
                   </div>
 
                   <div className="truncate min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <h4 onClick={() => navigate(`/inventory/component/${item.id}`)} className="text-xs md:text-sm font-bold text-[#073642] hover:text-emerald-700 hover:underline cursor-pointer truncate" title="Click to view supplier comparison">{item.name}</h4>
+                      <h4 onClick={() => navigate(`/inventory/component/${item.id}`)} className="text-xs md:text-sm font-bold text-[#0f172a] hover:text-emerald-700 hover:underline cursor-pointer truncate" title="Click to view supplier comparison">{item.name}</h4>
 
                       {/* Zero-Storage Google Drive Image Thumbnail / Lightbox Trigger */}
                       {item.image_drive_url ? (
@@ -1534,7 +1546,7 @@ Cosmo.cnergy Procurement Team`;
                             e.stopPropagation();
                             setEditingComponent(item);
                           }}
-                          className="p-1 rounded-md bg-[#EEE8D5] hover:bg-[#E4DDC7] text-[#586E75] border border-dashed border-[#D6D1B1] transition-all cursor-pointer shrink-0"
+                          className="p-1 rounded-md bg-[#f8fafc] hover:bg-[#e2e8f0] text-[#64748b] border border-dashed border-[#e2e8f0] transition-all cursor-pointer shrink-0"
                           title="Attach Google Drive Image Link"
                         >
                           <ImageIcon className="w-3.5 h-3.5 opacity-40" />
@@ -1589,10 +1601,10 @@ Cosmo.cnergy Procurement Team`;
                       </select>
                     </div>
 
-                    <div className="flex items-center gap-2 text-[11px] text-[#586E75] truncate mt-0.5">
+                    <div className="flex items-center gap-2 text-[11px] text-[#64748b] truncate mt-0.5">
                       <span className="truncate max-w-[200px]">{item.specs || 'Standard industrial spec'}</span>
                       <span>•</span>
-                      <span className="flex items-center gap-1 truncate text-[#073642] font-medium">
+                      <span className="flex items-center gap-1 truncate text-[#0f172a] font-medium">
                         <Building2 className="w-3 h-3 text-emerald-600 shrink-0" />
                         <span className="truncate">
                           {(() => {
@@ -1626,7 +1638,7 @@ Cosmo.cnergy Procurement Team`;
                 </div>
 
                 {/* Right: Metrics & Actions */}
-                <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#D6D1B1]/60">
+                <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#e2e8f0]/60">
                   {/* Automated Conditional "To Be Ordered" Badge (Only when Stock <= 20%) */}
                   {isBottleneck && (
                     <span
@@ -1640,28 +1652,28 @@ Cosmo.cnergy Procurement Team`;
 
                   {/* Stock */}
                   <div className="text-right">
-                    <span className="text-[9px] text-[#586E75] uppercase font-semibold block">Stock</span>
-                    <span className="text-xs font-bold text-[#073642] font-mono">
+                    <span className="text-[9px] text-[#64748b] uppercase font-semibold block">Stock</span>
+                    <span className="text-xs font-bold text-[#0f172a] font-mono">
                       {item.in_stock_qty ?? 0} {item.uom || 'Pcs'}
                     </span>
                   </div>
 
                   {/* Price */}
                   <div className="text-right">
-                    <span className="text-[9px] text-[#586E75] uppercase font-semibold block">Rate</span>
+                    <span className="text-[9px] text-[#64748b] uppercase font-semibold block">Rate</span>
                     <span className="text-xs font-extrabold text-emerald-800 font-mono">
                       ₹{Number(item.preset_price || 0).toLocaleString('en-IN')}
                     </span>
                   </div>
 
                   {/* 1-Tap Reorder Input Group */}
-                  <div onClick={e => e.stopPropagation()} className="flex items-center rounded-lg border border-[#D6D1B1] overflow-hidden">
+                  <div onClick={e => e.stopPropagation()} className="flex items-center rounded-lg border border-[#e2e8f0] overflow-hidden">
                     <input
                       type="number"
                       min={1}
                       value={reorderQtyMap[item.id] || item.min_order_qty || 10}
                       onChange={e => setReorderQtyMap(prev => ({ ...prev, [item.id]: Number(e.target.value) }))}
-                      className="w-14 px-1.5 py-1.5 text-xs font-mono font-bold text-center bg-[#FDF6E3] focus:outline-none focus:bg-white text-[#073642]"
+                      className="w-14 px-1.5 py-1.5 text-xs font-mono font-bold text-center bg-[white] focus:outline-none focus:bg-white text-[#0f172a]"
                       title="Override quantity"
                     />
                     <button
@@ -1701,7 +1713,7 @@ Cosmo.cnergy Procurement Team`;
                     <button
                       type="button"
                       onClick={(e) => { e.stopPropagation(); setEditingComponent(item); }}
-                      className="p-1.5 rounded bg-[#EEE8D5] hover:bg-emerald-100 text-[#586E75] hover:text-emerald-800 border border-[#D6D1B1] transition-all cursor-pointer"
+                      className="p-1.5 rounded bg-[#f8fafc] hover:bg-emerald-100 text-[#64748b] hover:text-emerald-800 border border-[#e2e8f0] transition-all cursor-pointer"
                       title="Edit Component"
                     >
                       <Edit2 className="w-3 h-3" />
@@ -1710,7 +1722,7 @@ Cosmo.cnergy Procurement Team`;
                     <button
                       type="button"
                       onClick={(e) => { e.stopPropagation(); setComponentToDelete(item); }}
-                      className="p-1.5 rounded bg-[#EEE8D5] hover:bg-red-100 text-[#586E75] hover:text-red-700 border border-[#D6D1B1] transition-all cursor-pointer"
+                      className="p-1.5 rounded bg-[#f8fafc] hover:bg-red-100 text-[#64748b] hover:text-red-700 border border-[#e2e8f0] transition-all cursor-pointer"
                       title="Delete Component"
                     >
                       <Trash2 className="w-3 h-3" />
@@ -1726,17 +1738,17 @@ Cosmo.cnergy Procurement Team`;
       {/* Add Product Folder Modal */}
       {isAddFolderOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#FDF6E3] w-full max-w-md rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-4 text-[#073642]">
-            <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-3">
-              <h3 className="text-lg font-bold text-[#073642]">Create New Product Folder</h3>
-              <button onClick={() => setIsAddFolderOpen(false)} className="text-[#586E75] hover:text-[#073642] font-bold">
+          <div className="bg-[white] w-full max-w-md rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 text-[#0f172a]">
+            <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 pb-3">
+              <h3 className="text-lg font-bold text-[#0f172a]">Create New Product Folder</h3>
+              <button onClick={() => setIsAddFolderOpen(false)} className="text-[#64748b] hover:text-[#0f172a] font-bold">
                 ✕
               </button>
             </div>
 
             <form onSubmit={handleAddFolderSubmit} className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-semibold text-[#073642] mb-1">Product Folder / Assembly Name *</label>
+                <label className="block font-semibold text-[#0f172a] mb-1">Product Folder / Assembly Name *</label>
                 <input
                   type="text"
                   required
@@ -1744,7 +1756,7 @@ Cosmo.cnergy Procurement Team`;
                   value={newFolderNameInput}
                   onChange={e => setNewFolderNameInput(e.target.value)}
                   placeholder="e.g. 48V 100Ah Telecom Battery Rack"
-                  className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
+                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
 
@@ -1752,7 +1764,7 @@ Cosmo.cnergy Procurement Team`;
                 <button
                   type="button"
                   onClick={() => setIsAddFolderOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] font-semibold hover:bg-[#E4DDC7]"
+                  className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#0f172a] font-semibold hover:bg-[#e2e8f0]"
                 >
                   Cancel
                 </button>
@@ -1772,11 +1784,11 @@ Cosmo.cnergy Procurement Team`;
       {/* Add Component Modal — Responsive: bottom-sheet on mobile, centered on desktop */}
       {isAddCatalogOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-[#FDF6E3] w-full sm:max-w-xl sm:rounded-3xl rounded-t-3xl border border-[#D6D1B1] shadow-2xl flex flex-col max-h-[90vh] text-[#073642]">
+          <div className="bg-[white] w-full sm:max-w-xl sm:rounded-3xl rounded-t-3xl border border-[#e2e8f0] shadow-2xl flex flex-col max-h-[90vh] text-[#0f172a]">
             {/* Sticky Header */}
-            <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 px-5 py-4 shrink-0">
-              <h3 className="text-lg font-bold text-[#073642]">Add Component to Catalog</h3>
-              <button onClick={() => setIsAddCatalogOpen(false)} className="text-[#586E75] hover:text-[#073642] font-bold p-1">
+            <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 px-5 py-4 shrink-0">
+              <h3 className="text-lg font-bold text-[#0f172a]">Add Component to Catalog</h3>
+              <button onClick={() => setIsAddCatalogOpen(false)} className="text-[#64748b] hover:text-[#0f172a] font-bold p-1">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -1786,7 +1798,7 @@ Cosmo.cnergy Procurement Team`;
               <div className="overflow-y-auto flex-1 px-5 py-4 space-y-3 text-xs">
               {/* Component Name (ONLY REQUIRED FIELD) */}
               <div>
-                <label className="block font-semibold text-[#073642] mb-1">Component Name *</label>
+                <label className="block font-semibold text-[#0f172a] mb-1">Component Name *</label>
                 <input
                   type="text"
                   required
@@ -1794,18 +1806,18 @@ Cosmo.cnergy Procurement Team`;
                   value={catalogForm.name}
                   onChange={e => setCatalogForm({ ...catalogForm, name: e.target.value })}
                   placeholder="e.g. 3.2V 100Ah LFP Cell"
-                  className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-semibold"
+                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-semibold"
                 />
               </div>
 
               {/* Category & Unit of Measure */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Category</label>
+                  <label className="block font-semibold text-[#0f172a] mb-1">Category</label>
                   <select
                     value={catalogForm.category}
                     onChange={e => setCatalogForm({ ...catalogForm, category: e.target.value })}
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-bold"
+                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-bold"
                   >
                     {allCategoryNames.map(cat => (
                       <option key={cat} value={cat}>
@@ -1816,26 +1828,26 @@ Cosmo.cnergy Procurement Team`;
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Unit of Measure (UOM)</label>
+                  <label className="block font-semibold text-[#0f172a] mb-1">Unit of Measure (UOM)</label>
                   <input
                     type="text"
                     value={catalogForm.uom}
                     onChange={e => setCatalogForm({ ...catalogForm, uom: e.target.value })}
                     placeholder="Pcs, Sets, Kg, etc."
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
+                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
               </div>
 
               {/* Multi-Company Sourcing Association (Tag / Pill UI + Commercial Parameters) */}
-              <div className="space-y-3 p-4 bg-[#FDF6E3] rounded-2xl border border-[#D6D1B1] shadow-2xs">
+              <div className="space-y-3 p-4 bg-[white] rounded-2xl border border-[#e2e8f0] shadow-2xs">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <div>
-                    <label className="block font-bold text-xs text-[#073642] uppercase tracking-wider flex items-center gap-1.5">
+                    <label className="block font-bold text-xs text-[#0f172a] uppercase tracking-wider flex items-center gap-1.5">
                       <Building2 className="w-3.5 h-3.5 text-emerald-600" />
                       <span>Associated Sourcing Companies *</span>
                     </label>
-                    <p className="text-[11px] text-[#586E75] mt-0.5">
+                    <p className="text-[11px] text-[#64748b] mt-0.5">
                       Associate 1 or more companies. Associating 2+ vendors enables the <strong>"Compare Companies"</strong> AI engine.
                     </p>
                   </div>
@@ -1856,7 +1868,7 @@ Cosmo.cnergy Procurement Team`;
                         handleAddCompanyToForm(e.target.value);
                       }
                     }}
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
+                    className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
                   >
                     <option value="">+ Click to add a company to this component...</option>
                     {companies
@@ -1885,7 +1897,7 @@ Cosmo.cnergy Procurement Team`;
                       return (
                         <span
                           key={item.company_id}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-[#073642] border border-[#D6D1B1] text-xs font-bold shadow-2xs group"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-[#0f172a] border border-[#e2e8f0] text-xs font-bold shadow-2xs group"
                         >
                           <Building2 className="w-3 h-3 text-emerald-600" />
                           <span className="truncate max-w-[140px]">{supp?.name || item.company_id}</span>
@@ -1897,7 +1909,7 @@ Cosmo.cnergy Procurement Team`;
                           <button
                             type="button"
                             onClick={() => handleRemoveCompanyFromForm(item.company_id)}
-                            className="p-0.5 rounded-full hover:bg-red-100 text-[#586E75] hover:text-red-700 transition-all cursor-pointer ml-1"
+                            className="p-0.5 rounded-full hover:bg-red-100 text-[#64748b] hover:text-red-700 transition-all cursor-pointer ml-1"
                             title="Remove company"
                           >
                             <X className="w-3 h-3" />
@@ -1922,15 +1934,15 @@ Cosmo.cnergy Procurement Team`;
                     </div>
                   </div>
                 ) : catalogForm.selectedCompanies.length === 1 ? (
-                  <p className="text-[11px] text-[#586E75] italic">
+                  <p className="text-[11px] text-[#64748b] italic">
                     💡 Tip: Add a 2nd company to unlock side-by-side RFQ comparison & AI company ranking.
                   </p>
                 ) : null}
 
                 {/* Dynamic Nested Fields / Compact Inline List per Selected Company */}
                 {catalogForm.selectedCompanies.length > 0 && (
-                  <div className="space-y-2 mt-2 pt-2 border-t border-[#D6D1B1]/60">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#586E75] block">
+                  <div className="space-y-2 mt-2 pt-2 border-t border-[#e2e8f0]/60">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#64748b] block">
                       Company Commercial Parameters & RFQ Metrics:
                     </span>
 
@@ -1940,10 +1952,10 @@ Cosmo.cnergy Procurement Team`;
                         return (
                           <div
                             key={item.company_id}
-                            className="p-3 rounded-xl bg-[#EEE8D5] border border-[#D6D1B1] space-y-2"
+                            className="p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] space-y-2"
                           >
                             <div className="flex items-center justify-between text-xs">
-                              <div className="flex items-center gap-1.5 font-bold text-[#073642]">
+                              <div className="flex items-center gap-1.5 font-bold text-[#0f172a]">
                                 <span className="w-4 h-4 rounded-full bg-emerald-600 text-white text-[9px] flex items-center justify-center font-mono font-bold">
                                   {idx + 1}
                                 </span>
@@ -1957,7 +1969,7 @@ Cosmo.cnergy Procurement Team`;
                               <button
                                 type="button"
                                 onClick={() => handleRemoveCompanyFromForm(item.company_id)}
-                                className="text-[#586E75] hover:text-red-700 text-[11px] font-semibold flex items-center gap-0.5 cursor-pointer"
+                                className="text-[#64748b] hover:text-red-700 text-[11px] font-semibold flex items-center gap-0.5 cursor-pointer"
                               >
                                 <X className="w-3.5 h-3.5" />
                                 <span>Remove</span>
@@ -1967,7 +1979,7 @@ Cosmo.cnergy Procurement Team`;
                             {/* Dynamic 4-field grid per company */}
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                               <div>
-                                <label className="block text-[10px] font-semibold text-[#586E75] mb-0.5">RFQ Quoted Price (₹)</label>
+                                <label className="block text-[10px] font-semibold text-[#64748b] mb-0.5">RFQ Quoted Price (₹)</label>
                                 <input
                                   type="number"
                                   min={0}
@@ -1977,13 +1989,13 @@ Cosmo.cnergy Procurement Team`;
                                     rfq_quoted_price: Number(e.target.value) || 0,
                                     unit_price: Number(e.target.value) || 0
                                   })}
-                                  className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#073642] focus:outline-none focus:border-emerald-500"
+                                  className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#0f172a] focus:outline-none focus:border-emerald-500"
                                   placeholder="150"
                                 />
                               </div>
 
                               <div>
-                                <label className="block text-[10px] font-semibold text-[#586E75] mb-0.5">MOQ</label>
+                                <label className="block text-[10px] font-semibold text-[#64748b] mb-0.5">MOQ</label>
                                 <input
                                   type="number"
                                   min={1}
@@ -1991,13 +2003,13 @@ Cosmo.cnergy Procurement Team`;
                                   onChange={e => handleUpdateCompanyMapping(item.company_id, {
                                     moq: Number(e.target.value) || 1
                                   })}
-                                  className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#073642] focus:outline-none focus:border-emerald-500"
+                                  className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#0f172a] focus:outline-none focus:border-emerald-500"
                                   placeholder="10"
                                 />
                               </div>
 
                               <div>
-                                <label className="block text-[10px] font-semibold text-[#586E75] mb-0.5">Lead Time (Days)</label>
+                                <label className="block text-[10px] font-semibold text-[#64748b] mb-0.5">Lead Time (Days)</label>
                                 <input
                                   type="number"
                                   min={1}
@@ -2005,20 +2017,20 @@ Cosmo.cnergy Procurement Team`;
                                   onChange={e => handleUpdateCompanyMapping(item.company_id, {
                                     lead_time_days: Number(e.target.value) || 7
                                   })}
-                                  className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#073642] focus:outline-none focus:border-emerald-500"
+                                  className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#0f172a] focus:outline-none focus:border-emerald-500"
                                   placeholder="7"
                                 />
                               </div>
 
                               <div>
-                                <label className="block text-[10px] font-semibold text-[#586E75] mb-0.5">Vendor Part # / SKU</label>
+                                <label className="block text-[10px] font-semibold text-[#64748b] mb-0.5">Vendor Part # / SKU</label>
                                 <input
                                   type="text"
                                   value={item.part_number_vendor || ''}
                                   onChange={e => handleUpdateCompanyMapping(item.company_id, {
                                     part_number_vendor: e.target.value
                                   })}
-                                  className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2 py-1 text-xs font-mono text-[#073642] focus:outline-none focus:border-emerald-500"
+                                  className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#0f172a] focus:outline-none focus:border-emerald-500"
                                   placeholder="OEM-SPEC"
                                 />
                               </div>
@@ -2034,19 +2046,19 @@ Cosmo.cnergy Procurement Team`;
 
               {/* Stock Quantity */}
               <div>
-                <label className="block font-semibold text-[#073642] mb-1">Stock Quantity (In-Stock)</label>
+                <label className="block font-semibold text-[#0f172a] mb-1">Stock Quantity (In-Stock)</label>
                 <input
                   type="number"
                   min={0}
                   value={catalogForm.in_stock_qty}
                   onChange={e => setCatalogForm({ ...catalogForm, in_stock_qty: Number(e.target.value) || 0 })}
-                  className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] font-mono font-bold focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] font-mono font-bold focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               {/* Custom Stock Alert Threshold Slider */}
               <div>
-                <label className="flex items-center justify-between font-semibold text-[#073642] mb-1 text-sm">
+                <label className="flex items-center justify-between font-semibold text-[#0f172a] mb-1 text-sm">
                   <span>Low Stock Alert Threshold</span>
                   <span className="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded text-xs">
                     {catalogForm.alert_threshold_percent}% of MOQ
@@ -2059,48 +2071,48 @@ Cosmo.cnergy Procurement Team`;
                   step="5"
                   value={catalogForm.alert_threshold_percent}
                   onChange={e => setCatalogForm({ ...catalogForm, alert_threshold_percent: Number(e.target.value) })}
-                  className="w-full h-2 bg-[#D6D1B1] rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                  className="w-full h-2 bg-[#e2e8f0] rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
-                <p className="text-[10px] text-[#586E75] mt-1">
+                <p className="text-[10px] text-[#64748b] mt-1">
                   Alert triggers when stock falls below {Math.floor((Number(catalogForm.target_qty) || 1) * (catalogForm.alert_threshold_percent / 100))} {catalogForm.uom || 'Pcs'}
                 </p>
               </div>
 
               {/* Google Drive Image Link */}
               <div>
-                <label className="block font-semibold text-[#073642] mb-1">Google Drive Image Link</label>
+                <label className="block font-semibold text-[#0f172a] mb-1">Google Drive Image Link</label>
                 <input
                   type="url"
                   value={catalogForm.image_drive_url}
                   onChange={e => setCatalogForm({ ...catalogForm, image_drive_url: e.target.value })}
                   placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
-                  className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-mono text-xs"
+                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono text-xs"
                 />
-                <p className="text-[10px] text-[#586E75] mt-1 italic">
+                <p className="text-[10px] text-[#64748b] mt-1 italic">
                   (Ensure link permissions are set to "Anyone with the link can view")
                 </p>
               </div>
 
               {/* Technical Specifications */}
               <div>
-                <label className="block font-semibold text-[#073642] mb-1">Technical Specification (Optional)</label>
+                <label className="block font-semibold text-[#0f172a] mb-1">Technical Specification (Optional)</label>
                 <textarea
                   rows={2}
                   value={catalogForm.specs}
                   onChange={e => setCatalogForm({ ...catalogForm, specs: e.target.value })}
                   placeholder="e.g. LiFePO4, 3.2V, 100Ah, M6 Terminals..."
-                  className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
+                  className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
 
               </div>{/* end scrollable body */}
 
               {/* Sticky Footer Action Buttons */}
-              <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-[#D6D1B1]/60 shrink-0 bg-[#FDF6E3] sm:rounded-b-3xl rounded-b-none">
+              <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-[#e2e8f0]/60 shrink-0 bg-[white] sm:rounded-b-3xl rounded-b-none">
                 <button
                   type="button"
                   onClick={() => setIsAddCatalogOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] font-semibold hover:bg-[#E4DDC7]"
+                  className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#0f172a] font-semibold hover:bg-[#e2e8f0]"
                 >
                   Cancel
                 </button>
@@ -2158,15 +2170,15 @@ Cosmo.cnergy Procurement Team`;
       {/* Product Folder View / Details Modal */}
       {activeDetailFolder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-[#FDF6E3] w-full max-w-4xl rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-6 my-8 text-[#073642]">
-            <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-4">
+          <div className="bg-[white] w-full max-w-4xl rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-6 my-8 text-[#0f172a]">
+            <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 pb-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-md shadow-emerald-500/20">
                   <Folder className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#073642]">{activeDetailFolder.name}</h3>
-                  <p className="text-xs text-[#586E75]">
+                  <h3 className="text-xl font-bold text-[#0f172a]">{activeDetailFolder.name}</h3>
+                  <p className="text-xs text-[#64748b]">
                     Folder ID: {activeDetailFolder.id} • {activeDetailFolder.description || 'Assembly Recipe'}
                   </p>
                 </div>
@@ -2174,7 +2186,7 @@ Cosmo.cnergy Procurement Team`;
 
               <button
                 onClick={() => setActiveDetailFolder(null)}
-                className="text-[#586E75] hover:text-[#073642] p-1.5 rounded-full bg-[#EEE8D5] transition-all font-bold"
+                className="text-[#64748b] hover:text-[#0f172a] p-1.5 rounded-full bg-[#f8fafc] transition-all font-bold"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -2183,7 +2195,7 @@ Cosmo.cnergy Procurement Team`;
             {/* Product Components List (Read-Only View) */}
             <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-[#073642] uppercase tracking-wider">
+                <h4 className="text-xs font-bold text-[#0f172a] uppercase tracking-wider">
                   Product Components ({activeDetailFolder.components?.length || 0}):
                 </h4>
                 <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
@@ -2192,12 +2204,12 @@ Cosmo.cnergy Procurement Team`;
               </div>
 
               {!activeDetailFolder.components || activeDetailFolder.components.length === 0 ? (
-                <div className="p-8 rounded-2xl bg-[#EEE8D5] border border-dashed border-[#D6D1B1] text-center space-y-2">
-                  <p className="text-xs text-[#586E75] font-medium">
+                <div className="p-8 rounded-2xl bg-[#f8fafc] border border-dashed border-[#e2e8f0] text-center space-y-2">
+                  <p className="text-xs text-[#64748b] font-medium">
                     No raw material components assigned to this product recipe yet.
                   </p>
-                  <p className="text-[11px] text-[#586E75]">
-                    To assign components, use the <strong className="text-[#073642] font-semibold">+ Component</strong> button on the Product Folder card.
+                  <p className="text-[11px] text-[#64748b]">
+                    To assign components, use the <strong className="text-[#0f172a] font-semibold">+ Component</strong> button on the Product Folder card.
                   </p>
                 </div>
               ) : (
@@ -2205,23 +2217,23 @@ Cosmo.cnergy Procurement Team`;
                   {activeDetailFolder.components.map((comp, idx) => {
                     const catItem = catalog.find(c => c.id === comp.item_id) || catalog[idx % catalog.length];
                     return (
-                      <div key={idx} className="p-3.5 rounded-2xl bg-[#EEE8D5]/70 border border-[#D6D1B1] shadow-xs space-y-2">
+                      <div key={idx} className="p-3.5 rounded-2xl bg-[#f8fafc]/70 border border-[#e2e8f0] shadow-xs space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="font-bold text-xs text-[#073642]">{catItem?.name || 'Raw Material Component'}</span>
+                          <span className="font-bold text-xs text-[#0f172a]">{catItem?.name || 'Raw Material Component'}</span>
                           <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-300">
                             {catItem?.category || 'Capacitor'}
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between bg-[#FDF6E3] p-2 rounded-xl text-xs border border-[#D6D1B1]/50">
-                          <span className="text-[#586E75] font-medium">Req per Build:</span>
+                        <div className="flex items-center justify-between bg-[white] p-2 rounded-xl text-xs border border-[#e2e8f0]/50">
+                          <span className="text-[#64748b] font-medium">Req per Build:</span>
                           <span className="font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300">
                             {comp.qty_per_unit} {catItem?.uom || 'Pcs'}
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between text-[11px] text-[#586E75] pt-1">
-                          <span>Stock: <strong className="text-[#073642]">{catItem?.in_stock_qty || 0} {catItem?.uom}</strong></span>
+                        <div className="flex items-center justify-between text-[11px] text-[#64748b] pt-1">
+                          <span>Stock: <strong className="text-[#0f172a]">{catItem?.in_stock_qty || 0} {catItem?.uom}</strong></span>
                           <span className="font-mono font-bold text-emerald-800">₹{Number(catItem?.preset_price || 0).toLocaleString('en-IN')}</span>
                         </div>
                       </div>
@@ -2274,17 +2286,17 @@ Cosmo.cnergy Procurement Team`;
       {/* Folder Deletion Confirmation Dialog */}
       {folderToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#FDF6E3] w-full max-w-md rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-4 text-[#073642]">
+          <div className="bg-[white] w-full max-w-md rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 text-[#0f172a]">
             <h3 className="text-lg font-bold text-red-700">Delete Product Folder</h3>
-            <p className="text-xs text-[#586E75]">
-              Are you sure you want to delete folder <span className="font-bold text-[#073642]">"{folderToDelete.name}"</span>?
+            <p className="text-xs text-[#64748b]">
+              Are you sure you want to delete folder <span className="font-bold text-[#0f172a]">"{folderToDelete.name}"</span>?
             </p>
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setFolderToDelete(null)}
-                className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#0f172a] text-xs font-semibold"
               >
                 Cancel
               </button>
@@ -2304,17 +2316,17 @@ Cosmo.cnergy Procurement Team`;
       {/* Component Deletion Confirmation Dialog */}
       {componentToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#FDF6E3] w-full max-w-md rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-4 text-[#073642]">
+          <div className="bg-[white] w-full max-w-md rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 text-[#0f172a]">
             <h3 className="text-lg font-bold text-red-700">Delete Component</h3>
-            <p className="text-xs text-[#586E75]">
-              Are you sure you want to remove <span className="font-bold text-[#073642]">"{componentToDelete.name}"</span> from catalog?
+            <p className="text-xs text-[#64748b]">
+              Are you sure you want to remove <span className="font-bold text-[#0f172a]">"{componentToDelete.name}"</span> from catalog?
             </p>
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setComponentToDelete(null)}
-                className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] text-xs font-semibold"
+                className="px-4 py-2 rounded-xl bg-[#f8fafc] text-[#0f172a] text-xs font-semibold"
               >
                 Cancel
               </button>
@@ -2340,6 +2352,44 @@ Cosmo.cnergy Procurement Team`;
           componentName={lightboxData.name}
           onClose={() => setLightboxData(null)}
         />
+      )}
+      {/* Slide-over Drawer for SKU Build Capacity Calculator */}
+      {isCalculatorOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden animate-in fade-in duration-150">
+          <div
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsCalculatorOpen(false)}
+          />
+          <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <div className="w-screen max-w-2xl bg-white border-l border-slate-200 shadow-2xl flex flex-col animate-in slide-in-from-right duration-200">
+              {/* Drawer Header */}
+              <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-800">
+                    <Calculator className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base">SKU Build Capacity Calculator</h3>
+                    <p className="text-xs text-slate-500">Live BOM recipe math, component shortages & batch capacity</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsCalculatorOpen(false)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer"
+                  title="Close Drawer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Drawer Content */}
+              <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+                <SKUCapacityCalculator catalog={catalog} boms={boms} folders={folders} />
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

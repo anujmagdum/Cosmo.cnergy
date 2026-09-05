@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Download, Upload, FileSpreadsheet, Check, AlertCircle, FileDown, Info } from 'lucide-react';
+import { Download, Upload, FileSpreadsheet, Check, AlertCircle, FileDown, Info, HelpCircle } from 'lucide-react';
 
 export type CsvSectionType = 'components' | 'orders' | 'companies';
 
@@ -169,6 +169,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSchemaGuide, setShowSchemaGuide] = useState(false);
+  const [showColumnsPopover, setShowColumnsPopover] = useState(false);
   const [statusFeedback, setStatusFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const schema = SECTION_SCHEMAS[sectionType] || SECTION_SCHEMAS.components;
@@ -452,141 +453,148 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
   };
 
   return (
-    <div className="w-full bg-[#FDF6E3] rounded-2xl border border-[#D6D1B1] p-3.5 shadow-xs flex flex-col gap-2.5 transition-all">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-        {/* Left Section: Header Chips & Schema Info */}
-        <div className="flex flex-wrap items-center gap-2 min-w-0 flex-1">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-[#073642] shrink-0">
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-            <span>CSV Schema:</span>
-          </div>
+    <div className="w-full bg-white rounded-xl border border-slate-200 p-3 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-slate-800 transition-all">
+      {/* Left: CSV Context, Template Download & Columns Tooltip */}
+      <div className="flex flex-wrap items-center gap-2 flex-1">
+        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 shrink-0 mr-1">
+          <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+          <span>CSV Engine:</span>
+        </div>
 
-          <div className="flex flex-wrap items-center gap-1.5">
-            {schema.requiredHeaders.map(h => (
-              <span
-                key={h.key}
-                className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300"
-                title={`Required: ${h.label} (e.g. ${h.example})`}
-              >
-                {h.label}*
-              </span>
-            ))}
+        {/* Download Sample Template */}
+        <button
+          type="button"
+          onClick={handleDownloadTemplate}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200 font-semibold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
+          title={`Download sample CSV template for ${sectionType}`}
+        >
+          <FileDown className="w-3.5 h-3.5 text-slate-600" />
+          <span>Download Template</span>
+        </button>
 
-            {schema.optionalHeaders.slice(0, 5).map(h => (
-              <span
-                key={h.key}
-                className="px-2 py-0.5 rounded-md text-[10px] font-mono font-semibold bg-[#EEE8D5] text-[#586E75] border border-[#D6D1B1]"
-                title={`Optional: ${h.label} (e.g. ${h.example})`}
-              >
-                {h.label}
-              </span>
-            ))}
+        {/* View Required Columns Info Popover */}
+        <div className="relative inline-block">
+          <button
+            type="button"
+            onMouseEnter={() => setShowColumnsPopover(true)}
+            onMouseLeave={() => setShowColumnsPopover(false)}
+            onClick={() => setShowColumnsPopover(!showColumnsPopover)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 border border-slate-200 font-semibold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
+            title="Hover or click to view required and optional columns"
+          >
+            <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
+            <span>View Required Columns</span>
+          </button>
 
-            {schema.optionalHeaders.length > 5 && (
-              <button
-                type="button"
-                onClick={() => setShowSchemaGuide(!showSchemaGuide)}
-                className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#E4DDC7] text-[#073642] hover:bg-[#D6D1B1] transition-colors cursor-pointer"
-                title="View all supported columns and format guide"
-              >
-                +{schema.optionalHeaders.length - 5} More
-              </button>
-            )}
-          </div>
-
-          {statusFeedback && (
-            <span
-              className={`text-xs font-bold flex items-center gap-1 px-2.5 py-0.5 rounded-md shadow-2xs ${
-                statusFeedback.type === 'success' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-red-100 text-red-800 border border-red-300'
-              }`}
+          {/* Popover Card */}
+          {showColumnsPopover && (
+            <div
+              onMouseEnter={() => setShowColumnsPopover(true)}
+              onMouseLeave={() => setShowColumnsPopover(false)}
+              className="absolute left-0 top-full mt-2 w-80 sm:w-96 p-4 rounded-xl bg-white border border-slate-200 shadow-2xl z-50 text-xs text-slate-800 space-y-2.5 animate-in fade-in zoom-in-95 duration-150"
             >
-              {statusFeedback.type === 'success' ? <Check className="w-3.5 h-3.5 text-emerald-700" /> : <AlertCircle className="w-3.5 h-3.5 text-red-700" />}
-              <span>{statusFeedback.message}</span>
-            </span>
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                  <Info className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>{schema.title}</span>
+                </span>
+                <span className="text-[10px] font-mono text-slate-400">RFC 4180</span>
+              </div>
+
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block mb-1">
+                  Required Header:
+                </span>
+                <div className="flex flex-wrap gap-1">
+                  {schema.requiredHeaders.map(h => (
+                    <span
+                      key={h.key}
+                      className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200"
+                    >
+                      {h.label}*
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">
+                  Supported Optional Headers:
+                </span>
+                <div className="flex flex-wrap gap-1 max-h-36 overflow-y-auto pr-1">
+                  {schema.optionalHeaders.map(h => (
+                    <span
+                      key={h.key}
+                      className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-700 border border-slate-200"
+                      title={`Example: ${h.example}`}
+                    >
+                      {h.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-1 text-[11px] text-slate-500 border-t border-slate-100">
+                Headers are case-insensitive and spaces/dashes are normalized automatically.
+              </div>
+            </div>
           )}
         </div>
 
-        {/* Right Section: Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2 shrink-0 self-end md:self-auto">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".csv,text/csv"
-            onChange={handleFileChange}
-            className="hidden"
-          />
-
-          {/* Download Sample Template */}
-          <button
-            type="button"
-            onClick={handleDownloadTemplate}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EEE8D5] hover:bg-[#E4DDC7] text-[#073642] border border-[#D6D1B1] font-semibold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
-            title={`Download clean sample CSV template with example data for ${sectionType}`}
+        {/* Feedback Alert */}
+        {statusFeedback && (
+          <span
+            className={`text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg shadow-2xs ${
+              statusFeedback.type === 'success'
+                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                : 'bg-red-50 text-red-800 border border-red-200'
+            }`}
           >
-            <FileDown className="w-3.5 h-3.5 text-emerald-700" />
-            <span>Sample Template</span>
-          </button>
+            {statusFeedback.type === 'success' ? (
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+            ) : (
+              <AlertCircle className="w-3.5 h-3.5 text-red-600" />
+            )}
+            <span>{statusFeedback.message}</span>
+          </span>
+        )}
+      </div>
 
-          {/* Import CSV */}
+      {/* Right: Combined Segmented Import | Export ▾ Button */}
+      <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv,text/csv"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+
+        <div className="inline-flex rounded-lg border border-emerald-600/30 shadow-xs overflow-hidden">
+          {/* Import */}
           <button
             type="button"
             disabled={isProcessing}
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors cursor-pointer disabled:opacity-50"
             title={`Upload .csv file to batch insert ${sectionType}`}
           >
             <Upload className="w-3.5 h-3.5" />
-            <span>{isProcessing ? 'Importing...' : 'Import CSV'}</span>
+            <span>{isProcessing ? 'Importing...' : 'Import'}</span>
           </button>
 
-          {/* Export / Download CSV */}
+          {/* Export */}
           <button
             type="button"
             onClick={handleDownloadCsv}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
-            title={`Download active ${sectionType} dataset as formatted .csv`}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs border-l border-emerald-500/40 transition-colors cursor-pointer"
+            title={`Export active ${sectionType} dataset as .csv`}
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Download CSV</span>
+            <span>Export ▾</span>
           </button>
         </div>
       </div>
-
-      {/* Expandable Schema Column & Mapping Guide */}
-      {showSchemaGuide && (
-        <div className="pt-2.5 mt-1 border-t border-[#D6D1B1]/60 text-xs text-[#073642] animate-in fade-in">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-bold text-[11px] uppercase tracking-wider text-[#586E75] flex items-center gap-1.5">
-              <Info className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Full Supported CSV Schema for {schema.title}</span>
-            </span>
-            <button
-              type="button"
-              onClick={() => setShowSchemaGuide(false)}
-              className="text-[10px] text-[#586E75] hover:text-[#073642] font-semibold underline cursor-pointer"
-            >
-              Hide Guide
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
-            {allHeaders.map(h => (
-              <div key={h.key} className="p-2 rounded-xl bg-[#EEE8D5] border border-[#D6D1B1] flex flex-col gap-0.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#073642]">{h.label}</span>
-                  {schema.requiredHeaders.some(req => req.key === h.key) ? (
-                    <span className="text-[9px] font-bold text-emerald-800 bg-emerald-100 px-1.5 py-0.2 rounded">Required</span>
-                  ) : (
-                    <span className="text-[9px] text-[#586E75]">Optional</span>
-                  )}
-                </div>
-                <span className="text-[10px] text-[#586E75] font-mono truncate">Key: {h.key}</span>
-                <span className="text-[10px] text-[#073642] italic truncate">Example: "{h.example}"</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
