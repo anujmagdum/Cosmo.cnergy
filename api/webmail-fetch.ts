@@ -4,6 +4,103 @@ export const runtime = 'nodejs';
 import { ImapFlow } from 'imapflow';
 import tls from 'tls';
 
+const WIN1252_MAP: Record<number, string> = {
+  0x80: '€', 0x82: '‚', 0x83: 'ƒ', 0x84: '„', 0x85: '…', 0x86: '†', 0x87: '‡',
+  0x88: 'ˆ', 0x89: '‰', 0x8A: 'Š', 0x8B: '‹', 0x8C: 'Œ', 0x8E: 'Ž',
+  0x91: '‘', 0x92: '’', 0x93: '“', 0x94: '”', 0x95: '•', 0x96: '–', 0x97: '—',
+  0x98: '˜', 0x99: '™', 0x9A: 'š', 0x9B: '›', 0x9C: 'œ', 0x9E: 'ž', 0x9F: 'Ÿ',
+  0xA0: ' ', 0xA9: '©', 0xAE: '®', 0xB0: '°', 0xB1: '±', 0xB7: '·'
+};
+
+function decodeMimeString(input?: string): string {
+  if (!input || typeof input !== 'string') return '';
+
+  // 1. Decode RFC 2047 encoded words in subject/headers (=?UTF-8?B?...?= or =?UTF-8?Q?...?=)
+  let text = input.replace(/=\?([a-zA-Z0-9_-]+)\?([bBqQ])\?([^?]+)\?=/g, (match, charset, encoding, data) => {
+    try {
+      if (encoding.toUpperCase() === 'B') {
+        return Buffer.from(data, 'base64').toString('utf8');
+      } else if (encoding.toUpperCase() === 'Q') {
+        const qData = data.replace(/_/g, ' ');
+        return decodeQuotedPrintable(qData);
+      }
+    } catch {
+      return data;
+    }
+    return match;
+  });
+
+  return decodeQuotedPrintable(text);
+}
+
+function decodeQuotedPrintable(input: string): string {
+  if (!input) return '';
+
+  // Remove soft line breaks
+  let text = input.replace(/=(\r\n|\n|\r)/g, '');
+
+  // Decode byte sequences
+  return text.replace(/((?:=[0-9A-Fa-f]{2})+)/g, (match) => {
+    const hexes = match.split('=').filter(Boolean);
+    const bytes = Buffer.from(hexes.map(h => parseInt(h, 16)));
+    try {
+      const strict = new TextDecoder('utf-8', { fatal: true });
+      return strict.decode(bytes);
+    } catch {
+      let s = '';
+      for (let i = 0; i < bytes.length; ) {
+        let matched = false;
+        for (let len = Math.min(4, bytes.length - i); len >= 1; len--) {
+          try {
+            const sub = bytes.subarray(i, i + len);
+            const strict = new TextDecoder('utf-8', { fatal: true });
+            s += strict.decode(sub);
+            i += len;
+            matched = true;
+            break;
+          } catch {}
+        }
+        if (!matched) {
+          const b = bytes[i];
+          s += WIN1252_MAP[b] || String.fromCharCode(b);
+          i++;
+        }
+      }
+      return s;
+    }
+  });
+}
+
+function extractSnippetFromBody(body: string, maxLength = 80): string {
+  if (!body) return 'New message received';
+
+  let clean = decodeMimeString(body);
+  clean = clean.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, ' ');
+  clean = clean.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, ' ');
+  clean = clean.replace(/<head[^>]*>[\s\S]*?<\/head>/gi, ' ');
+  clean = clean.replace(/<[^>]+>/g, ' ');
+  clean = clean
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&ndash;/gi, '–')
+    .replace(/&mdash;/gi, '—');
+  clean = clean.replace(/\s+/g, ' ').trim();
+
+  if (!clean) return 'New message received';
+  if (clean.length <= maxLength) return clean;
+
+  const sub = clean.substring(0, maxLength);
+  const lastSpace = sub.lastIndexOf(' ');
+  if (lastSpace >= 55) {
+    return sub.substring(0, lastSpace) + '...';
+  }
+  return sub + '...';
+}
+
 // Serverless Handler for IMAP Email Sync & Connection Testing
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
@@ -93,33 +190,79 @@ export default async function handler(req: any, res: any) {
 
           const toAddr = envelope.to?.[0]?.address || account?.email || authUser;
 
-          // Extract text snippet or body from source if present
-          let bodyText = '';
+          // Extract text and html parts from raw MIME source if present
+          let htmlBody = '';
+          let textBody = '';
+
           if (message.source) {
-            const rawSource = message.source.toString();
-            const textMatch = rawSource.match(/Content-Type:\s*text\/(?:plain|html)[^]*?\r?\n\r?\n([^]*?)(?:\r?\n--|$)/i);
-            bodyText = textMatch ? textMatch[1].trim() : rawSource.substring(0, 500);
+            const rawSource = message.source.toString('binary');
+
+            // Find HTML part
+            const htmlPartMatch = rawSource.match(
+              /Content-Type:\s*text\/html(?:;[^\r\n]*)?(?:\r?\n[ \t][^\r\n]*)*\r?\n(?:Content-Transfer-Encoding:\s*([^\r\n]+)\r?\n)?(?:[^\r\n]+\r?\n)*\r?\n([\s\S]*?)(?:\r?\n--|$)/i
+            );
+            if (htmlPartMatch) {
+              const enc = (htmlPartMatch[1] || '').trim().toLowerCase();
+              const partContent = htmlPartMatch[2];
+              if (enc === 'base64') {
+                htmlBody = Buffer.from(partContent.replace(/\s+/g, ''), 'base64').toString('utf8');
+              } else if (enc === 'quoted-printable') {
+                htmlBody = decodeMimeString(partContent);
+              } else {
+                htmlBody = decodeMimeString(partContent);
+              }
+            }
+
+            // Find Plain Text part
+            const textPartMatch = rawSource.match(
+              /Content-Type:\s*text\/plain(?:;[^\r\n]*)?(?:\r?\n[ \t][^\r\n]*)*\r?\n(?:Content-Transfer-Encoding:\s*([^\r\n]+)\r?\n)?(?:[^\r\n]+\r?\n)*\r?\n([\s\S]*?)(?:\r?\n--|$)/i
+            );
+            if (textPartMatch) {
+              const enc = (textPartMatch[1] || '').trim().toLowerCase();
+              const partContent = textPartMatch[2];
+              if (enc === 'base64') {
+                textBody = Buffer.from(partContent.replace(/\s+/g, ''), 'base64').toString('utf8');
+              } else if (enc === 'quoted-printable') {
+                textBody = decodeMimeString(partContent);
+              } else {
+                textBody = decodeMimeString(partContent);
+              }
+            }
+
+            // If neither matched MIME boundaries, use general body after double newline
+            if (!htmlBody && !textBody) {
+              const headerEnd = rawSource.indexOf('\r\n\r\n');
+              const altHeaderEnd = rawSource.indexOf('\n\n');
+              const splitIdx = headerEnd !== -1 ? headerEnd + 4 : altHeaderEnd !== -1 ? altHeaderEnd + 2 : 0;
+              const remainder = rawSource.substring(splitIdx);
+              if (/<[a-z][\s\S]*>/i.test(remainder)) {
+                htmlBody = decodeMimeString(remainder);
+              } else {
+                textBody = decodeMimeString(remainder);
+              }
+            }
           }
 
-          const cleanSnippet = (envelope.subject || bodyText.substring(0, 120) || 'New message received').replace(/<[^>]*>?/gm, '');
+          const rawCandidate = textBody || htmlBody || '';
+          const cleanSnippet = extractSnippetFromBody(rawCandidate);
+          const decodedSubject = decodeMimeString(envelope.subject || '(No Subject)');
+          const decodedFrom = decodeMimeString(fromAddr);
+
+          const finalBodyHtml = htmlBody
+            ? htmlBody
+            : `<div style="white-space: pre-wrap; font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; font-size: 14px; line-height: 1.6; color: #0D0D0D; padding: 12px;">${textBody || cleanSnippet}</div>`;
 
           fetchedEmails.push({
             id: `imap-${message.uid || message.seq}`,
             accountEmail: account?.email || authUser,
             folder: folder || 'inbox',
-            from: fromAddr,
+            from: decodedFrom,
             to: toAddr,
-            subject: envelope.subject || '(No Subject)',
+            subject: decodedSubject,
             date: envelope.date ? new Date(envelope.date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : new Date().toLocaleString(),
             timestamp: envelope.date ? new Date(envelope.date).getTime() : Date.now(),
             snippet: cleanSnippet,
-            bodyHtml: `<div style="font-family: Arial, sans-serif; padding: 14px; color: #073642; line-height: 1.6;">
-              <p><strong>Subject:</strong> ${envelope.subject || '(No Subject)'}</p>
-              <p><strong>From:</strong> ${fromAddr}</p>
-              <p><strong>Date:</strong> ${envelope.date ? new Date(envelope.date).toUTCString() : new Date().toUTCString()}</p>
-              <hr style="border: 0; border-top: 1px solid #D6D1B1; margin: 15px 0;"/>
-              <div style="white-space: pre-wrap; font-size: 13px;">${bodyText || cleanSnippet}</div>
-            </div>`,
+            bodyHtml: finalBodyHtml,
             isUnread: !(message.flags?.has('\\Seen')),
             isStarred: Boolean(message.flags?.has('\\Flagged')),
           });

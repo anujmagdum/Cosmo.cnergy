@@ -4,6 +4,13 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { WebmailAccount, EmailMessage, EmailAttachment, QueuedMailDraft } from '../types';
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient';
 import {
+  decodeMimeQuotedPrintable,
+  cleanRawEmailBody,
+  extractTrueBodySnippet,
+  buildSanitizedIframeDoc,
+  formatEmailListDate
+} from '../utils/emailMimeUtils';
+import {
   Mail,
   Send,
   Inbox,
@@ -26,7 +33,9 @@ import {
   Sparkles,
   ChevronDown,
   Eye,
-  Download
+  Download,
+  ReplyAll,
+  MailCheck
 } from 'lucide-react';
 
 interface Props {
@@ -553,6 +562,63 @@ export const Webmail: React.FC<Props> = ({
     }
   };
 
+  
+  // Quick Actions: Reply, Reply All, Forward, Toggle Read
+  const handleReply = (email: EmailMessage) => {
+    const rawFrom = decodeMimeQuotedPrintable(email.from);
+    const toAddr = rawFrom.includes('<') ? rawFrom.split('<')[1].replace('>', '').trim() : rawFrom.trim();
+    const cleanSubject = decodeMimeQuotedPrintable(email.subject);
+    const subjectPrefix = cleanSubject.toLowerCase().startsWith('re:') ? cleanSubject : `Re: ${cleanSubject}`;
+    const plainSnippet = extractTrueBodySnippet(email.bodyHtml, email.snippet, 0, 300);
+
+    setComposeTo(toAddr);
+    setComposeCc('');
+    setComposeSubject(subjectPrefix);
+    setComposeBody(`\n\n--- On ${email.date}, ${rawFrom} wrote:\n> ${plainSnippet}`);
+    setIsComposeOpen(true);
+  };
+
+  const handleReplyAll = (email: EmailMessage) => {
+    const rawFrom = decodeMimeQuotedPrintable(email.from);
+    const toAddr = rawFrom.includes('<') ? rawFrom.split('<')[1].replace('>', '').trim() : rawFrom.trim();
+    const cleanSubject = decodeMimeQuotedPrintable(email.subject);
+    const subjectPrefix = cleanSubject.toLowerCase().startsWith('re:') ? cleanSubject : `Re: ${cleanSubject}`;
+    const plainSnippet = extractTrueBodySnippet(email.bodyHtml, email.snippet, 0, 300);
+
+    const otherRecipients = [email.to, email.cc]
+      .filter(Boolean)
+      .join(', ')
+      .split(',')
+      .map(s => s.trim())
+      .filter(addr => addr && !addr.includes(activeAccount.email) && !addr.includes(toAddr));
+
+    setComposeTo(toAddr);
+    setComposeCc(otherRecipients.join(', '));
+    setComposeSubject(subjectPrefix);
+    setComposeBody(`\n\n--- On ${email.date}, ${rawFrom} wrote:\n> ${plainSnippet}`);
+    setIsComposeOpen(true);
+  };
+
+  const handleForward = (email: EmailMessage) => {
+    const rawFrom = decodeMimeQuotedPrintable(email.from);
+    const cleanSubject = decodeMimeQuotedPrintable(email.subject);
+    const subjectPrefix = cleanSubject.toLowerCase().startsWith('fwd:') ? cleanSubject : `Fwd: ${cleanSubject}`;
+    const plainSnippet = extractTrueBodySnippet(email.bodyHtml, email.snippet, 0, 500);
+
+    setComposeTo('');
+    setComposeCc('');
+    setComposeSubject(subjectPrefix);
+    setComposeBody(`\n\n--- Forwarded Message ---\nFrom: ${rawFrom}\nDate: ${email.date}\nSubject: ${cleanSubject}\nTo: ${email.to}\n\n${plainSnippet}`);
+    setIsComposeOpen(true);
+  };
+
+  const handleToggleReadStatus = (emailId: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setEmails(prev =>
+      prev.map(item => (item.id === emailId ? { ...item, isUnread: !item.isUnread } : item))
+    );
+  };
+
   // Delete / Trash email
   const handleDeleteEmail = (emailId: string) => {
     setEmails(prev =>
@@ -646,21 +712,16 @@ export const Webmail: React.FC<Props> = ({
   return (
     <div className="space-y-6">
       {/* Top Header & Account Management Bar */}
-      <div className="glass-panel p-6 rounded-3xl bg-[#0B192C] text-white flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md">
+      <div className="glass-panel px-5 py-3.5 rounded-2xl bg-[#0B192C] text-white flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-md">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-            <Mail className="w-6 h-6 text-white" />
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center shadow-md shadow-emerald-500/20 shrink-0">
+            <Mail className="w-4.5 h-4.5 text-white" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold text-white font-sans tracking-tight">Admin Webmail Client</h2>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                IMAP / SMTP SSL
-              </span>
-            </div>
-            <p className="text-xs text-slate-300 mt-0.5">
-              Multi-account enterprise inbox with live IMAP polling, SMTP email drafting, and Supabase auth persistence.
-            </p>
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h2 className="text-lg font-bold text-white font-heading tracking-tight">Admin Webmail Client</h2>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              IMAP / SMTP SSL
+            </span>
           </div>
         </div>
 
@@ -882,41 +943,41 @@ export const Webmail: React.FC<Props> = ({
           <div className="flex-1 overflow-y-auto max-h-[600px] divide-y divide-[#e2e8f0]/40">
             {filteredEmails.length === 0 ? (
               <div className="p-10 text-center text-[#1e293b] text-xs">
-                <Mail className="w-8 h-8 text-[#93A1A1] mx-auto mb-2 opacity-50" />
+                <Mail className="w-8 h-8 text-[#94a3b8] mx-auto mb-2 opacity-50" />
                 <p>No emails found in this folder.</p>
               </div>
             ) : (
               filteredEmails.map(mail => {
                 const isSelected = selectedEmail?.id === mail.id;
+                const bodySnippet = extractTrueBodySnippet(mail.bodyHtml, mail.snippet);
+                const decodedSubject = decodeMimeQuotedPrintable(mail.subject) || '(No Subject)';
+                const senderDisplay = decodeMimeQuotedPrintable(mail.from.split('<')[0].trim()) || decodeMimeQuotedPrintable(mail.from);
+                const formattedDate = formatEmailListDate(mail.date, mail.timestamp);
+
                 return (
                   <div
                     key={mail.id}
                     onClick={() => handleSelectEmail(mail)}
-                    className={`p-3.5 cursor-pointer transition-all ${
+                    className={`p-3.5 cursor-pointer transition-all border-b border-slate-100 ${
                       isSelected
-                        ? 'bg-emerald-50/90 border-l-4 border-l-emerald-600'
+                        ? 'bg-[#ECFDF5] border-l-4 border-l-emerald-600 shadow-xs'
                         : mail.isUnread
-                        ? 'bg-[white] hover:bg-[white] font-semibold'
-                        : 'bg-[#FAF4E6] hover:bg-[white] text-[#1e293b]'
+                        ? 'bg-white hover:bg-slate-50 font-semibold'
+                        : 'bg-white hover:bg-slate-50/80 text-slate-700'
                     }`}
                   >
+                    {/* Top row: Left (Unread/Read dot + Star + Sender) | Right (Right-aligned Timestamp + Paperclip) */}
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <div className="flex items-center gap-1.5 truncate">
-                        {mail.isUnread && (
-                          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                        )}
-                        <span className={`text-xs truncate ${mail.isUnread ? 'font-bold text-[#020617]' : 'text-[#1e293b]'}`}>
-                          {mail.from.split('<')[0].trim() || mail.from}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        {mail.hasAttachments && (
-                          <Paperclip className="w-3 h-3 text-[#1e293b]" />
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        {mail.isUnread ? (
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="Unread" />
+                        ) : (
+                          <span className="w-2 h-2 rounded-full bg-slate-300 shrink-0" title="Read" />
                         )}
                         <button
                           onClick={e => handleToggleStar(mail.id, e)}
-                          className="text-[#93A1A1] hover:text-amber-500 transition-colors"
+                          className="text-slate-400 hover:text-amber-500 transition-colors shrink-0 p-0.5"
+                          title={mail.isStarred ? 'Starred' : 'Not starred'}
                         >
                           <Star
                             className={`w-3.5 h-3.5 ${
@@ -924,18 +985,37 @@ export const Webmail: React.FC<Props> = ({
                             }`}
                           />
                         </button>
-                        <span className="text-[10px] text-[#1e293b] font-mono">
-                          {mail.date.split(',')[0]}
+                        <span
+                          className={`text-xs truncate ${
+                            mail.isUnread ? 'font-bold text-[#0D0D0D]' : 'font-normal text-slate-700'
+                          }`}
+                        >
+                          {senderDisplay}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                        {mail.hasAttachments && (
+                          <Paperclip className="w-3 h-3 text-slate-400 shrink-0" />
+                        )}
+                        <span className="text-[11px] text-slate-500 font-mono text-right whitespace-nowrap">
+                          {formattedDate}
                         </span>
                       </div>
                     </div>
 
-                    <h4 className={`text-xs truncate ${mail.isUnread ? 'font-bold text-[#020617]' : 'text-[#1e293b]'}`}>
-                      {mail.subject}
+                    {/* Subject line */}
+                    <h4
+                      className={`text-xs truncate mb-1 ${
+                        mail.isUnread ? 'font-bold text-[#0D0D0D]' : 'font-normal text-slate-600'
+                      }`}
+                    >
+                      {decodedSubject}
                     </h4>
 
-                    <p className="text-[11px] text-[#1e293b] line-clamp-1 mt-0.5">
-                      {mail.snippet}
+                    {/* True body snippet (60-80 chars) */}
+                    <p className="text-[11px] text-slate-500 line-clamp-1">
+                      {bodySnippet}
                     </p>
                   </div>
                 );
@@ -946,108 +1026,185 @@ export const Webmail: React.FC<Props> = ({
 
         {/* Right Reading Pane (5 Cols) */}
         <div className="lg:col-span-5 p-6 flex flex-col justify-between bg-[white] overflow-y-auto max-h-[680px] text-[#020617]">
-          {selectedEmail ? (
-            <div className="space-y-6">
-              {/* Email View Header */}
-              <div className="border-b border-[#e2e8f0]/60 pb-4 space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <h3 className="text-lg font-bold text-[#020617] font-sans leading-tight">
-                    {selectedEmail.subject}
-                  </h3>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={e => handleToggleStar(selectedEmail.id, e)}
-                      className="p-1.5 rounded-lg text-[#1e293b] hover:text-amber-500 transition-colors"
-                      title="Star email"
-                    >
-                      <Star className={`w-4 h-4 ${selectedEmail.isStarred ? 'text-amber-500 fill-amber-500' : ''}`} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteEmail(selectedEmail.id)}
-                      className="p-1.5 rounded-lg text-[#1e293b] hover:text-red-600 hover:bg-red-50 transition-colors"
-                      title="Delete / Move to Trash"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+          {selectedEmail ? (() => {
+            const rawFrom = decodeMimeQuotedPrintable(selectedEmail.from);
+            const fromMatch = rawFrom.match(/^(.*?)(?:<([^>]+)>)?$/);
+            const senderName = (fromMatch && fromMatch[1] ? fromMatch[1].trim() : rawFrom) || 'Unknown Sender';
+            const senderEmail = fromMatch && fromMatch[2] ? fromMatch[2].trim() : '';
+            const senderInitials = senderName
+              .replace(/[^a-zA-Z0-9 ]/g, '')
+              .split(' ')
+              .filter(Boolean)
+              .map(w => w[0])
+              .slice(0, 2)
+              .join('')
+              .toUpperCase() || 'U';
 
-                <div className="flex items-center justify-between text-xs text-[#1e293b] pt-1">
-                  <div>
-                    <div>
-                      From: <span className="font-bold text-[#020617]">{selectedEmail.from}</span>
-                    </div>
-                    <div className="text-[#1e293b] text-[11px]">
-                      To: {selectedEmail.to} {selectedEmail.cc ? `• CC: ${selectedEmail.cc}` : ''}
-                    </div>
-                  </div>
-                  <div className="text-[11px] text-[#1e293b] font-mono text-right">
-                    {selectedEmail.date}
-                  </div>
-                </div>
-              </div>
+            const decodedSubject = decodeMimeQuotedPrintable(selectedEmail.subject) || '(No Subject)';
 
-              {/* Attachments Section */}
-              {selectedEmail.attachments && selectedEmail.attachments.length > 0 && (
-                <div className="p-3 rounded-2xl bg-[white] border border-[#e2e8f0] space-y-2">
-                  <div className="text-[11px] font-bold text-[#1e293b] uppercase tracking-wider flex items-center gap-1.5">
-                    <Paperclip className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Attachments ({selectedEmail.attachments.length})</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedEmail.attachments.map((att, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[white] border border-[#e2e8f0] text-xs text-[#020617] shadow-2xs hover:border-emerald-500 transition-all cursor-pointer font-medium"
-                        onClick={() => alert(`Downloading attachment: ${att.filename}`)}
+            const formattedDateDetail = (() => {
+              try {
+                const t = selectedEmail.timestamp ? new Date(selectedEmail.timestamp) : new Date(selectedEmail.date);
+                if (!isNaN(t.getTime())) {
+                  return t.toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                  });
+                }
+              } catch {}
+              return selectedEmail.date;
+            })();
+
+            return (
+              <div className="space-y-4 flex flex-col h-full">
+                {/* Single Clean Header Card */}
+                <div className="border-b border-slate-200 pb-4 space-y-2.5 bg-white shrink-0">
+                  {/* Top line: Large bold Subject line with Star, Delete, and Quick Email Actions */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] font-heading leading-snug break-words flex-1">
+                      {decodedSubject}
+                    </h3>
+
+                    {/* Quick action buttons next to delete & star */}
+                    <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+                      <button
+                        onClick={() => handleReply(selectedEmail)}
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-emerald-500 bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-emerald-800 text-xs font-semibold transition-all active:scale-95 shadow-2xs"
+                        title="Reply"
                       >
-                        <FileText className="w-3.5 h-3.5 text-emerald-600" />
-                        <span className="truncate max-w-[140px]">{att.filename}</span>
-                        <span className="text-[10px] text-[#1e293b] font-mono">({att.size})</span>
-                        <Download className="w-3 h-3 text-[#1e293b] hover:text-[#020617]" />
+                        <Reply className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="hidden sm:inline">Reply</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleReplyAll(selectedEmail)}
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-emerald-500 bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-emerald-800 text-xs font-semibold transition-all active:scale-95 shadow-2xs"
+                        title="Reply All"
+                      >
+                        <ReplyAll className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="hidden sm:inline">Reply All</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleForward(selectedEmail)}
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-emerald-500 bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-emerald-800 text-xs font-semibold transition-all active:scale-95 shadow-2xs"
+                        title="Forward"
+                      >
+                        <Forward className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="hidden sm:inline">Forward</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleToggleReadStatus(selectedEmail.id)}
+                        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all active:scale-95 shadow-2xs ${
+                          selectedEmail.isUnread
+                            ? 'border-emerald-300 bg-emerald-50 text-emerald-800'
+                            : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                        }`}
+                        title={selectedEmail.isUnread ? 'Mark as read' : 'Mark as unread'}
+                      >
+                        <Mail className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="hidden sm:inline">{selectedEmail.isUnread ? 'Mark Read' : 'Mark Unread'}</span>
+                      </button>
+
+                      <div className="h-4 w-px bg-slate-200 mx-0.5" />
+
+                      <button
+                        onClick={e => handleToggleStar(selectedEmail.id, e)}
+                        className="p-1.5 rounded-lg border border-slate-200 hover:border-amber-400 bg-white hover:bg-amber-50 text-slate-400 hover:text-amber-500 transition-all shadow-2xs"
+                        title={selectedEmail.isStarred ? 'Starred' : 'Star email'}
+                      >
+                        <Star className={`w-4 h-4 ${selectedEmail.isStarred ? 'text-amber-500 fill-amber-500' : ''}`} />
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteEmail(selectedEmail.id)}
+                        className="p-1.5 rounded-lg border border-slate-200 hover:border-red-300 bg-white hover:bg-red-50 text-slate-500 hover:text-red-600 transition-all shadow-2xs"
+                        title="Delete / Move to Trash"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Sub-line: Sender Avatar, Display Name <email@domain.com>, and relative timestamp */}
+                  <div className="flex items-center justify-between gap-3 pt-0.5">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-7 h-7 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center shrink-0 uppercase shadow-2xs">
+                        {senderInitials}
                       </div>
-                    ))}
+                      <div className="min-w-0 truncate">
+                        <span className="font-semibold text-xs text-[#0D0D0D]">{senderName}</span>
+                        {senderEmail && (
+                          <span className="text-slate-500 font-mono text-[11px] ml-1.5">
+                            &lt;{senderEmail}&gt;
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-[11px] text-slate-500 font-mono shrink-0 text-right">
+                      {formattedDateDetail}
+                    </div>
+                  </div>
+
+                  {/* Bottom line: Recipient chip (To: me) */}
+                  <div className="flex items-center gap-2 pt-0.5">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                      To: {selectedEmail.to === activeAccount.email ? 'me' : selectedEmail.to}
+                    </span>
+                    {selectedEmail.cc && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                        Cc: {selectedEmail.cc}
+                      </span>
+                    )}
                   </div>
                 </div>
-              )}
 
-              {/* Body HTML */}
-              <div
-                className="prose prose-sm max-w-none text-[#020617] text-xs leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: selectedEmail.bodyHtml }}
-              />
+                {/* Attachments Section */}
+                {selectedEmail.attachments && selectedEmail.attachments.length > 0 && (
+                  <div className="p-3 rounded-2xl bg-white border border-slate-200 space-y-2 shrink-0">
+                    <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <Paperclip className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Attachments ({selectedEmail.attachments.length})</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedEmail.attachments.map((att, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-[#0D0D0D] shadow-2xs hover:border-emerald-500 transition-all cursor-pointer font-medium"
+                          onClick={() => alert(`Downloading attachment: ${att.filename}`)}
+                        >
+                          <FileText className="w-3.5 h-3.5 text-emerald-600" />
+                          <span className="truncate max-w-[140px]">{att.filename}</span>
+                          <span className="text-[10px] text-slate-500 font-mono">({att.size})</span>
+                          <Download className="w-3 h-3 text-slate-400 hover:text-slate-800" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-              {/* Quick Reply / Forward Actions */}
-              <div className="pt-6 border-t border-[#e2e8f0]/60 flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    setComposeTo(selectedEmail.from.includes('<') ? selectedEmail.from.split('<')[1].replace('>', '') : selectedEmail.from);
-                    setComposeSubject(`Re: ${selectedEmail.subject}`);
-                    setComposeBody(`\n\n--- On ${selectedEmail.date}, ${selectedEmail.from} wrote:\n> ${selectedEmail.snippet}`);
-                    setIsComposeOpen(true);
-                  }}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[white] hover:bg-[#e2e8f0] text-[#020617] font-semibold text-xs transition-all active:scale-95 border border-[#e2e8f0]"
-                >
-                  <Reply className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Reply</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setComposeSubject(`Fwd: ${selectedEmail.subject}`);
-                    setComposeBody(`\n\n--- Forwarded Message ---\nFrom: ${selectedEmail.from}\nDate: ${selectedEmail.date}\nSubject: ${selectedEmail.subject}\n\n${selectedEmail.snippet}`);
-                    setIsComposeOpen(true);
-                  }}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[white] hover:bg-[#e2e8f0] text-[#020617] font-semibold text-xs transition-all active:scale-95 border border-[#e2e8f0]"
-                >
-                  <Forward className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Forward</span>
-                </button>
+                {/* Safe Sanitized HTML Email Body rendered inside isolated sandboxed iframe */}
+                <div className="flex-1 w-full min-h-[480px] bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+                  <iframe
+                    key={selectedEmail.id}
+                    title={`Email Body: ${decodedSubject}`}
+                    srcDoc={buildSanitizedIframeDoc(selectedEmail.bodyHtml || selectedEmail.snippet)}
+                    sandbox="allow-popups allow-popups-to-escape-sandbox"
+                    className="w-full h-full min-h-[480px] border-0 bg-white"
+                    style={{ minHeight: '480px', width: '100%', display: 'block' }}
+                  />
+                </div>
               </div>
-            </div>
-          ) : (
+            );
+          })() : (
             <div className="h-full flex flex-col items-center justify-center text-center p-8 text-[#1e293b]">
-              <Mail className="w-12 h-12 text-[#93A1A1] mb-3" />
+              <Mail className="w-12 h-12 text-[#94a3b8] mb-3" />
               <p className="text-xs">Select an email message from the list to read its contents.</p>
             </div>
           )}
