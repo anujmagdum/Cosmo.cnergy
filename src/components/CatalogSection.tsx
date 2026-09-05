@@ -706,11 +706,7 @@ Cosmo.cnergy Procurement Team`;
     e.preventDefault();
     if (!catalogForm.name.trim()) return;
 
-    // Requirement: Ensure form validation requires at least 1 company
-    if (catalogForm.selectedCompanies.length === 0) {
-      setCompanyValidationMsg('Please associate at least 1 company for this component.');
-      return;
-    }
+// Associated company is optional
 
     setIsSubmitting(true);
     const matchedCat = categories.find(c => c.name.toLowerCase() === catalogForm.category.toLowerCase());
@@ -1845,7 +1841,7 @@ Cosmo.cnergy Procurement Team`;
                   <div>
                     <label className="block font-bold text-xs text-[#0f172a] uppercase tracking-wider flex items-center gap-1.5">
                       <Building2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Associated Sourcing Companies *</span>
+                      <span>Associated Sourcing Companies</span> <span className="text-[11px] text-slate-500 font-normal lowercase">(optional)</span>
                     </label>
                     <p className="text-[11px] text-[#64748b] mt-0.5">
                       Associate 1 or more companies. Associating 2+ vendors enables the <strong>"Compare Companies"</strong> AI engine.

@@ -125,7 +125,7 @@ export const CompanyDashboard: React.FC<Props> = ({
 
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email) return;
+    if (!formData.name.trim()) return;
 
     const primaryCat = formData.categories[0] || formData.category;
     const matchedCat = categories.find(c => c.name.toLowerCase() === primaryCat.toLowerCase());
@@ -163,7 +163,7 @@ export const CompanyDashboard: React.FC<Props> = ({
 
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingCompany) return;
+    if (!editingCompany || !editingCompany.name.trim()) return;
 
     const primaryCat = (editingCompany.categories && editingCompany.categories.length > 0)
       ? editingCompany.categories[0]
@@ -562,10 +562,9 @@ export const CompanyDashboard: React.FC<Props> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Contact Person *</label>
+                  <label className="block font-semibold text-[#0f172a] mb-1">Contact Person (Optional)</label>
                   <input
                     type="text"
-                    required
                     value={formData.contact_person}
                     onChange={e => setFormData({ ...formData, contact_person: e.target.value })}
                     placeholder="e.g. Rajesh Sharma"
@@ -616,10 +615,9 @@ export const CompanyDashboard: React.FC<Props> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Email Address *</label>
+                  <label className="block font-semibold text-[#0f172a] mb-1">Email Address (Optional)</label>
                   <input
                     type="email"
-                    required
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
                     placeholder="sales@company.com"
@@ -627,10 +625,9 @@ export const CompanyDashboard: React.FC<Props> = ({
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Phone Number *</label>
+                  <label className="block font-semibold text-[#0f172a] mb-1">Phone Number (Optional)</label>
                   <input
                     type="text"
-                    required
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+91 98765 43210"
@@ -724,10 +721,9 @@ export const CompanyDashboard: React.FC<Props> = ({
 
               <div className="grid grid-cols-1 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Contact Person *</label>
+                  <label className="block font-semibold text-[#0f172a] mb-1">Contact Person (Optional)</label>
                   <input
                     type="text"
-                    required
                     value={editingCompany.contact_person}
                     onChange={e => setEditingCompany({ ...editingCompany, contact_person: e.target.value })}
                     className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
@@ -779,20 +775,18 @@ export const CompanyDashboard: React.FC<Props> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Email Address *</label>
+                  <label className="block font-semibold text-[#0f172a] mb-1">Email Address (Optional)</label>
                   <input
                     type="email"
-                    required
                     value={editingCompany.email}
                     onChange={e => setEditingCompany({ ...editingCompany, email: e.target.value })}
                     className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#0f172a] mb-1">Phone Number *</label>
+                  <label className="block font-semibold text-[#0f172a] mb-1">Phone Number (Optional)</label>
                   <input
                     type="text"
-                    required
                     value={editingCompany.phone}
                     onChange={e => setEditingCompany({ ...editingCompany, phone: e.target.value })}
                     className="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-emerald-500 font-mono"
