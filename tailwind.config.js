@@ -6,6 +6,11 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        heading: ['Lexend', 'sans-serif'],
+        brand: ['Lexend', 'sans-serif'],
+      },
       colors: {
         brand: {
           dark: '#0B192C',

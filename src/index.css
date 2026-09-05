@@ -4,18 +4,28 @@
 
 @layer base {
   body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: #ffffff;
-    color: #020617;
+    color: #0D0D0D;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Outfit', 'Inter', sans-serif;
-    color: #020617;
+  h1, h2, h3, h4, h5, h6, .font-heading, .font-brand {
+    font-family: 'Lexend', sans-serif;
+    color: #0D0D0D;
+    letter-spacing: -0.02em;
+  }
+
+  /* Datlion Cnergy Shared Industrial Table & Column Headers */
+  th, .table-header {
+    font-family: 'Lexend', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
     font-weight: 700;
+    color: #0D0D0D;
   }
 }
 
