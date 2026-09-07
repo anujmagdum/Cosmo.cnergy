@@ -993,25 +993,28 @@ export const App: React.FC = () => {
     }
   };
 
-  // CSV Import Batch Handlers (Inventory: Component Name, Part Name, Technical Specification only; other fields blank)
+  // CSV Import Batch Handlers (Inventory: Component Name, Category, Part Name, Technical Specification; other fields blank)
   const handleImportComponents = async (rows: any[]): Promise<number> => {
     const importedItems: CatalogItem[] = [];
 
     rows.forEach((row, idx) => {
       const itemId = `cat-${Date.now()}-${idx}`;
       const compName = (row.name || row.component_name || '').trim();
+      const catName = (row.category || '').trim();
       const partName = (row.sku || row.part_name || '').trim();
       const techSpecs = (row.specs || row.technical_specification || row.technical_spec || '').trim();
 
-      // In inventory CSV import: only import Component Name, Part Name, and Technical Specification.
+      const matchedCat = categories.find(c => c.name.toLowerCase() === catName.toLowerCase());
+
+      // In inventory CSV import: import Component Name, Category, Part Name, Technical Specification.
       // All other fields remain completely blank / unassigned.
       const item: CatalogItem = {
         id: itemId,
         name: compName || `Component ${idx + 1}`,
+        category: catName || matchedCat?.name || '',
+        category_id: matchedCat?.id,
         sku: partName || '',
         specs: techSpecs || '',
-        category: '',
-        category_id: undefined,
         uom: '',
         preset_price: undefined,
         in_stock_qty: undefined,
@@ -1032,10 +1035,10 @@ export const App: React.FC = () => {
         const payload = importedItems.map(item => ({
           id: item.id,
           name: item.name,
+          category: item.category || null,
+          category_id: item.category_id || null,
           sku: item.sku || null,
           specs: item.specs || null,
-          category: null,
-          category_id: null,
           uom: null,
           preset_price: null,
           in_stock_qty: null,

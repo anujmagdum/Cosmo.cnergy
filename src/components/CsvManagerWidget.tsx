@@ -23,6 +23,7 @@ const SECTION_SCHEMAS: Record<CsvSectionType, SchemaHeaderConfig> = {
     filenamePrefix: 'Inventory_Components',
     requiredHeaders: [
       { key: 'name', label: 'Component Name', example: 'LiFePO4 Battery Cell' },
+      { key: 'category', label: 'Category', example: 'Capacitor' },
       { key: 'part_name', label: 'Part Name', example: 'LFP-48V-100AH' },
       { key: 'specs', label: 'Technical Specification', example: '48V 100Ah, 3.2V nominal, 6000 cycles' }
     ],
@@ -30,16 +31,19 @@ const SECTION_SCHEMAS: Record<CsvSectionType, SchemaHeaderConfig> = {
     sampleRows: [
       {
         name: 'LiFePO4 Battery Cell',
+        category: 'Capacitor',
         part_name: 'LFP-48V-100AH',
         specs: '48V 100Ah, 3.2V nominal, 6000 cycles'
       },
       {
         name: 'Smart BMS Controller',
+        category: 'Micro-Controller',
         part_name: 'BMS-16S-100A',
         specs: '16S 100A continuous, CANBUS 2.0B, RS485 isolated port'
       },
       {
         name: 'Steel Battery Enclosure',
+        category: 'Push Button',
         part_name: 'ENC-IP65-100A',
         specs: 'Powder-coated CRCA steel, IP65 silicone gasket'
       }
@@ -248,9 +252,10 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
 
       const parsedObjects = dataRows.map((row, rowIdx) => {
         if (sectionType === 'components') {
-          // Strictly extract only: Component Name, Part Name, Technical Specification
+          // Extract: Component Name, Category, Part Name, Technical Specification
           // All other fields remain completely blank
           let componentName = '';
+          let category = '';
           let partName = '';
           let technicalSpec = '';
 
@@ -262,9 +267,11 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
               normKey.includes('componentname') ||
               normKey === 'component' ||
               normKey === 'itemname' ||
-              (normKey.includes('name') && !normKey.includes('part') && !normKey.includes('company') && !normKey.includes('person'))
+              (normKey.includes('name') && !normKey.includes('part') && !normKey.includes('company') && !normKey.includes('person') && !normKey.includes('cat'))
             ) {
               componentName = val;
+            } else if (normKey.includes('category') || normKey === 'domain' || normKey === 'cat') {
+              category = val;
             } else if (
               normKey.includes('partname') ||
               normKey.includes('partnumber') ||
@@ -287,16 +294,19 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
             }
           });
 
-          // Fallback by column position if header didn't match:
-          // Col 0: Component Name, Col 1: Part Name, Col 2: Technical Specification
+          // Fallback by column position if headers didn't match:
+          // Col 0: Component Name, Col 1: Category, Col 2: Part Name, Col 3: Technical Specification
           if (!componentName && row[0]) {
             componentName = (row[0] || '').replace(/^["']|["']$/g, '').trim();
           }
-          if (!partName && row[1]) {
-            partName = (row[1] || '').replace(/^["']|["']$/g, '').trim();
-          }
-          if (!technicalSpec && row[2]) {
-            technicalSpec = (row[2] || '').replace(/^["']|["']$/g, '').trim();
+          if (row.length >= 4) {
+            if (!category && row[1]) category = (row[1] || '').replace(/^["']|["']$/g, '').trim();
+            if (!partName && row[2]) partName = (row[2] || '').replace(/^["']|["']$/g, '').trim();
+            if (!technicalSpec && row[3]) technicalSpec = (row[3] || '').replace(/^["']|["']$/g, '').trim();
+          } else {
+            // 3-column fallback: Col 0: Name, Col 1: Part Name, Col 2: Specs
+            if (!partName && row[1]) partName = (row[1] || '').replace(/^["']|["']$/g, '').trim();
+            if (!technicalSpec && row[2]) technicalSpec = (row[2] || '').replace(/^["']|["']$/g, '').trim();
           }
 
           if (!componentName) {
@@ -305,6 +315,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
 
           return {
             name: componentName,
+            category: category,
             sku: partName,
             part_name: partName,
             specs: technicalSpec,
@@ -492,7 +503,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
 
               <div className="pt-1 text-[11px] text-slate-700 border-t border-slate-100">
                 {sectionType === 'components'
-                  ? 'Imports strictly: Component Name, Part Name, and Technical Specification. All other fields remain blank.'
+                  ? 'Imports: Component Name, Category, Part Name, and Technical Specification. All other fields remain blank.'
                   : 'Headers are case-insensitive and spaces/dashes are normalized automatically.'}
               </div>
             </div>
