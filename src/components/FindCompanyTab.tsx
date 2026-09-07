@@ -229,17 +229,17 @@ export const FindCompanyTab: React.FC<Props> = ({
       )}
 
       {/* SEARCH HEADER & FILTERS */}
-      <div className="bg-[#FDF6E3] p-5 rounded-3xl border border-[#D6D1B1] shadow-xs space-y-4">
+      <div className="bg-[#FFFFFF] p-5 rounded-3xl border border-[#E2E8F0] shadow-xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-cyan-600 flex items-center justify-center shadow-md">
               <Search className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-[#073642] flex items-center gap-2">
+              <h2 className="text-base font-extrabold text-[#0D0D0D] flex items-center gap-2">
                 <span>Find New Companies (AI & Maps Orchestrator)</span>
               </h2>
-              <p className="text-xs text-[#586E75]">
+              <p className="text-xs text-[#334155]">
                 Discover industrial vendors on Google Maps, IndiaMart & Web, enrich contact details, and 1-tap import.
               </p>
             </div>
@@ -252,7 +252,7 @@ export const FindCompanyTab: React.FC<Props> = ({
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'search'
                   ? 'bg-[#0B192C] text-white shadow-md'
-                  : 'bg-[#EEE8D5] text-[#073642] hover:bg-[#E4DDC7]'
+                  : 'bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#f8fafc]'
               }`}
             >
               🌐 Sourcing Feed ({sourcedCompanies.length})
@@ -277,34 +277,34 @@ export const FindCompanyTab: React.FC<Props> = ({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 pt-1">
           {/* City Input */}
           <div className="md:col-span-3">
-            <label className="block text-[11px] font-bold text-[#073642] uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-[#0D0D0D] uppercase tracking-wider mb-1">
               City / Region *
             </label>
             <div className="relative">
-              <MapPin className="w-4 h-4 absolute left-3 top-2.5 text-[#586E75]" />
+              <MapPin className="w-4 h-4 absolute left-3 top-2.5 text-[#334155]" />
               <input
                 type="text"
                 value={city}
                 onChange={e => setCity(e.target.value)}
                 placeholder="e.g. Pune, Mumbai, Delhi"
-                className="w-full pl-9 pr-3 py-2 bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl text-xs font-bold text-[#073642] focus:outline-none focus:border-emerald-600"
+                className="w-full pl-9 pr-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs font-bold text-[#0D0D0D] focus:outline-none focus:border-emerald-600"
               />
             </div>
           </div>
 
           {/* Product Query Box */}
           <div className="md:col-span-6">
-            <label className="block text-[11px] font-bold text-[#073642] uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-bold text-[#0D0D0D] uppercase tracking-wider mb-1">
               Component / Material Name *
             </label>
             <div className="relative">
-              <Building2 className="w-4 h-4 absolute left-3 top-2.5 text-[#586E75]" />
+              <Building2 className="w-4 h-4 absolute left-3 top-2.5 text-[#334155]" />
               <input
                 type="text"
                 value={productQuery}
                 onChange={e => setProductQuery(e.target.value)}
                 placeholder="e.g. 3.2V 100Ah LFP Cell, 16S BMS, Copper Busbars, Solar Inverter"
-                className="w-full pl-9 pr-3 py-2 bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl text-xs font-bold text-[#073642] focus:outline-none focus:border-emerald-600"
+                className="w-full pl-9 pr-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs font-bold text-[#0D0D0D] focus:outline-none focus:border-emerald-600"
                 onKeyDown={e => e.key === 'Enter' && handleSearch()}
               />
             </div>
@@ -334,7 +334,7 @@ export const FindCompanyTab: React.FC<Props> = ({
 
         {/* QUICK CATEGORY PILLS */}
         <div className="flex items-center gap-2 pt-1 overflow-x-auto scrollbar-hide">
-          <span className="text-[11px] font-bold text-[#586E75] shrink-0">Quick Filters:</span>
+          <span className="text-[11px] font-bold text-[#334155] shrink-0">Quick Filters:</span>
           {quickCategories.map((cat, idx) => (
             <button
               key={idx}
@@ -343,7 +343,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                 handleSearch(cat);
               }}
               disabled={isLoading}
-              className="text-[11px] font-bold bg-[#EEE8D5] hover:bg-emerald-600 hover:text-white text-[#073642] border border-[#D6D1B1] px-3 py-1 rounded-xl transition-all whitespace-nowrap shrink-0 disabled:opacity-50 cursor-pointer"
+              className="text-[11px] font-bold bg-[#FFFFFF] hover:bg-emerald-600 hover:text-white text-[#0D0D0D] border border-[#E2E8F0] px-3 py-1 rounded-xl transition-all whitespace-nowrap shrink-0 disabled:opacity-50 cursor-pointer"
             >
               {cat}
             </button>
@@ -378,7 +378,7 @@ export const FindCompanyTab: React.FC<Props> = ({
         /* SPLIT SCREEN WORKSPACE */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[520px]">
           {/* LEFT 40% — LIVE GOOGLE MAPS PLUGIN */}
-          <div className="lg:col-span-5 bg-[#FDF6E3] rounded-3xl border border-[#D6D1B1] shadow-xs flex flex-col overflow-hidden">
+          <div className="lg:col-span-5 bg-[#FFFFFF] rounded-3xl border border-[#E2E8F0] shadow-xs flex flex-col overflow-hidden">
             <div className="bg-[#0B192C] text-white px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-emerald-400" />
@@ -399,16 +399,16 @@ export const FindCompanyTab: React.FC<Props> = ({
           </div>
 
           {/* RIGHT 60% — SOURCED CANDIDATE CARDS */}
-          <div className="lg:col-span-7 flex flex-col bg-[#FDF6E3] rounded-3xl border border-[#D6D1B1] shadow-xs overflow-hidden">
+          <div className="lg:col-span-7 flex flex-col bg-[#FFFFFF] rounded-3xl border border-[#E2E8F0] shadow-xs overflow-hidden">
             {/* SOURCE TABS HEADER */}
-            <div className="bg-[#EEE8D5] border-b border-[#D6D1B1] px-4 py-2.5 flex items-center justify-between gap-2 overflow-x-auto">
+            <div className="bg-[#FFFFFF] border-b border-[#E2E8F0] px-4 py-2.5 flex items-center justify-between gap-2 overflow-x-auto">
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setActiveSourceFilter('all')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     activeSourceFilter === 'all'
                       ? 'bg-[#0B192C] text-white'
-                      : 'text-[#073642] hover:bg-[#E4DDC7]'
+                      : 'text-[#0D0D0D] hover:bg-[#f8fafc]'
                   }`}
                 >
                   All ({sourcedCompanies.length})
@@ -418,7 +418,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     activeSourceFilter === 'maps'
                       ? 'bg-[#0B192C] text-white'
-                      : 'text-[#073642] hover:bg-[#E4DDC7]'
+                      : 'text-[#0D0D0D] hover:bg-[#f8fafc]'
                   }`}
                 >
                   📍 Google Maps
@@ -428,7 +428,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     activeSourceFilter === 'indiamart'
                       ? 'bg-[#0B192C] text-white'
-                      : 'text-[#073642] hover:bg-[#E4DDC7]'
+                      : 'text-[#0D0D0D] hover:bg-[#f8fafc]'
                   }`}
                 >
                   🏭 IndiaMart
@@ -438,7 +438,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     activeSourceFilter === 'google'
                       ? 'bg-[#0B192C] text-white'
-                      : 'text-[#073642] hover:bg-[#E4DDC7]'
+                      : 'text-[#0D0D0D] hover:bg-[#f8fafc]'
                   }`}
                 >
                   🌐 Web Search
@@ -448,7 +448,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     activeSourceFilter === 'other'
                       ? 'bg-[#0B192C] text-white'
-                      : 'text-[#073642] hover:bg-[#E4DDC7]'
+                      : 'text-[#0D0D0D] hover:bg-[#f8fafc]'
                   }`}
                 >
                   📦 Directories
@@ -461,14 +461,14 @@ export const FindCompanyTab: React.FC<Props> = ({
               {isLoading ? (
                 <div className="py-24 text-center space-y-3">
                   <RefreshCw className="w-8 h-8 animate-spin text-emerald-600 mx-auto" />
-                  <p className="text-xs font-bold text-[#073642]">
+                  <p className="text-xs font-bold text-[#0D0D0D]">
                     Gemini Sourcing Companies across Google Maps, IndiaMart & Directories...
                   </p>
                 </div>
               ) : filteredCompanies.length === 0 ? (
-                <div className="py-20 text-center text-[#586E75] space-y-2">
-                  <Search className="w-8 h-8 text-[#93A1A1] mx-auto" />
-                  <p className="text-xs font-semibold text-[#073642]">
+                <div className="py-20 text-center text-[#334155] space-y-2">
+                  <Search className="w-8 h-8 text-[#94a3b8] mx-auto" />
+                  <p className="text-xs font-semibold text-[#0D0D0D]">
                     No companies found for this filter. Try adjusting your component query.
                   </p>
                 </div>
@@ -483,14 +483,14 @@ export const FindCompanyTab: React.FC<Props> = ({
                           ? 'bg-emerald-50/80 border-emerald-300'
                           : sup.isShortlisted
                           ? 'bg-amber-50/70 border-amber-300 ring-1 ring-amber-300'
-                          : 'bg-[#EEE8D5] border-[#D6D1B1] hover:border-emerald-400 hover:shadow-xs'
+                          : 'bg-[#FFFFFF] border-[#E2E8F0] hover:border-emerald-400 hover:shadow-xs'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className="text-sm font-bold text-[#073642]">{sup.name}</h4>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-[#D6D1B1] text-[#073642]">
+                            <h4 className="text-sm font-bold text-[#0D0D0D]">{sup.name}</h4>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-[#E2E8F0] text-[#0D0D0D]">
                               {sup.sourceLabel}
                             </span>
                             {sup.rating && (
@@ -499,8 +499,8 @@ export const FindCompanyTab: React.FC<Props> = ({
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-[#586E75] mt-1 flex items-center gap-1">
-                            <MapPin className="w-3 h-3 text-[#586E75] shrink-0" />
+                          <p className="text-xs text-[#334155] mt-1 flex items-center gap-1">
+                            <MapPin className="w-3 h-3 text-[#334155] shrink-0" />
                             <span>{sup.address}</span>
                           </p>
                         </div>
@@ -511,7 +511,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                           className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
                             sup.isShortlisted
                               ? 'bg-amber-400 text-slate-950 font-black shadow-xs'
-                              : 'bg-white border border-[#D6D1B1] text-[#073642] hover:bg-white'
+                              : 'bg-white border border-[#E2E8F0] text-[#0D0D0D] hover:bg-white'
                           }`}
                         >
                           {sup.isShortlisted ? '✓ Shortlisted' : '+ Shortlist'}
@@ -519,12 +519,12 @@ export const FindCompanyTab: React.FC<Props> = ({
                       </div>
 
                       {/* CONTACT DETAILS & ENRICHMENT */}
-                      <div className="mt-3 pt-3 border-t border-[#D6D1B1]/60 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      <div className="mt-3 pt-3 border-t border-[#E2E8F0]/60 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                         {/* Phone / WhatsApp */}
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[#586E75] font-semibold">📱 Phone:</span>
+                          <span className="text-[#334155] font-semibold">📱 Phone:</span>
                           {sup.phoneNumber ? (
-                            <span className="font-bold text-[#073642] flex items-center gap-1.5">
+                            <span className="font-bold text-[#0D0D0D] flex items-center gap-1.5">
                               {cleanPhone || sup.phoneNumber}
                               {waUrl && (
                                 <a
@@ -545,9 +545,9 @@ export const FindCompanyTab: React.FC<Props> = ({
 
                         {/* Email Address */}
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[#586E75] font-semibold">📧 Email:</span>
+                          <span className="text-[#334155] font-semibold">📧 Email:</span>
                           {sup.email ? (
-                            <span className="font-bold text-[#073642] truncate max-w-[200px]">
+                            <span className="font-bold text-[#0D0D0D] truncate max-w-[200px]">
                               {sup.email}
                             </span>
                           ) : (
@@ -557,7 +557,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                       </div>
 
                       {/* FOOTER ACTIONS */}
-                      <div className="mt-3 flex items-center justify-between gap-2 pt-2 border-t border-[#D6D1B1]/60">
+                      <div className="mt-3 flex items-center justify-between gap-2 pt-2 border-t border-[#E2E8F0]/60">
                         {/* AI ENRICHMENT BUTTON IF PHONE/EMAIL MISSING */}
                         {(!sup.phoneNumber || !sup.email) && (
                           <button
@@ -604,13 +604,13 @@ export const FindCompanyTab: React.FC<Props> = ({
         </div>
       ) : (
         /* SHORTLISTED TRAY VIEW */
-        <div className="bg-[#FDF6E3] rounded-3xl border border-[#D6D1B1] shadow-xs p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-[#D6D1B1] pb-4">
+        <div className="bg-[#FFFFFF] rounded-3xl border border-[#E2E8F0] shadow-xs p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
             <div>
-              <h3 className="text-base font-bold text-[#073642]">
+              <h3 className="text-base font-bold text-[#0D0D0D]">
                 Shortlisted Company Candidates ({shortlistedList.length})
               </h3>
-              <p className="text-xs text-[#586E75]">
+              <p className="text-xs text-[#334155]">
                 Review selected companies before 1-tap onboarding or dispatching RFQs
               </p>
             </div>
@@ -627,9 +627,9 @@ export const FindCompanyTab: React.FC<Props> = ({
           </div>
 
           {shortlistedList.length === 0 ? (
-            <div className="py-20 text-center text-[#586E75] space-y-2">
-              <BookmarkPlus className="w-8 h-8 text-[#93A1A1] mx-auto" />
-              <p className="text-xs font-semibold text-[#073642]">
+            <div className="py-20 text-center text-[#334155] space-y-2">
+              <BookmarkPlus className="w-8 h-8 text-[#94a3b8] mx-auto" />
+              <p className="text-xs font-semibold text-[#0D0D0D]">
                 No companies shortlisted yet. Switch back to Sourcing Feed and click "+ Shortlist".
               </p>
             </div>
@@ -640,12 +640,12 @@ export const FindCompanyTab: React.FC<Props> = ({
                 return (
                   <div
                     key={sup.id}
-                    className="p-4 rounded-2xl border border-[#D6D1B1] bg-[#EEE8D5] space-y-3 shadow-xs"
+                    className="p-4 rounded-2xl border border-[#E2E8F0] bg-[#FFFFFF] space-y-3 shadow-xs"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <h4 className="text-sm font-bold text-[#073642]">{sup.name}</h4>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white text-[#073642] border border-[#D6D1B1]">
+                        <h4 className="text-sm font-bold text-[#0D0D0D]">{sup.name}</h4>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white text-[#0D0D0D] border border-[#E2E8F0]">
                           {sup.sourceLabel}
                         </span>
                       </div>
@@ -657,23 +657,23 @@ export const FindCompanyTab: React.FC<Props> = ({
                       </button>
                     </div>
 
-                    <div className="text-xs text-[#586E75] space-y-1">
+                    <div className="text-xs text-[#334155] space-y-1">
                       <p>
-                        📍 <strong className="text-[#073642]">Address:</strong> {sup.address}
+                        📍 <strong className="text-[#0D0D0D]">Address:</strong> {sup.address}
                       </p>
                       <p>
-                        📱 <strong className="text-[#073642]">Phone:</strong>{' '}
+                        📱 <strong className="text-[#0D0D0D]">Phone:</strong>{' '}
                         {cleanPhone || sup.phoneNumber || 'Not found'}
                       </p>
                       <p>
-                        📧 <strong className="text-[#073642]">Email:</strong> {sup.email || 'Not found'}
+                        📧 <strong className="text-[#0D0D0D]">Email:</strong> {sup.email || 'Not found'}
                       </p>
                       <p>
-                        👤 <strong className="text-[#073642]">Contact:</strong> {sup.contactPerson}
+                        👤 <strong className="text-[#0D0D0D]">Contact:</strong> {sup.contactPerson}
                       </p>
                     </div>
 
-                    <div className="pt-2 flex items-center justify-between border-t border-[#D6D1B1] gap-2 flex-wrap">
+                    <div className="pt-2 flex items-center justify-between border-t border-[#E2E8F0] gap-2 flex-wrap">
                       {waUrl && (
                         <a
                           href={waUrl}

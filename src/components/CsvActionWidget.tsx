@@ -314,7 +314,7 @@ export const CsvActionWidget: React.FC<Props> = ({
         type="button"
         onClick={() => fileInputRef.current?.click()}
         disabled={isImporting}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FDF6E3] hover:bg-[#EEE8D5] text-[#073642] border border-[#D6D1B1] text-xs font-bold transition-all shadow-xs active:scale-95 disabled:opacity-50"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] text-xs font-bold transition-all shadow-xs active:scale-95 disabled:opacity-50"
         title={`Import ${sectionType} from CSV file`}
       >
         {isImporting ? (
@@ -330,7 +330,7 @@ export const CsvActionWidget: React.FC<Props> = ({
       <button
         type="button"
         onClick={handleExportCsv}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FDF6E3] hover:bg-[#EEE8D5] text-[#073642] border border-[#D6D1B1] text-xs font-bold transition-all shadow-xs active:scale-95"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] text-xs font-bold transition-all shadow-xs active:scale-95"
         title={`Download current ${sectionType} dataset as CSV`}
       >
         <Download className="w-3.5 h-3.5 text-emerald-600" />

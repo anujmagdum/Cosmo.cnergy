@@ -45,10 +45,10 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-      <div className="bg-[#FDF6E3] w-full max-w-md rounded-3xl border border-[#D6D1B1] shadow-2xl p-6 relative text-[#073642]">
+      <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl border border-[#E2E8F0] shadow-2xl p-6 relative text-[#0D0D0D]">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-[#586E75] hover:text-[#073642] p-1 rounded-full bg-[#EEE8D5]"
+          className="absolute top-4 right-4 text-[#334155] hover:text-[#0D0D0D] p-1 rounded-full bg-[#FFFFFF]"
         >
           <X className="w-5 h-5" />
         </button>
@@ -57,9 +57,9 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
           <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-600 shadow-md shadow-emerald-500/20">
             <CheckCircle className="w-8 h-8" />
           </div>
-          <h3 className="text-xl font-bold text-[#073642]">Order Created Successfully!</h3>
-          <p className="text-xs text-[#586E75]">
-            Order <span className="font-mono font-bold text-emerald-800">{order.order_number}</span> is logged. Choose how you would like to transmit it to <span className="text-[#073642] font-semibold">{order.company?.name}</span>:
+          <h3 className="text-xl font-bold text-[#0D0D0D]">Order Created Successfully!</h3>
+          <p className="text-xs text-[#334155]">
+            Order <span className="font-mono font-bold text-emerald-800">{order.order_number}</span> is logged. Choose how you would like to transmit it to <span className="text-[#0D0D0D] font-semibold">{order.company?.name}</span>:
           </p>
         </div>
 
@@ -77,7 +77,7 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
 
           <button
             onClick={handleSendWhatsApp}
-            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-[#EEE8D5] hover:bg-[#E4DDC7] text-emerald-800 font-bold text-sm border border-[#D6D1B1] active:scale-95 transition-all group"
+            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-[#FFFFFF] hover:bg-[#f8fafc] text-emerald-800 font-bold text-sm border border-[#E2E8F0] active:scale-95 transition-all group"
           >
             <div className="flex items-center gap-3">
               <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform text-emerald-600" />

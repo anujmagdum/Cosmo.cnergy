@@ -256,13 +256,13 @@ export const CompanyDashboard: React.FC<Props> = ({
       )}
 
       {/* Sub-Tab Switcher Bar (All Companies vs Find New Companies) */}
-      <div className="flex items-center gap-2 p-1.5 bg-[white] border border-[#e2e8f0] rounded-2xl w-fit shadow-xs">
+      <div className="flex items-center gap-2 p-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-fit shadow-xs">
         <button
           onClick={() => setActiveCompanyTab('all_companies')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeCompanyTab === 'all_companies'
               ? 'bg-[#0B192C] text-white shadow-md'
-              : 'text-[#020617] hover:bg-[white]'
+              : 'text-[#020617] hover:bg-[#FFFFFF]'
           }`}
         >
           <Building2 className="w-4 h-4 text-emerald-400" />
@@ -342,7 +342,7 @@ export const CompanyDashboard: React.FC<Props> = ({
             placeholder="Search companies, contacts, locations..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full bg-[white] border border-[#e2e8f0] rounded-xl pl-10 pr-4 py-2 text-xs text-[#020617] focus:outline-none focus:border-emerald-500 transition-all shadow-sm font-medium placeholder-[#64748b]"
+            className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-10 pr-4 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-emerald-500 transition-all shadow-xs font-medium placeholder-slate-400"
           />
         </div>
 
@@ -355,7 +355,7 @@ export const CompanyDashboard: React.FC<Props> = ({
               className={`px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-[white] text-[#020617] hover:bg-[white] border border-[#e2e8f0]'
+                  : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#FFFFFF] border border-[#E2E8F0]'
               }`}
             >
               {cat}
@@ -403,7 +403,7 @@ export const CompanyDashboard: React.FC<Props> = ({
             return (
               <div
                 key={company.id}
-                className="w-full bg-[white] rounded-xl p-3 border border-[#e2e8f0] hover:border-emerald-500/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all"
+                className="w-full bg-[#FFFFFF] rounded-xl p-3 border border-[#E2E8F0] hover:border-emerald-500/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all"
               >
                 {/* Left: Checkbox, Company Name, Category, Contact Person, Email, Phone */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -429,12 +429,12 @@ export const CompanyDashboard: React.FC<Props> = ({
                         <span key={i} className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">{cat}</span>
                       ))}
                       {company.categories && company.categories.length > 2 && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[white] text-[#020617] border border-[#e2e8f0] shrink-0">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#FFFFFF] text-[#020617] border border-[#E2E8F0] shrink-0">
                           +{company.categories.length - 2} more
                         </span>
                       )}
                       {company.gstin && (
-                        <span className="hidden md:inline-block text-[9px] font-mono font-bold bg-[white] text-[#020617] px-1.5 py-0.5 rounded border border-[#e2e8f0] shrink-0">
+                        <span className="hidden md:inline-block text-[9px] font-mono font-bold bg-[#FFFFFF] text-[#020617] px-1.5 py-0.5 rounded border border-[#E2E8F0] shrink-0">
                           GST: {company.gstin}
                         </span>
                       )}
@@ -457,7 +457,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 </div>
 
                 {/* Right: Payment Terms, Supplied Components count, Edit & Delete Buttons */}
-                <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#e2e8f0]/60">
+                <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E2E8F0]/60">
                   {company.payment_terms && (
                     <div className="text-right hidden sm:block">
                       <span className="text-[9px] text-[#1e293b] uppercase font-semibold block">Terms</span>
@@ -488,7 +488,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => setCompanyToDelete(company)}
-                      className="p-1.5 rounded-lg bg-[white] hover:bg-red-100 text-[#1e293b] hover:text-red-700 border border-[#e2e8f0] transition-all cursor-pointer"
+                      className="p-1.5 rounded-lg bg-[#FFFFFF] hover:bg-red-100 text-[#1e293b] hover:text-red-700 border border-[#E2E8F0] transition-all cursor-pointer"
                       title="Delete Company"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -506,7 +506,7 @@ export const CompanyDashboard: React.FC<Props> = ({
       {/* Delete Company Confirmation Modal */}
       {companyToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[white] w-full max-w-md rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 text-[#020617]">
+          <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 text-[#020617]">
             <h3 className="text-lg font-bold text-red-700">Delete Company</h3>
             <p className="text-xs text-[#1e293b]">
               Are you sure you want to delete company <span className="font-bold text-[#020617]">"{companyToDelete.name}"</span>? This will remove vendor profile from the directory.
@@ -516,7 +516,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setCompanyToDelete(null)}
-                className="px-4 py-2 rounded-xl bg-[white] text-[#020617] text-xs font-semibold hover:bg-[#e2e8f0]"
+                className="px-4 py-2 rounded-xl bg-[#FFFFFF] text-[#020617] text-xs font-semibold hover:bg-[#e2e8f0]"
               >
                 Cancel
               </button>
@@ -536,8 +536,8 @@ export const CompanyDashboard: React.FC<Props> = ({
       {/* Add Company Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-[white] w-full max-w-lg rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 my-8 text-[#020617]">
-            <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 pb-3">
+          <div className="bg-[#FFFFFF] w-full max-w-lg rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#020617]">
+            <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <h3 className="text-xl font-bold text-[#020617]">Add New Company</h3>
               <button
                 onClick={() => setIsAddModalOpen(false)}
@@ -556,7 +556,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g. Acme Components Ltd."
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
 
@@ -568,7 +568,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     value={formData.contact_person}
                     onChange={e => setFormData({ ...formData, contact_person: e.target.value })}
                     placeholder="e.g. Rajesh Sharma"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
               </div>
@@ -578,7 +578,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 <label className="block font-semibold text-[#020617] mb-1.5">
                   Categories <span className="text-[10px] text-[#1e293b] font-normal ml-1">(Select all that apply)</span>
                 </label>
-                <div className="p-3 bg-[white] border border-[#e2e8f0] rounded-xl space-y-2 max-h-36 overflow-y-auto">
+                <div className="p-3 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl space-y-2 max-h-36 overflow-y-auto">
                   {DEFAULT_CATEGORIES.map(cat => (
                     <label key={cat} className="flex items-center gap-2.5 cursor-pointer hover:text-emerald-800 group">
                       <input
@@ -621,7 +621,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
                     placeholder="sales@company.com"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
                 <div>
@@ -631,7 +631,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+91 98765 43210"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-mono"
                   />
                 </div>
               </div>
@@ -644,7 +644,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     value={formData.gstin}
                     onChange={e => setFormData({ ...formData, gstin: e.target.value })}
                     placeholder="27AABCC1234F1Z5"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] uppercase font-mono"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] uppercase font-mono"
                   />
                 </div>
                 <div>
@@ -654,7 +654,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     value={formData.payment_terms}
                     onChange={e => setFormData({ ...formData, payment_terms: e.target.value })}
                     placeholder="Net 30 Days"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617]"
                   />
                 </div>
               </div>
@@ -666,15 +666,15 @@ export const CompanyDashboard: React.FC<Props> = ({
                   value={formData.address}
                   onChange={e => setFormData({ ...formData, address: e.target.value })}
                   placeholder="Plot 45, Electronics City, Industrial Zone..."
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#e2e8f0]/60">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E2E8F0]/60">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[white] text-[#020617] font-semibold hover:bg-[#e2e8f0]"
+                  className="px-4 py-2 rounded-xl bg-[#FFFFFF] text-[#020617] font-semibold hover:bg-[#e2e8f0]"
                 >
                   Cancel
                 </button>
@@ -693,8 +693,8 @@ export const CompanyDashboard: React.FC<Props> = ({
       {/* Edit Company Modal */}
       {editingCompany && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-[white] w-full max-w-lg rounded-3xl p-6 border border-[#e2e8f0] shadow-2xl space-y-4 my-8 text-[#020617]">
-            <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 pb-3">
+          <div className="bg-[#FFFFFF] w-full max-w-lg rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#020617]">
+            <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <div className="flex items-center gap-2">
                 <Edit2 className="w-5 h-5 text-emerald-600" />
                 <h3 className="text-xl font-bold text-[#020617]">Edit Company Attributes</h3>
@@ -715,7 +715,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                   required
                   value={editingCompany.name}
                   onChange={e => setEditingCompany({ ...editingCompany, name: e.target.value })}
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                 />
               </div>
 
@@ -726,7 +726,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     type="text"
                     value={editingCompany.contact_person}
                     onChange={e => setEditingCompany({ ...editingCompany, contact_person: e.target.value })}
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
               </div>
@@ -736,7 +736,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 <label className="block font-semibold text-[#020617] mb-1.5">
                   Categories <span className="text-[10px] text-[#1e293b] font-normal ml-1">(Select all that apply)</span>
                 </label>
-                <div className="p-3 bg-[white] border border-[#e2e8f0] rounded-xl space-y-2 max-h-36 overflow-y-auto">
+                <div className="p-3 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl space-y-2 max-h-36 overflow-y-auto">
                   {DEFAULT_CATEGORIES.map(cat => {
                     const currentCats = editingCompany.categories || (editingCompany.category ? [editingCompany.category] : ['General Company']);
                     return (
@@ -780,7 +780,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     type="email"
                     value={editingCompany.email}
                     onChange={e => setEditingCompany({ ...editingCompany, email: e.target.value })}
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
                   />
                 </div>
                 <div>
@@ -789,7 +789,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     type="text"
                     value={editingCompany.phone}
                     onChange={e => setEditingCompany({ ...editingCompany, phone: e.target.value })}
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-mono"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-mono"
                   />
                 </div>
               </div>
@@ -802,7 +802,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     value={editingCompany.gstin || ''}
                     onChange={e => setEditingCompany({ ...editingCompany, gstin: e.target.value })}
                     placeholder="27AABCC1234F1Z5"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] uppercase font-mono"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] uppercase font-mono"
                   />
                 </div>
                 <div>
@@ -812,7 +812,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     value={editingCompany.payment_terms || ''}
                     onChange={e => setEditingCompany({ ...editingCompany, payment_terms: e.target.value })}
                     placeholder="Net 30 Days"
-                    className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617]"
                   />
                 </div>
               </div>
@@ -824,7 +824,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                   value={editingCompany.address || ''}
                   onChange={e => setEditingCompany({ ...editingCompany, address: e.target.value })}
                   placeholder="Street, Industrial Area, City..."
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
@@ -835,15 +835,15 @@ export const CompanyDashboard: React.FC<Props> = ({
                   value={editingCompany.buying_url || ''}
                   onChange={e => setEditingCompany({ ...editingCompany, buying_url: e.target.value })}
                   placeholder="https://..."
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617]"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#e2e8f0]/60">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E2E8F0]/60">
                 <button
                   type="button"
                   onClick={() => setEditingCompany(null)}
-                  className="px-4 py-2 rounded-xl bg-[white] text-[#020617] font-semibold hover:bg-[#e2e8f0]"
+                  className="px-4 py-2 rounded-xl bg-[#FFFFFF] text-[#020617] font-semibold hover:bg-[#e2e8f0]"
                 >
                   Cancel
                 </button>

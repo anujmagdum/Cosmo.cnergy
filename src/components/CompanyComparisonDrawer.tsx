@@ -167,11 +167,11 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
       onClick={onClose}
     >
       <div
-        className="bg-[#FDF6E3] border-l border-[#D6D1B1] w-full max-w-4xl h-full overflow-y-auto shadow-2xl flex flex-col justify-between text-[#073642]"
+        className="bg-[#FFFFFF] border-l border-[#E2E8F0] w-full max-w-4xl h-full overflow-y-auto shadow-2xl flex flex-col justify-between text-[#0D0D0D]"
         onClick={e => e.stopPropagation()}
       >
         {/* Drawer Header */}
-        <div className="p-5 md:p-6 border-b border-[#D6D1B1]/70 bg-[#FDF6E3] sticky top-0 z-20 space-y-3">
+        <div className="p-5 md:p-6 border-b border-[#E2E8F0]/70 bg-[#FFFFFF] sticky top-0 z-20 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-md shadow-emerald-500/20">
@@ -179,14 +179,14 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg md:text-xl font-extrabold text-[#073642]">
+                  <h3 className="text-lg md:text-xl font-extrabold text-[#0D0D0D]">
                     Multi-Company Sourcing Matrix
                   </h3>
                   <span className="bg-emerald-100 text-emerald-900 border border-emerald-300 text-[10px] font-black px-2 py-0.5 rounded-full">
                     {scoredCandidates.length} Vendors Available
                   </span>
                 </div>
-                <p className="text-xs text-[#586E75]">
+                <p className="text-xs text-[#334155]">
                   Comparing RFQ quoted prices, delivery lead times, MOQs, and verified platform ratings
                 </p>
               </div>
@@ -194,33 +194,33 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
 
             <button
               onClick={onClose}
-              className="p-2 rounded-full bg-[#EEE8D5] hover:bg-red-100 text-[#586E75] hover:text-red-700 transition-all cursor-pointer"
+              className="p-2 rounded-full bg-[#FFFFFF] hover:bg-red-100 text-[#334155] hover:text-red-700 transition-all cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Component Info Card */}
-          <div className="bg-[#EEE8D5]/70 border border-[#D6D1B1] rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="bg-[#FFFFFF]/70 border border-[#E2E8F0] rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div className="space-y-0.5">
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-[#073642]">{component.name}</span>
-                <span className="bg-[#FDF6E3] text-[#586E75] border border-[#D6D1B1] text-[10px] font-mono px-2 py-0.2 rounded">
+                <span className="font-bold text-sm text-[#0D0D0D]">{component.name}</span>
+                <span className="bg-[#FFFFFF] text-[#334155] border border-[#E2E8F0] text-[10px] font-mono px-2 py-0.2 rounded">
                   SKU: {component.sku || component.id}
                 </span>
               </div>
-              <p className="text-[11px] text-[#586E75] truncate max-w-lg">
+              <p className="text-[11px] text-[#334155] truncate max-w-lg">
                 Specs: {component.specs || 'Standard industrial specifications'} • Category: {component.category || 'Battery Component'}
               </p>
             </div>
 
             <div className="flex items-center gap-4 shrink-0 font-mono text-[11px]">
               <div>
-                <span className="text-[9px] text-[#586E75] uppercase block font-sans">Current Stock</span>
-                <strong className="text-[#073642] text-xs">{component.in_stock_qty || 0} {component.uom || 'Pcs'}</strong>
+                <span className="text-[9px] text-[#334155] uppercase block font-sans">Current Stock</span>
+                <strong className="text-[#0D0D0D] text-xs">{component.in_stock_qty || 0} {component.uom || 'Pcs'}</strong>
               </div>
-              <div className="border-l border-[#D6D1B1] pl-4">
-                <span className="text-[9px] text-[#586E75] uppercase block font-sans">Target MOQ</span>
+              <div className="border-l border-[#E2E8F0] pl-4">
+                <span className="text-[9px] text-[#334155] uppercase block font-sans">Target MOQ</span>
                 <strong className="text-emerald-800 text-xs">{component.min_order_qty || 10} {component.uom || 'Pcs'}</strong>
               </div>
             </div>
@@ -259,7 +259,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                     <span className="text-[10px] font-black text-emerald-800 uppercase tracking-wider block">
                       AI Sourcing Advisor • Gemini 3.6 Flash
                     </span>
-                    <h4 className="text-sm font-extrabold text-[#073642] flex items-center gap-2">
+                    <h4 className="text-sm font-extrabold text-[#0D0D0D] flex items-center gap-2">
                       <span>Recommended Vendor:</span>
                       <span className="text-emerald-900 underline underline-offset-2">
                         {companies.find(s => s.id === recommendation.winning_company_id)?.name || 'Top Company'}
@@ -276,7 +276,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                 </div>
               </div>
 
-              <p className="text-xs text-[#073642] bg-white/70 p-3 rounded-xl border border-emerald-200 leading-relaxed font-medium">
+              <p className="text-xs text-[#0D0D0D] bg-white/70 p-3 rounded-xl border border-emerald-200 leading-relaxed font-medium">
                 "{recommendation.reasoning}"
               </p>
             </div>
@@ -285,18 +285,18 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
           {/* Company Comparison Grid / Rows */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-black text-[#073642] uppercase tracking-wider">
+              <h4 className="text-xs font-black text-[#0D0D0D] uppercase tracking-wider">
                 Company Candidates Ranked by Multi-Criteria Formula
               </h4>
-              <span className="text-[10px] text-[#586E75] font-medium">
+              <span className="text-[10px] text-[#334155] font-medium">
                 Weights: 40% RFQ Price • 30% Rating • 20% Lead Time • 10% MOQ
               </span>
             </div>
 
             {scoredCandidates.length === 0 ? (
-              <div className="p-8 text-center bg-[#EEE8D5]/60 border border-dashed border-[#D6D1B1] rounded-2xl space-y-2">
-                <Building2 className="w-8 h-8 text-[#586E75] mx-auto" />
-                <p className="text-xs text-[#586E75] font-semibold">
+              <div className="p-8 text-center bg-[#FFFFFF]/60 border border-dashed border-[#E2E8F0] rounded-2xl space-y-2">
+                <Building2 className="w-8 h-8 text-[#334155] mx-auto" />
+                <p className="text-xs text-[#334155] font-semibold">
                   No companies currently mapped to this component in the junction database.
                 </p>
               </div>
@@ -312,17 +312,17 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                     className={`rounded-2xl p-4 border transition-all space-y-3 ${
                       isWinner
                         ? 'bg-[#FFFBEB] border-2 border-emerald-500 shadow-md ring-2 ring-emerald-400/30'
-                        : 'bg-[#EEE8D5]/60 hover:bg-[#EEE8D5] border-[#D6D1B1] shadow-2xs'
+                        : 'bg-[#FFFFFF]/60 hover:bg-[#FFFFFF] border-[#E2E8F0] shadow-2xs'
                     }`}
                   >
                     {/* Top Row: Rank, Company Info, Match Score */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#D6D1B1]/60 pb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0]/60 pb-3">
                       <div className="flex items-center gap-3">
                         <span
                           className={`w-7 h-7 rounded-xl flex items-center justify-center font-mono font-black text-xs shrink-0 ${
                             isWinner
                               ? 'bg-emerald-600 text-white shadow-xs'
-                              : 'bg-[#FDF6E3] text-[#073642] border border-[#D6D1B1]'
+                              : 'bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0]'
                           }`}
                         >
                           #{idx + 1}
@@ -330,7 +330,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
 
                         <div>
                           <div className="flex items-center gap-2">
-                            <h5 className="font-extrabold text-sm text-[#073642]">
+                            <h5 className="font-extrabold text-sm text-[#0D0D0D]">
                               {companyObj?.name || 'Industrial Company'}
                             </h5>
                             {isWinner && (
@@ -340,8 +340,8 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                             )}
                           </div>
 
-                          <div className="flex items-center gap-2 text-[11px] text-[#586E75] mt-0.5">
-                            <span>Vendor Part: <strong className="font-mono text-[#073642]">{cs.part_number_vendor || 'N/A'}</strong></span>
+                          <div className="flex items-center gap-2 text-[11px] text-[#334155] mt-0.5">
+                            <span>Vendor Part: <strong className="font-mono text-[#0D0D0D]">{cs.part_number_vendor || 'N/A'}</strong></span>
                             <span>•</span>
                             <span>{companyObj?.address || 'Industrial Zone'}</span>
                           </div>
@@ -351,7 +351,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                       {/* Match Score Gauge */}
                       <div className="flex items-center gap-2.5 self-start sm:self-auto shrink-0">
                         <div className="text-right">
-                          <span className="text-[9px] text-[#586E75] uppercase font-bold block">Match Score</span>
+                          <span className="text-[9px] text-[#334155] uppercase font-bold block">Match Score</span>
                           <span
                             className={`font-mono text-base font-black ${
                               matchScore >= 80 ? 'text-emerald-700' : matchScore >= 60 ? 'text-amber-700' : 'text-slate-700'
@@ -374,55 +374,55 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                     {/* Metrics Grid: Pricing, MOQ, Lead Time, Ratings */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                       {/* Price Box */}
-                      <div className="bg-[#FDF6E3] p-2.5 rounded-xl border border-[#D6D1B1]/60">
-                        <span className="text-[9px] text-[#586E75] uppercase font-bold block">RFQ Quoted Price</span>
+                      <div className="bg-[#FFFFFF] p-2.5 rounded-xl border border-[#E2E8F0]/60">
+                        <span className="text-[9px] text-[#334155] uppercase font-bold block">RFQ Quoted Price</span>
                         <div className="font-mono font-black text-sm text-emerald-800 mt-0.5">
                           ₹{effectivePrice.toLocaleString('en-IN')}
                         </div>
                         {cs.unit_price !== effectivePrice && (
-                          <span className="text-[10px] text-[#586E75] line-through block">
+                          <span className="text-[10px] text-[#334155] line-through block">
                             Cat: ₹{cs.unit_price.toLocaleString('en-IN')}
                           </span>
                         )}
                       </div>
 
                       {/* MOQ Box */}
-                      <div className="bg-[#FDF6E3] p-2.5 rounded-xl border border-[#D6D1B1]/60">
-                        <span className="text-[9px] text-[#586E75] uppercase font-bold block">Minimum Order (MOQ)</span>
-                        <div className="font-mono font-extrabold text-sm text-[#073642] mt-0.5">
+                      <div className="bg-[#FFFFFF] p-2.5 rounded-xl border border-[#E2E8F0]/60">
+                        <span className="text-[9px] text-[#334155] uppercase font-bold block">Minimum Order (MOQ)</span>
+                        <div className="font-mono font-extrabold text-sm text-[#0D0D0D] mt-0.5">
                           {cs.moq} {component.uom || 'Pcs'}
                         </div>
-                        <span className="text-[10px] text-[#586E75] block">Trial friendly</span>
+                        <span className="text-[10px] text-[#334155] block">Trial friendly</span>
                       </div>
 
                       {/* Lead Time Box */}
-                      <div className="bg-[#FDF6E3] p-2.5 rounded-xl border border-[#D6D1B1]/60">
-                        <span className="text-[9px] text-[#586E75] uppercase font-bold block">Delivery Lead Time</span>
-                        <div className="font-mono font-extrabold text-sm text-[#073642] mt-0.5 flex items-center gap-1">
+                      <div className="bg-[#FFFFFF] p-2.5 rounded-xl border border-[#E2E8F0]/60">
+                        <span className="text-[9px] text-[#334155] uppercase font-bold block">Delivery Lead Time</span>
+                        <div className="font-mono font-extrabold text-sm text-[#0D0D0D] mt-0.5 flex items-center gap-1">
                           <Clock className="w-3.5 h-3.5 text-blue-600" />
                           <span>{cs.lead_time_days} Days</span>
                         </div>
-                        <span className="text-[10px] text-[#586E75] block">Dispatch estimate</span>
+                        <span className="text-[10px] text-[#334155] block">Dispatch estimate</span>
                       </div>
 
                       {/* Overall Rating */}
-                      <div className="bg-[#FDF6E3] p-2.5 rounded-xl border border-[#D6D1B1]/60">
-                        <span className="text-[9px] text-[#586E75] uppercase font-bold block">Verified Rating</span>
+                      <div className="bg-[#FFFFFF] p-2.5 rounded-xl border border-[#E2E8F0]/60">
+                        <span className="text-[9px] text-[#334155] uppercase font-bold block">Verified Rating</span>
                         <div className="font-mono font-extrabold text-sm text-amber-700 mt-0.5 flex items-center gap-1">
                           <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                           <span>{effectiveRating} / 5.0</span>
                         </div>
-                        <span className="text-[10px] text-[#586E75] block">Across sources</span>
+                        <span className="text-[10px] text-[#334155] block">Across sources</span>
                       </div>
                     </div>
 
                     {/* Platform Rating Breakdown Badges */}
                     <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                      <span className="text-[10px] font-bold text-[#586E75] mr-1">Source Breakdown:</span>
+                      <span className="text-[10px] font-bold text-[#334155] mr-1">Source Breakdown:</span>
                       {ratingBreakdown.map((src, sIdx) => (
                         <span
                           key={sIdx}
-                          className="bg-[#FDF6E3] border border-[#D6D1B1] px-2 py-0.5 rounded text-[10px] text-[#073642] font-semibold flex items-center gap-1"
+                          className="bg-[#FFFFFF] border border-[#E2E8F0] px-2 py-0.5 rounded text-[10px] text-[#0D0D0D] font-semibold flex items-center gap-1"
                         >
                           <span>{src.platform}:</span>
                           <strong className="text-amber-700 font-mono">{src.rating}★</strong>
@@ -432,15 +432,15 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
 
                     {/* Review Snippet if available */}
                     {cs.review_summary && (
-                      <p className="text-[11px] text-[#586E75] italic bg-[#FDF6E3]/60 p-2 rounded-lg border border-[#D6D1B1]/40">
+                      <p className="text-[11px] text-[#334155] italic bg-[#FFFFFF]/60 p-2 rounded-lg border border-[#E2E8F0]/40">
                         "{cs.review_summary}"
                       </p>
                     )}
 
                     {/* Bottom Action: Create Purchase Order (1-Tap Immediate Modal Launch) */}
-                    <div className="pt-2 border-t border-[#D6D1B1]/60 flex items-center justify-between">
-                      <span className="text-[10px] text-[#586E75]">
-                        Contact: <strong className="text-[#073642] font-medium">{companyObj?.contact_person || 'Sales Desk'}</strong> ({companyObj?.phone || companyObj?.email})
+                    <div className="pt-2 border-t border-[#E2E8F0]/60 flex items-center justify-between">
+                      <span className="text-[10px] text-[#334155]">
+                        Contact: <strong className="text-[#0D0D0D] font-medium">{companyObj?.contact_person || 'Sales Desk'}</strong> ({companyObj?.phone || companyObj?.email})
                       </span>
 
                       <button
@@ -468,13 +468,13 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
         </div>
 
         {/* Drawer Footer */}
-        <div className="p-4 border-t border-[#D6D1B1]/70 bg-[#FDF6E3] flex items-center justify-between text-xs text-[#586E75]">
+        <div className="p-4 border-t border-[#E2E8F0]/70 bg-[#FFFFFF] flex items-center justify-between text-xs text-[#334155]">
           <span>
-            Target Route: <code className="font-mono text-[10px] bg-[#EEE8D5] px-1.5 py-0.5 rounded">/procurement/new?companyId={winningId}&price=...</code>
+            Target Route: <code className="font-mono text-[10px] bg-[#FFFFFF] px-1.5 py-0.5 rounded">/procurement/new?companyId={winningId}&price=...</code>
           </span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-[#EEE8D5] hover:bg-[#E4DDC7] text-[#073642] font-bold text-xs border border-[#D6D1B1]"
+            className="px-4 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-[#E4DDC7] text-[#0D0D0D] font-bold text-xs border border-[#E2E8F0]"
           >
             Close Sourcing Drawer
           </button>

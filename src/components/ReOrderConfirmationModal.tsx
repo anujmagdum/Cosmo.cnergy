@@ -155,26 +155,26 @@ Cosmo Cnergy Procurement Team`
   if (isSuccess) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
-        <div className="bg-[#FDF6E3] w-full max-w-md rounded-3xl p-8 border border-[#D6D1B1] shadow-2xl space-y-6 text-center my-8 animate-in fade-in zoom-in-95 duration-150 text-[#073642]">
+        <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-8 border border-[#E2E8F0] shadow-2xl space-y-6 text-center my-8 animate-in fade-in zoom-in-95 duration-150 text-[#0D0D0D]">
           <div className="w-16 h-16 rounded-3xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-600 shadow-md shadow-emerald-500/20">
             <CheckCircle2 className="w-9 h-9" />
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-2xl font-bold text-[#073642]">Order created successfully</h3>
-            <p className="text-xs text-[#586E75]">
-              Procurement order for <strong className="text-[#073642]">{item.name}</strong> ({quantity} {item.uom || 'Pcs'}) has been logged with <strong className="text-[#073642]">{companyName}</strong>.
+            <h3 className="text-2xl font-bold text-[#0D0D0D]">Order created successfully</h3>
+            <p className="text-xs text-[#334155]">
+              Procurement order for <strong className="text-[#0D0D0D]">{item.name}</strong> ({quantity} {item.uom || 'Pcs'}) has been logged with <strong className="text-[#0D0D0D]">{companyName}</strong>.
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#EEE8D5] border border-[#D6D1B1] space-y-2 text-xs text-left">
-            <div className="flex items-center justify-between text-[#586E75]">
+          <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] space-y-2 text-xs text-left">
+            <div className="flex items-center justify-between text-[#334155]">
               <span>Total Value:</span>
               <span className="font-mono font-bold text-emerald-800">₹{totalPrice.toLocaleString('en-IN')}</span>
             </div>
-            <div className="flex items-center justify-between text-[#586E75]">
+            <div className="flex items-center justify-between text-[#334155]">
               <span>Channel:</span>
-              <span className="font-bold text-[#073642] uppercase">{selectedChannel.replace('_', ' ')}</span>
+              <span className="font-bold text-[#0D0D0D] uppercase">{selectedChannel.replace('_', ' ')}</span>
             </div>
           </div>
 
@@ -194,48 +194,48 @@ Cosmo Cnergy Procurement Team`
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-[#FDF6E3] w-full max-w-xl rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-4 my-8 text-[#073642]">
+      <div className="bg-[#FFFFFF] w-full max-w-xl rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#0D0D0D]">
         {/* Modal Top Header */}
-        <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-3">
+        <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md">
               <ShoppingCart className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[#073642]">1-Tap Component Reorder</h3>
-              <p className="text-xs text-[#586E75]">
-                Target Vendor: <strong className="text-[#073642]">{companyName}</strong>
+              <h3 className="text-lg font-bold text-[#0D0D0D]">1-Tap Component Reorder</h3>
+              <p className="text-xs text-[#334155]">
+                Target Vendor: <strong className="text-[#0D0D0D]">{companyName}</strong>
               </p>
             </div>
           </div>
 
-          <button onClick={onClose} className="text-[#586E75] hover:text-[#073642] font-bold p-1">
+          <button onClick={onClose} className="text-[#334155] hover:text-[#0D0D0D] font-bold p-1">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Item Summary Card */}
-        <div className="p-4 rounded-2xl bg-[#EEE8D5] border border-[#D6D1B1] space-y-2 text-xs">
+        <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] space-y-2 text-xs">
           <div className="flex items-center justify-between">
-            <span className="font-bold text-[#073642] text-sm">{item.name}</span>
+            <span className="font-bold text-[#0D0D0D] text-sm">{item.name}</span>
             <span className="font-mono font-bold text-emerald-800 text-sm">
               ₹{totalPrice.toLocaleString('en-IN')}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 text-[#586E75] text-[11px] pt-1 border-t border-[#D6D1B1]/60">
+          <div className="grid grid-cols-2 gap-2 text-[#334155] text-[11px] pt-1 border-t border-[#E2E8F0]/60">
             <div>
-              Order Volume: <strong className="text-[#073642]">{quantity} {item.uom || 'Pcs'}</strong>
+              Order Volume: <strong className="text-[#0D0D0D]">{quantity} {item.uom || 'Pcs'}</strong>
             </div>
             <div>
-              Unit Price: <strong className="text-[#073642]">₹{Number(item.preset_price || 0).toLocaleString('en-IN')}</strong>
+              Unit Price: <strong className="text-[#0D0D0D]">₹{Number(item.preset_price || 0).toLocaleString('en-IN')}</strong>
             </div>
           </div>
         </div>
 
         {/* Channel Selection */}
         <div className="space-y-2">
-          <label className="block text-xs font-bold text-[#073642] uppercase tracking-wider">
+          <label className="block text-xs font-bold text-[#0D0D0D] uppercase tracking-wider">
             Select Dispatch Channel:
           </label>
           <div className="grid grid-cols-3 gap-2">
@@ -245,7 +245,7 @@ Cosmo Cnergy Procurement Team`
               className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                 selectedChannel === 'webmail'
                   ? 'bg-emerald-600 text-white shadow-md border-emerald-500'
-                  : 'bg-[#EEE8D5] text-[#073642] hover:bg-[#E4DDC7] border-[#D6D1B1]'
+                  : 'bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#f8fafc] border-[#E2E8F0]'
               }`}
             >
               <Mail className="w-4 h-4" />
@@ -258,7 +258,7 @@ Cosmo Cnergy Procurement Team`
               className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                 selectedChannel === 'whatsapp'
                   ? 'bg-emerald-600 text-white shadow-md border-emerald-500'
-                  : 'bg-[#EEE8D5] text-[#073642] hover:bg-[#E4DDC7] border-[#D6D1B1]'
+                  : 'bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#f8fafc] border-[#E2E8F0]'
               }`}
             >
               <MessageSquare className="w-4 h-4" />
@@ -271,7 +271,7 @@ Cosmo Cnergy Procurement Team`
               className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                 selectedChannel === 'direct_po'
                   ? 'bg-purple-600 text-white shadow-md border-purple-500'
-                  : 'bg-[#EEE8D5] text-[#073642] hover:bg-[#E4DDC7] border-[#D6D1B1]'
+                  : 'bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#f8fafc] border-[#E2E8F0]'
               }`}
             >
               <PackageCheck className="w-4 h-4" />
@@ -284,13 +284,13 @@ Cosmo Cnergy Procurement Team`
         {selectedChannel === 'webmail' && (
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-bold text-[#073642] mb-1">
+              <label className="block text-xs font-bold text-[#0D0D0D] mb-1">
                 Select Procurement Intent / Subject:
               </label>
               <select
                 value={selectedSubjectKey}
                 onChange={e => setSelectedSubjectKey(e.target.value)}
-                className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-xs text-[#073642] font-semibold focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs text-[#0D0D0D] font-semibold focus:outline-none focus:border-emerald-500"
               >
                 {subjectOptions.map(opt => (
                   <option key={opt.key} value={opt.key}>
@@ -301,14 +301,14 @@ Cosmo Cnergy Procurement Team`
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-[#073642] mb-1">
+              <label className="block text-xs font-bold text-[#0D0D0D] mb-1">
                 Draft Email Body:
               </label>
               <textarea
                 rows={5}
                 value={emailBody}
                 onChange={e => setEmailBody(e.target.value)}
-                className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl p-3 text-xs text-[#073642] font-mono focus:outline-none focus:border-emerald-500 resize-none leading-relaxed"
+                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl p-3 text-xs text-[#0D0D0D] font-mono focus:outline-none focus:border-emerald-500 resize-none leading-relaxed"
               />
             </div>
           </div>
@@ -316,12 +316,12 @@ Cosmo Cnergy Procurement Team`
 
         {/* WhatsApp Preview */}
         {selectedChannel === 'whatsapp' && (
-          <div className="p-4 rounded-2xl bg-[#EEE8D5] border border-[#D6D1B1] space-y-2 text-xs">
+          <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] space-y-2 text-xs">
             <div className="flex items-center gap-2 font-bold text-emerald-800">
               <MessageSquare className="w-4 h-4 text-emerald-600" />
               <span>Target WhatsApp Contact: {company?.phone || '+91 98765 43210'}</span>
             </div>
-            <p className="text-[#586E75] leading-relaxed">
+            <p className="text-[#334155] leading-relaxed">
               Clicking dispatch will open an official WhatsApp chat pre-filled with the component particulars ({item.name}, Qty: {quantity} {item.uom || 'Pcs'}) and request immediate commercial confirmation.
             </p>
           </div>
@@ -334,18 +334,18 @@ Cosmo Cnergy Procurement Team`
               <PackageCheck className="w-4 h-4 text-purple-600" />
               <span>Instant Purchase Order Creation</span>
             </div>
-            <p className="text-[#586E75] leading-relaxed">
+            <p className="text-[#334155] leading-relaxed">
               Instantly registers a new Purchase Order in the Orders Timeline and marks the status as <strong>ORDERED</strong> without external email dispatch.
             </p>
           </div>
         )}
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#D6D1B1]/60">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E2E8F0]/60">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl bg-[#EEE8D5] text-[#073642] text-xs font-semibold hover:bg-[#E4DDC7] transition-all"
+            className="px-4 py-2.5 rounded-xl bg-[#FFFFFF] text-[#0D0D0D] text-xs font-semibold hover:bg-[#f8fafc] transition-all"
           >
             Cancel
           </button>

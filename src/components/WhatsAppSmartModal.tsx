@@ -57,25 +57,25 @@ export const WhatsAppSmartModal: React.FC<Props> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-[#FDF6E3] w-full max-w-md rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-4 text-[#073642]">
-        <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-3">
+      <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 text-[#0D0D0D]">
+        <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
           <div className="flex items-center gap-2.5 text-emerald-800 font-bold">
             <MessageSquare className="w-5 h-5 text-emerald-600" />
-            <h3 className="text-lg font-bold text-[#073642]">WhatsApp Smart Dispatch</h3>
+            <h3 className="text-lg font-bold text-[#0D0D0D]">WhatsApp Smart Dispatch</h3>
           </div>
-          <button onClick={onClose} className="text-[#586E75] hover:text-[#073642] font-bold">
+          <button onClick={onClose} className="text-[#334155] hover:text-[#0D0D0D] font-bold">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSaveAndLaunch} className="space-y-4">
           <div className="space-y-1.5">
-            <p className="text-xs text-[#586E75] font-medium">
-              Please enter phone number for <span className="font-bold text-[#073642]">{company.name}</span>:
+            <p className="text-xs text-[#334155] font-medium">
+              Please enter phone number for <span className="font-bold text-[#0D0D0D]">{company.name}</span>:
             </p>
 
             <div className="relative">
-              <PhoneCall className="w-4 h-4 text-[#586E75] absolute left-3.5 top-3" />
+              <PhoneCall className="w-4 h-4 text-[#334155] absolute left-3.5 top-3" />
               <input
                 type="text"
                 required
@@ -86,26 +86,26 @@ export const WhatsAppSmartModal: React.FC<Props> = ({
                   setErrorMsg('');
                 }}
                 placeholder="+91 98765 43210"
-                className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-mono font-bold"
+                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#0D0D0D] focus:outline-none focus:border-emerald-500 font-mono font-bold"
               />
             </div>
             {errorMsg && <p className="text-xs text-red-600 font-semibold">{errorMsg}</p>}
           </div>
 
-          <div className="bg-[#EEE8D5] p-3 rounded-xl border border-[#D6D1B1] space-y-1">
-            <div className="text-[11px] font-bold text-[#586E75] uppercase tracking-wider">
+          <div className="bg-[#FFFFFF] p-3 rounded-xl border border-[#E2E8F0] space-y-1">
+            <div className="text-[11px] font-bold text-[#334155] uppercase tracking-wider">
               Pre-filled Message Preview:
             </div>
-            <p className="text-xs text-[#073642] font-mono italic leading-relaxed">
+            <p className="text-xs text-[#0D0D0D] font-mono italic leading-relaxed">
               "Hello {company.name}, inquiring about {itemNameOrContext} quotation from Cosmo Cnergy."
             </p>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#D6D1B1]/60">
+          <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#E2E8F0]/60">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] text-xs font-semibold hover:bg-[#E4DDC7]"
+              className="px-4 py-2 rounded-xl bg-[#FFFFFF] text-[#0D0D0D] text-xs font-semibold hover:bg-[#f8fafc]"
             >
               Cancel
             </button>

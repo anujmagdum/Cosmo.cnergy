@@ -137,9 +137,9 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 overflow-y-auto">
-      <div className="bg-[#EEE8D5] w-full max-w-7xl h-[94vh] rounded-3xl border border-[#D6D1B1] shadow-2xl flex flex-col overflow-hidden my-auto text-[#073642]">
+      <div className="bg-[#FFFFFF] w-full max-w-7xl h-[94vh] rounded-3xl border border-[#E2E8F0] shadow-2xl flex flex-col overflow-hidden my-auto text-[#0D0D0D]">
         {/* Modal Top Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#D6D1B1]/60 bg-[#0B192C] text-white shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0]/60 bg-[#0B192C] text-white shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-md shadow-emerald-500/20">
               <Edit3 className="w-5 h-5" />
@@ -186,33 +186,33 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
         </div>
 
         {/* 2-Column Split Body: Left Editor / Right Live Preview */}
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-12 overflow-hidden bg-[#EEE8D5]">
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-12 overflow-hidden bg-[#FFFFFF]">
           {/* Left Column: Form Editor */}
-          <div className={`md:col-span-6 lg:col-span-6 p-6 overflow-y-auto space-y-6 border-r border-[#D6D1B1] ${activeTab === 'preview' ? 'hidden md:block' : 'block'}`}>
+          <div className={`md:col-span-6 lg:col-span-6 p-6 overflow-y-auto space-y-6 border-r border-[#E2E8F0] ${activeTab === 'preview' ? 'hidden md:block' : 'block'}`}>
             {/* 1. Document Parameters */}
-            <div className="p-4 rounded-2xl bg-[#FDF6E3] border border-[#D6D1B1] shadow-xs space-y-4">
-              <h4 className="text-xs font-bold text-[#073642] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#D6D1B1]/60 pb-2">
+            <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs space-y-4">
+              <h4 className="text-xs font-bold text-[#0D0D0D] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#E2E8F0]/60 pb-2">
                 <FileText className="w-4 h-4 text-emerald-600" />
                 <span>Document & Routing Parameters</span>
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                 <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Document #</label>
+                  <label className="block font-semibold text-[#0D0D0D] mb-1">Document #</label>
                   <input
                     type="text"
                     value={editableOrder.order_number}
                     onChange={e => setEditableOrder({ ...editableOrder, order_number: e.target.value })}
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-[#073642] font-mono font-bold focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-mono font-bold focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Document Type</label>
+                  <label className="block font-semibold text-[#0D0D0D] mb-1">Document Type</label>
                   <select
                     value={editableOrder.type}
                     onChange={e => setEditableOrder({ ...editableOrder, type: e.target.value as 'PO' | 'RFQ' })}
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-[#073642] font-bold focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-bold focus:outline-none focus:border-emerald-500"
                   >
                     <option value="PO">Purchase Order (PO)</option>
                     <option value="RFQ">Request for Quotation (RFQ)</option>
@@ -220,11 +220,11 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Order Status</label>
+                  <label className="block font-semibold text-[#0D0D0D] mb-1">Order Status</label>
                   <select
                     value={editableOrder.status}
                     onChange={e => setEditableOrder({ ...editableOrder, status: e.target.value as OrderStatus })}
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-[#073642] font-semibold focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-semibold focus:outline-none focus:border-emerald-500"
                   >
                     <option value="TO_BE_ORDERED">🟡 To Be Ordered</option>
                     <option value="RFQ_SENT">🔵 RFQ Sent</option>
@@ -237,15 +237,15 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             </div>
 
             {/* 2. Company Vendor Entity */}
-            <div className="p-4 rounded-2xl bg-[#FDF6E3] border border-[#D6D1B1] shadow-xs space-y-4">
-              <h4 className="text-xs font-bold text-[#073642] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#D6D1B1]/60 pb-2">
+            <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs space-y-4">
+              <h4 className="text-xs font-bold text-[#0D0D0D] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#E2E8F0]/60 pb-2">
                 <Building2 className="w-4 h-4 text-emerald-600" />
                 <span>Company / Vendor Entity</span>
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Company / Entity Name</label>
+                  <label className="block font-semibold text-[#0D0D0D] mb-1">Company / Entity Name</label>
                   <input
                     type="text"
                     value={editableOrder.company?.name || ''}
@@ -258,12 +258,12 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                         }
                       })
                     }
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-[#073642] font-bold focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-bold focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Attn Contact Person</label>
+                  <label className="block font-semibold text-[#0D0D0D] mb-1">Attn Contact Person</label>
                   <input
                     type="text"
                     value={editableOrder.company?.contact_person || ''}
@@ -276,12 +276,12 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                         }
                       })
                     }
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-[#073642] focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Primary Email</label>
+                  <label className="block font-semibold text-[#0D0D0D] mb-1">Primary Email</label>
                   <input
                     type="email"
                     value={editableOrder.company?.email || ''}
@@ -294,12 +294,12 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                         }
                       })
                     }
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-[#073642] focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-[#073642] mb-1">Phone / WhatsApp</label>
+                  <label className="block font-semibold text-[#0D0D0D] mb-1">Phone / WhatsApp</label>
                   <input
                     type="text"
                     value={editableOrder.company?.phone || ''}
@@ -312,12 +312,12 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                         }
                       })
                     }
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-[#073642] font-mono focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="block font-semibold text-[#073642] mb-1">Plant / Dispatch Address</label>
+                  <label className="block font-semibold text-[#0D0D0D] mb-1">Plant / Dispatch Address</label>
                   <input
                     type="text"
                     value={editableOrder.company?.address || ''}
@@ -330,16 +330,16 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                         }
                       })
                     }
-                    className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-[#073642] focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
             </div>
 
             {/* 3. Line Items Editor */}
-            <div className="p-4 rounded-2xl bg-[#FDF6E3] border border-[#D6D1B1] shadow-xs space-y-4">
-              <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-2">
-                <h4 className="text-xs font-bold text-[#073642] uppercase tracking-wider flex items-center gap-1.5">
+            <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-2">
+                <h4 className="text-xs font-bold text-[#0D0D0D] uppercase tracking-wider flex items-center gap-1.5">
                   <FileText className="w-4 h-4 text-emerald-600" />
                   <span>Order Line Items ({editableOrder.items?.length || 0})</span>
                 </h4>
@@ -355,9 +355,9 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
 
               <div className="space-y-3">
                 {(editableOrder.items || []).map((item, idx) => (
-                  <div key={idx} className="p-3.5 rounded-xl bg-[#EEE8D5] border border-[#D6D1B1] space-y-2.5 text-xs">
+                  <div key={idx} className="p-3.5 rounded-xl bg-[#FFFFFF] border border-[#E2E8F0] space-y-2.5 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-[#073642]">Line #{idx + 1}</span>
+                      <span className="font-bold text-[#0D0D0D]">Line #{idx + 1}</span>
                       <button
                         type="button"
                         onClick={() => handleRemoveItem(idx)}
@@ -370,60 +370,60 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div>
-                        <label className="text-[10px] font-semibold text-[#586E75]">Item Name</label>
+                        <label className="text-[10px] font-semibold text-[#334155]">Item Name</label>
                         <input
                           type="text"
                           value={item.item?.name || ''}
                           onChange={e => handleItemChange(idx, 'name', e.target.value)}
-                          className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-[#073642] font-semibold"
+                          className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-[#0D0D0D] font-semibold"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-semibold text-[#586E75]">SKU Code</label>
+                        <label className="text-[10px] font-semibold text-[#334155]">SKU Code</label>
                         <input
                           type="text"
                           value={item.item?.sku || ''}
                           onChange={e => handleItemChange(idx, 'sku', e.target.value)}
-                          className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-[#073642] font-mono font-bold"
+                          className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-[#0D0D0D] font-mono font-bold"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="text-[10px] font-semibold text-[#586E75]">Technical Specs</label>
+                      <label className="text-[10px] font-semibold text-[#334155]">Technical Specs</label>
                       <input
                         type="text"
                         value={item.item?.specs || ''}
                         onChange={e => handleItemChange(idx, 'specs', e.target.value)}
-                        className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-[#073642]"
+                        className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-[#0D0D0D]"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
                       <div>
-                        <label className="text-[10px] font-semibold text-[#586E75] block mb-1">Quantity</label>
+                        <label className="text-[10px] font-semibold text-[#334155] block mb-1">Quantity</label>
                         <input
                           type="number"
                           min={1}
                           value={item.quantity}
                           onChange={e => handleItemChange(idx, 'quantity', e.target.value)}
-                          className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-[#073642] font-mono font-bold text-center focus:outline-none focus:border-emerald-500"
+                          className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-[#0D0D0D] font-mono font-bold text-center focus:outline-none focus:border-emerald-500"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-semibold text-[#586E75] block mb-1">Unit Rate (INR)</label>
+                        <label className="text-[10px] font-semibold text-[#334155] block mb-1">Unit Rate (INR)</label>
                         <input
                           type="number"
                           min={0}
                           step="0.01"
                           value={item.unit_price}
                           onChange={e => handleItemChange(idx, 'unit_price', e.target.value)}
-                          className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-[#073642] font-mono font-bold text-right focus:outline-none focus:border-emerald-500"
+                          className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-[#0D0D0D] font-mono font-bold text-right focus:outline-none focus:border-emerald-500"
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-semibold text-[#586E75] block mb-1">Line Total</label>
-                        <div className="w-full bg-[#FDF6E3] border border-[#D6D1B1] rounded-lg px-2.5 py-1.5 text-emerald-800 font-mono font-bold text-right truncate overflow-hidden">
+                        <label className="text-[10px] font-semibold text-[#334155] block mb-1">Line Total</label>
+                        <div className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-emerald-800 font-mono font-bold text-right truncate overflow-hidden">
                           ₹{Number(item.total_price || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                       </div>
@@ -434,8 +434,8 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             </div>
 
             {/* 4. Terms & Notes */}
-            <div className="p-4 rounded-2xl bg-[#FDF6E3] border border-[#D6D1B1] shadow-xs space-y-3">
-              <label className="block text-xs font-bold text-[#073642] uppercase tracking-wider">
+            <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs space-y-3">
+              <label className="block text-xs font-bold text-[#0D0D0D] uppercase tracking-wider">
                 Terms & Special Instructions
               </label>
               <textarea
@@ -443,24 +443,24 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                 value={editableOrder.notes || ''}
                 onChange={e => setEditableOrder({ ...editableOrder, notes: e.target.value })}
                 placeholder="1. Please confirm dispatch schedule within 24 hours of receipt..."
-                className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3 py-2 text-xs text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
+                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-emerald-500 font-medium"
               />
             </div>
           </div>
 
           {/* Right Column: Live Vector Preview */}
-          <div className={`md:col-span-6 lg:col-span-6 p-4 md:p-6 flex flex-col overflow-hidden bg-[#EEE8D5] ${activeTab === 'editor' ? 'hidden md:flex' : 'flex'}`}>
-            <div className="flex items-center justify-between mb-3 text-xs font-bold text-[#073642]">
+          <div className={`md:col-span-6 lg:col-span-6 p-4 md:p-6 flex flex-col overflow-hidden bg-[#FFFFFF] ${activeTab === 'editor' ? 'hidden md:flex' : 'flex'}`}>
+            <div className="flex items-center justify-between mb-3 text-xs font-bold text-[#0D0D0D]">
               <span className="flex items-center gap-1.5">
                 <Eye className="w-4 h-4 text-emerald-600" />
                 <span>Live Vector PDF Preview (Selectable Text)</span>
               </span>
-              <span className="text-[11px] font-semibold text-[#586E75]">
+              <span className="text-[11px] font-semibold text-[#334155]">
                 100% Vector Engine
               </span>
             </div>
 
-            <div className="flex-1 bg-[#FDF6E3] rounded-2xl shadow-xl overflow-hidden border border-[#D6D1B1]">
+            <div className="flex-1 bg-[#FFFFFF] rounded-2xl shadow-xl overflow-hidden border border-[#E2E8F0]">
               {pdfPreviewUrl ? (
                 <iframe
                   src={pdfPreviewUrl}
@@ -468,7 +468,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                   title="PDF Vector Preview"
                 />
               ) : (
-                <div className="flex items-center justify-center h-full text-[#586E75] text-xs">
+                <div className="flex items-center justify-center h-full text-[#334155] text-xs">
                   Generating vector preview...
                 </div>
               )}
@@ -477,7 +477,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
         </div>
 
         {/* Modal Bottom Action Footer */}
-        <div className="px-6 py-4 border-t border-[#D6D1B1] bg-[#FDF6E3] flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div className="px-6 py-4 border-t border-[#E2E8F0] bg-[#FFFFFF] flex flex-wrap items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-2">
             {saveSuccess && (
               <span className="flex items-center gap-1 text-emerald-800 text-xs font-bold animate-fade-in">
@@ -491,7 +491,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl bg-[#EEE8D5] hover:bg-[#E4DDC7] text-[#073642] font-semibold text-xs transition-all border border-[#D6D1B1]"
+              className="px-4 py-2.5 rounded-xl bg-[#FFFFFF] hover:bg-[#f8fafc] text-[#0D0D0D] font-semibold text-xs transition-all border border-[#E2E8F0]"
             >
               Close Editor
             </button>

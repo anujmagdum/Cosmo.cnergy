@@ -94,27 +94,27 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto">
-      <div className="bg-[#FDF6E3] w-full max-w-4xl rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-5 my-8 text-[#073642]">
+      <div className="bg-[#FFFFFF] w-full max-w-4xl rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-5 my-8 text-[#0D0D0D]">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-3">
+        <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-md">
               <Rocket className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-[#073642]">Multi-Vendor Dispatch Workspace</h3>
+                <h3 className="text-lg font-bold text-[#0D0D0D]">Multi-Vendor Dispatch Workspace</h3>
                 <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
                   {drafts.length} Vendors
                 </span>
               </div>
-              <p className="text-xs text-[#586E75]">
+              <p className="text-xs text-[#334155]">
                 Review and dispatch individual vendor purchase orders via internal Webmail or WhatsApp
               </p>
             </div>
           </div>
 
-          <button onClick={onClose} className="text-[#586E75] hover:text-[#073642] font-bold p-1">
+          <button onClick={onClose} className="text-[#334155] hover:text-[#0D0D0D] font-bold p-1">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -128,17 +128,17 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
               <div
                 key={draft.company.id}
                 className={`p-4 rounded-2xl border transition-all ${
-                  isDispatched ? 'bg-emerald-50/70 border-emerald-300' : 'bg-[#EEE8D5]/70 border-[#D6D1B1]'
+                  isDispatched ? 'bg-emerald-50/70 border-emerald-300' : 'bg-[#FFFFFF]/70 border-[#E2E8F0]'
                 }`}
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#D6D1B1]/60 pb-2.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0]/60 pb-2.5">
                   <div className="flex items-center gap-2.5">
                     <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
                       {idx + 1}
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-[#073642]">{draft.company.name}</h4>
-                      <p className="text-[11px] text-[#586E75]">
+                      <h4 className="font-bold text-sm text-[#0D0D0D]">{draft.company.name}</h4>
+                      <p className="text-[11px] text-[#334155]">
                         {draft.company.email} • {draft.items.length} items • <strong className="text-emerald-800 font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
                       </p>
                     </div>
@@ -156,7 +156,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
 
                     <button
                       onClick={() => handleDispatchVendorWhatsApp(draft)}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#FDF6E3] hover:bg-[#E4DDC7] text-[#073642] font-bold text-xs border border-[#D6D1B1] shadow-xs active:scale-95 transition-all"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-[#f8fafc] text-[#0D0D0D] font-bold text-xs border border-[#E2E8F0] shadow-xs active:scale-95 transition-all"
                     >
                       <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
                       <span>WhatsApp</span>
@@ -169,7 +169,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
                   {draft.items.map((it, i) => (
                     <span
                       key={i}
-                      className="px-2 py-0.5 rounded bg-[#FDF6E3] border border-[#D6D1B1] text-[10px] text-[#073642] font-medium"
+                      className="px-2 py-0.5 rounded bg-[#FFFFFF] border border-[#E2E8F0] text-[10px] text-[#0D0D0D] font-medium"
                     >
                       {it.catalogItem.name} (x{it.quantity} @ ₹{it.unit_price})
                     </span>
@@ -181,10 +181,10 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-3 border-t border-[#D6D1B1]/60">
+        <div className="flex items-center justify-between pt-3 border-t border-[#E2E8F0]/60">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] text-xs font-semibold hover:bg-[#E4DDC7]"
+            className="px-4 py-2 rounded-xl bg-[#FFFFFF] text-[#0D0D0D] text-xs font-semibold hover:bg-[#f8fafc]"
           >
             Cancel
           </button>
