@@ -1523,11 +1523,6 @@ export const App: React.FC = () => {
         </Route>
       </Routes>
 
-      {/* Footer */}
-      <footer className="glass-panel border-t border-[#1e3e62] py-6 text-center text-xs text-slate-300 bg-[#0B192C]">
-        <p>CosmoCnergy Procurement OS — Datlion Cnergy Enterprise Edition</p>
-      </footer>
-
       {/* Global Modals */}
       {isBOMModalOpen && (
         <BOMProcurementModal
