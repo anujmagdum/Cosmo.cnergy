@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Download, Upload, Loader2, CheckCircle2, AlertCircle, FileSpreadsheet } from 'lucide-react';
+import { Upload, Loader2, CheckCircle2, AlertCircle, FileSpreadsheet } from 'lucide-react';
 
 export type CsvSectionType = 'components' | 'orders' | 'companies';
 
@@ -21,140 +21,6 @@ export const CsvActionWidget: React.FC<Props> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-
-  // Helper to format values for CSV escaping
-  const escapeCsvValue = (val: any): string => {
-    if (val === null || val === undefined) return '""';
-    const str = String(val);
-    if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
-      return `"${str.replace(/"/g, '""')}"`;
-    }
-    return `"${str}"`;
-  };
-
-  // 1. DYNAMIC CSV GENERATION & DOWNLOAD (EXPORT)
-  const handleExportCsv = () => {
-    if (!data || data.length === 0) {
-      setFeedback({ type: 'error', message: 'No records available to export.' });
-      setTimeout(() => setFeedback(null), 3000);
-      return;
-    }
-
-    let headers: string[] = [];
-    let rows: string[][] = [];
-
-    if (sectionType === 'components') {
-      headers = [
-        'Component Name',
-        'Category',
-        'SKU Code',
-        'Price (INR)',
-        'In-Stock Qty',
-        'Min Order Qty',
-        'UOM',
-        'Company ID',
-        'Company Name',
-        'Technical Specifications',
-        'Procurement Status'
-      ];
-
-      rows = data.map(item => [
-        escapeCsvValue(item.name || ''),
-        escapeCsvValue(item.category || 'Battery Cells'),
-        escapeCsvValue(item.sku || ''),
-        escapeCsvValue(item.preset_price ?? 0),
-        escapeCsvValue(item.in_stock_qty ?? 0),
-        escapeCsvValue(item.min_order_qty ?? 1),
-        escapeCsvValue(item.uom || 'Pcs'),
-        escapeCsvValue(item.company_id || ''),
-        escapeCsvValue(item.company?.name || ''),
-        escapeCsvValue(item.specs || ''),
-        escapeCsvValue(item.procurement_status || 'TO_BE_ORDERED')
-      ]);
-    } else if (sectionType === 'orders') {
-      headers = [
-        'Order Number',
-        'Document Type',
-        'Order Status',
-        'Company ID',
-        'Company Name',
-        'Total Amount (INR)',
-        'Items Count',
-        'Items Detail',
-        'Created By',
-        'Created Date',
-        'Notes'
-      ];
-
-      rows = data.map(order => {
-        const itemsSummary = (order.items || [])
-          .map((i: any) => `${i.item?.name || 'Item'} (${i.quantity} ${i.item?.uom || 'Pcs'} @ Rs.${i.unit_price})`)
-          .join('; ');
-
-        return [
-          escapeCsvValue(order.order_number || ''),
-          escapeCsvValue(order.type || 'PO'),
-          escapeCsvValue(order.status || 'ORDERED'),
-          escapeCsvValue(order.company_id || ''),
-          escapeCsvValue(order.company?.name || ''),
-          escapeCsvValue(order.total_amount ?? 0),
-          escapeCsvValue((order.items || []).length),
-          escapeCsvValue(itemsSummary),
-          escapeCsvValue(order.created_by || ''),
-          escapeCsvValue(order.created_at ? new Date(order.created_at).toLocaleDateString('en-IN') : ''),
-          escapeCsvValue(order.notes || '')
-        ];
-      });
-    } else if (sectionType === 'companies') {
-      headers = [
-        'Company Name',
-        'Contact Person',
-        'Email Address',
-        'Phone Number',
-        'WhatsApp',
-        'Category',
-        'GSTIN',
-        'Payment Terms',
-        'Address',
-        'Buying Portal URL',
-        'Rating'
-      ];
-
-      rows = data.map(supp => [
-        escapeCsvValue(supp.name || ''),
-        escapeCsvValue(supp.contact_person || ''),
-        escapeCsvValue(supp.email || ''),
-        escapeCsvValue(supp.phone || ''),
-        escapeCsvValue(supp.whatsapp || supp.phone || ''),
-        escapeCsvValue(supp.category || 'General Company'),
-        escapeCsvValue(supp.gstin || ''),
-        escapeCsvValue(supp.payment_terms || 'Net 30 Days'),
-        escapeCsvValue(supp.address || ''),
-        escapeCsvValue(supp.buying_url || ''),
-        escapeCsvValue(supp.rating || 4.8)
-      ]);
-    }
-
-    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
-    const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-
-    const now = new Date();
-    const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
-    const prefix = customFilenamePrefix || `Export_${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)}`;
-    const filename = `${prefix}_${dateStr}.csv`;
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-
-    setFeedback({ type: 'success', message: `Exported ${data.length} records to ${filename}` });
-    setTimeout(() => setFeedback(null), 3500);
-  };
 
   // 2. PARSE CSV LINE WITH PROPER QUOTATION HANDLING
   const parseCsvLine = (line: string): string[] => {
@@ -326,17 +192,6 @@ export const CsvActionWidget: React.FC<Props> = ({
         <span className="sm:hidden">Import</span>
       </button>
 
-      {/* Download CSV Button */}
-      <button
-        type="button"
-        onClick={handleExportCsv}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] text-xs font-bold transition-all shadow-xs active:scale-95"
-        title={`Download current ${sectionType} dataset as CSV`}
-      >
-        <Download className="w-3.5 h-3.5 text-emerald-600" />
-        <span className="hidden sm:inline">Download CSV</span>
-        <span className="sm:hidden">Export</span>
-      </button>
 
       {/* Feedback Toast Banner */}
       {feedback && (

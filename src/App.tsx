@@ -993,78 +993,64 @@ export const App: React.FC = () => {
     }
   };
 
-  // CSV Import Batch Handlers
+  // CSV Import Batch Handlers (Inventory: Component Name, Part Name, Technical Specification only; other fields blank)
   const handleImportComponents = async (rows: any[]): Promise<number> => {
     const importedItems: CatalogItem[] = [];
-    const newJunctions: ComponentCompany[] = [];
 
     rows.forEach((row, idx) => {
-      let suppId = row.company_id;
-      if (!suppId && row.company_name) {
-        const found = companies.find(s => s.name.toLowerCase() === row.company_name.toLowerCase());
-        if (found) suppId = found.id;
-      }
-
       const itemId = `cat-${Date.now()}-${idx}`;
-      const presetPrice = Number(row.preset_price) || 0;
-      const moq = Number(row.min_order_qty) || 1;
-      const matchedCat = categories.find(c => c.name.toLowerCase() === (row.category || '').toLowerCase());
+      const compName = (row.name || row.component_name || '').trim();
+      const partName = (row.sku || row.part_name || '').trim();
+      const techSpecs = (row.specs || row.technical_specification || row.technical_spec || '').trim();
 
+      // In inventory CSV import: only import Component Name, Part Name, and Technical Specification.
+      // All other fields remain completely blank / unassigned.
       const item: CatalogItem = {
         id: itemId,
-        name: row.name,
-        category: row.category || matchedCat?.name || 'Capacitor',
-        category_id: matchedCat?.id,
-        sku: row.sku || `SKU-${Date.now().toString().slice(-4)}-${idx + 1}`,
-        specs: row.specs || '',
-        uom: row.uom || 'Pcs',
-        preset_price: presetPrice,
-        in_stock_qty: Number(row.in_stock_qty) || 100,
-        min_order_qty: moq,
-        company_id: suppId || companies[0]?.id || '',
-        company_ids: suppId ? [suppId] : (companies[0]?.id ? [companies[0].id] : []),
-        procurement_status: row.procurement_status || 'TO_BE_ORDERED',
-        image_drive_url: row.image_drive_url || undefined
+        name: compName || `Component ${idx + 1}`,
+        sku: partName || '',
+        specs: techSpecs || '',
+        category: '',
+        category_id: undefined,
+        uom: '',
+        preset_price: undefined,
+        in_stock_qty: undefined,
+        min_order_qty: undefined,
+        company_id: undefined,
+        company_ids: [],
+        procurement_status: 'TO_BE_ORDERED',
+        image_drive_url: undefined
       };
 
       importedItems.push(item);
-
-      const targetCompanyId = item.company_id;
-      if (targetCompanyId) {
-        const companyObj = companies.find(s => s.id === targetCompanyId);
-        newJunctions.push({
-          id: `cc-${itemId}-${targetCompanyId}`,
-          component_id: itemId,
-          company_id: targetCompanyId,
-          unit_price: presetPrice,
-          rfq_quoted_price: presetPrice,
-          moq: moq,
-          lead_time_days: 7,
-          part_number_vendor: item.sku || 'OEM-SPEC',
-          external_rating: companyObj?.rating || 4.8,
-          review_summary: `Imported via CSV for ${item.name}`,
-          company: companyObj
-        });
-      }
     });
 
     if (importedItems.length === 0) return 0;
 
     if (isSupabaseConfigured()) {
       try {
-        await supabase.from('catalog_items').upsert(importedItems);
-        if (newJunctions.length > 0) {
-          await supabase.from('component_companies').upsert(newJunctions);
-        }
+        const payload = importedItems.map(item => ({
+          id: item.id,
+          name: item.name,
+          sku: item.sku || null,
+          specs: item.specs || null,
+          category: null,
+          category_id: null,
+          uom: null,
+          preset_price: null,
+          in_stock_qty: null,
+          min_order_qty: null,
+          company_id: null,
+          procurement_status: item.procurement_status || 'TO_BE_ORDERED',
+          image_drive_url: null
+        }));
+        await supabase.from('catalog_items').upsert(payload);
       } catch (e) {
         console.warn('Batch insert catalog_items to Supabase error:', e);
       }
     }
 
     setCatalog(prev => [...importedItems, ...prev]);
-    if (newJunctions.length > 0) {
-      setComponentCompanies(prev => [...newJunctions, ...prev]);
-    }
     return importedItems.length;
   };
 
