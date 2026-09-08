@@ -177,7 +177,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Studio Header */}
-      <div className="glass-panel p-6 rounded-3xl bg-[#0B192C] text-white flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md">
+      <div className="glass-panel p-6 rounded-3xl bg-[#0C0D0E] text-white flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-md">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg">
             <Bot className="w-7 h-7 text-black fill-black" />

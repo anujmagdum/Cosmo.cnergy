@@ -85,7 +85,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
         </div>
 
         {/* Modal Image Viewport */}
-        <div className="relative w-full min-h-[320px] max-h-[65vh] bg-[#0B192C] rounded-2xl overflow-hidden flex items-center justify-center border border-slate-700">
+        <div className="relative w-full min-h-[320px] max-h-[65vh] bg-[#0C0D0E] rounded-2xl overflow-hidden flex items-center justify-center border border-slate-700">
           {isLoading && !hasError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-slate-300">
               <RefreshCw className="w-8 h-8 animate-spin text-[#0b6623]" />

@@ -13,9 +13,9 @@ export default {
       },
       colors: {
         brand: {
-          dark: '#0B192C',
-          navy: '#0B192C',
-          'navy-light': '#1E3E62',
+          dark: '#0C0D0E',
+          navy: '#0C0D0E',
+          'navy-light': '#23262B',
           card: '#FFFFFF',
           canvas: '#FAF5EF',
           emerald: '#0b6623',
@@ -23,7 +23,7 @@ export default {
           'emerald-hover': '#084d1a',
           forest: '#0b6623',
           'forest-hover': '#084d1a',
-          text: '#0B192C',
+          text: '#0C0D0E',
           muted: '#64748B'
         },
         cosmo: {
@@ -32,8 +32,8 @@ export default {
           500: '#0b6623',
           600: '#0b6623',
           700: '#084d1a',
-          900: '#0b192c',
-          dark: '#0b192c',
+          900: '#0c0d0e',
+          dark: '#0c0d0e',
           card: '#ffffff',
           accent: '#0b6623'
         },

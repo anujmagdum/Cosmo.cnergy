@@ -27,7 +27,7 @@ export const MailQueueManager: React.FC = () => {
   const pendingCount = queue.filter(q => q.status === 'pending' || q.status === 'sending').length;
 
   return (
-    <div className="fixed bottom-6 right-6 w-96 bg-[#0B192C] rounded-2xl shadow-2xl border border-[#0b6623]/30 overflow-hidden z-[100] text-white flex flex-col">
+    <div className="fixed bottom-6 right-6 w-96 bg-[#0C0D0E] rounded-2xl shadow-2xl border border-[#0b6623]/30 overflow-hidden z-[100] text-white flex flex-col">
       {/* Header */}
       <div className="p-4 bg-emerald-900/40 border-b border-[#0b6623]/30 flex items-center justify-between">
         <div className="flex items-center gap-2">

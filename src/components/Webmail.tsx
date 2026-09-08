@@ -712,7 +712,7 @@ export const Webmail: React.FC<Props> = ({
   return (
     <div className="space-y-6">
       {/* Top Header & Account Management Bar */}
-      <div className="glass-panel px-5 py-3.5 rounded-2xl bg-[#0B192C] text-white flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-md">
+      <div className="glass-panel px-5 py-3.5 rounded-2xl bg-[#0C0D0E] text-white flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-md">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-[#0b6623] flex items-center justify-center shadow-md shadow-[#0b6623]/20 shrink-0">
             <Mail className="w-4.5 h-4.5 text-white" />

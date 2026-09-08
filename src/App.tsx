@@ -1390,7 +1390,7 @@ export const App: React.FC = () => {
   // Strict Auth Guard
   if (!userEmail) {
     return (
-      <div className="min-h-screen bg-[#0B192C] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#0C0D0E] flex items-center justify-center p-4">
         <AuthModal
           onClose={() => {}} // Cannot close until logged in
           onLogin={(name, email) => {

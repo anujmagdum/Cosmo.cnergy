@@ -453,7 +453,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                         className={`px-4 py-2 rounded-xl font-black text-xs flex items-center gap-2 transition-all shadow-sm active:scale-95 cursor-pointer ${
                           isWinner
                             ? 'bg-[#0b6623] hover:bg-[#084d1a] text-white shadow-emerald-500/25 ring-2 ring-[#0b6623]/40'
-                            : 'bg-[#0B192C] hover:bg-slate-800 text-white'
+                            : 'bg-[#0C0D0E] hover:bg-slate-800 text-white'
                         }`}
                       >
                         <ShoppingCart className="w-3.5 h-3.5" />

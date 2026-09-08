@@ -533,7 +533,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
       <div className="bg-[#FFFFFF] w-full max-w-5xl rounded-3xl border border-[#E2E8F0] shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150 text-[#020617]">
         {/* Modal Top Banner */}
-        <div className="bg-[#0B192C] p-6 border-b border-[#E2E8F0]/60 flex items-center justify-between text-white">
+        <div className="bg-[#0C0D0E] p-6 border-b border-[#E2E8F0]/60 flex items-center justify-between text-white">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-lg shadow-[#0b6623]/20">
               <Layers className="w-6 h-6" />
@@ -923,7 +923,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   <button
                     type="button"
                     onClick={() => handleDispatchSingleVendorWebmail(selectedDraft)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0B192C] hover:bg-[#1e3e62] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0C0D0E] hover:bg-[#1C1E22] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                   >
                     <Mail className="w-3.5 h-3.5 text-[#0b6623]" />
                     <span>Send this {orderType} via Webmail</span>

@@ -211,7 +211,7 @@ export const FindCompanyTab: React.FC<Props> = ({
             notification.type === 'success'
               ? 'bg-[#0b6623] text-white'
               : notification.type === 'info'
-              ? 'bg-[#0B192C] text-cyan-300 border border-cyan-500/40'
+              ? 'bg-[#0C0D0E] text-cyan-300 border border-cyan-500/40'
               : 'bg-rose-600 text-white'
           }`}
         >
@@ -251,7 +251,7 @@ export const FindCompanyTab: React.FC<Props> = ({
               onClick={() => setViewMode('search')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'search'
-                  ? 'bg-[#0B192C] text-white shadow-md'
+                  ? 'bg-[#0C0D0E] text-white shadow-md'
                   : 'bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#f8fafc]'
               }`}
             >
@@ -266,7 +266,7 @@ export const FindCompanyTab: React.FC<Props> = ({
               }`}
             >
               <span>📋 Shortlist</span>
-              <span className="bg-[#0B192C] text-white text-[10px] px-2 py-0.5 rounded-full font-extrabold font-mono">
+              <span className="bg-[#0C0D0E] text-white text-[10px] px-2 py-0.5 rounded-full font-extrabold font-mono">
                 {shortlistedList.length}
               </span>
             </button>
@@ -353,7 +353,7 @@ export const FindCompanyTab: React.FC<Props> = ({
 
       {/* TOP STICKY BAR FOR SHORTLISTED ACTIONS */}
       {shortlistedList.length > 0 && (
-        <div className="bg-[#0B192C] text-white p-3.5 rounded-2xl shadow-lg border border-slate-700 flex flex-wrap items-center justify-between gap-3 animate-in fade-in">
+        <div className="bg-[#0C0D0E] text-white p-3.5 rounded-2xl shadow-lg border border-slate-700 flex flex-wrap items-center justify-between gap-3 animate-in fade-in">
           <div className="flex items-center gap-3">
             <span className="bg-[#0b6623] text-white text-xs font-black px-3 py-1 rounded-lg">
               {shortlistedList.length} Shortlisted
@@ -379,7 +379,7 @@ export const FindCompanyTab: React.FC<Props> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[520px]">
           {/* LEFT 40% — LIVE GOOGLE MAPS PLUGIN */}
           <div className="lg:col-span-5 bg-[#FFFFFF] rounded-3xl border border-[#E2E8F0] shadow-xs flex flex-col overflow-hidden">
-            <div className="bg-[#0B192C] text-white px-4 py-3 flex items-center justify-between">
+            <div className="bg-[#0C0D0E] text-white px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-[#0b6623]" />
                 <h3 className="text-xs font-bold text-white">Google Maps Live Plugin ({city})</h3>
@@ -407,7 +407,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                   onClick={() => setActiveSourceFilter('all')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     activeSourceFilter === 'all'
-                      ? 'bg-[#0B192C] text-white'
+                      ? 'bg-[#0C0D0E] text-white'
                       : 'text-[#0D0D0D] hover:bg-[#f8fafc]'
                   }`}
                 >
@@ -417,7 +417,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                   onClick={() => setActiveSourceFilter('maps')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     activeSourceFilter === 'maps'
-                      ? 'bg-[#0B192C] text-white'
+                      ? 'bg-[#0C0D0E] text-white'
                       : 'text-[#0D0D0D] hover:bg-[#f8fafc]'
                   }`}
                 >
@@ -427,7 +427,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                   onClick={() => setActiveSourceFilter('indiamart')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     activeSourceFilter === 'indiamart'
-                      ? 'bg-[#0B192C] text-white'
+                      ? 'bg-[#0C0D0E] text-white'
                       : 'text-[#0D0D0D] hover:bg-[#f8fafc]'
                   }`}
                 >
@@ -437,7 +437,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                   onClick={() => setActiveSourceFilter('google')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     activeSourceFilter === 'google'
-                      ? 'bg-[#0B192C] text-white'
+                      ? 'bg-[#0C0D0E] text-white'
                       : 'text-[#0D0D0D] hover:bg-[#f8fafc]'
                   }`}
                 >
@@ -447,7 +447,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                   onClick={() => setActiveSourceFilter('other')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
                     activeSourceFilter === 'other'
-                      ? 'bg-[#0B192C] text-white'
+                      ? 'bg-[#0C0D0E] text-white'
                       : 'text-[#0D0D0D] hover:bg-[#f8fafc]'
                   }`}
                 >

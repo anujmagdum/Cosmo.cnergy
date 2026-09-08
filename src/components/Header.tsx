@@ -79,7 +79,7 @@ export const Header: React.FC<Props> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 glass-panel border-b border-[#1e3e62] bg-[#0B192C] select-none shadow-xl">
+    <header className="sticky top-0 z-40 glass-panel border-b border-[#1C1E22] bg-[#0C0D0E] select-none shadow-xl">
       {/* Top Main Navigation Bar */}
       <div className="px-4 lg:px-8 py-2.5">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -106,7 +106,7 @@ export const Header: React.FC<Props> = ({
             <div className="flex md:hidden items-center gap-2">
               <button
                 onClick={onOpenSearch}
-                className="p-2 rounded-xl bg-[#1e3e62]/70 border border-slate-700 text-slate-300 active:scale-95"
+                className="p-2 rounded-xl bg-[#1C1E22]/70 border border-slate-700 text-slate-300 active:scale-95"
                 title="Search"
               >
                 <Search className="w-4 h-4 text-[#0b6623]" />
@@ -115,7 +115,7 @@ export const Header: React.FC<Props> = ({
               {userName ? (
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-1.5 p-1.5 rounded-xl bg-[#1e3e62]/70 border border-slate-700 text-white active:scale-95"
+                  className="flex items-center gap-1.5 p-1.5 rounded-xl bg-[#1C1E22]/70 border border-slate-700 text-white active:scale-95"
                 >
                   <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs">
                     {userInitial}
@@ -135,7 +135,7 @@ export const Header: React.FC<Props> = ({
           </div>
 
           {/* Center: Reordered Navigation Bar with Standout AI Studio Pill and Badges */}
-          <nav className="flex flex-wrap items-center justify-center md:justify-start gap-1.5 p-1 rounded-2xl bg-[#071322]/80 border border-slate-800/80 shadow-inner">
+          <nav className="flex flex-wrap items-center justify-center md:justify-start gap-1.5 p-1 rounded-2xl bg-[#141618]/80 border border-slate-800/80 shadow-inner">
             {navItems.map(item => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -168,7 +168,7 @@ export const Header: React.FC<Props> = ({
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     isActive
                       ? 'bg-[#0b6623] text-white shadow-md shadow-[#0b6623]/30 ring-1 ring-[#0b6623]/40'
-                      : 'bg-[#10243E]/60 hover:bg-[#1E3E62] text-slate-300 hover:text-white border border-slate-700/50'
+                      : 'bg-[#1C1E22]/60 hover:bg-[#23262B] text-slate-300 hover:text-white border border-slate-700/50'
                   }`}
                 >
                   <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#0b6623]'}`} />
@@ -212,7 +212,7 @@ export const Header: React.FC<Props> = ({
               <div className="hidden md:block relative">
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-[#1e3e62]/70 hover:bg-[#1e3e62] border border-slate-700/80 transition-all text-left group active:scale-95 overflow-hidden"
+                  className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-[#1C1E22]/70 hover:bg-[#1C1E22] border border-slate-700/80 transition-all text-left group active:scale-95 overflow-hidden"
                   title="User Profile & Session"
                 >
                   <div className="flex flex-col items-end">
@@ -233,7 +233,7 @@ export const Header: React.FC<Props> = ({
 
                 {/* Interactive Profile Dropdown Menu */}
                 {isProfileDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#0B192C] border border-slate-700 shadow-2xl p-3 text-xs space-y-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150 overflow-hidden">
+                  <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#0C0D0E] border border-slate-700 shadow-2xl p-3 text-xs space-y-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150 overflow-hidden">
                     <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs shrink-0">
@@ -288,7 +288,7 @@ export const Header: React.FC<Props> = ({
 
       {/* Mobile Profile Dropdown Menu Drawer */}
       {isProfileDropdownOpen && userName && (
-        <div className="md:hidden mt-2 p-3 rounded-2xl bg-[#071322] border border-slate-700 shadow-xl space-y-3 overflow-hidden mx-4 mb-3">
+        <div className="md:hidden mt-2 p-3 rounded-2xl bg-[#141618] border border-slate-700 shadow-xl space-y-3 overflow-hidden mx-4 mb-3">
           <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-900 border border-slate-800">
             <div className="w-8 h-8 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs shrink-0">
               {userInitial}

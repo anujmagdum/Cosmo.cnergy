@@ -262,7 +262,7 @@ export const CompanyDashboard: React.FC<Props> = ({
           onClick={() => setActiveCompanyTab('all_companies')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeCompanyTab === 'all_companies'
-              ? 'bg-[#0B192C] text-white shadow-md'
+              ? 'bg-[#0C0D0E] text-white shadow-md'
               : 'text-[#020617] hover:bg-[#FFFFFF]'
           }`}
         >
@@ -297,7 +297,7 @@ export const CompanyDashboard: React.FC<Props> = ({
       ) : (
         <>
           {/* Primary Action Header Bar */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-5 rounded-2xl bg-[#0B192C] text-white shadow-md">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-5 rounded-2xl bg-[#0C0D0E] text-white shadow-md">
             <div>
               <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                 <Building2 className="w-7 h-7 text-[#0b6623]" />
