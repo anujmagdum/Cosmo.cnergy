@@ -262,7 +262,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
           <div className="col-span-1 flex items-center gap-2">
             <button
               onClick={handleCalculateCapacity}
-              className="flex-1 py-1.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              className="flex-1 py-1.5 px-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Cpu className="w-3.5 h-3.5" />
               <span>Calculate</span>

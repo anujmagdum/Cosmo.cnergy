@@ -998,6 +998,27 @@ export const App: React.FC = () => {
     }
   };
 
+  // Batch Update Multiple Catalog Items (e.g. Procurement Status)
+  const handleBulkUpdateCatalogItems = async (itemIds: string[], updates: Partial<CatalogItem>) => {
+    setCatalog(prev => {
+      const updated = prev.map(c => itemIds.includes(c.id) ? { ...c, ...updates } : c);
+      try { localStorage.setItem('cosmo_catalog', JSON.stringify(updated)); } catch {}
+      return updated;
+    });
+
+    if (isSupabaseConfigured()) {
+      try {
+        const { error } = await supabase
+          .from('catalog_items')
+          .update(updates)
+          .in('id', itemIds);
+        if (error) console.warn('[Supabase bulk update catalog_items error]:', error);
+      } catch (e) {
+        console.warn('Failed to bulk update catalog items in Supabase:', e);
+      }
+    }
+  };
+
   // CSV Import Batch Handlers (Inventory: Component Name, Category, Part Name, Technical Specification; other fields blank)
   const handleImportComponents = async (rows: any[]): Promise<number> => {
     const importedItems: CatalogItem[] = [];
@@ -1390,7 +1411,7 @@ export const App: React.FC = () => {
   }).length;
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-slate-950 selection:bg-emerald-500 selection:text-white overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#FAF5EF] text-slate-950 selection:bg-[#0b6623] selection:text-white overflow-x-hidden">
       {/* Top Header & Navigation */}
       
 
@@ -1408,6 +1429,7 @@ export const App: React.FC = () => {
               categories={categories}
               onAddCatalogItem={handleAddCatalogItem}
               onUpdateCatalogItem={handleUpdateCatalogItem}
+              onBulkUpdateCatalogItems={handleBulkUpdateCatalogItems}
               onAddProductFolder={handleAddProductFolder}
               onUpdateFolderLinkedPOs={handleUpdateFolderLinkedPOs}
               onUpdateFolderComponents={handleUpdateFolderComponents}
@@ -1490,6 +1512,7 @@ export const App: React.FC = () => {
               categories={categories}
               onAddCatalogItem={handleAddCatalogItem}
               onUpdateCatalogItem={handleUpdateCatalogItem}
+              onBulkUpdateCatalogItems={handleBulkUpdateCatalogItems}
               onAddProductFolder={handleAddProductFolder}
               onUpdateFolderLinkedPOs={handleUpdateFolderLinkedPOs}
               onUpdateFolderComponents={handleUpdateFolderComponents}
@@ -1616,7 +1639,7 @@ export const App: React.FC = () => {
         className="fixed bottom-6 right-6 z-30 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-slate-900/95 hover:bg-slate-800 border border-slate-700 text-white shadow-xl shadow-slate-900/20 active:scale-95 transition-all group cursor-pointer backdrop-blur-md"
         title="Master Data Universal Search (Ctrl + K)"
       >
-        <div className="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+        <div className="w-6 h-6 rounded-lg bg-[#0b6623]/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
           <Search className="w-3.5 h-3.5" />
         </div>
         <span className="font-bold text-xs tracking-wide text-slate-100 group-hover:text-white">

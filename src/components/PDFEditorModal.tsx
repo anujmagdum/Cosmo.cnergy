@@ -164,13 +164,13 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             <div className="hidden sm:flex md:hidden items-center bg-slate-800 p-1 rounded-xl text-xs">
               <button
                 onClick={() => setActiveTab('editor')}
-                className={`px-3 py-1 rounded-lg font-bold transition-all ${activeTab === 'editor' ? 'bg-emerald-600 text-white' : 'text-slate-800'}`}
+                className={`px-3 py-1 rounded-lg font-bold transition-all ${activeTab === 'editor' ? 'bg-[#0b6623] text-white' : 'text-slate-800'}`}
               >
                 Editor
               </button>
               <button
                 onClick={() => setActiveTab('preview')}
-                className={`px-3 py-1 rounded-lg font-bold transition-all ${activeTab === 'preview' ? 'bg-emerald-600 text-white' : 'text-slate-800'}`}
+                className={`px-3 py-1 rounded-lg font-bold transition-all ${activeTab === 'preview' ? 'bg-[#0b6623] text-white' : 'text-slate-800'}`}
               >
                 Live Preview
               </button>
@@ -346,7 +346,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                 <button
                   type="button"
                   onClick={handleAddItem}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-800 text-xs font-bold border border-emerald-500/30 transition-all active:scale-95"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#0b6623]/15 hover:bg-[#084d1a]/25 text-emerald-800 text-xs font-bold border border-emerald-500/30 transition-all active:scale-95"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>+ Add Item</span>
@@ -508,7 +508,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             <button
               type="button"
               onClick={handleDownload}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all active:scale-95"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all active:scale-95"
             >
               <Download className="w-4 h-4" />
               <span>Download PDF</span>

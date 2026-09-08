@@ -17,23 +17,25 @@ export default {
           navy: '#0B192C',
           'navy-light': '#1E3E62',
           card: '#FFFFFF',
-          canvas: '#F8FAFC',
-          emerald: '#10B981',
-          'emerald-dark': '#059669',
-          'emerald-hover': '#047857',
+          canvas: '#FAF5EF',
+          emerald: '#0b6623',
+          'emerald-dark': '#084d1a',
+          'emerald-hover': '#084d1a',
+          forest: '#0b6623',
+          'forest-hover': '#084d1a',
           text: '#0B192C',
           muted: '#64748B'
         },
         cosmo: {
           50: '#ecfdf5',
           100: '#d1fae5',
-          500: '#10b981',
-          600: '#059669',
-          700: '#047857',
+          500: '#0b6623',
+          600: '#0b6623',
+          700: '#084d1a',
           900: '#0b192c',
           dark: '#0b192c',
           card: '#ffffff',
-          accent: '#10b981'
+          accent: '#0b6623'
         }
       }
     },

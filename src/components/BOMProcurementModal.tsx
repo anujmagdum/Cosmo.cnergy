@@ -570,7 +570,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
               onClick={() => setActiveBOMTab('whole_product')}
               className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 activeBOMTab === 'whole_product'
-                  ? 'bg-emerald-600 text-white shadow-md'
+                  ? 'bg-[#0b6623] text-white shadow-md'
                   : 'text-[#1e293b] hover:text-[#020617] hover:bg-white/50'
               }`}
             >
@@ -582,7 +582,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
               onClick={() => setActiveBOMTab('selected_components')}
               className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 activeBOMTab === 'selected_components'
-                  ? 'bg-emerald-600 text-white shadow-md'
+                  ? 'bg-[#0b6623] text-white shadow-md'
                   : 'text-[#1e293b] hover:text-[#020617] hover:bg-white/50'
               }`}
             >
@@ -652,7 +652,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                     onClick={() => setPackQuantity(val)}
                     className={`px-3 py-1 rounded-lg font-bold font-mono transition-all cursor-pointer ${
                       packQuantity === val
-                        ? 'bg-emerald-600 text-white shadow-xs'
+                        ? 'bg-[#0b6623] text-white shadow-xs'
                         : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border border-[#E2E8F0]'
                     }`}
                   >
@@ -719,7 +719,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                           }}
                           className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
                             isSelected
-                              ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+                              ? 'bg-[#0b6623] text-white border-[#0b6623] shadow-2xs'
                               : 'bg-white text-[#1e293b] border-[#E2E8F0] hover:text-[#020617] hover:bg-white'
                           }`}
                         >
@@ -743,7 +743,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   onClick={() => setOrderType('PO')}
                   className={`px-4 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                     orderType === 'PO'
-                      ? 'bg-emerald-600 text-white shadow-sm'
+                      ? 'bg-[#0b6623] text-white shadow-sm'
                       : 'text-[#1e293b] hover:text-[#020617]'
                   }`}
                 >
@@ -754,7 +754,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   onClick={() => setOrderType('RFQ')}
                   className={`px-4 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                     orderType === 'RFQ'
-                      ? 'bg-emerald-600 text-white shadow-sm'
+                      ? 'bg-[#0b6623] text-white shadow-sm'
                       : 'text-[#1e293b] hover:text-[#020617]'
                   }`}
                 >
@@ -796,7 +796,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                     onClick={() => setActiveTabCompanyId(draft.company.id)}
                     className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-2 border transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-emerald-600 text-white shadow-md border-emerald-500'
+                        ? 'bg-[#0b6623] text-white shadow-md border-emerald-500'
                         : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border-[#E2E8F0]'
                     }`}
                   >
@@ -932,7 +932,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   <button
                     type="button"
                     onClick={() => handleDispatchSingleVendorWhatsApp(selectedDraft)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0b6623] hover:bg-[#084d1a] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                   >
                     <MessageSquare className="w-3.5 h-3.5 fill-white text-white" />
                     <span>Send via WhatsApp</span>
@@ -980,7 +980,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
             <button
               onClick={handleMasterDispatch}
               disabled={isDispatching || activeDrafts.length === 0}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] disabled:opacity-50 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 active:scale-95 transition-all cursor-pointer"
             >
               <Zap className="w-4 h-4 fill-white text-white" />
               <span>

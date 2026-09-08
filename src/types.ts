@@ -1,4 +1,4 @@
-export type OrderStatus = 'TO_BE_ORDERED' | 'RFQ_SENT' | 'ORDERED' | 'DELIVERED' | 'ON_HOLD';
+export type OrderStatus = 'TO_BE_ORDERED' | 'RFQ_SENT' | 'ORDERED' | 'DELIVERED' | 'ON_HOLD' | 'IN_STOCK';
 
 export interface OrderStatusConfig {
   label: string;
@@ -10,6 +10,14 @@ export interface OrderStatusConfig {
 }
 
 export const STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
+  IN_STOCK: {
+    label: 'In Stock',
+    badgeBg: 'bg-emerald-50',
+    badgeText: 'text-[#0b6623]',
+    badgeBorder: 'border-emerald-200',
+    dotColor: 'bg-[#0b6623]',
+    iconName: 'PackageCheck'
+  },
   TO_BE_ORDERED: {
     label: 'To Be Ordered',
     badgeBg: 'bg-amber-100',

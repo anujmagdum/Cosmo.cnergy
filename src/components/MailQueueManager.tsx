@@ -71,7 +71,7 @@ export const MailQueueManager: React.FC = () => {
           {pendingCount > 0 && !isProcessing && (
             <button
               onClick={() => processQueue(activeAccount)}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] uppercase tracking-wider"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-[10px] uppercase tracking-wider"
             >
               <Play className="w-3.5 h-3.5 fill-white" />
               Process Queue

@@ -252,7 +252,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
             <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-emerald-500/50 shadow-sm space-y-2.5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+                  <div className="w-7 h-7 rounded-xl bg-[#0b6623] text-white flex items-center justify-center shadow-xs">
                     <Sparkles className="w-4 h-4" />
                   </div>
                   <div>
@@ -269,7 +269,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                 </div>
 
                 <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <span className="bg-emerald-600 text-white border border-emerald-700 text-xs font-black px-3 py-1 rounded-lg flex items-center gap-1.5 shadow-xs">
+                  <span className="bg-[#0b6623] text-white border border-emerald-700 text-xs font-black px-3 py-1 rounded-lg flex items-center gap-1.5 shadow-xs">
                     <Award className="w-3.5 h-3.5 text-amber-300" />
                     <span>{recommendation.badge}</span>
                   </span>
@@ -321,7 +321,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                         <span
                           className={`w-7 h-7 rounded-xl flex items-center justify-center font-mono font-black text-xs shrink-0 ${
                             isWinner
-                              ? 'bg-emerald-600 text-white shadow-xs'
+                              ? 'bg-[#0b6623] text-white shadow-xs'
                               : 'bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0]'
                           }`}
                         >
@@ -452,7 +452,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                         }}
                         className={`px-4 py-2 rounded-xl font-black text-xs flex items-center gap-2 transition-all shadow-sm active:scale-95 cursor-pointer ${
                           isWinner
-                            ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-500/25 ring-2 ring-emerald-400/40'
+                            ? 'bg-[#0b6623] hover:bg-[#084d1a] text-white shadow-emerald-500/25 ring-2 ring-emerald-400/40'
                             : 'bg-[#0B192C] hover:bg-slate-800 text-white'
                         }`}
                       >

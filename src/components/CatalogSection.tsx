@@ -43,6 +43,8 @@ import {
   Send,
   Edit2,
   AlertCircle,
+  Clock,
+  CheckCircle2,
   Image as ImageIcon,
   Eye,
   Sparkles,
@@ -62,6 +64,7 @@ interface Props {
   categories?: Category[];
   onAddCatalogItem: (item: Omit<CatalogItem, 'id'>) => Promise<any> | void;
   onUpdateCatalogItem?: (item: CatalogItem) => Promise<any> | void;
+  onBulkUpdateCatalogItems?: (itemIds: string[], updates: Partial<CatalogItem>) => Promise<any> | void;
   onAddProductFolder: (folderName: string) => Promise<any> | void;
   onUpdateFolderLinkedPOs: (folderId: string, poIds: string[]) => void;
   onUpdateFolderComponents?: (folderId: string, components: ProductFolderComponent[]) => void;
@@ -109,6 +112,7 @@ export const CatalogSection: React.FC<Props> = ({
   categories = [],
   onAddCatalogItem,
   onUpdateCatalogItem,
+  onBulkUpdateCatalogItems,
   onAddProductFolder,
   onUpdateFolderLinkedPOs,
   onUpdateFolderComponents,
@@ -350,8 +354,11 @@ Please send your best quote & availability.`;
   // Active Procurement Widget Status Filter: 'ALL' | 'TO_BE_ORDERED'
   const [activeStatusFilter, setActiveStatusFilter] = useState<'ALL' | 'TO_BE_ORDERED'>('ALL');
 
-  // Helper to determine if a catalog item is a stock bottleneck (stock <= 20%)
+  // Helper to determine if a catalog item is a stock bottleneck / To Be Ordered
+  // "nothing will show means its in stock"
   const isStockBottleneck = useCallback((item: CatalogItem): boolean => {
+    if (item.procurement_status === 'TO_BE_ORDERED') return true;
+    if (item.procurement_status === 'IN_STOCK' || item.procurement_status === 'DELIVERED') return false;
     const currentStock = Number(item.in_stock_qty ?? 0);
     const targetThreshold = Math.max(Number(item.min_order_qty || 0), 50);
     const stockRatio = targetThreshold > 0 ? currentStock / targetThreshold : 1;
@@ -1016,6 +1023,61 @@ Cosmo.cnergy Procurement Team`;
     }
   };
 
+  // Bulk change procurement status of multiple selected components
+  // "we should now change multiple component procurement status To be Ordered and nothing will show means its in stock"
+  const handleBulkUpdateProcurementStatus = async (status: 'TO_BE_ORDERED' | 'IN_STOCK') => {
+    if (selectedComponentIds.length === 0) return;
+    const count = selectedComponentIds.length;
+    setIsSubmitting(true);
+    try {
+      if (onBulkUpdateCatalogItems) {
+        await onBulkUpdateCatalogItems(selectedComponentIds, { procurement_status: status });
+      } else if (onUpdateCatalogItem) {
+        for (const id of selectedComponentIds) {
+          const it = catalog.find(c => c.id === id);
+          if (it) {
+            await onUpdateCatalogItem({ ...it, procurement_status: status });
+          }
+        }
+      }
+      setSelectedComponentIds([]);
+      setToastFeedback({
+        type: 'success',
+        message: status === 'TO_BE_ORDERED'
+          ? `Marked ${count} component(s) as "To Be Ordered"`
+          : `Marked ${count} component(s) as "In Stock" (cleared)`
+      });
+      setTimeout(() => setToastFeedback(null), 3500);
+    } catch (err: any) {
+      console.error('Failed to bulk update status:', err);
+      setToastFeedback({ type: 'error', message: `Status update failed: ${err.message || err}` });
+      setTimeout(() => setToastFeedback(null), 4500);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Quick toggle procurement status for an individual component
+  const handleToggleItemProcurementStatus = async (item: CatalogItem) => {
+    if (!onUpdateCatalogItem) return;
+    const isCurrentlyBottleneck = isStockBottleneck(item);
+    const nextStatus: OrderStatus = isCurrentlyBottleneck ? 'IN_STOCK' : 'TO_BE_ORDERED';
+    try {
+      await onUpdateCatalogItem({ ...item, procurement_status: nextStatus });
+      setToastFeedback({
+        type: 'success',
+        message: nextStatus === 'TO_BE_ORDERED'
+          ? `"${item.name}" marked as To Be Ordered`
+          : `"${item.name}" marked as In Stock`
+      });
+      setTimeout(() => setToastFeedback(null), 3000);
+    } catch (err: any) {
+      console.error('Failed to toggle status:', err);
+      setToastFeedback({ type: 'error', message: `Failed to update status: ${err.message || err}` });
+      setTimeout(() => setToastFeedback(null), 3500);
+    }
+  };
+
   // Dynamic Real-time Status Counts for Top Widgets
   const counts = useMemo(() => {
     let to_be_ordered = 0;
@@ -1184,7 +1246,7 @@ Cosmo.cnergy Procurement Team`;
               }));
               setIsAddCatalogOpen(true);
             }}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-sm active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>+ Add Component</span>
@@ -1237,7 +1299,7 @@ Cosmo.cnergy Procurement Team`;
               onClick={() => handleSelectCategory('ALL')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategoryFilter.toLowerCase() === 'all'
-                  ? 'bg-emerald-600 text-white shadow-xs'
+                  ? 'bg-[#0b6623] text-white shadow-xs'
                   : 'bg-white text-slate-800 hover:bg-slate-100 border border-slate-200'
               }`}
             >
@@ -1252,7 +1314,7 @@ Cosmo.cnergy Procurement Team`;
                   onClick={() => handleSelectCategory(cat)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                     selectedCategoryFilter.toLowerCase() === cat.toLowerCase()
-                      ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                      ? 'bg-[#0b6623] text-white font-bold shadow-xs'
                       : 'bg-white text-slate-800 hover:bg-slate-100 border border-slate-200'
                   }`}
                 >
@@ -1267,7 +1329,7 @@ Cosmo.cnergy Procurement Team`;
                 onClick={() => handleSelectCategory('Uncategorized')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   selectedCategoryFilter.toLowerCase() === 'uncategorized'
-                    ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                    ? 'bg-[#0b6623] text-white font-bold shadow-xs'
                     : 'bg-white text-slate-800 hover:bg-slate-100 border border-slate-200'
                 }`}
               >
@@ -1360,7 +1422,7 @@ Cosmo.cnergy Procurement Team`;
                         className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
                       />
 
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-[#0b6623]/15 text-emerald-700 border border-emerald-500/30 flex items-center justify-center shrink-0">
                         <Folder className="w-4 h-4" />
                       </div>
 
@@ -1386,7 +1448,7 @@ Cosmo.cnergy Procurement Team`;
                           e.stopPropagation();
                           setRecipeFolder(folder);
                         }}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-800 font-bold text-xs border border-emerald-500/30 transition-all active:scale-95 cursor-pointer"
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0b6623]/10 hover:bg-[#084d1a]/20 text-emerald-800 font-bold text-xs border border-emerald-500/30 transition-all active:scale-95 cursor-pointer"
                       >
                         <PlusCircle className="w-3.5 h-3.5 text-emerald-600" />
                         <span>+ Component</span>
@@ -1397,7 +1459,7 @@ Cosmo.cnergy Procurement Team`;
                           e.stopPropagation();
                           setBatchSendFolder(folder);
                         }}
-                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-xs active:scale-95 transition-all cursor-pointer"
+                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-[#0b6623] hover:bg-[#084d1a] rounded-lg shadow-xs active:scale-95 transition-all cursor-pointer"
                       >
                         <Send className="w-3 h-3 fill-white text-white" />
                         <span>Send POs</span>
@@ -1446,11 +1508,37 @@ Cosmo.cnergy Procurement Team`;
           </div>
 
           {selectedComponentIds.length > 0 && (
-            <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-emerald-500 animate-in fade-in">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 bg-white p-2 rounded-xl shadow-sm border border-[#E2E8F0] animate-in fade-in">
               <span className="text-xs font-bold text-[#020617] px-2">{selectedComponentIds.length} Selected</span>
+
+              {/* Bulk Status Actions: To Be Ordered & In Stock */}
+              <div className="flex items-center gap-1.5 border-l border-r border-[#E2E8F0] px-2">
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => handleBulkUpdateProcurementStatus('TO_BE_ORDERED')}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+                  title="Mark all selected components as To Be Ordered"
+                >
+                  <Clock className="w-3.5 h-3.5 text-amber-600" />
+                  <span>To Be Ordered</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => handleBulkUpdateProcurementStatus('IN_STOCK')}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+                  title="Mark all selected components as In Stock (nothing will show)"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#0b6623]" />
+                  <span>In Stock</span>
+                </button>
+              </div>
+
               <button
                 onClick={() => setShowBulkSendModal(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0b6623] hover:bg-[#084d1a] text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
               >
                 <Send className="w-3.5 h-3.5" />
                 Send RFQ / PO
@@ -1461,7 +1549,7 @@ Cosmo.cnergy Procurement Team`;
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                {isBulkDeletingComponents ? 'Deleting...' : 'Delete Components'}
+                {isBulkDeletingComponents ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           )}
@@ -1504,7 +1592,7 @@ Cosmo.cnergy Procurement Team`;
                       }}
                       className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-2 ${
                         bulkSendDocType === 'RFQ'
-                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
+                          ? 'bg-[#0b6623] text-white border-[#0b6623] shadow-md'
                           : 'bg-[#FFFFFF] text-[#020617] border-[#E2E8F0] hover:border-emerald-500'
                       }`}
                     >
@@ -1522,7 +1610,7 @@ Cosmo.cnergy Procurement Team`;
                       }}
                       className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all flex items-center justify-center gap-2 ${
                         bulkSendDocType === 'PO'
-                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
+                          ? 'bg-[#0b6623] text-white border-[#0b6623] shadow-md'
                           : 'bg-[#FFFFFF] text-[#020617] border-[#E2E8F0] hover:border-emerald-500'
                       }`}
                     >
@@ -1638,7 +1726,7 @@ Cosmo.cnergy Procurement Team`;
                       type="button"
                       disabled={isBulkSending}
                       onClick={() => handleExecuteDirectDispatch('whatsapp')}
-                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs shadow-md active:scale-95 transition-all cursor-pointer"
+                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md active:scale-95 transition-all cursor-pointer"
                     >
                       <span>💬 Send via WhatsApp</span>
                     </button>
@@ -1647,7 +1735,7 @@ Cosmo.cnergy Procurement Team`;
                       type="button"
                       disabled={isBulkSending}
                       onClick={() => handleExecuteDirectDispatch('webmail')}
-                      className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
+                      className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
                     >
                       <Send className="w-3.5 h-3.5 fill-white" />
                       <span>{isBulkSending ? 'Dispatching...' : 'Send via Webmail'}</span>
@@ -1700,7 +1788,7 @@ Cosmo.cnergy Procurement Team`;
                     }));
                     setIsAddCatalogOpen(true);
                   }}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  className="px-4 py-2 bg-[#0b6623] hover:bg-[#084d1a] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                 >
                   + Add Component in {selectedCategoryFilter !== 'ALL' && selectedCategoryFilter !== 'Uncategorized' ? selectedCategoryFilter : 'Inventory'}
                 </button>
@@ -1837,11 +1925,15 @@ Cosmo.cnergy Procurement Team`;
 
                 {/* Right: Metrics & Actions */}
                 <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E2E8F0]/60">
-                  {/* Automated Conditional "To Be Ordered" Badge (Only when Stock <= 20%) */}
+                  {/* Automated Conditional "To Be Ordered" Badge (Nothing will show when In Stock) */}
                   {isBottleneck && (
                     <span
-                      className="bg-amber-500/20 text-amber-900 border border-amber-500/40 text-xs px-2.5 py-1 rounded-md font-semibold flex items-center gap-1.5 shrink-0 select-none shadow-2xs"
-                      title="Stock is <= 20% of safe reorder threshold"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleItemProcurementStatus(item);
+                      }}
+                      className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 border border-amber-500/40 text-xs px-2.5 py-1 rounded-md font-semibold flex items-center gap-1.5 shrink-0 select-none shadow-2xs cursor-pointer transition-all"
+                      title="Click to toggle: Mark as In Stock (badge will disappear)"
                     >
                       <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                       <span>To Be Ordered</span>
@@ -1880,7 +1972,7 @@ Cosmo.cnergy Procurement Team`;
                     />
                     <button
                       onClick={(e) => { e.stopPropagation(); setReOrderConfirmData({ item, qty: reorderQtyMap[item.id] || item.min_order_qty || 10 }); }}
-                      className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
+                      className="px-2.5 py-1.5 bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-[10px] uppercase tracking-wider transition-all cursor-pointer"
                     >
                       Reorder
                     </button>
@@ -1915,7 +2007,7 @@ Cosmo.cnergy Procurement Team`;
                           e.stopPropagation();
                           navigate(`/inventory/component/${item.id}`);
                         }}
-                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-950 border border-emerald-500/30 text-[10px] font-bold shrink-0 transition-colors cursor-pointer"
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#0b6623]/10 hover:bg-[#084d1a]/20 text-emerald-950 border border-emerald-500/30 text-[10px] font-bold shrink-0 transition-colors cursor-pointer"
                         title="Click to open Company Quotation & Commercial Parameters"
                       >
                         <Building2 className="w-3.5 h-3.5 text-emerald-700" />
@@ -1925,12 +2017,25 @@ Cosmo.cnergy Procurement Team`;
                     );
                   })()}
 
-                  {/* Edit & Delete Action Buttons */}
+                  {/* Status Toggle, Edit & Delete Action Buttons */}
                   <div className="flex items-center gap-1">
                     <button
                       type="button"
+                      onClick={(e) => { e.stopPropagation(); handleToggleItemProcurementStatus(item); }}
+                      className={`p-1.5 rounded bg-[#FFFFFF] border border-[#E2E8F0] transition-all cursor-pointer ${
+                        isBottleneck
+                          ? 'hover:bg-emerald-50 text-amber-600 hover:text-[#0b6623]'
+                          : 'hover:bg-amber-50 text-slate-400 hover:text-amber-700'
+                      }`}
+                      title={isBottleneck ? 'Mark as In Stock (badge will disappear)' : 'Mark as To Be Ordered'}
+                    >
+                      {isBottleneck ? <Check className="w-3 h-3 text-[#0b6623]" /> : <Clock className="w-3 h-3 text-slate-500 hover:text-amber-600" />}
+                    </button>
+
+                    <button
+                      type="button"
                       onClick={(e) => { e.stopPropagation(); setEditingComponent(item); }}
-                      className="p-1.5 rounded bg-[#FFFFFF] hover:bg-emerald-100 text-[#1e293b] hover:text-emerald-800 border border-[#E2E8F0] transition-all cursor-pointer"
+                      className="p-1.5 rounded bg-[#FFFFFF] hover:bg-emerald-100 text-[#1e293b] hover:text-[#0b6623] border border-[#E2E8F0] transition-all cursor-pointer"
                       title="Edit Component"
                     >
                       <Edit2 className="w-3 h-3" />
@@ -1984,7 +2089,7 @@ Cosmo.cnergy Procurement Team`;
                   }}
                   className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
                     pageSize === size && !isAllPages
-                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+                      ? 'bg-[#0b6623] text-white border-[#0b6623] shadow-2xs'
                       : 'bg-[#FFFFFF] text-slate-700 border-[#E2E8F0] hover:border-emerald-400 hover:bg-slate-50'
                   }`}
                 >
@@ -1999,7 +2104,7 @@ Cosmo.cnergy Procurement Team`;
                 }}
                 className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
                   isAllPages
-                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+                    ? 'bg-[#0b6623] text-white border-[#0b6623] shadow-2xs'
                     : 'bg-[#FFFFFF] text-slate-700 border-[#E2E8F0] hover:border-emerald-400 hover:bg-slate-50'
                 }`}
                 title="Display all components without pagination"
@@ -2096,7 +2201,7 @@ Cosmo.cnergy Procurement Team`;
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-md shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold shadow-md shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
                 >
                   {isSubmitting ? 'Creating...' : 'Create Folder'}
                 </button>
@@ -2190,7 +2295,7 @@ Cosmo.cnergy Procurement Team`;
                     </p>
                   </div>
                   {catalogForm.selectedCompanies.length >= 2 && (
-                    <span className="self-start sm:self-auto flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-600/15 text-emerald-900 border border-emerald-500/30 text-[10px] font-black animate-in fade-in">
+                    <span className="self-start sm:self-auto flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#0b6623]/15 text-emerald-900 border border-emerald-500/30 text-[10px] font-black animate-in fade-in">
                       <Sparkles className="w-3 h-3 text-emerald-600" />
                       <span>Comparison Enabled ({catalogForm.selectedCompanies.length} Vendors)</span>
                     </span>
@@ -2294,7 +2399,7 @@ Cosmo.cnergy Procurement Team`;
                           >
                             <div className="flex items-center justify-between text-xs">
                               <div className="flex items-center gap-1.5 font-bold text-[#020617]">
-                                <span className="w-4 h-4 rounded-full bg-emerald-600 text-white text-[9px] flex items-center justify-center font-mono font-bold">
+                                <span className="w-4 h-4 rounded-full bg-[#0b6623] text-white text-[9px] flex items-center justify-center font-mono font-bold">
                                   {idx + 1}
                                 </span>
                                 <span>{supp?.name}</span>
@@ -2457,7 +2562,7 @@ Cosmo.cnergy Procurement Team`;
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold shadow-lg shadow-emerald-500/20 active:scale-95 disabled:opacity-50"
                 >
                   {isSubmitting ? 'Saving...' : 'Save Component'}
                 </button>
@@ -2511,7 +2616,7 @@ Cosmo.cnergy Procurement Team`;
           <div className="bg-[#FFFFFF] w-full max-w-4xl rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-6 my-8 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-md shadow-emerald-500/20">
+                <div className="w-10 h-10 rounded-xl bg-[#0b6623] text-white flex items-center justify-center font-bold shadow-md shadow-emerald-500/20">
                   <Folder className="w-6 h-6" />
                 </div>
                 <div>

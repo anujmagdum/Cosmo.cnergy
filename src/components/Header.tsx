@@ -117,7 +117,7 @@ export const Header: React.FC<Props> = ({
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                   className="flex items-center gap-1.5 p-1.5 rounded-xl bg-[#1e3e62]/70 border border-slate-700 text-white active:scale-95"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
+                  <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs">
                     {userInitial}
                   </div>
                   <ChevronDown className="w-3 h-3 text-slate-400" />
@@ -125,7 +125,7 @@ export const Header: React.FC<Props> = ({
               ) : (
                 <button
                   onClick={onOpenAuth}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-xs font-bold active:scale-95"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0b6623] text-white text-xs font-bold active:scale-95"
                 >
                   <LogIn className="w-3.5 h-3.5" />
                   <span>Login</span>
@@ -167,7 +167,7 @@ export const Header: React.FC<Props> = ({
                   onClick={() => setActiveTab(item.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     isActive
-                      ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/30 ring-1 ring-emerald-400/40'
+                      ? 'bg-[#0b6623] text-white shadow-md shadow-emerald-500/30 ring-1 ring-emerald-400/40'
                       : 'bg-[#10243E]/60 hover:bg-[#1E3E62] text-slate-300 hover:text-white border border-slate-700/50'
                   }`}
                 >
@@ -199,13 +199,12 @@ export const Header: React.FC<Props> = ({
             {/* 1-Tap BOM Procurement Button (Enhanced Datlion Style) */}
             <button
               onClick={onOpenBOMModal}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs shadow-md shadow-emerald-500/25 active:scale-95 transition-all whitespace-nowrap border border-emerald-400/30"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-black text-xs shadow-md active:scale-95 transition-all whitespace-nowrap border border-[#0b6623]/30"
               title="1-Tap Multi-Company BOM Procurement Engine"
             >
               <PlusCircle className="w-3.5 h-3.5" />
               <span className="hidden md:inline">1-Tap BOM PO</span>
               <span className="md:hidden">BOM PO</span>
-              
             </button>
 
             {/* User Profile Badge (Desktop) */}
@@ -237,7 +236,7 @@ export const Header: React.FC<Props> = ({
                   <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#0B192C] border border-slate-700 shadow-2xl p-3 text-xs space-y-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150 overflow-hidden">
                     <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
+                        <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs shrink-0">
                           {userInitial}
                         </div>
                         <div className="truncate min-w-0">
@@ -275,7 +274,7 @@ export const Header: React.FC<Props> = ({
             ) : (
               <button
                 onClick={onOpenAuth}
-                className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs font-bold text-emerald-400 transition-all active:scale-95"
+                className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0b6623]/10 hover:bg-[#084d1a]/20 border border-emerald-500/30 text-xs font-bold text-emerald-400 transition-all active:scale-95"
               >
                 <LogIn className="w-4 h-4" />
                 <span>Login</span>
@@ -291,7 +290,7 @@ export const Header: React.FC<Props> = ({
       {isProfileDropdownOpen && userName && (
         <div className="md:hidden mt-2 p-3 rounded-2xl bg-[#071322] border border-slate-700 shadow-xl space-y-3 overflow-hidden mx-4 mb-3">
           <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-900 border border-slate-800">
-            <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs shrink-0">
               {userInitial}
             </div>
             <div className="truncate min-w-0">

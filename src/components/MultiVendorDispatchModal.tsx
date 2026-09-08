@@ -133,7 +133,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0]/60 pb-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
+                    <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs">
                       {idx + 1}
                     </div>
                     <div>
@@ -148,7 +148,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
                     <button
                       onClick={() => handleDispatchVendorWebmail(draft)}
                       disabled={loadingVendorId === draft.company.id}
-                      className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs active:scale-95 transition-all"
+                      className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs active:scale-95 transition-all"
                     >
                       <Mail className="w-3.5 h-3.5" />
                       <span>Open in Webmail</span>
@@ -192,7 +192,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
           <button
             onClick={handleFinishAll}
             disabled={isProcessing}
-            className="px-6 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 active:scale-95 transition-all"
+            className="px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-emerald-500/20 active:scale-95 transition-all"
           >
             {isProcessing ? 'Confirming...' : 'Confirm All Dispatches & Log Orders'}
           </button>

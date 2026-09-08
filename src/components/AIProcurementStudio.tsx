@@ -227,7 +227,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
             />
             <button
               onClick={handleSaveApiKey}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
+              className="px-4 py-2 bg-[#0b6623] hover:bg-[#084d1a] text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
             >
               Save Key
             </button>
@@ -237,9 +237,9 @@ export const AIProcurementStudio: React.FC<Props> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Input Panel: Voice / Photo / Text */}
-        <div className="glass-card bg-[#FDF6E3] p-6 rounded-2xl space-y-5 border border-[#D6D1B1] text-[#073642] shadow-sm">
-          <h3 className="text-base font-bold text-[#073642] flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-emerald-600" />
+        <div className="glass-card bg-[#FFFFFF] p-6 rounded-2xl space-y-5 border border-[#E2E8F0] text-[#0D0D0D] shadow-sm">
+          <h3 className="text-base font-bold text-[#0D0D0D] flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-[#0b6623]" />
             <span>1. Capture Input (Photo, Voice, or Text)</span>
           </h3>
 
@@ -250,15 +250,15 @@ export const AIProcurementStudio: React.FC<Props> = ({
               className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs border transition-all ${
                 isRecording
                   ? 'bg-red-50 border-red-500 text-red-600 animate-pulse'
-                  : 'bg-[#EEE8D5] hover:bg-[#E4DDC7] border-[#D6D1B1] text-[#073642]'
+                  : 'bg-[#FFFFFF] hover:bg-slate-50 border-[#E2E8F0] text-[#0D0D0D]'
               }`}
             >
-              <Mic className={`w-4 h-4 ${isRecording ? 'text-red-600' : 'text-emerald-600'}`} />
+              <Mic className={`w-4 h-4 ${isRecording ? 'text-red-600' : 'text-[#0b6623]'}`} />
               <span>{isRecording ? 'Listening...' : 'Record Voice Note'}</span>
             </button>
 
-            <label className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs bg-[#EEE8D5] hover:bg-[#E4DDC7] border border-[#D6D1B1] text-[#073642] cursor-pointer transition-all">
-              <Image className="w-4 h-4 text-emerald-600" />
+            <label className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs bg-[#FFFFFF] hover:bg-slate-50 border border-[#E2E8F0] text-[#0D0D0D] cursor-pointer transition-all">
+              <Image className="w-4 h-4 text-[#0b6623]" />
               <span>Upload Photo/Note</span>
               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
             </label>
@@ -266,7 +266,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
 
           {/* Image Preview */}
           {imagePreview && (
-            <div className="relative rounded-xl overflow-hidden border border-[#D6D1B1] max-h-56 bg-slate-950/5">
+            <div className="relative rounded-xl overflow-hidden border border-[#E2E8F0] max-h-56 bg-slate-950/5">
               <img src={imagePreview} alt="Upload preview" className="w-full h-48 object-contain" />
               <button
                 onClick={() => setImagePreview(null)}
@@ -296,14 +296,14 @@ export const AIProcurementStudio: React.FC<Props> = ({
               value={textPrompt}
               onChange={e => setTextPrompt(e.target.value)}
               placeholder="e.g. Speak or type: '12V 100Ah LFP Battery Pack assembly with 100A smart BMS' or describe product photo details..."
-              className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl p-3 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 resize-none font-medium placeholder-[#586E75]"
+              className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl p-3 text-sm text-[#0D0D0D] focus:outline-none focus:border-[#0b6623] resize-none font-medium placeholder-slate-400"
             />
           </div>
 
           <button
             onClick={handleAnalyze}
             disabled={isAnalyzing || (!textPrompt.trim() && !imagePreview)}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50 active:scale-95 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-extrabold text-sm shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50 active:scale-95 cursor-pointer"
           >
             {isAnalyzing ? (
               <>
@@ -320,21 +320,21 @@ export const AIProcurementStudio: React.FC<Props> = ({
         </div>
 
         {/* Output Panel: Extracted Items & Order Conversion */}
-        <div className="glass-card bg-[#FDF6E3] p-6 rounded-2xl space-y-5 border border-[#D6D1B1] flex flex-col justify-between text-[#073642] shadow-sm">
+        <div className="glass-card bg-[#FFFFFF] p-6 rounded-2xl space-y-5 border border-[#E2E8F0] flex flex-col justify-between text-[#0D0D0D] shadow-sm">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-[#073642] flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <h3 className="text-base font-bold text-[#0D0D0D] flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#0b6623]" />
                 <span>2. Extracted BOM Line Items</span>
               </h3>
-              <span className="text-xs font-semibold text-[#586E75]">{parsedItems.length} items parsed</span>
+              <span className="text-xs font-semibold text-slate-500">{parsedItems.length} items parsed</span>
             </div>
 
             {parsedItems.length === 0 ? (
-              <div className="h-64 rounded-xl border border-dashed border-[#D6D1B1] flex flex-col items-center justify-center p-6 text-center text-[#586E75] space-y-2 bg-[#EEE8D5]/50">
-                <Bot className="w-10 h-10 text-[#93A1A1]" />
-                <p className="text-xs font-semibold text-[#073642]">No components extracted yet.</p>
-                <p className="text-[11px] text-[#586E75] max-w-xs">
+              <div className="h-64 rounded-xl border border-dashed border-[#E2E8F0] flex flex-col items-center justify-center p-6 text-center text-slate-500 space-y-2 bg-slate-50/50">
+                <Bot className="w-10 h-10 text-slate-400" />
+                <p className="text-xs font-semibold text-[#0D0D0D]">No components extracted yet.</p>
+                <p className="text-[11px] text-slate-500 max-w-xs">
                   Upload a photo of a battery pack, schematic, paper invoice, or enter specifications above to generate 1-tap PO drafts.
                 </p>
               </div>
@@ -343,13 +343,13 @@ export const AIProcurementStudio: React.FC<Props> = ({
                 {parsedItems.map((item, idx) => (
                   <div
                     key={idx}
-                    className="bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs shadow-xs"
+                    className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs shadow-xs"
                   >
                     <div className="min-w-0 flex-1 space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-[#073642] text-sm">{item.itemName}</span>
+                        <span className="font-bold text-[#0D0D0D] text-sm">{item.itemName}</span>
                         {item.category && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-900 border border-emerald-200">
                             {item.category}
                           </span>
                         )}
@@ -358,25 +358,25 @@ export const AIProcurementStudio: React.FC<Props> = ({
                             ✓ Catalog Linked
                           </span>
                         ) : (
-                          <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-slate-200 text-slate-700">
+                          <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
                             New Spec
                           </span>
                         )}
                       </div>
                       {item.specs && (
-                        <p className="text-[#586E75] text-[11px] truncate font-medium">
+                        <p className="text-slate-600 text-[11px] truncate font-medium">
                           {item.specs}
                         </p>
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#D6D1B1]/60">
-                      <span className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-extrabold text-xs shadow-2xs font-mono">
+                    <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E2E8F0]/60">
+                      <span className="px-2.5 py-1 rounded-lg bg-[#0b6623] text-white font-extrabold text-xs shadow-2xs font-mono">
                         Qty: {item.quantity}
                       </span>
                       <div className="text-right">
-                        <span className="text-[10px] text-[#586E75] block">₹{item.estimatedPrice.toLocaleString('en-IN')}/unit</span>
-                        <div className="text-emerald-800 font-extrabold font-mono text-sm">
+                        <span className="text-[10px] text-slate-500 block">₹{item.estimatedPrice.toLocaleString('en-IN')}/unit</span>
+                        <div className="text-[#0b6623] font-extrabold font-mono text-sm">
                           ₹{(item.quantity * item.estimatedPrice).toLocaleString('en-IN')}
                         </div>
                       </div>
@@ -391,7 +391,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
           <button
             onClick={handleConvertToOrder}
             disabled={parsedItems.length === 0}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-40 active:scale-95 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-extrabold text-sm shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-40 active:scale-95 cursor-pointer"
           >
             <span>Convert AI Draft to Live Procurement Orders</span>
             <ArrowRight className="w-4 h-4" />

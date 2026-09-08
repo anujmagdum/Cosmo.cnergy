@@ -182,7 +182,7 @@ Cosmo Cnergy Procurement Team`
             <button
               type="button"
               onClick={onClose}
-              className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all"
+              className="w-full py-3 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all"
             >
               Done & Return to Catalog
             </button>
@@ -198,7 +198,7 @@ Cosmo Cnergy Procurement Team`
         {/* Modal Top Header */}
         <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-[#0b6623] text-white flex items-center justify-center shadow-md">
               <ShoppingCart className="w-5 h-5" />
             </div>
             <div>
@@ -244,7 +244,7 @@ Cosmo Cnergy Procurement Team`
               onClick={() => setSelectedChannel('webmail')}
               className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                 selectedChannel === 'webmail'
-                  ? 'bg-emerald-600 text-white shadow-md border-emerald-500'
+                  ? 'bg-[#0b6623] text-white shadow-md border-emerald-500'
                   : 'bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#f8fafc] border-[#E2E8F0]'
               }`}
             >
@@ -257,7 +257,7 @@ Cosmo Cnergy Procurement Team`
               onClick={() => setSelectedChannel('whatsapp')}
               className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                 selectedChannel === 'whatsapp'
-                  ? 'bg-emerald-600 text-white shadow-md border-emerald-500'
+                  ? 'bg-[#0b6623] text-white shadow-md border-emerald-500'
                   : 'bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#f8fafc] border-[#E2E8F0]'
               }`}
             >
@@ -354,7 +354,7 @@ Cosmo Cnergy Procurement Team`
             type="button"
             disabled={isPlacing}
             onClick={handleExecuteDispatch}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/25 active:scale-95 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-lg shadow-emerald-500/25 active:scale-95 transition-all disabled:opacity-50"
           >
             <Send className="w-4 h-4" />
             <span>

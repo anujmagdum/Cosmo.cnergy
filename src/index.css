@@ -5,7 +5,7 @@
 @layer base {
   body {
     font-family: 'Inter', sans-serif;
-    background-color: #ffffff;
+    background-color: #FAF5EF;
     color: #0D0D0D;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
@@ -62,7 +62,30 @@ table tbody tr:hover {
 
 /* Glow effects */
 .emerald-glow {
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 15px rgba(11, 102, 35, 0.25);
+}
+
+/* Unified Green Color Buttons (#0b6623) across every tab */
+button.bg-emerald-600,
+button.bg-emerald-700,
+button.bg-emerald-500,
+button.bg-green-600,
+button.bg-green-700,
+.btn-green,
+.btn-emerald {
+  background-color: #0b6623 !important;
+  color: #ffffff !important;
+}
+
+button.bg-emerald-600:hover,
+button.bg-emerald-700:hover,
+button.bg-emerald-500:hover,
+button.bg-green-600:hover,
+button.bg-green-700:hover,
+.btn-green:hover,
+.btn-emerald:hover {
+  background-color: #084d1a !important;
+  color: #ffffff !important;
 }
 
 /* Custom Scrollbar */

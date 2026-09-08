@@ -159,7 +159,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               onClick={() => setActiveCategoryFilter('ALL')}
               className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                 activeCategoryFilter === 'ALL'
-                  ? 'bg-emerald-600 text-white shadow-sm'
+                  ? 'bg-[#0b6623] text-white shadow-sm'
                   : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border border-[#E2E8F0]'
               }`}
             >
@@ -170,7 +170,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               onClick={() => setActiveCategoryFilter('COMPONENTS')}
               className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                 activeCategoryFilter === 'COMPONENTS'
-                  ? 'bg-emerald-600 text-white shadow-sm'
+                  ? 'bg-[#0b6623] text-white shadow-sm'
                   : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border border-[#E2E8F0]'
               }`}
             >
@@ -181,7 +181,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               onClick={() => setActiveCategoryFilter('FOLDERS')}
               className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                 activeCategoryFilter === 'FOLDERS'
-                  ? 'bg-emerald-600 text-white shadow-sm'
+                  ? 'bg-[#0b6623] text-white shadow-sm'
                   : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border border-[#E2E8F0]'
               }`}
             >
@@ -192,7 +192,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               onClick={() => setActiveCategoryFilter('SUPPLIERS')}
               className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
                 activeCategoryFilter === 'SUPPLIERS'
-                  ? 'bg-emerald-600 text-white shadow-sm'
+                  ? 'bg-[#0b6623] text-white shadow-sm'
                   : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border border-[#E2E8F0]'
               }`}
             >
@@ -329,7 +329,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                       <div className="flex items-center gap-2">
                                         <button
                                           onClick={() => handleQuickDraftPO(supp, item)}
-                                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs active:scale-95 transition-all"
+                                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs active:scale-95 transition-all"
                                         >
                                           <Mail className="w-3 h-3" />
                                           <span>Draft PO</span>

@@ -274,7 +274,7 @@ export const CompanyDashboard: React.FC<Props> = ({
           onClick={() => setActiveCompanyTab('find_new')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeCompanyTab === 'find_new'
-              ? 'bg-emerald-600 text-white shadow-md'
+              ? 'bg-[#0b6623] text-white shadow-md'
               : 'text-[#020617] hover:bg-emerald-50 hover:text-emerald-800'
           }`}
         >
@@ -311,7 +311,7 @@ export const CompanyDashboard: React.FC<Props> = ({
             <div className="flex flex-wrap items-center gap-2.5">
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
+                className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>+ Add Company</span>
@@ -355,7 +355,7 @@ export const CompanyDashboard: React.FC<Props> = ({
               onClick={() => setSelectedCategory(cat as string)}
               className={`px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-emerald-600 text-white shadow-sm'
+                  ? 'bg-[#0b6623] text-white shadow-sm'
                   : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#FFFFFF] border border-[#E2E8F0]'
               }`}
             >
@@ -415,7 +415,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
                   />
                   
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 flex items-center justify-center font-bold text-xs shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#0b6623]/15 text-emerald-700 border border-emerald-500/30 flex items-center justify-center font-bold text-xs shrink-0">
                     <Building2 className="w-4 h-4" />
                   </div>
 
@@ -479,7 +479,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => setEditingCompany({ ...company })}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
                       title="Edit Company"
                     >
                       <Edit2 className="w-3 h-3" />
@@ -681,7 +681,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-500/20 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold shadow-lg shadow-emerald-500/20 cursor-pointer"
                 >
                   Save Company
                 </button>
@@ -850,7 +850,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-500/20 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold shadow-lg shadow-emerald-500/20 cursor-pointer"
                 >
                   Update Company
                 </button>

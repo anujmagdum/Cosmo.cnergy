@@ -315,7 +315,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
         </p>
         <button
           onClick={() => navigate('/inventory')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-md cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white text-xs font-bold transition-all shadow-md cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
           <span>Return to Inventory</span>
@@ -344,7 +344,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-3 py-1 rounded-full bg-emerald-600/10 text-emerald-900 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5">
+          <span className="px-3 py-1 rounded-full bg-[#0b6623]/10 text-emerald-900 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5">
             <Building2 className="w-3.5 h-3.5 text-emerald-700" />
             <span>{linkedCompanies.length} Linked {linkedCompanies.length === 1 ? 'Company' : 'Companies'}</span>
           </span>

@@ -543,7 +543,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
           type="button"
           disabled={isProcessing}
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-all cursor-pointer disabled:opacity-50 active:scale-95"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs transition-all cursor-pointer disabled:opacity-50 active:scale-95"
           title={`Upload .csv file to batch insert ${sectionType}`}
         >
           <Upload className="w-3.5 h-3.5" />

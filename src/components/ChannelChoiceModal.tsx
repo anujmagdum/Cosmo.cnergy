@@ -54,7 +54,7 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
         </button>
 
         <div className="text-center space-y-3 mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-600 shadow-md shadow-emerald-500/20">
+          <div className="w-14 h-14 rounded-2xl bg-[#0b6623]/15 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-600 shadow-md shadow-emerald-500/20">
             <CheckCircle className="w-8 h-8" />
           </div>
           <h3 className="text-xl font-bold text-[#0D0D0D]">Order Created Successfully!</h3>
@@ -66,7 +66,7 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
         <div className="space-y-3">
           <button
             onClick={handleSendWebmail}
-            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-500/20 active:scale-95 transition-all group"
+            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-sm shadow-lg shadow-emerald-500/20 active:scale-95 transition-all group"
           >
             <div className="flex items-center gap-3">
               <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />

@@ -328,7 +328,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             onClick={() => setFilterStatus('ALL')}
             className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               filterStatus === 'ALL'
-                ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                ? 'bg-[#0b6623] text-white font-bold shadow-xs'
                 : 'bg-[#FFFFFF] text-[#1e293b] hover:bg-[#FFFFFF] border border-[#E2E8F0]'
             }`}
           >

@@ -149,7 +149,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-lg shadow-emerald-500/25 active:scale-95 transition-all disabled:opacity-50"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold shadow-lg shadow-emerald-500/25 active:scale-95 transition-all disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               <span>{loading ? 'Authenticating...' : 'Sign In'}</span>

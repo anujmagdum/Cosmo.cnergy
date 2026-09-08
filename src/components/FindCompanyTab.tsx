@@ -209,7 +209,7 @@ export const FindCompanyTab: React.FC<Props> = ({
         <div
           className={`px-4 py-3 rounded-2xl text-xs font-bold shadow-lg flex items-center justify-between transition-all animate-in fade-in slide-in-from-top-2 ${
             notification.type === 'success'
-              ? 'bg-emerald-600 text-white'
+              ? 'bg-[#0b6623] text-white'
               : notification.type === 'info'
               ? 'bg-[#0B192C] text-cyan-300 border border-cyan-500/40'
               : 'bg-rose-600 text-white'
@@ -261,7 +261,7 @@ export const FindCompanyTab: React.FC<Props> = ({
               onClick={() => setViewMode('shortlist')}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 viewMode === 'shortlist'
-                  ? 'bg-emerald-600 text-white shadow-md'
+                  ? 'bg-[#0b6623] text-white shadow-md'
                   : 'bg-emerald-100/80 text-emerald-900 hover:bg-emerald-200 border border-emerald-300'
               }`}
             >
@@ -315,7 +315,7 @@ export const FindCompanyTab: React.FC<Props> = ({
             <button
               onClick={() => handleSearch()}
               disabled={isLoading}
-              className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 cursor-pointer"
+              className="w-full py-2.5 px-4 bg-[#0b6623] hover:bg-[#084d1a] text-white font-extrabold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 cursor-pointer"
             >
               {isLoading ? (
                 <>
@@ -343,7 +343,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                 handleSearch(cat);
               }}
               disabled={isLoading}
-              className="text-[11px] font-bold bg-[#FFFFFF] hover:bg-emerald-600 hover:text-white text-[#0D0D0D] border border-[#E2E8F0] px-3 py-1 rounded-xl transition-all whitespace-nowrap shrink-0 disabled:opacity-50 cursor-pointer"
+              className="text-[11px] font-bold bg-[#FFFFFF] hover:bg-[#0b6623] hover:text-white text-[#0D0D0D] border border-[#E2E8F0] px-3 py-1 rounded-xl transition-all whitespace-nowrap shrink-0 disabled:opacity-50 cursor-pointer"
             >
               {cat}
             </button>
@@ -355,7 +355,7 @@ export const FindCompanyTab: React.FC<Props> = ({
       {shortlistedList.length > 0 && (
         <div className="bg-[#0B192C] text-white p-3.5 rounded-2xl shadow-lg border border-slate-700 flex flex-wrap items-center justify-between gap-3 animate-in fade-in">
           <div className="flex items-center gap-3">
-            <span className="bg-emerald-500 text-white text-xs font-black px-3 py-1 rounded-lg">
+            <span className="bg-[#0b6623] text-white text-xs font-black px-3 py-1 rounded-lg">
               {shortlistedList.length} Shortlisted
             </span>
             <span className="text-xs text-slate-300">
@@ -365,7 +365,7 @@ export const FindCompanyTab: React.FC<Props> = ({
 
           <button
             onClick={() => handleAddSelectedToDatabase()}
-            className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer transform hover:scale-[1.02]"
+            className="px-5 py-2 bg-[#0b6623] hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer transform hover:scale-[1.02]"
           >
             <span>⚡ Add All Shortlisted ({shortlistedList.length}) to Database</span>
             <ArrowRight className="w-4 h-4" />
@@ -588,7 +588,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                           ) : (
                             <button
                               onClick={() => handleAddSelectedToDatabase(sup.id)}
-                              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95"
+                              className="px-3.5 py-1.5 bg-[#0b6623] hover:bg-[#084d1a] text-white font-extrabold text-xs rounded-xl transition-all shadow-xs flex items-center gap-1.5 cursor-pointer active:scale-95"
                             >
                               <span>⚡ 1-Tap Add to Database</span>
                             </button>
@@ -618,7 +618,7 @@ export const FindCompanyTab: React.FC<Props> = ({
             {shortlistedList.length > 0 && (
               <button
                 onClick={() => handleAddSelectedToDatabase()}
-                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                className="px-5 py-2.5 bg-[#0b6623] hover:bg-[#084d1a] text-white font-extrabold text-xs rounded-xl shadow-lg transition-all flex items-center gap-2 cursor-pointer"
               >
                 <span>⚡ Add All Shortlisted ({shortlistedList.length}) to Database</span>
                 <ArrowRight className="w-4 h-4" />
@@ -707,7 +707,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                       ) : (
                         <button
                           onClick={() => handleAddSelectedToDatabase(sup.id)}
-                          className="px-3 py-1 bg-emerald-600 text-white font-extrabold text-xs rounded-lg hover:bg-emerald-500 ml-auto cursor-pointer"
+                          className="px-3 py-1 bg-[#0b6623] text-white font-extrabold text-xs rounded-lg hover:bg-[#0b6623] ml-auto cursor-pointer"
                         >
                           ⚡ 1-Tap Add
                         </button>

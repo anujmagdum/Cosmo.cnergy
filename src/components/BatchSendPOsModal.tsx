@@ -367,7 +367,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                   onClick={() => setOrderType('PO')}
                   className={`px-3 py-1 rounded-lg font-bold transition-all ${
                     orderType === 'PO'
-                      ? 'bg-emerald-600 text-white shadow-sm'
+                      ? 'bg-[#0b6623] text-white shadow-sm'
                       : 'text-[#586E75] hover:text-[#073642]'
                   }`}
                 >
@@ -378,7 +378,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                   onClick={() => setOrderType('RFQ')}
                   className={`px-3 py-1 rounded-lg font-bold transition-all ${
                     orderType === 'RFQ'
-                      ? 'bg-emerald-600 text-white shadow-sm'
+                      ? 'bg-[#0b6623] text-white shadow-sm'
                       : 'text-[#586E75] hover:text-[#073642]'
                   }`}
                 >
@@ -395,7 +395,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                   onClick={() => setPreferredChannel('webmail')}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition-all ${
                     preferredChannel === 'webmail'
-                      ? 'bg-emerald-600 text-white shadow-xs'
+                      ? 'bg-[#0b6623] text-white shadow-xs'
                       : 'text-[#586E75] hover:text-[#073642]'
                   }`}
                 >
@@ -408,7 +408,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                   onClick={() => setPreferredChannel('whatsapp')}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition-all ${
                     preferredChannel === 'whatsapp'
-                      ? 'bg-emerald-600 text-white shadow-xs'
+                      ? 'bg-[#0b6623] text-white shadow-xs'
                       : 'text-[#586E75] hover:text-[#073642]'
                   }`}
                 >
@@ -423,7 +423,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
             <button
               type="button"
               onClick={handleBatchDispatchAll}
-              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-500/20 active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-emerald-500/20 active:scale-95 transition-all cursor-pointer"
             >
               <Rocket className="w-4 h-4" />
               <span>Dispatch All ({selectedVendorIds.length}) POs</span>
@@ -460,7 +460,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                       }}
                       className="w-4 h-4 text-emerald-600 rounded border-[#D6D1B1] focus:ring-emerald-500 accent-emerald-600 cursor-pointer"
                     />
-                    <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
+                    <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs">
                       {index + 1}
                     </div>
                     <div>
@@ -475,7 +475,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => dispatchSingleVendorWebmail(draft)}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
                     >
                       <Mail className="w-3.5 h-3.5" />
                       <span>Open Webmail Draft</span>
