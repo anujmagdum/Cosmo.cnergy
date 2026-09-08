@@ -66,19 +66,19 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 animate-in fade-in duration-150">
-      <div className="bg-[#FDF6E3] w-full max-w-md rounded-3xl p-6 border border-[#D6D1B1] space-y-5 shadow-2xl text-[#073642]">
+      <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-6 border border-[#E2E8F0] space-y-5 shadow-2xl text-[#020617]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-3">
+        <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shadow-md shadow-[#0b6623]/20">
+            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center shadow-md shadow-[#0b6623]/20">
               <Zap className="w-5 h-5 text-white fill-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-[#073642]">CosmoCnergy Account</h3>
-              <p className="text-xs text-[#586E75]">Enterprise Procurement OS</p>
+              <h3 className="text-lg font-bold text-[#020617]">CosmoCnergy Account</h3>
+              <p className="text-xs text-slate-500">Enterprise Procurement OS</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-[#586E75] hover:text-[#073642] font-bold p-1">
+          <button onClick={onClose} className="text-slate-400 hover:text-[#020617] font-bold p-1">
             ✕
           </button>
         </div>
@@ -93,7 +93,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
         {/* Login Form: Standard Email, Password, and Submit */}
         <form onSubmit={handleSubmit} autoComplete="on" className="space-y-4 text-xs">
           <div>
-            <label htmlFor="auth-email" className="block font-semibold text-[#073642] mb-1.5 flex items-center gap-1.5">
+            <label htmlFor="auth-email" className="block font-semibold text-[#020617] mb-1.5 flex items-center gap-1.5">
               <Mail className="w-3.5 h-3.5 text-[#0b6623]" />
               <span>Email Address</span>
             </label>
@@ -108,12 +108,12 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="user@cosmocnergy.com"
-              className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3.5 py-2.5 text-sm text-[#073642] focus:outline-none focus:border-[#0b6623] font-medium"
+              className="w-full bg-[#F0F2F5] border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
             />
           </div>
 
           <div>
-            <label htmlFor="auth-password" className="block font-semibold text-[#073642] mb-1.5 flex items-center gap-1.5">
+            <label htmlFor="auth-password" className="block font-semibold text-[#020617] mb-1.5 flex items-center gap-1.5">
               <Lock className="w-3.5 h-3.5 text-[#0b6623]" />
               <span>Password</span>
             </label>
@@ -129,20 +129,20 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
               minLength={6}
-              className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3.5 py-2.5 text-sm text-[#073642] focus:outline-none focus:border-[#0b6623] font-medium"
+              className="w-full bg-[#F0F2F5] border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
             />
           </div>
 
-          <p className="text-[11px] text-[#586E75] text-center pt-1 flex items-center justify-center gap-1">
+          <p className="text-[11px] text-slate-500 text-center pt-1 flex items-center justify-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-[#0b6623]" />
             Secure Enterprise Authentication via Supabase Auth.
           </p>
 
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#D6D1B1]/60">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E2E8F0]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] font-semibold hover:bg-[#E4DDC7] transition-all"
+              className="px-4 py-2 rounded-xl bg-[#F0F2F5] text-[#020617] font-semibold hover:bg-[#E2E8F0] transition-all"
             >
               Cancel
             </button>

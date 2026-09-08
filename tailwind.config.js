@@ -17,7 +17,7 @@ export default {
           navy: '#0C0D0E',
           'navy-light': '#23262B',
           card: '#FFFFFF',
-          canvas: '#FAF5EF',
+          canvas: '#F0F2F5',
           emerald: '#0b6623',
           'emerald-dark': '#084d1a',
           'emerald-hover': '#084d1a',

@@ -209,13 +209,13 @@ export const AIProcurementStudio: React.FC<Props> = ({
 
       {/* API Key Configuration Drawer */}
       {isKeyConfigOpen && (
-        <div className="bg-[#FDF6E3] border border-[#D6D1B1] rounded-2xl p-4 shadow-md animate-in fade-in space-y-3">
+        <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-4 shadow-md animate-in fade-in space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-[#073642] uppercase tracking-wider flex items-center gap-1.5">
+            <h4 className="text-xs font-bold text-[#020617] uppercase tracking-wider flex items-center gap-1.5">
               <Key className="w-4 h-4 text-[#0b6623]" />
               <span>Gemini API Key Configuration</span>
             </h4>
-            <span className="text-[11px] text-[#586E75]">Supports Google AI Studio API Keys</span>
+            <span className="text-[11px] text-slate-500">Supports Google AI Studio API Keys</span>
           </div>
           <div className="flex gap-2">
             <input
@@ -223,7 +223,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
               value={apiKeyInput}
               onChange={e => setApiKeyInput(e.target.value)}
               placeholder="Paste your AI Studio GEMINI_API_KEY (AIzaSy...)"
-              className="flex-1 bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3.5 py-2 text-xs font-mono text-[#073642] focus:outline-none focus:border-[#0b6623]"
+              className="flex-1 bg-[#F0F2F5] border border-[#E2E8F0] rounded-xl px-3.5 py-2 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#0b6623]"
             />
             <button
               onClick={handleSaveApiKey}

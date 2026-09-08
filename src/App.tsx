@@ -1411,7 +1411,7 @@ export const App: React.FC = () => {
   }).length;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF5EF] text-slate-950 selection:bg-[#0b6623] selection:text-white overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#F0F2F5] text-slate-950 selection:bg-[#0b6623] selection:text-white overflow-x-hidden">
       {/* Top Header & Navigation */}
       
 

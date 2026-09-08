@@ -331,44 +331,44 @@ export const BatchSendPOsModal: React.FC<Props> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
-      <div className="bg-[#FDF6E3] w-full max-w-4xl rounded-3xl p-6 border border-[#D6D1B1] shadow-2xl space-y-5 my-8 text-[#073642]">
+      <div className="bg-[#FFFFFF] w-full max-w-4xl rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-5 my-8 text-[#020617]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-3">
+        <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-md shadow-[#0b6623]/20">
+            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-white font-bold shadow-md shadow-[#0b6623]/20">
               <Send className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-[#073642]">Multi-Vendor Dispatch Workspace</h3>
-                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-[#0b6623] border border-emerald-300">
+                <h3 className="text-lg font-bold text-[#020617]">Multi-Vendor Dispatch Workspace</h3>
+                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-[#0b6623] border border-[#0b6623]/30">
                   {vendorDrafts.length} Vendors
                 </span>
               </div>
-              <p className="text-xs text-[#586E75]">
-                Aggregated PO drafts for assembly <span className="font-bold text-[#073642]">"{folder.name}"</span>
+              <p className="text-xs text-slate-500">
+                Aggregated PO drafts for assembly <span className="font-bold text-[#020617]">"{folder.name}"</span>
               </p>
             </div>
           </div>
 
-          <button onClick={onClose} className="text-[#586E75] hover:text-[#073642] font-bold p-1">
+          <button onClick={onClose} className="text-slate-400 hover:text-[#020617] font-bold p-1">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Dispatch Options & Progress */}
-        <div className="bg-[#EEE8D5] p-4 rounded-2xl border border-[#D6D1B1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-[#F0F2F5] p-4 rounded-2xl border border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-4 text-xs">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-[#073642]">Dispatch Mode:</span>
-              <div className="flex items-center p-1 bg-[#FDF6E3] rounded-xl border border-[#D6D1B1]">
+              <span className="font-bold text-[#020617]">Dispatch Mode:</span>
+              <div className="flex items-center p-1 bg-[#FFFFFF] rounded-xl border border-[#E2E8F0]">
                 <button
                   type="button"
                   onClick={() => setOrderType('PO')}
                   className={`px-3 py-1 rounded-lg font-bold transition-all ${
                     orderType === 'PO'
                       ? 'bg-[#0b6623] text-white shadow-sm'
-                      : 'text-[#586E75] hover:text-[#073642]'
+                      : 'text-slate-500 hover:text-[#020617]'
                   }`}
                 >
                   PO
@@ -379,7 +379,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                   className={`px-3 py-1 rounded-lg font-bold transition-all ${
                     orderType === 'RFQ'
                       ? 'bg-[#0b6623] text-white shadow-sm'
-                      : 'text-[#586E75] hover:text-[#073642]'
+                      : 'text-slate-500 hover:text-[#020617]'
                   }`}
                 >
                   RFQ
@@ -388,15 +388,15 @@ export const BatchSendPOsModal: React.FC<Props> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="font-bold text-[#073642]">Channel:</span>
-              <div className="flex items-center p-1 bg-[#FDF6E3] rounded-xl border border-[#D6D1B1]">
+              <span className="font-bold text-[#020617]">Channel:</span>
+              <div className="flex items-center p-1 bg-[#FFFFFF] rounded-xl border border-[#E2E8F0]">
                 <button
                   type="button"
                   onClick={() => setPreferredChannel('webmail')}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition-all ${
                     preferredChannel === 'webmail'
                       ? 'bg-[#0b6623] text-white shadow-xs'
-                      : 'text-[#586E75] hover:text-[#073642]'
+                      : 'text-slate-500 hover:text-[#020617]'
                   }`}
                 >
                   <Mail className="w-3.5 h-3.5" />
@@ -409,7 +409,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition-all ${
                     preferredChannel === 'whatsapp'
                       ? 'bg-[#0b6623] text-white shadow-xs'
-                      : 'text-[#586E75] hover:text-[#073642]'
+                      : 'text-slate-500 hover:text-[#020617]'
                   }`}
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
@@ -443,10 +443,10 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                 className={`p-4 rounded-2xl border transition-all ${
                   isDispatched
                     ? 'bg-emerald-50/70 border-emerald-300'
-                    : 'bg-[#EEE8D5]/70 border-[#D6D1B1]'
+                    : 'bg-[#F0F2F5] border-[#E2E8F0]'
                 }`}
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#D6D1B1]/60 pb-2.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0] pb-2.5">
                   <div className="flex items-center gap-2.5">
                     <input
                       type="checkbox"
@@ -458,14 +458,14 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                           setSelectedVendorIds(prev => prev.filter(id => id !== draft.company.id));
                         }
                       }}
-                      className="w-4 h-4 text-[#0b6623] rounded border-[#D6D1B1] focus:ring-[#0b6623] accent-[#0b6623] cursor-pointer"
+                      className="w-4 h-4 text-[#0b6623] rounded border-[#E2E8F0] focus:ring-[#0b6623] accent-[#0b6623] cursor-pointer"
                     />
                     <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs">
                       {index + 1}
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-[#073642]">{draft.company.name}</h4>
-                      <p className="text-[11px] text-[#586E75]">
+                      <h4 className="font-bold text-sm text-[#020617]">{draft.company.name}</h4>
+                      <p className="text-[11px] text-slate-500">
                         Contact: {draft.company.contact_person || 'Sales Dept'} • Total: <strong className="text-[#0b6623] font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
                       </p>
                     </div>
@@ -484,7 +484,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => dispatchSingleVendorWhatsApp(draft)}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#FDF6E3] hover:bg-[#E4DDC7] text-[#073642] font-bold text-xs border border-[#D6D1B1] shadow-xs active:scale-95 transition-all cursor-pointer"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F0F2F5] text-[#020617] font-bold text-xs border border-[#E2E8F0] shadow-xs active:scale-95 transition-all cursor-pointer"
                     >
                       <MessageSquare className="w-3.5 h-3.5 text-[#0b6623]" />
                       <span>WhatsApp</span>
@@ -497,7 +497,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                   {draft.items.map((it, idx) => (
                     <span
                       key={idx}
-                      className="px-2 py-0.5 rounded bg-[#FDF6E3] border border-[#D6D1B1] text-[10px] text-[#073642] font-medium"
+                      className="px-2 py-0.5 rounded bg-[#FFFFFF] border border-[#E2E8F0] text-[10px] text-[#020617] font-medium"
                     >
                       {it.catalogItem.name} (x{it.quantity} @ ₹{it.unit_price})
                     </span>
@@ -509,11 +509,11 @@ export const BatchSendPOsModal: React.FC<Props> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#D6D1B1]/60">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#E2E8F0]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-[#EEE8D5] text-[#073642] text-xs font-semibold hover:bg-[#E4DDC7]"
+            className="px-4 py-2 rounded-xl bg-[#F0F2F5] text-[#020617] text-xs font-semibold hover:bg-[#E2E8F0]"
           >
             Close
           </button>
