@@ -773,6 +773,7 @@ export const App: React.FC = () => {
 
     const payload: any = {
       name: itemData.name,
+      sku: itemData.sku || null,
       category: itemData.category || 'Capacitor',
       category_id: categoryId || null,
       specs: itemData.specs || '',
@@ -807,6 +808,7 @@ export const App: React.FC = () => {
 
         savedItem = {
           ...data,
+          sku: itemData.sku || data?.sku || '',
           category: itemData.category || 'Capacitor',
           company_ids: itemData.company_ids,
           company_mappings: itemData.company_mappings,

@@ -417,6 +417,7 @@ Please send your best quote & availability.`;
   // Add Component Form State supporting Multi-Company Association
   const [catalogForm, setCatalogForm] = useState({
     name: '',
+    sku: '',
     category: 'Capacitor',
     target_qty: 10,
     preset_price: 150,
@@ -455,7 +456,7 @@ Please send your best quote & availability.`;
           rfq_quoted_price: Number(prev.preset_price) || 150,
           moq: Number(prev.target_qty) || 10,
           lead_time_days: 7,
-          part_number_vendor: prev.name ? `${prev.name.slice(0, 4).toUpperCase()}-${supp.name.slice(0, 3).toUpperCase()}` : 'OEM-SPEC'
+          part_number_vendor: prev.name.trim() || 'OEM-SPEC'
         }
       ]
     }));
@@ -469,14 +470,18 @@ Please send your best quote & availability.`;
     }));
   };
 
-  const handleUpdateCompanyMapping = (companyId: string, updates: Record<string, any>) => {
+  const handleUpdateCompanyMapping = (companyId: string, updates: Partial<FormCompanyMapping>) => {
     setCatalogForm(prev => ({
       ...prev,
-      selectedCompanies: prev.selectedCompanies.map(s => (s.company_id === companyId ? { ...s, ...updates } : s))
+      selectedCompanies: prev.selectedCompanies.map(item =>
+        item.company_id === companyId ? { ...item, ...updates } : item
+      )
     }));
   };
 
+  // Reactive Folder Filtering with multi-tag keyword search
   const filteredFolders = useMemo(() => {
+    if (!searchTerm.trim()) return folders;
     return folders.filter(f =>
       f.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
     );
@@ -485,15 +490,24 @@ Please send your best quote & availability.`;
   // Reactive Catalog Filtering with category and widget status filter (Data-bound with component_id & product_id)
   const filteredCatalog = useMemo(() => {
     return catalog.filter(c => {
+      const search = searchTerm.toLowerCase().trim();
+      const compName = (c.name || '').toLowerCase();
+      const compSpecs = (c.specs || '').toLowerCase();
+      const compSku = (c.sku || '').toLowerCase();
+
       const matchesSearch =
-        c.name.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-        (c.specs && c.specs.toLowerCase().includes(searchTerm.toLowerCase().trim())) ||
-        (c.sku && c.sku.toLowerCase().includes(searchTerm.toLowerCase().trim()));
+        !search ||
+        compName.includes(search) ||
+        compSpecs.includes(search) ||
+        compSku.includes(search);
+
+      const compCat = (c.category || '').toLowerCase().trim();
+      const filterCat = (selectedCategoryFilter || 'ALL').toLowerCase().trim();
 
       const matchesCategory =
-        selectedCategoryFilter === 'ALL' ||
-        (selectedCategoryFilter === 'Uncategorized' && (!c.category || c.category.trim() === '')) ||
-        (c.category && c.category.toLowerCase() === selectedCategoryFilter.toLowerCase());
+        filterCat === 'all' ||
+        (filterCat === 'uncategorized' && (!compCat || compCat === '')) ||
+        (compCat === filterCat);
 
       let matchesStatus = true;
       if (activeStatusFilter === 'TO_BE_ORDERED') {
@@ -714,9 +728,13 @@ Cosmo.cnergy Procurement Team`;
     const matchedCat = categories.find(c => c.name.toLowerCase() === catalogForm.category.toLowerCase());
 
     try {
+      const addedCat = catalogForm.category;
+      const compSku = (catalogForm.sku || '').trim();
+
       await onAddCatalogItem({
         name: catalogForm.name.trim(),
-        category: catalogForm.category,
+        sku: compSku,
+        category: addedCat,
         category_id: matchedCat?.id,
         specs: catalogForm.specs.trim(),
         uom: catalogForm.uom || 'Pcs',
@@ -729,7 +747,7 @@ Cosmo.cnergy Procurement Team`;
           rfq_quoted_price: Number(s.rfq_quoted_price) || Number(s.unit_price) || Number(catalogForm.preset_price) || 0,
           moq: Number(s.moq) || Number(catalogForm.target_qty) || 1,
           lead_time_days: Number(s.lead_time_days) || 7,
-          part_number_vendor: s.part_number_vendor || catalogForm.name.trim()
+          part_number_vendor: s.part_number_vendor || compSku || catalogForm.name.trim()
         })),
         min_order_qty: Number(catalogForm.target_qty) || 1,
         in_stock_qty: Number(catalogForm.in_stock_qty) || 0,
@@ -740,7 +758,8 @@ Cosmo.cnergy Procurement Team`;
 
       setCatalogForm({
         name: '',
-        category: 'Capacitor',
+        sku: '',
+        category: addedCat,
         target_qty: 10,
         preset_price: 150,
         in_stock_qty: 100,
@@ -762,7 +781,14 @@ Cosmo.cnergy Procurement Team`;
       });
       setCompanyValidationMsg(null);
       setIsAddCatalogOpen(false);
-      setToastFeedback({ type: 'success', message: `Component "${catalogForm.name}" added with ${catalogForm.selectedCompanies.length} company(s)!` });
+
+      // Auto-switch filter to newly added component's category so it is immediately visible
+      if (selectedCategoryFilter !== 'ALL' && selectedCategoryFilter.toLowerCase() !== addedCat.toLowerCase()) {
+        handleSelectCategory(addedCat);
+      }
+      setSearchTerm('');
+
+      setToastFeedback({ type: 'success', message: `Component "${catalogForm.name}" added to "${addedCat}"!` });
       setTimeout(() => setToastFeedback(null), 3500);
     } catch (err: any) {
       console.error('Failed to add component:', err);
@@ -905,7 +931,11 @@ Cosmo.cnergy Procurement Team`;
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {/* 1. To Be Ordered (Dynamic Bottleneck Alert: Stock <= 20%) */}
         <div
-          onClick={() => setActiveStatusFilter(activeStatusFilter === 'TO_BE_ORDERED' ? 'ALL' : 'TO_BE_ORDERED')}
+          onClick={() => {
+            setActiveStatusFilter(activeStatusFilter === 'TO_BE_ORDERED' ? 'ALL' : 'TO_BE_ORDERED');
+            handleSelectCategory('ALL');
+            setSearchTerm('');
+          }}
           className={`rounded-xl p-4 border transition-all cursor-pointer flex flex-col justify-between select-none ${
             activeStatusFilter === 'TO_BE_ORDERED'
               ? 'bg-amber-50 text-amber-950 border-amber-400 shadow-sm ring-2 ring-amber-400/40 font-bold scale-[1.01]'
@@ -923,7 +953,7 @@ Cosmo.cnergy Procurement Team`;
               Stock Bottlenecks (Stock &le; 20%)
             </span>
             {activeStatusFilter === 'TO_BE_ORDERED' && (
-              <span className="text-[10px] font-bold uppercase bg-amber-200 text-amber-900 px-2 py-0.5 rounded-md border border-amber-300">
+              <span className="text-[10px] font-bold uppercase bg-amber-200 text-amber-950 px-2 py-0.5 rounded-md border border-amber-300">
                 Active Filter
               </span>
             )}
@@ -944,7 +974,11 @@ Cosmo.cnergy Procurement Team`;
 
         {/* 2. All Procurement Records */}
         <div
-          onClick={() => setActiveStatusFilter('ALL')}
+          onClick={() => {
+            setActiveStatusFilter('ALL');
+            handleSelectCategory('ALL');
+            setSearchTerm('');
+          }}
           className={`rounded-xl p-4 border transition-all cursor-pointer flex flex-col justify-between select-none ${
             activeStatusFilter === 'ALL'
               ? 'bg-slate-900 text-white border-slate-800 shadow-sm ring-2 ring-slate-700/50 font-bold scale-[1.01]'
@@ -1028,7 +1062,16 @@ Cosmo.cnergy Procurement Team`;
 
           <button
             type="button"
-            onClick={() => setIsAddCatalogOpen(true)}
+            onClick={() => {
+              const activeCat = (selectedCategoryFilter && selectedCategoryFilter !== 'ALL' && selectedCategoryFilter !== 'Uncategorized')
+                ? selectedCategoryFilter
+                : 'Capacitor';
+              setCatalogForm(prev => ({
+                ...prev,
+                category: activeCat
+              }));
+              setIsAddCatalogOpen(true);
+            }}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4" />
@@ -1513,7 +1556,55 @@ Cosmo.cnergy Procurement Team`;
           )}</div>
 
         <div className="flex flex-col space-y-2">
-          {filteredCatalog.map(item => {
+          {filteredCatalog.length === 0 ? (
+            <div className="bg-[#FFFFFF] rounded-2xl p-8 border border-[#E2E8F0] shadow-xs text-center space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center mx-auto">
+                <Package className="w-6 h-6" />
+              </div>
+              <h4 className="text-sm font-bold text-[#020617]">
+                {catalog.length === 0
+                  ? 'No components in catalog yet'
+                  : `No components matching active filter "${selectedCategoryFilter}"`}
+              </h4>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                {catalog.length === 0
+                  ? 'Get started by adding your first component or importing a CSV spreadsheet.'
+                  : `There are ${catalog.length} total components in your inventory, but none match the currently selected filter (${selectedCategoryFilter})${activeStatusFilter === 'TO_BE_ORDERED' ? ' with Low Stock' : ''}${searchTerm ? ` or search "${searchTerm}"` : ''}.`}
+              </p>
+              <div className="flex items-center justify-center gap-2 pt-2">
+                {catalog.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSelectCategory('ALL');
+                      setActiveStatusFilter('ALL');
+                      setSearchTerm('');
+                    }}
+                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                  >
+                    View All Components ({catalog.length})
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const activeCategory = (selectedCategoryFilter && selectedCategoryFilter !== 'ALL' && selectedCategoryFilter !== 'Uncategorized')
+                      ? selectedCategoryFilter
+                      : 'Crystal';
+                    setCatalogForm(prev => ({
+                      ...prev,
+                      category: activeCategory
+                    }));
+                    setIsAddCatalogOpen(true);
+                  }}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                >
+                  + Add Component in {selectedCategoryFilter !== 'ALL' && selectedCategoryFilter !== 'Uncategorized' ? selectedCategoryFilter : 'Inventory'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            filteredCatalog.map(item => {
             const company = companies.find(s => s.id === item.company_id);
             const isBottleneck = isStockBottleneck(item);
 
@@ -1781,7 +1872,7 @@ Cosmo.cnergy Procurement Team`;
                 </div>
               </div>
             );
-          })}
+          }))}
         </div>
       </div>
 
@@ -1846,18 +1937,31 @@ Cosmo.cnergy Procurement Team`;
             {/* Scrollable Form Body */}
             <form onSubmit={handleCatalogSubmit} className="flex flex-col flex-1 overflow-hidden">
               <div className="overflow-y-auto flex-1 px-5 py-4 space-y-3 text-xs">
-              {/* Component Name (ONLY REQUIRED FIELD) */}
-              <div>
-                <label className="block font-semibold text-[#020617] mb-1">Component Name *</label>
-                <input
-                  type="text"
-                  required
-                  autoFocus
-                  value={catalogForm.name}
-                  onChange={e => setCatalogForm({ ...catalogForm, name: e.target.value })}
-                  placeholder="e.g. 3.2V 100Ah LFP Cell"
-                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-semibold"
-                />
+              {/* Component Name & Part Name (SKU) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-[#020617] mb-1">Component Name *</label>
+                  <input
+                    type="text"
+                    required
+                    autoFocus
+                    value={catalogForm.name}
+                    onChange={e => setCatalogForm({ ...catalogForm, name: e.target.value })}
+                    placeholder="e.g. 1000 pF / 50V"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-semibold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-[#020617] mb-1">Part Name / SKU</label>
+                  <input
+                    type="text"
+                    value={catalogForm.sku}
+                    onChange={e => setCatalogForm({ ...catalogForm, sku: e.target.value })}
+                    placeholder="e.g. SMD, Radial, HC-49S"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+                  />
+                </div>
               </div>
 
               {/* Category & Unit of Measure */}
