@@ -112,7 +112,8 @@ export const App: React.FC = () => {
     { id: 'cat-14', name: 'Coil' },
     { id: 'cat-15', name: 'Regulator' },
     { id: 'cat-16', name: 'Fuse' },
-    { id: 'cat-17', name: 'Drill Bit' }
+    { id: 'cat-17', name: 'Drill Bit' },
+    { id: 'cat-18', name: 'Crystal' }
   ]);
   const [catalog, setCatalog] = useState<CatalogItem[]>(() => {
     const saved = localStorage.getItem('cosmo_catalog');
@@ -343,8 +344,10 @@ export const App: React.FC = () => {
 
       if (catgs && catgs.length > 0) {
         const filteredCatgs = catgs.filter((c: any) => !legacyToExclude.has(c.name));
-        setCategories(filteredCatgs.length > 0 ? filteredCatgs : catgs);
-        try { localStorage.setItem('cosmo_categories', JSON.stringify(filteredCatgs)); } catch {}
+        const hasCrystal = filteredCatgs.some((c: any) => c.name.toLowerCase() === 'crystal');
+        const finalCatgs = hasCrystal ? filteredCatgs : [...filteredCatgs, { id: 'cat-18', name: 'Crystal' }];
+        setCategories(finalCatgs.length > 0 ? finalCatgs : catgs);
+        try { localStorage.setItem('cosmo_categories', JSON.stringify(finalCatgs)); } catch {}
       }
 
       // 1. Fetch Companies (with graceful fallback if join fails)

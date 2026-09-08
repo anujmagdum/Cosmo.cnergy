@@ -341,5 +341,6 @@ export const DEFAULT_CATEGORIES: string[] = [
   'Coil',
   'Regulator',
   'Fuse',
-  'Drill Bit'
+  'Drill Bit',
+  'Crystal'
 ];

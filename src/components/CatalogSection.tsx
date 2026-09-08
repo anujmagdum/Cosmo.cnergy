@@ -92,7 +92,8 @@ const DEFAULT_CATEGORIES = [
   'Coil',
   'Regulator',
   'Fuse',
-  'Drill Bit'
+  'Drill Bit',
+  'Crystal'
 ];
 
 export const CatalogSection: React.FC<Props> = ({
