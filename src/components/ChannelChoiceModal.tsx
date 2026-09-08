@@ -54,19 +54,19 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
         </button>
 
         <div className="text-center space-y-3 mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-[#0b6623]/15 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-600 shadow-md shadow-emerald-500/20">
+          <div className="w-14 h-14 rounded-2xl bg-[#0b6623]/15 border border-[#0b6623]/30 flex items-center justify-center mx-auto text-[#0b6623] shadow-md shadow-[#0b6623]/20">
             <CheckCircle className="w-8 h-8" />
           </div>
           <h3 className="text-xl font-bold text-[#0D0D0D]">Order Created Successfully!</h3>
           <p className="text-xs text-[#334155]">
-            Order <span className="font-mono font-bold text-emerald-800">{order.order_number}</span> is logged. Choose how you would like to transmit it to <span className="text-[#0D0D0D] font-semibold">{order.company?.name}</span>:
+            Order <span className="font-mono font-bold text-[#0b6623]">{order.order_number}</span> is logged. Choose how you would like to transmit it to <span className="text-[#0D0D0D] font-semibold">{order.company?.name}</span>:
           </p>
         </div>
 
         <div className="space-y-3">
           <button
             onClick={handleSendWebmail}
-            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-sm shadow-lg shadow-emerald-500/20 active:scale-95 transition-all group"
+            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-sm shadow-lg shadow-[#0b6623]/20 active:scale-95 transition-all group"
           >
             <div className="flex items-center gap-3">
               <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -77,13 +77,13 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
 
           <button
             onClick={handleSendWhatsApp}
-            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-[#FFFFFF] hover:bg-[#f8fafc] text-emerald-800 font-bold text-sm border border-[#E2E8F0] active:scale-95 transition-all group"
+            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-[#FFFFFF] hover:bg-[#f8fafc] text-[#0b6623] font-bold text-sm border border-[#E2E8F0] active:scale-95 transition-all group"
           >
             <div className="flex items-center gap-3">
               <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform text-[#0b6623]" />
               <span>Send via WhatsApp</span>
             </div>
-            <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full uppercase font-bold border border-emerald-300">Deep Link</span>
+            <span className="text-xs bg-emerald-100 text-[#0b6623] px-2 py-0.5 rounded-full uppercase font-bold border border-emerald-300">Deep Link</span>
           </button>
         </div>
       </div>

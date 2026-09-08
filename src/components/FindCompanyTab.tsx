@@ -232,7 +232,7 @@ export const FindCompanyTab: React.FC<Props> = ({
       <div className="bg-[#FFFFFF] p-5 rounded-3xl border border-[#E2E8F0] shadow-xs space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-cyan-600 flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-[#0b6623] flex items-center justify-center shadow-md">
               <Search className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -262,7 +262,7 @@ export const FindCompanyTab: React.FC<Props> = ({
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
                 viewMode === 'shortlist'
                   ? 'bg-[#0b6623] text-white shadow-md'
-                  : 'bg-emerald-100/80 text-emerald-900 hover:bg-emerald-200 border border-emerald-300'
+                  : 'bg-emerald-100/80 text-[#0b6623] hover:bg-emerald-200 border border-emerald-300'
               }`}
             >
               <span>📋 Shortlist</span>
@@ -287,7 +287,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                 value={city}
                 onChange={e => setCity(e.target.value)}
                 placeholder="e.g. Pune, Mumbai, Delhi"
-                className="w-full pl-9 pr-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs font-bold text-[#0D0D0D] focus:outline-none focus:border-emerald-600"
+                className="w-full pl-9 pr-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs font-bold text-[#0D0D0D] focus:outline-none focus:border-[#0b6623]"
               />
             </div>
           </div>
@@ -304,7 +304,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                 value={productQuery}
                 onChange={e => setProductQuery(e.target.value)}
                 placeholder="e.g. 3.2V 100Ah LFP Cell, 16S BMS, Copper Busbars, Solar Inverter"
-                className="w-full pl-9 pr-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs font-bold text-[#0D0D0D] focus:outline-none focus:border-emerald-600"
+                className="w-full pl-9 pr-3 py-2 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl text-xs font-bold text-[#0D0D0D] focus:outline-none focus:border-[#0b6623]"
                 onKeyDown={e => e.key === 'Enter' && handleSearch()}
               />
             </div>
@@ -483,7 +483,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                           ? 'bg-emerald-50/80 border-emerald-300'
                           : sup.isShortlisted
                           ? 'bg-amber-50/70 border-amber-300 ring-1 ring-amber-300'
-                          : 'bg-[#FFFFFF] border-[#E2E8F0] hover:border-emerald-400 hover:shadow-xs'
+                          : 'bg-[#FFFFFF] border-[#E2E8F0] hover:border-[#0b6623] hover:shadow-xs'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3">
@@ -531,7 +531,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                                   href={waUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-emerald-700 hover:underline font-bold text-[11px] bg-emerald-100/70 px-1.5 py-0.5 rounded"
+                                  className="text-[#0b6623] hover:underline font-bold text-[11px] bg-emerald-100/70 px-1.5 py-0.5 rounded"
                                   title="Open WhatsApp chat"
                                 >
                                   💬 WhatsApp
@@ -581,7 +581,7 @@ export const FindCompanyTab: React.FC<Props> = ({
 
                         <div className="ml-auto flex items-center gap-2">
                           {sup.isAddedToDb ? (
-                            <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-xl flex items-center gap-1 border border-emerald-300">
+                            <span className="text-xs font-bold text-[#0b6623] bg-emerald-100 px-3 py-1 rounded-xl flex items-center gap-1 border border-emerald-300">
                               <CheckCircle2 className="w-3.5 h-3.5 text-[#0b6623]" />
                               <span>Saved in Database</span>
                             </span>
@@ -679,7 +679,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                           href={waUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg font-bold text-xs hover:bg-emerald-200 transition-colors"
+                          className="px-2.5 py-1 bg-emerald-100 text-[#0b6623] rounded-lg font-bold text-xs hover:bg-emerald-200 transition-colors"
                         >
                           💬 WhatsApp
                         </a>
@@ -701,7 +701,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                       )}
 
                       {sup.isAddedToDb ? (
-                        <span className="text-xs font-bold text-emerald-700 ml-auto">
+                        <span className="text-xs font-bold text-[#0b6623] ml-auto">
                           ✓ Saved in Database
                         </span>
                       ) : (

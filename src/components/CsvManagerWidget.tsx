@@ -467,14 +467,14 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
               </div>
 
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#0b6623] block mb-1">
                   Required Header:
                 </span>
                 <div className="flex flex-wrap gap-1">
                   {schema.requiredHeaders.map(h => (
                     <span
                       key={h.key}
-                      className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200"
+                      className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-[#0b6623] border border-emerald-200"
                     >
                       {h.label}*
                     </span>
@@ -515,7 +515,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
           <span
             className={`text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg shadow-2xs ${
               statusFeedback.type === 'success'
-                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                ? 'bg-emerald-50 text-[#0b6623] border border-emerald-200'
                 : 'bg-red-50 text-red-800 border border-red-200'
             }`}
           >

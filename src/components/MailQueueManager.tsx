@@ -27,15 +27,15 @@ export const MailQueueManager: React.FC = () => {
   const pendingCount = queue.filter(q => q.status === 'pending' || q.status === 'sending').length;
 
   return (
-    <div className="fixed bottom-6 right-6 w-96 bg-[#0B192C] rounded-2xl shadow-2xl border border-emerald-500/30 overflow-hidden z-[100] text-white flex flex-col">
+    <div className="fixed bottom-6 right-6 w-96 bg-[#0B192C] rounded-2xl shadow-2xl border border-[#0b6623]/30 overflow-hidden z-[100] text-white flex flex-col">
       {/* Header */}
-      <div className="p-4 bg-emerald-900/40 border-b border-emerald-500/30 flex items-center justify-between">
+      <div className="p-4 bg-emerald-900/40 border-b border-[#0b6623]/30 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Mail className="w-5 h-5 text-[#0b6623]" />
           <h3 className="font-bold text-sm">Background Mail Queue</h3>
         </div>
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+          <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-[#0b6623] font-bold border border-[#0b6623]/30">
             {queue.length} Tasks
           </span>
           <button onClick={clearQueue} className="text-slate-800 hover:text-white p-1" title="Clear Queue">
@@ -103,7 +103,7 @@ export const MailQueueManager: React.FC = () => {
 
             <div className="flex items-center gap-2 shrink-0">
               {item.status === 'pending' && <Clock className="w-4 h-4 text-slate-700" />}
-              {item.status === 'sending' && <span className="w-4 h-4 rounded-full border-2 border-t-emerald-500 border-slate-600 animate-spin" />}
+              {item.status === 'sending' && <span className="w-4 h-4 rounded-full border-2 border-t-[#0b6623] border-slate-600 animate-spin" />}
               {item.status === 'success' && <CheckCircle className="w-4 h-4 text-[#0b6623]" />}
               {item.status === 'failed' && <XCircle className="w-4 h-4 text-red-500" />}
               

@@ -535,7 +535,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
         {/* Modal Top Banner */}
         <div className="bg-[#0B192C] p-6 border-b border-[#E2E8F0]/60 flex items-center justify-between text-white">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-500/20">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-lg shadow-[#0b6623]/20">
               <Layers className="w-6 h-6" />
             </div>
             <div>
@@ -543,7 +543,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 <h2 className="text-xl font-bold text-white tracking-tight">
                   1-Tap Automated BOM Procurement Engine
                 </h2>
-                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-[#0b6623] border border-[#0b6623]/30">
                   Multi-Vendor Auto-Split
                 </span>
               </div>
@@ -600,7 +600,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   <span>1. Production Assembly Target & Multiplier</span>
                 </span>
                 <span className="text-xs text-[#1e293b] font-semibold">
-                  Auto-splits into <strong className="text-emerald-800">{activeDrafts.length} distinct company POs</strong>
+                  Auto-splits into <strong className="text-[#0b6623]">{activeDrafts.length} distinct company POs</strong>
                 </span>
               </div>
 
@@ -613,7 +613,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   <select
                     value={selectedProductCode}
                     onChange={e => setSelectedProductCode(e.target.value)}
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm text-[#020617] font-semibold focus:outline-none focus:border-emerald-500 shadow-sm"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm text-[#020617] font-semibold focus:outline-none focus:border-[#0b6623] shadow-sm"
                   >
                     {allSelectableProducts.map(p => (
                       <option key={p.code} value={p.code}>
@@ -635,7 +635,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                       max={1000}
                       value={packQuantity}
                       onChange={e => setPackQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm text-[#020617] font-mono font-bold focus:outline-none focus:border-emerald-500 shadow-sm text-center"
+                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-4 py-2.5 text-sm text-[#020617] font-mono font-bold focus:outline-none focus:border-[#0b6623] shadow-sm text-center"
                     />
                     <span className="text-xs font-bold text-[#1e293b]">Packs</span>
                   </div>
@@ -669,7 +669,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   <span>1. Select Components for On-Demand Batch ({selectedCompIds.length} Selected)</span>
                 </span>
                 <span className="text-xs text-[#1e293b] font-semibold">
-                  Auto-splits into <strong className="text-emerald-800">{activeDrafts.length} lowest-price company orders</strong>
+                  Auto-splits into <strong className="text-[#0b6623]">{activeDrafts.length} lowest-price company orders</strong>
                 </span>
               </div>
 
@@ -683,7 +683,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                       placeholder="Search components to add to procurement batch..."
                       value={compSearchQuery}
                       onChange={e => setCompSearchQuery(e.target.value)}
-                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-9 pr-3 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-emerald-500 shadow-xs placeholder-slate-400"
+                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-9 pr-3 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-[#0b6623] shadow-xs placeholder-slate-400"
                     />
                   </div>
                   <button
@@ -768,7 +768,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 <span className="text-[10px] text-[#1e293b] font-semibold uppercase block">
                   Total Procurement Value
                 </span>
-                <span className="text-xl font-extrabold text-emerald-800 font-mono">
+                <span className="text-xl font-extrabold text-[#0b6623] font-mono">
                   ₹{totalCalculatedCost.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </span>
               </div>
@@ -796,7 +796,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                     onClick={() => setActiveTabCompanyId(draft.company.id)}
                     className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-2 border transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-[#0b6623] text-white shadow-md border-emerald-500'
+                        ? 'bg-[#0b6623] text-white shadow-md border-[#0b6623]'
                         : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border-[#E2E8F0]'
                     }`}
                   >
@@ -817,7 +817,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   <div>
                     <h4 className="font-bold text-sm text-[#020617] flex items-center gap-2">
                       <span>{selectedDraft.company.name}</span>
-                      <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold">
+                      <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-100 text-[#0b6623] border border-emerald-300 font-bold">
                         {selectedDraft.items.length} Line Item(s)
                       </span>
                     </h4>
@@ -828,7 +828,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
 
                   <div className="text-right">
                     <span className="text-[10px] text-[#1e293b] uppercase block">Subtotal for this Vendor</span>
-                    <span className="text-base font-extrabold text-emerald-800 font-mono">
+                    <span className="text-base font-extrabold text-[#0b6623] font-mono">
                       ₹{selectedDraft.total_amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </span>
                   </div>
@@ -873,7 +873,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                                     setSelectedCompQtyOverrides(prev => ({ ...prev, [item.catalogItem.id]: val }));
                                   }
                                 }}
-                                className="w-20 px-2 py-1 text-xs font-mono font-bold bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] rounded-lg text-center focus:outline-none focus:border-emerald-500 shadow-2xs"
+                                className="w-20 px-2 py-1 text-xs font-mono font-bold bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] rounded-lg text-center focus:outline-none focus:border-[#0b6623] shadow-2xs"
                                 title="Edit quantity to satisfy MOQ or batch adjustments"
                               />
                               <span className="text-[10px] text-[#1e293b] font-semibold">
@@ -881,7 +881,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                               </span>
                             </div>
                           </td>
-                          <td className="py-2.5 text-right font-bold text-emerald-800 font-mono">
+                          <td className="py-2.5 text-right font-bold text-[#0b6623] font-mono">
                             ₹{item.total_price.toLocaleString('en-IN')}
                           </td>
                         </tr>
@@ -900,7 +900,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                       value={editableContacts[selectedDraft.company.id]?.email || ''}
                       onChange={e => handleContactChange(selectedDraft.company.id, 'email', e.target.value)}
                       placeholder="sales@vendor.com"
-                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-1.5 text-xs text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-1.5 text-xs text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
                     />
                   </div>
 
@@ -913,7 +913,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                       value={editableContacts[selectedDraft.company.id]?.phone || ''}
                       onChange={e => handleContactChange(selectedDraft.company.id, 'phone', e.target.value)}
                       placeholder="+91 98765 43210"
-                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-1.5 text-xs text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-1.5 text-xs text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
                     />
                   </div>
                 </div>
@@ -951,7 +951,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 type="checkbox"
                 checked={autoRecordOrders}
                 onChange={e => setAutoRecordOrders(e.target.checked)}
-                className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 accent-emerald-600 cursor-pointer"
+                className="w-4 h-4 rounded text-[#0b6623] focus:ring-[#0b6623] accent-[#0b6623] cursor-pointer"
               />
               <span>Record dispatched {orderType}s to Database Timeline</span>
             </label>
@@ -961,7 +961,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
               <select
                 value={dispatchChannel}
                 onChange={e => setDispatchChannel(e.target.value as any)}
-                className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1 text-xs font-semibold focus:outline-none focus:border-emerald-500 cursor-pointer"
+                className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1 text-xs font-semibold focus:outline-none focus:border-[#0b6623] cursor-pointer"
               >
                 <option value="webmail">Native Webmail (Auto-Queued)</option>
                 <option value="whatsapp">WhatsApp Direct Deep Links</option>

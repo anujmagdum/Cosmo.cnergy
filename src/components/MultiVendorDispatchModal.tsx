@@ -104,7 +104,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-bold text-[#0D0D0D]">Multi-Vendor Dispatch Workspace</h3>
-                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-[#0b6623] border border-emerald-300">
                   {drafts.length} Vendors
                 </span>
               </div>
@@ -139,7 +139,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
                     <div>
                       <h4 className="font-bold text-sm text-[#0D0D0D]">{draft.company.name}</h4>
                       <p className="text-[11px] text-[#334155]">
-                        {draft.company.email} • {draft.items.length} items • <strong className="text-emerald-800 font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
+                        {draft.company.email} • {draft.items.length} items • <strong className="text-[#0b6623] font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
                       </p>
                     </div>
                   </div>
@@ -192,7 +192,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
           <button
             onClick={handleFinishAll}
             disabled={isProcessing}
-            className="px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-emerald-500/20 active:scale-95 transition-all"
+            className="px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all"
           >
             {isProcessing ? 'Confirming...' : 'Confirm All Dispatches & Log Orders'}
           </button>

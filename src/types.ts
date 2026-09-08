@@ -44,10 +44,10 @@ export const STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
   },
   DELIVERED: {
     label: 'Delivered',
-    badgeBg: 'bg-emerald-100',
-    badgeText: 'text-emerald-800',
-    badgeBorder: 'border-emerald-300',
-    dotColor: 'bg-emerald-500',
+    badgeBg: 'bg-emerald-50',
+    badgeText: 'text-[#0b6623]',
+    badgeBorder: 'border-[#0b6623]/30',
+    dotColor: 'bg-[#0b6623]',
     iconName: 'PackageCheck'
   },
   ON_HOLD: {

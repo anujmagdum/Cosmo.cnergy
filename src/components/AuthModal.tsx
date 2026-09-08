@@ -70,7 +70,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shadow-md shadow-emerald-500/20">
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shadow-md shadow-[#0b6623]/20">
               <Zap className="w-5 h-5 text-white fill-white" />
             </div>
             <div>
@@ -108,7 +108,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="user@cosmocnergy.com"
-              className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3.5 py-2.5 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
+              className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3.5 py-2.5 text-sm text-[#073642] focus:outline-none focus:border-[#0b6623] font-medium"
             />
           </div>
 
@@ -129,7 +129,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
               minLength={6}
-              className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3.5 py-2.5 text-sm text-[#073642] focus:outline-none focus:border-emerald-500 font-medium"
+              className="w-full bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3.5 py-2.5 text-sm text-[#073642] focus:outline-none focus:border-[#0b6623] font-medium"
             />
           </div>
 

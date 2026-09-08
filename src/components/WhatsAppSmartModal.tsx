@@ -59,7 +59,7 @@ export const WhatsAppSmartModal: React.FC<Props> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 text-[#0D0D0D]">
         <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
-          <div className="flex items-center gap-2.5 text-emerald-800 font-bold">
+          <div className="flex items-center gap-2.5 text-[#0b6623] font-bold">
             <MessageSquare className="w-5 h-5 text-[#0b6623]" />
             <h3 className="text-lg font-bold text-[#0D0D0D]">WhatsApp Smart Dispatch</h3>
           </div>
@@ -86,7 +86,7 @@ export const WhatsAppSmartModal: React.FC<Props> = ({
                   setErrorMsg('');
                 }}
                 placeholder="+91 98765 43210"
-                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#0D0D0D] focus:outline-none focus:border-emerald-500 font-mono font-bold"
+                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#0D0D0D] focus:outline-none focus:border-[#0b6623] font-mono font-bold"
               />
             </div>
             {errorMsg && <p className="text-xs text-red-600 font-semibold">{errorMsg}</p>}
@@ -111,7 +111,7 @@ export const WhatsAppSmartModal: React.FC<Props> = ({
             </button>
             <button
               type="submit"
-              className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-emerald-500/20 active:scale-95 transition-all"
+              className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all"
             >
               <Check className="w-4 h-4" />
               <span>Save & Launch WhatsApp</span>

@@ -221,7 +221,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
             </div>
           </div>
 
-          <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
+          <span className="text-[10px] font-bold text-[#0b6623] bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
             Recipe Math Sync
           </span>
         </div>
@@ -236,7 +236,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
               placeholder="Filter recipes..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+              className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
             />
           </div>
 
@@ -248,7 +248,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
                 setSelectedProduct(e.target.value);
                 setCalculatedResult(null);
               }}
-              className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-1.5 text-xs text-[#020617] font-semibold focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-1.5 text-xs text-[#020617] font-semibold focus:outline-none focus:border-[#0b6623]"
             >
               {filteredProducts.map(prod => (
                 <option key={prod} value={prod}>
@@ -289,7 +289,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
                 <span className="text-[10px] font-bold text-[#1e293b] uppercase tracking-wider">
                   Max Buildable Finished Units:
                 </span>
-                <div className="text-2xl font-extrabold text-emerald-800 font-mono">
+                <div className="text-2xl font-extrabold text-[#0b6623] font-mono">
                   {calculatedResult.maxUnits.toLocaleString()} Units
                 </div>
               </div>
@@ -328,7 +328,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
                         </div>
                       </div>
 
-                      <div className="text-right shrink-0 font-mono font-bold text-emerald-800 text-xs">
+                      <div className="text-right shrink-0 font-mono font-bold text-[#0b6623] text-xs">
                         {d.buildable} units
                       </div>
                     </div>
@@ -387,14 +387,14 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
         </div>
       ) : (
         /* Optimal Stock Levels Banner (Slim Scale Format) */
-        <div className="bg-emerald-50 border border-emerald-300 text-emerald-950 rounded-xl px-3.5 py-2 flex items-center justify-between shadow-xs text-xs">
+        <div className="bg-emerald-50 border border-emerald-300 text-[#0b6623] rounded-xl px-3.5 py-2 flex items-center justify-between shadow-xs text-xs">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-[#0b6623] shrink-0" />
             <span className="font-bold text-[#020617]">
               Stock Levels Optimal &mdash; All active inventory items have &gt; 20% safe buffer.
             </span>
           </div>
-          <span className="text-[10px] font-black bg-emerald-200 text-emerald-950 px-2 py-0.5 rounded-full border border-emerald-300 font-mono">
+          <span className="text-[10px] font-black bg-emerald-200 text-[#0b6623] px-2 py-0.5 rounded-full border border-emerald-300 font-mono">
             Healthy Buffers
           </span>
         </div>

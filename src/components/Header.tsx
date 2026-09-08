@@ -89,7 +89,7 @@ export const Header: React.FC<Props> = ({
               className="flex items-center gap-2.5 cursor-pointer group"
               onClick={() => setActiveTab('procurement')}
             >
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center emerald-glow shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+              <div className="w-9 h-9 rounded-xl bg-[#0b6623] flex items-center justify-center emerald-glow shadow-md shadow-[#0b6623]/20 group-hover:scale-105 transition-transform">
                 <Zap className="w-5 h-5 text-white fill-white" />
               </div>
               <div>
@@ -167,7 +167,7 @@ export const Header: React.FC<Props> = ({
                   onClick={() => setActiveTab(item.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                     isActive
-                      ? 'bg-[#0b6623] text-white shadow-md shadow-emerald-500/30 ring-1 ring-emerald-400/40'
+                      ? 'bg-[#0b6623] text-white shadow-md shadow-[#0b6623]/30 ring-1 ring-[#0b6623]/40'
                       : 'bg-[#10243E]/60 hover:bg-[#1E3E62] text-slate-300 hover:text-white border border-slate-700/50'
                   }`}
                 >
@@ -224,7 +224,7 @@ export const Header: React.FC<Props> = ({
                     </span>
                   </div>
 
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center font-bold text-xs shadow-sm ring-1 ring-emerald-500/30 shrink-0">
+                  <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs shadow-sm ring-1 ring-[#0b6623]/40 shrink-0">
                     {userInitial}
                   </div>
 
@@ -246,7 +246,7 @@ export const Header: React.FC<Props> = ({
                       </div>
                       <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
                         <span className="flex items-center gap-1 text-[#0b6623] font-semibold">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#0b6623] animate-pulse" />
                           Supabase Active
                         </span>
                         <span>Solarized Light</span>
@@ -274,7 +274,7 @@ export const Header: React.FC<Props> = ({
             ) : (
               <button
                 onClick={onOpenAuth}
-                className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0b6623]/10 hover:bg-[#084d1a]/20 border border-emerald-500/30 text-xs font-bold text-[#0b6623] transition-all active:scale-95"
+                className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0b6623]/10 hover:bg-[#084d1a]/20 border border-[#0b6623]/30 text-xs font-bold text-[#0b6623] transition-all active:scale-95"
               >
                 <LogIn className="w-4 h-4" />
                 <span>Login</span>

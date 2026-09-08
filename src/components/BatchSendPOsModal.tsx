@@ -335,13 +335,13 @@ export const BatchSendPOsModal: React.FC<Props> = ({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#D6D1B1]/60 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-md shadow-emerald-500/20">
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-md shadow-[#0b6623]/20">
               <Send className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-bold text-[#073642]">Multi-Vendor Dispatch Workspace</h3>
-                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-[#0b6623] border border-emerald-300">
                   {vendorDrafts.length} Vendors
                 </span>
               </div>
@@ -423,7 +423,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
             <button
               type="button"
               onClick={handleBatchDispatchAll}
-              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-emerald-500/20 active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all cursor-pointer"
             >
               <Rocket className="w-4 h-4" />
               <span>Dispatch All ({selectedVendorIds.length}) POs</span>
@@ -458,7 +458,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                           setSelectedVendorIds(prev => prev.filter(id => id !== draft.company.id));
                         }
                       }}
-                      className="w-4 h-4 text-emerald-600 rounded border-[#D6D1B1] focus:ring-emerald-500 accent-emerald-600 cursor-pointer"
+                      className="w-4 h-4 text-[#0b6623] rounded border-[#D6D1B1] focus:ring-[#0b6623] accent-[#0b6623] cursor-pointer"
                     />
                     <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs">
                       {index + 1}
@@ -466,7 +466,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                     <div>
                       <h4 className="font-bold text-sm text-[#073642]">{draft.company.name}</h4>
                       <p className="text-[11px] text-[#586E75]">
-                        Contact: {draft.company.contact_person || 'Sales Dept'} • Total: <strong className="text-emerald-800 font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
+                        Contact: {draft.company.contact_person || 'Sales Dept'} • Total: <strong className="text-[#0b6623] font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
                       </p>
                     </div>
                   </div>

@@ -197,7 +197,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
             onClick={() => setIsKeyConfigOpen(!isKeyConfigOpen)}
             className={`px-3 py-1.5 rounded-full text-xs font-extrabold border transition-all flex items-center gap-1.5 ${
               isKeyActive
-                ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
+                ? 'bg-emerald-500/20 text-[#0b6623] border-[#0b6623]/40 hover:bg-emerald-500/30'
                 : 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30 animate-pulse'
             }`}
           >
@@ -223,7 +223,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
               value={apiKeyInput}
               onChange={e => setApiKeyInput(e.target.value)}
               placeholder="Paste your AI Studio GEMINI_API_KEY (AIzaSy...)"
-              className="flex-1 bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3.5 py-2 text-xs font-mono text-[#073642] focus:outline-none focus:border-emerald-500"
+              className="flex-1 bg-[#EEE8D5] border border-[#D6D1B1] rounded-xl px-3.5 py-2 text-xs font-mono text-[#073642] focus:outline-none focus:border-[#0b6623]"
             />
             <button
               onClick={handleSaveApiKey}
@@ -349,7 +349,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-bold text-[#0D0D0D] text-sm">{item.itemName}</span>
                         {item.category && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-900 border border-emerald-200">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-[#0b6623] border border-emerald-200">
                             {item.category}
                           </span>
                         )}
@@ -391,7 +391,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
           <button
             onClick={handleConvertToOrder}
             disabled={parsedItems.length === 0}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-extrabold text-sm shadow-lg shadow-emerald-500/20 transition-all disabled:opacity-40 active:scale-95 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-extrabold text-sm shadow-lg shadow-[#0b6623]/20 transition-all disabled:opacity-40 active:scale-95 cursor-pointer"
           >
             <span>Convert AI Draft to Live Procurement Orders</span>
             <ArrowRight className="w-4 h-4" />

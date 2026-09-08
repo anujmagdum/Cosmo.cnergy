@@ -121,7 +121,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
       <div className="bg-[#FFFFFF] w-full max-w-4xl rounded-2xl sm:rounded-3xl border border-[#E2E8F0] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-[#0D0D0D] flex flex-col max-h-[94vh]">
         {/* Top Search Input Bar */}
         <div className="p-4 sm:p-5 border-b border-[#E2E8F0] bg-[#FFFFFF] flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shrink-0 shadow-md shadow-emerald-500/20">
+          <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shrink-0 shadow-md shadow-[#0b6623]/20">
             <Search className="w-5 h-5" />
           </div>
 
@@ -132,7 +132,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               placeholder="Master Data Search: components, SKUs, MPN, companies, folders, orders & invoices..."
-              className="w-full bg-[#FFFFFF] border border-[#E2E8F0] text-[#0D0D0D] placeholder-slate-400 rounded-xl px-4 py-2.5 text-sm md:text-base focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 shadow-xs font-medium"
+              className="w-full bg-[#FFFFFF] border border-[#E2E8F0] text-[#0D0D0D] placeholder-slate-400 rounded-xl px-4 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#0b6623] focus:ring-1 focus:ring-[#0b6623] shadow-xs font-medium"
             />
             {searchTerm && (
               <button
@@ -219,7 +219,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                   <button
                     key={sample}
                     onClick={() => setSearchTerm(sample)}
-                    className="px-2.5 py-1 rounded-lg bg-[#FFFFFF] hover:bg-emerald-100 text-[#020617] hover:text-emerald-800 border border-[#E2E8F0] font-mono text-xs font-bold transition-all"
+                    className="px-2.5 py-1 rounded-lg bg-[#FFFFFF] hover:bg-emerald-100 text-[#020617] hover:text-[#0b6623] border border-[#E2E8F0] font-mono text-xs font-bold transition-all"
                   >
                     {sample}
                   </button>
@@ -253,21 +253,21 @@ export const GlobalSearchModal: React.FC<Props> = ({
                         return (
                           <div
                             key={item.id}
-                            className="bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] shadow-xs overflow-hidden hover:border-emerald-500 transition-all"
+                            className="bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] shadow-xs overflow-hidden hover:border-[#0b6623] transition-all"
                           >
                             {/* Component Summary Card */}
                             <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFFFF]">
                               <div className="space-y-1 flex-1">
                                 <div className="flex items-center gap-2">
                                   <h4 className="font-bold text-[#020617] text-sm">{item.title}</h4>
-                                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-100 text-[#0b6623] border border-emerald-300">
                                     {item.metadata?.sku}
                                   </span>
                                 </div>
                                 <p className="text-xs text-[#1e293b]">{item.metadata?.specs}</p>
                                 <div className="flex items-center gap-3 text-xs text-[#1e293b] pt-1">
                                   <span>
-                                    Preset Price: <strong className="text-emerald-800 font-mono">₹{item.metadata?.presetPrice?.toLocaleString('en-IN')}</strong> / {item.metadata?.uom}
+                                    Preset Price: <strong className="text-[#0b6623] font-mono">₹{item.metadata?.presetPrice?.toLocaleString('en-IN')}</strong> / {item.metadata?.uom}
                                   </span>
                                   <span>•</span>
                                   <span>Stock: <strong className="text-[#020617] font-mono">{item.metadata?.inStockQty || 0}</strong> {item.metadata?.uom}</span>
@@ -278,7 +278,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                               <div className="flex items-center gap-2">
                                 <button
                                   onClick={() => toggleComponentExpand(item.id)}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-emerald-50 text-emerald-800 border border-[#E2E8F0] text-xs font-bold transition-all"
+                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-emerald-50 text-[#0b6623] border border-[#E2E8F0] text-xs font-bold transition-all"
                                 >
                                   <span>{companiesList.length} Associated Company(s)</span>
                                   {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
@@ -315,13 +315,13 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                           <Building2 className="w-3.5 h-3.5 text-[#0b6623]" />
                                           <span className="font-bold text-xs text-[#020617]">{supp.companyName}</span>
                                           {supp.isPrimary && (
-                                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                            <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-[#0b6623] border border-emerald-300">
                                               Primary Vendor
                                             </span>
                                           )}
                                         </div>
                                         <div className="text-[11px] text-[#1e293b]">
-                                          Rate: <strong className="text-emerald-800 font-mono">₹{supp.unitPrice?.toLocaleString('en-IN')}</strong> • Lead Time: {supp.leadTime} • Contact: {supp.contactPerson || supp.email}
+                                          Rate: <strong className="text-[#0b6623] font-mono">₹{supp.unitPrice?.toLocaleString('en-IN')}</strong> • Lead Time: {supp.leadTime} • Contact: {supp.contactPerson || supp.email}
                                         </div>
                                       </div>
 
@@ -342,7 +342,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                               const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(`Hi ${supp.companyName}, request for quote for ${item.title} (${item.metadata?.sku}).`)}`;
                                               window.open(waUrl, '_blank');
                                             }}
-                                            className="p-1.5 rounded-lg bg-[#FFFFFF] hover:bg-[#e2e8f0] text-emerald-800 border border-[#E2E8F0] text-xs transition-all"
+                                            className="p-1.5 rounded-lg bg-[#FFFFFF] hover:bg-[#e2e8f0] text-[#0b6623] border border-[#E2E8F0] text-xs transition-all"
                                             title="WhatsApp Company"
                                           >
                                             <MessageSquare className="w-3.5 h-3.5" />
@@ -374,7 +374,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                       {results.folders.map(folder => (
                         <div
                           key={folder.id}
-                          className="p-4 bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] hover:border-emerald-500 shadow-sm space-y-2.5 transition-all"
+                          className="p-4 bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] hover:border-[#0b6623] shadow-sm space-y-2.5 transition-all"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
@@ -396,7 +396,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                 onNavigateTab('inventory');
                                 onClose();
                               }}
-                              className="flex items-center gap-1 font-bold text-emerald-800 hover:text-emerald-900"
+                              className="flex items-center gap-1 font-bold text-[#0b6623] hover:text-[#0b6623]"
                             >
                               <span>Open Folder</span>
                               <ArrowRight className="w-3.5 h-3.5" />
@@ -421,20 +421,20 @@ export const GlobalSearchModal: React.FC<Props> = ({
                       {results.orders.map(orderItem => (
                         <div
                           key={orderItem.id}
-                          className="p-4 bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
+                          className="p-4 bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] hover:border-[#0b6623] shadow-sm space-y-2 transition-all"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
                               <h4 className="font-bold text-[#020617] text-sm font-mono">{orderItem.title}</h4>
                               <p className="text-xs text-[#1e293b]">{orderItem.subtitle}</p>
                             </div>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-100 text-[#0b6623] border border-emerald-300">
                               {orderItem.metadata?.status}
                             </span>
                           </div>
 
                           <div className="flex items-center justify-between pt-2 border-t border-[#E2E8F0]/60 text-xs">
-                            <span className="text-emerald-800 font-bold font-mono">
+                            <span className="text-[#0b6623] font-bold font-mono">
                               ₹{Number(orderItem.metadata?.totalAmount || 0).toLocaleString('en-IN')}
                             </span>
 
@@ -443,7 +443,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                 onNavigateTab('procurement');
                                 onClose();
                               }}
-                              className="flex items-center gap-1 font-bold text-emerald-800 hover:text-emerald-900 cursor-pointer"
+                              className="flex items-center gap-1 font-bold text-[#0b6623] hover:text-[#0b6623] cursor-pointer"
                             >
                               <span>View in Procurement</span>
                               <ArrowRight className="w-3.5 h-3.5" />
@@ -468,14 +468,14 @@ export const GlobalSearchModal: React.FC<Props> = ({
                       {results.companies.map(supp => (
                         <div
                           key={supp.id}
-                          className="p-4 bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] hover:border-emerald-500 shadow-sm space-y-2 transition-all"
+                          className="p-4 bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] hover:border-[#0b6623] shadow-sm space-y-2 transition-all"
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
                               <h4 className="font-bold text-[#020617] text-sm">{supp.title}</h4>
                               <p className="text-xs text-[#1e293b]">{supp.subtitle}</p>
                             </div>
-                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-[#0b6623] border border-emerald-300">
                               ★ {supp.metadata?.rating || 4.8}
                             </span>
                           </div>
@@ -490,7 +490,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                 onNavigateTab('companies');
                                 onClose();
                               }}
-                              className="flex items-center gap-1 font-bold text-emerald-800 hover:text-emerald-900"
+                              className="flex items-center gap-1 font-bold text-[#0b6623] hover:text-[#0b6623]"
                             >
                               <span>View Company</span>
                               <ArrowRight className="w-3.5 h-3.5" />

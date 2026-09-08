@@ -234,7 +234,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         <div className="bg-[#FFFFFF] p-4 rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#1e293b]">Total Orders / Invoices</span>
-            <div className="p-2 rounded-xl bg-emerald-100 text-emerald-800">
+            <div className="p-2 rounded-xl bg-emerald-100 text-[#0b6623]">
               <Receipt className="w-4 h-4" />
             </div>
           </div>
@@ -243,7 +243,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             <div className="text-[11px] text-[#1e293b] mt-0.5 flex items-center gap-1.5 font-semibold">
               <span className="text-purple-700">{financialSummary.poCount} POs</span>
               <span>•</span>
-              <span className="text-emerald-700">{financialSummary.rfqCount} RFQs</span>
+              <span className="text-[#0b6623]">{financialSummary.rfqCount} RFQs</span>
             </div>
           </div>
         </div>
@@ -284,12 +284,12 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         <div className="bg-[#FFFFFF] p-4 rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700">Grand Total Spend</span>
-            <div className="p-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
+            <div className="p-2 rounded-xl bg-emerald-50 text-[#0b6623] border border-emerald-100">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl md:text-2xl font-black text-emerald-700 font-mono">
+            <div className="text-xl md:text-2xl font-black text-[#0b6623] font-mono">
               ₹{financialSummary.grossTotal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
             <div className="text-[11px] text-slate-500 mt-0.5 font-semibold">Gross dispatched order volume</div>
@@ -318,7 +318,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             placeholder="Search order #, issuer, receiver, notes..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-10 pr-4 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-emerald-500 transition-all shadow-xs font-medium placeholder-slate-400"
+            className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-10 pr-4 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-[#0b6623] transition-all shadow-xs font-medium placeholder-slate-400"
           />
         </div>
 
@@ -370,7 +370,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
           </div>
 
           {selectedOrderIds.length > 0 && (
-            <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-xl shadow-xs border border-emerald-500 animate-in fade-in">
+            <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-xl shadow-xs border border-[#0b6623] animate-in fade-in">
               <span className="text-xs font-bold text-[#020617]">{selectedOrderIds.length} Selected</span>
               <button
                 onClick={handleBulkDelete}
@@ -394,7 +394,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                     type="checkbox"
                     checked={filteredOrders.length > 0 && selectedOrderIds.length === filteredOrders.length}
                     onChange={handleSelectAll}
-                    className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+                    className="w-4 h-4 rounded text-[#0b6623] focus:ring-[#0b6623] cursor-pointer accent-[#0b6623]"
                   />
                 </th>
                 <th className="py-3 px-3.5">Date</th>
@@ -438,7 +438,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                           type="checkbox"
                           checked={selectedOrderIds.includes(order.id)}
                           onChange={() => toggleSelectOne(order.id)}
-                          className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+                          className="w-4 h-4 rounded text-[#0b6623] focus:ring-[#0b6623] cursor-pointer accent-[#0b6623]"
                         />
                       </td>
 
@@ -465,7 +465,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                       <td className="py-3 px-3.5 align-middle">
                         <div className="flex items-center gap-1.5">
                           <Building2 className="w-3.5 h-3.5 text-[#0b6623] shrink-0" />
-                          <span className="font-bold text-emerald-900 truncate max-w-[170px]" title={receiverName}>
+                          <span className="font-bold text-[#0b6623] truncate max-w-[170px]" title={receiverName}>
                             {receiverName}
                           </span>
                         </div>
@@ -483,7 +483,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                             className={`px-1.5 py-0.5 rounded text-[9px] font-black ${
                               order.type === 'PO'
                                 ? 'bg-purple-100 text-purple-800 border border-purple-300'
-                                : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                : 'bg-emerald-100 text-[#0b6623] border border-emerald-300'
                             }`}
                           >
                             {order.type}
@@ -510,10 +510,10 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
 
                       {/* Total */}
                       <td className="py-3 px-3.5 align-middle text-right whitespace-nowrap font-mono">
-                        <span className="text-xs font-black text-emerald-800">
+                        <span className="text-xs font-black text-[#0b6623]">
                           ₹{gross.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </span>
-                        <span className="text-[9px] text-emerald-600 font-semibold block">incl. GST</span>
+                        <span className="text-[9px] text-[#0b6623] font-semibold block">incl. GST</span>
                       </td>
 
                       {/* Actions: Edit PDF, Download PDF, Add Note, Send Mail */}
@@ -523,7 +523,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                           <button
                             type="button"
                             onClick={() => setEditingPDFOrder(order)}
-                            className="p-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 shadow-2xs active:scale-95 transition-all cursor-pointer"
+                            className="p-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-[#0b6623] border border-emerald-300 shadow-2xs active:scale-95 transition-all cursor-pointer"
                             title="Edit PDF (Interactive vector editor with jsPDF & autotable)"
                           >
                             <FileEdit className="w-3.5 h-3.5" />

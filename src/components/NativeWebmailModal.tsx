@@ -113,13 +113,13 @@ Cosmo Cnergy`;
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-md shadow-emerald-500/20">
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-md shadow-[#0b6623]/20">
               <Mail className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-bold text-[#020617]">Official Webmail Composer</h3>
-                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-[#0b6623] border border-emerald-300">
                   {orderType}
                 </span>
               </div>
@@ -143,7 +143,7 @@ Cosmo Cnergy`;
 
         {sendSuccess ? (
           <div className="py-12 flex flex-col items-center justify-center space-y-3 text-center">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 border border-emerald-300 flex items-center justify-center text-emerald-600 animate-in zoom-in-50 duration-200">
+            <div className="w-16 h-16 rounded-full bg-emerald-100 border border-emerald-300 flex items-center justify-center text-[#0b6623] animate-in zoom-in-50 duration-200">
               <CheckCircle className="w-9 h-9" />
             </div>
             <h3 className="text-xl font-bold text-[#020617]">Email Dispatched via Webmail SMTP!</h3>
@@ -162,7 +162,7 @@ Cosmo Cnergy`;
                 value={toEmail}
                 onChange={e => setToEmail(e.target.value)}
                 placeholder="sales@vendor.com"
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
               />
             </div>
 
@@ -174,7 +174,7 @@ Cosmo Cnergy`;
                 required
                 value={subject}
                 onChange={e => setSubject(e.target.value)}
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium"
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
               />
             </div>
 
@@ -186,7 +186,7 @@ Cosmo Cnergy`;
                 required
                 value={bodyText}
                 onChange={e => setBodyText(e.target.value)}
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl p-3 text-xs text-[#020617] font-mono focus:outline-none focus:border-emerald-500 leading-relaxed resize-none"
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl p-3 text-xs text-[#020617] font-mono focus:outline-none focus:border-[#0b6623] leading-relaxed resize-none"
               />
             </div>
 
@@ -244,7 +244,7 @@ Cosmo Cnergy`;
               <button
                 type="submit"
                 disabled={isSending}
-                className="flex items-center gap-2 px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-emerald-500/20 active:scale-95 disabled:opacity-50 transition-all"
+                className="flex items-center gap-2 px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 disabled:opacity-50 transition-all"
               >
                 {isSending ? (
                   <>

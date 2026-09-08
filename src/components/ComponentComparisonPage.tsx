@@ -344,7 +344,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-3 py-1 rounded-full bg-[#0b6623]/10 text-emerald-900 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5">
+          <span className="px-3 py-1 rounded-full bg-[#0b6623]/10 text-[#0b6623] border border-[#0b6623]/30 text-xs font-bold flex items-center gap-1.5">
             <Building2 className="w-3.5 h-3.5 text-[#0b6623]" />
             <span>{linkedCompanies.length} Linked {linkedCompanies.length === 1 ? 'Company' : 'Companies'}</span>
           </span>
@@ -364,7 +364,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                 <h1 className="text-lg sm:text-xl font-black text-[#0D0D0D] tracking-tight">
                   {component.name}
                 </h1>
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-[#0b6623] border border-emerald-300">
                   {component.category || 'General'}
                 </span>
               </div>
@@ -385,7 +385,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
 
             <div>
               <span className="text-[10px] text-[#334155] uppercase font-bold block">Default Rate</span>
-              <span className="text-sm font-extrabold text-emerald-800 font-mono">
+              <span className="text-sm font-extrabold text-[#0b6623] font-mono">
                 ₹{Number(component.preset_price || 0).toLocaleString('en-IN')}
               </span>
             </div>
@@ -448,7 +448,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                   onClick={() => handleSortToggle('rfq_quoted_price')}
                   className={`py-3.5 px-5 cursor-pointer transition-colors ${
                     sortField === 'rfq_quoted_price'
-                      ? 'bg-emerald-600/15 text-emerald-950 font-black'
+                      ? 'bg-emerald-600/15 text-[#0b6623] font-black'
                       : 'hover:bg-[#f8fafc] text-[#0D0D0D]'
                   }`}
                   title="Click to toggle: Ascending (Lowest price) -> Descending (Highest price) -> Reset"
@@ -472,7 +472,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                   onClick={() => handleSortToggle('moq')}
                   className={`py-3.5 px-5 cursor-pointer transition-colors ${
                     sortField === 'moq'
-                      ? 'bg-emerald-600/15 text-emerald-950 font-black'
+                      ? 'bg-emerald-600/15 text-[#0b6623] font-black'
                       : 'hover:bg-[#f8fafc] text-[#0D0D0D]'
                   }`}
                   title="Click to toggle: Ascending (Lowest MOQ) -> Descending (Highest MOQ) -> Reset"
@@ -496,7 +496,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                   onClick={() => handleSortToggle('lead_time_days')}
                   className={`py-3.5 px-5 cursor-pointer transition-colors ${
                     sortField === 'lead_time_days'
-                      ? 'bg-emerald-600/15 text-emerald-950 font-black'
+                      ? 'bg-emerald-600/15 text-[#0b6623] font-black'
                       : 'hover:bg-[#f8fafc] text-[#0D0D0D]'
                   }`}
                   title="Click to toggle: Ascending (Shortest lead time) -> Descending (Longest lead time) -> Reset"
@@ -554,7 +554,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                           {link.company.name}
                         </div>
                         {idx === 0 && !sortField && (
-                          <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
+                          <span className="px-1.5 py-0.2 rounded text-[9px] font-black bg-emerald-100 text-[#0b6623] border border-emerald-300">
                             Primary
                           </span>
                         )}
@@ -589,7 +589,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                                 setEditingCell(null);
                               }
                             }}
-                            className="w-28 bg-white border-2 border-emerald-500 rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#0D0D0D] focus:outline-none shadow-sm"
+                            className="w-28 bg-white border-2 border-[#0b6623] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#0D0D0D] focus:outline-none shadow-sm"
                           />
                         </div>
                       ) : (
@@ -597,8 +597,8 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                           onClick={() => startEditing(link.id, 'rfq_quoted_price', priceVal)}
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border font-mono font-extrabold cursor-pointer transition-all ${
                             lastSavedCell === `${link.id}-rfq_quoted_price`
-                              ? 'bg-emerald-200 border-emerald-500 text-emerald-950 scale-105'
-                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-emerald-500 text-emerald-900 shadow-2xs'
+                              ? 'bg-emerald-200 border-[#0b6623] text-[#0b6623] scale-105'
+                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-[#0b6623] text-[#0b6623] shadow-2xs'
                           }`}
                           title="Click to edit RFQ Price inline"
                         >
@@ -628,7 +628,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                                 setEditingCell(null);
                               }
                             }}
-                            className="w-24 bg-white border-2 border-emerald-500 rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#0D0D0D] focus:outline-none shadow-sm"
+                            className="w-24 bg-white border-2 border-[#0b6623] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#0D0D0D] focus:outline-none shadow-sm"
                           />
                         </div>
                       ) : (
@@ -636,8 +636,8 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                           onClick={() => startEditing(link.id, 'moq', moqVal)}
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border font-mono font-bold cursor-pointer transition-all ${
                             lastSavedCell === `${link.id}-moq`
-                              ? 'bg-emerald-200 border-emerald-500 text-emerald-950 scale-105'
-                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-emerald-500 text-[#0D0D0D] shadow-2xs'
+                              ? 'bg-emerald-200 border-[#0b6623] text-[#0b6623] scale-105'
+                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-[#0b6623] text-[#0D0D0D] shadow-2xs'
                           }`}
                           title="Click to edit MOQ inline"
                         >
@@ -668,7 +668,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                                 setEditingCell(null);
                               }
                             }}
-                            className="w-24 bg-white border-2 border-emerald-500 rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#0D0D0D] focus:outline-none shadow-sm"
+                            className="w-24 bg-white border-2 border-[#0b6623] rounded-lg px-2 py-1 text-xs font-mono font-bold text-[#0D0D0D] focus:outline-none shadow-sm"
                           />
                         </div>
                       ) : (
@@ -676,8 +676,8 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                           onClick={() => startEditing(link.id, 'lead_time_days', leadTimeVal)}
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border font-mono font-bold cursor-pointer transition-all ${
                             lastSavedCell === `${link.id}-lead_time_days`
-                              ? 'bg-emerald-200 border-emerald-500 text-emerald-950 scale-105'
-                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-emerald-500 text-[#0D0D0D] shadow-2xs'
+                              ? 'bg-emerald-200 border-[#0b6623] text-[#0b6623] scale-105'
+                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-[#0b6623] text-[#0D0D0D] shadow-2xs'
                           }`}
                           title="Click to edit Lead Time inline"
                         >

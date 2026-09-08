@@ -50,7 +50,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-[#E2E8F0]/70 pb-3.5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-800">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-[#0b6623]/30 flex items-center justify-center text-[#0b6623]">
               <ImageIcon className="w-5 h-5" />
             </div>
             <div>
@@ -68,7 +68,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
               href={directDriveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-emerald-100 text-[#0D0D0D] hover:text-emerald-800 border border-[#E2E8F0] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-emerald-100 text-[#0D0D0D] hover:text-[#0b6623] border border-[#E2E8F0] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
               title="Open direct file in Google Drive"
             >
               <ExternalLink className="w-3.5 h-3.5" />
@@ -120,7 +120,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
               </div>
 
               <div className="p-3 bg-slate-900/80 border border-slate-700 rounded-xl text-left text-[11px] text-slate-300 space-y-1">
-                <p className="font-bold text-emerald-400">How to fix:</p>
+                <p className="font-bold text-[#0b6623]">How to fix:</p>
                 <p>1. Open the file in Google Drive.</p>
                 <p>2. Set Sharing permissions to <strong className="text-white">"Anyone with the link can view"</strong>.</p>
               </div>

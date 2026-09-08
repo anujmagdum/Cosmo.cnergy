@@ -1639,7 +1639,7 @@ export const App: React.FC = () => {
         className="fixed bottom-6 right-6 z-30 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-slate-900/95 hover:bg-slate-800 border border-slate-700 text-white shadow-xl shadow-slate-900/20 active:scale-95 transition-all group cursor-pointer backdrop-blur-md"
         title="Master Data Universal Search (Ctrl + K)"
       >
-        <div className="w-6 h-6 rounded-lg bg-[#0b6623]/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+        <div className="w-6 h-6 rounded-lg bg-[#0b6623]/20 border border-[#0b6623]/30 flex items-center justify-center text-[#0b6623] group-hover:scale-110 transition-transform">
           <Search className="w-3.5 h-3.5" />
         </div>
         <span className="font-bold text-xs tracking-wide text-slate-100 group-hover:text-white">
