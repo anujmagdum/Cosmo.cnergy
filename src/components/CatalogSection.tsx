@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useDeferredValue } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   CatalogItem,
@@ -30,7 +30,10 @@ import {
   FolderPlus,
   Trash2,
   Building2,
+  ChevronLeft,
   ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
   ChevronDown,
   X,
   Check,
@@ -123,6 +126,11 @@ export const CatalogSection: React.FC<Props> = ({
   const navigate = useNavigate();
   const [isFoldersExpanded, setIsFoldersExpanded] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const deferredSearchTerm = useDeferredValue(searchTerm);
+
+  // Pagination states for high-performance rendering of 800+ components
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(50);
   const [lightboxData, setLightboxData] = useState<{ url: string; name: string } | null>(null);
   
   // Initialize category filter from URL Search Params or sessionStorage
@@ -487,10 +495,17 @@ Please send your best quote & availability.`;
     );
   }, [folders, searchTerm]);
 
+  // Reset pagination to page 1 whenever any filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [deferredSearchTerm, selectedCategoryFilter, activeStatusFilter]);
+
   // Reactive Catalog Filtering with category and widget status filter (Data-bound with component_id & product_id)
   const filteredCatalog = useMemo(() => {
+    const search = deferredSearchTerm.toLowerCase().trim();
+    const filterCat = (selectedCategoryFilter || 'ALL').toLowerCase().trim();
+
     return catalog.filter(c => {
-      const search = searchTerm.toLowerCase().trim();
       const compName = (c.name || '').toLowerCase();
       const compSpecs = (c.specs || '').toLowerCase();
       const compSku = (c.sku || '').toLowerCase();
@@ -501,22 +516,119 @@ Please send your best quote & availability.`;
         compSpecs.includes(search) ||
         compSku.includes(search);
 
-      const compCat = (c.category || '').toLowerCase().trim();
-      const filterCat = (selectedCategoryFilter || 'ALL').toLowerCase().trim();
+      if (!matchesSearch) return false;
 
+      const compCat = (c.category || '').toLowerCase().trim();
       const matchesCategory =
         filterCat === 'all' ||
         (filterCat === 'uncategorized' && (!compCat || compCat === '')) ||
         (compCat === filterCat);
 
-      let matchesStatus = true;
+      if (!matchesCategory) return false;
+
       if (activeStatusFilter === 'TO_BE_ORDERED') {
-        matchesStatus = isStockBottleneck(c);
+        return isStockBottleneck(c);
       }
 
-      return matchesSearch && matchesCategory && matchesStatus;
+      return true;
     });
-  }, [catalog, searchTerm, selectedCategoryFilter, activeStatusFilter, isStockBottleneck]);
+  }, [catalog, deferredSearchTerm, selectedCategoryFilter, activeStatusFilter, isStockBottleneck]);
+
+  // High-performance windowed slicing of 800+ items
+  const totalFilteredCount = filteredCatalog.length;
+  const isAllPages = pageSize >= totalFilteredCount || pageSize <= 0;
+  const totalPages = isAllPages ? 1 : Math.ceil(totalFilteredCount / pageSize);
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages || 1);
+
+  const paginatedCatalog = useMemo(() => {
+    if (isAllPages) return filteredCatalog;
+    const startIndex = (safeCurrentPage - 1) * pageSize;
+    return filteredCatalog.slice(startIndex, startIndex + pageSize);
+  }, [filteredCatalog, safeCurrentPage, pageSize, isAllPages]);
+
+  // Pre-computed category counts to eliminate heavy nested loops across 800+ components
+  const { categoryCountMap, uncategorizedCount } = useMemo(() => {
+    const counts: Record<string, number> = {};
+    let uncat = 0;
+    const catIdToName = new Map<string, string>();
+    for (let i = 0; i < categories.length; i++) {
+      catIdToName.set(categories[i].id, categories[i].name.toLowerCase().trim());
+    }
+
+    for (let i = 0; i < catalog.length; i++) {
+      const item = catalog[i];
+      let catName = (item.category || '').toLowerCase().trim();
+      if (!catName && item.category_id) {
+        catName = catIdToName.get(item.category_id) || '';
+      }
+      if (!catName) {
+        uncat++;
+      } else {
+        counts[catName] = (counts[catName] || 0) + 1;
+      }
+    }
+    return { categoryCountMap: counts, uncategorizedCount: uncat };
+  }, [catalog, categories]);
+
+  // Pre-computed sourcing & lowest quoted vendor lookup map (O(1) lookup per card instead of O(N) sort/filter)
+  const componentVendorInfoMap = useMemo(() => {
+    const map = new Map<string, {
+      count: number;
+      lowestCompanyText: string;
+    }>();
+
+    const companyById = new Map<string, Company>();
+    for (let i = 0; i < companies.length; i++) {
+      companyById.set(companies[i].id, companies[i]);
+    }
+
+    const grouped = new Map<string, ComponentCompany[]>();
+    for (let i = 0; i < componentCompanies.length; i++) {
+      const cc = componentCompanies[i];
+      let list = grouped.get(cc.component_id);
+      if (!list) {
+        list = [];
+        grouped.set(cc.component_id, list);
+      }
+      list.push(cc);
+    }
+
+    for (let i = 0; i < catalog.length; i++) {
+      const item = catalog[i];
+      const linked = grouped.get(item.id) || [];
+      const count = linked.length > 0 ? linked.length : (item.company_ids?.length || (item.company_id ? 1 : 0));
+
+      let lowestCompanyText = '';
+      if (linked.length > 0) {
+        let minPrice = Infinity;
+        let minCompName = 'Default Company';
+        for (let j = 0; j < linked.length; j++) {
+          const l = linked[j];
+          const p = l.rfq_quoted_price ?? l.unit_price ?? 0;
+          if (p < minPrice) {
+            minPrice = p;
+            const cObj = companyById.get(l.company_id);
+            if (cObj) minCompName = cObj.name;
+          }
+        }
+        if (linked.length > 1) {
+          lowestCompanyText = `${minCompName} (Lowest ₹${minPrice === Infinity ? 0 : minPrice}) +${linked.length - 1} more`;
+        } else {
+          lowestCompanyText = `${minCompName} (₹${minPrice === Infinity ? 0 : minPrice})`;
+        }
+      } else if (count > 1) {
+        const comp = companyById.get(item.company_id || '');
+        lowestCompanyText = `${comp?.name || 'Primary'} +${count - 1} more`;
+      } else if (count === 1 && item.company_id) {
+        const comp = companyById.get(item.company_id);
+        lowestCompanyText = comp?.name || 'Primary';
+      }
+
+      map.set(item.id, { count, lowestCompanyText });
+    }
+
+    return map;
+  }, [catalog, componentCompanies, companies]);
 
   // Helper to build draft subject and body for bulk dispatch
   const buildBulkSendDraftContent = useCallback((docType: 'RFQ' | 'PO', items: CatalogItem[]) => {
@@ -1133,12 +1245,7 @@ Cosmo.cnergy Procurement Team`;
             </button>
 
             {allCategoryNames.map(cat => {
-              const count = catalog.filter(
-                c =>
-                  (c.category || '').toLowerCase().trim() === cat.toLowerCase().trim() ||
-                  (c.category_id && categories.find(ct => ct.id === c.category_id)?.name.toLowerCase().trim() === cat.toLowerCase().trim())
-              ).length;
-
+              const count = categoryCountMap[cat.toLowerCase().trim()] || 0;
               return (
                 <button
                   key={cat}
@@ -1154,23 +1261,19 @@ Cosmo.cnergy Procurement Team`;
               );
             })}
 
-            {(() => {
-              const uncategorizedCount = catalog.filter(c => !c.category || c.category.trim() === '').length;
-              if (uncategorizedCount === 0) return null;
-              return (
-                <button
-                  key="Uncategorized"
-                  onClick={() => handleSelectCategory('Uncategorized')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                    selectedCategoryFilter.toLowerCase() === 'uncategorized'
-                      ? 'bg-emerald-600 text-white font-bold shadow-xs'
-                      : 'bg-white text-slate-800 hover:bg-slate-100 border border-slate-200'
-                  }`}
-                >
-                  Uncategorized ({uncategorizedCount})
-                </button>
-              );
-            })()}
+            {uncategorizedCount > 0 && (
+              <button
+                key="Uncategorized"
+                onClick={() => handleSelectCategory('Uncategorized')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                  selectedCategoryFilter.toLowerCase() === 'uncategorized'
+                    ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                    : 'bg-white text-slate-800 hover:bg-slate-100 border border-slate-200'
+                }`}
+              >
+                Uncategorized ({uncategorizedCount})
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -1604,7 +1707,7 @@ Cosmo.cnergy Procurement Team`;
               </div>
             </div>
           ) : (
-            filteredCatalog.map(item => {
+            paginatedCatalog.map(item => {
             const company = companies.find(s => s.id === item.company_id);
             const isBottleneck = isStockBottleneck(item);
 
@@ -1723,33 +1826,9 @@ Cosmo.cnergy Procurement Team`;
                       <span className="flex items-center gap-1 truncate text-[#020617] font-medium">
                         <Building2 className="w-3 h-3 text-emerald-600 shrink-0" />
                         <span className="truncate">
-                          {(() => {
-                            const linkedSupps = componentCompanies.filter(cs => cs.component_id === item.id);
-                            if (linkedSupps.length > 0) {
-                              // Deterministic sort by lowest RFQ quoted price (lowest first, no AI)
-                              const sorted = [...linkedSupps].sort((a, b) => {
-                                const pA = (a.rfq_quoted_price ?? a.unit_price ?? 0);
-                                const pB = (b.rfq_quoted_price ?? b.unit_price ?? 0);
-                                return pA - pB;
-                              });
-                              const lowest = sorted[0];
-                              const lowestComp = companies.find(c => c.id === lowest.company_id);
-                              const price = lowest.rfq_quoted_price ?? lowest.unit_price;
-                              const name = lowestComp?.name || 'Default Company';
-                              if (linkedSupps.length > 1) {
-                                return `${name} (Lowest ₹${price}) +${linkedSupps.length - 1} more`;
-                              }
-                              return `${name} (₹${price})`;
-                            }
-                            const count = item.company_ids?.length || (item.company_id ? 1 : 0);
-                            if (count > 1) {
-                              return `${company?.name || 'Primary'} +${count - 1} more`;
-                            }
-                            if (count === 1 && company?.name) {
-                              return company.name;
-                            }
-                            return <span className="text-slate-400 italic font-normal">Unassigned</span>;
-                          })()}
+                          {componentVendorInfoMap.get(item.id)?.lowestCompanyText || (
+                            <span className="text-slate-400 italic font-normal">Unassigned</span>
+                          )}
                         </span>
                       </span>
                     </div>
@@ -1809,10 +1888,7 @@ Cosmo.cnergy Procurement Team`;
 
                                     {/* Linked Companies indicator badge (Click card to open dedicated view) */}
                   {(() => {
-                    const linked = componentCompanies.filter(cs => cs.component_id === item.id);
-                    const sCount = linked.length > 0 
-                      ? linked.length 
-                      : (item.company_ids?.length || (item.company_id ? 1 : 0));
+                    const sCount = componentVendorInfoMap.get(item.id)?.count || 0;
 
                     if (sCount === 0) {
                       return (
@@ -1874,6 +1950,114 @@ Cosmo.cnergy Procurement Team`;
             );
           }))}
         </div>
+
+        {/* High-Performance Pagination & View Controls */}
+        {totalFilteredCount > 0 && (
+          <div className="bg-[#FFFFFF] rounded-xl p-3 border border-[#E2E8F0] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs mt-2">
+            {/* Left: Range and Totals */}
+            <div className="text-slate-600 font-medium">
+              Showing{' '}
+              <span className="font-bold text-[#020617]">
+                {isAllPages ? 1 : (safeCurrentPage - 1) * pageSize + 1}
+              </span>
+              {' '}to{' '}
+              <span className="font-bold text-[#020617]">
+                {isAllPages ? totalFilteredCount : Math.min(safeCurrentPage * pageSize, totalFilteredCount)}
+              </span>
+              {' '}of{' '}
+              <span className="font-bold text-[#020617]">{totalFilteredCount}</span> components
+              {totalFilteredCount !== catalog.length && (
+                <span className="text-slate-400 ml-1">({catalog.length} total in inventory)</span>
+              )}
+            </div>
+
+            {/* Middle: Page Size Selector */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-slate-500 font-medium mr-1">Per page:</span>
+              {[25, 50, 100, 250].map(size => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => {
+                    setPageSize(size);
+                    setCurrentPage(1);
+                  }}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                    pageSize === size && !isAllPages
+                      ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+                      : 'bg-[#FFFFFF] text-slate-700 border-[#E2E8F0] hover:border-emerald-400 hover:bg-slate-50'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  setPageSize(totalFilteredCount || 1000);
+                  setCurrentPage(1);
+                }}
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                  isAllPages
+                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+                    : 'bg-[#FFFFFF] text-slate-700 border-[#E2E8F0] hover:border-emerald-400 hover:bg-slate-50'
+                }`}
+                title="Display all components without pagination"
+              >
+                All ({totalFilteredCount})
+              </button>
+            </div>
+
+            {/* Right: Page Navigation Controls */}
+            {!isAllPages && totalPages > 1 && (
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(1)}
+                  disabled={safeCurrentPage <= 1}
+                  className="p-1.5 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] text-slate-700 hover:bg-slate-50 hover:border-emerald-400 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
+                  title="First Page"
+                >
+                  <ChevronsLeft className="w-3.5 h-3.5" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={safeCurrentPage <= 1}
+                  className="p-1.5 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] text-slate-700 hover:bg-slate-50 hover:border-emerald-400 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
+                  title="Previous Page"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                </button>
+
+                <span className="px-3 py-1 font-semibold text-slate-700 text-xs select-none">
+                  Page <span className="font-bold text-[#020617]">{safeCurrentPage}</span> of <span className="font-bold text-[#020617]">{totalPages}</span>
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={safeCurrentPage >= totalPages}
+                  className="p-1.5 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] text-slate-700 hover:bg-slate-50 hover:border-emerald-400 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
+                  title="Next Page"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={safeCurrentPage >= totalPages}
+                  className="p-1.5 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] text-slate-700 hover:bg-slate-50 hover:border-emerald-400 disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer"
+                  title="Last Page"
+                >
+                  <ChevronsRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Add Product Folder Modal */}
