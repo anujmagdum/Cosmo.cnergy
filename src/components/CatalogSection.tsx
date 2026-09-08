@@ -1205,7 +1205,7 @@ Cosmo.cnergy Procurement Team`;
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-xl bg-white border border-slate-200 text-slate-950 shadow-xs">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-950 flex items-center gap-2.5">
-            <Layers className="w-6 h-6 text-emerald-600" />
+            <Layers className="w-6 h-6 text-[#0b6623]" />
             <span>Components & Product Catalog</span>
           </h2>
           <p className="text-xs text-slate-700 mt-1">
@@ -1221,7 +1221,7 @@ Cosmo.cnergy Procurement Team`;
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
             title="Open SKU Build Capacity Calculator in slide-over drawer"
           >
-            <Calculator className="w-4 h-4 text-emerald-600" />
+            <Calculator className="w-4 h-4 text-[#0b6623]" />
             <span>Build Calculator</span>
           </button>
 
@@ -1352,12 +1352,12 @@ Cosmo.cnergy Procurement Team`;
             <div className="w-6 h-6 rounded-lg bg-[#FFFFFF] border border-[#E2E8F0] flex items-center justify-center text-[#1e293b] group-hover:bg-emerald-100 group-hover:text-emerald-800 group-hover:border-emerald-300 transition-all">
               <ChevronDown
                 className={`w-4 h-4 transition-transform duration-200 ${
-                  isFoldersExpanded ? 'rotate-180 text-emerald-700' : 'text-[#1e293b]'
+                  isFoldersExpanded ? 'rotate-180 text-[#0b6623]' : 'text-[#1e293b]'
                 }`}
               />
             </div>
 
-            <Folder className="w-4 h-4 text-emerald-600" />
+            <Folder className="w-4 h-4 text-[#0b6623]" />
             <span>Product Folders & Pack Assemblies</span>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-[#FFFFFF] text-[#020617] border border-[#E2E8F0]">
               {filteredFolders.length}
@@ -1450,7 +1450,7 @@ Cosmo.cnergy Procurement Team`;
                         }}
                         className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0b6623]/10 hover:bg-[#084d1a]/20 text-emerald-800 font-bold text-xs border border-emerald-500/30 transition-all active:scale-95 cursor-pointer"
                       >
-                        <PlusCircle className="w-3.5 h-3.5 text-emerald-600" />
+                        <PlusCircle className="w-3.5 h-3.5 text-[#0b6623]" />
                         <span>+ Component</span>
                       </button>
 
@@ -1501,7 +1501,7 @@ Cosmo.cnergy Procurement Team`;
                 onChange={handleSelectAllComponents}
                 className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
               />
-              <Package className="w-4 h-4 text-emerald-600" />
+              <Package className="w-4 h-4 text-[#0b6623]" />
               <span>Components & Raw Materials ({filteredCatalog.length})</span>
             </h3>
             <span className="text-[11px] text-[#1e293b] ml-6">Maximized density ladder view with multi-select bulk delete</span>
@@ -1561,7 +1561,7 @@ Cosmo.cnergy Procurement Team`;
                 {/* Modal Header */}
                 <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
                   <div className="flex items-center gap-2">
-                    <Send className="w-5 h-5 text-emerald-600" />
+                    <Send className="w-5 h-5 text-[#0b6623]" />
                     <h3 className="text-xl font-bold text-[#020617]">Send Procurement Dispatch</h3>
                   </div>
                   <button
@@ -1678,7 +1678,7 @@ Cosmo.cnergy Procurement Team`;
                   {/* Attachment Picker */}
                   <div className="flex items-center justify-between p-2.5 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0]">
                     <div className="flex items-center gap-2 text-[#1e293b]">
-                      <Paperclip className="w-4 h-4 text-emerald-600" />
+                      <Paperclip className="w-4 h-4 text-[#0b6623]" />
                       {bulkSendAttachment ? (
                         <span className="font-bold text-[#020617]">{bulkSendAttachment.filename} ({bulkSendAttachment.size})</span>
                       ) : (
@@ -1707,7 +1707,7 @@ Cosmo.cnergy Procurement Team`;
 
                   {bulkSendProgress && (
                     <div className="px-3 py-2 rounded-xl bg-emerald-100 border border-emerald-400 text-emerald-900 text-xs font-bold flex items-center gap-2">
-                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-700" />
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-[#0b6623]" />
                       <span>{bulkSendProgress}</span>
                     </div>
                   )}
@@ -1816,7 +1816,7 @@ Cosmo.cnergy Procurement Team`;
                   />
 
                   <div className="w-8 h-8 rounded-lg bg-[#FFFFFF] text-[#020617] border border-[#E2E8F0] flex items-center justify-center font-bold text-xs shrink-0">
-                    <Package className="w-4 h-4 text-emerald-700" />
+                    <Package className="w-4 h-4 text-[#0b6623]" />
                   </div>
 
                   <div className="truncate min-w-0 flex-1">
@@ -1840,8 +1840,8 @@ Cosmo.cnergy Procurement Team`;
                           className="p-1 rounded-md bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 transition-all cursor-pointer shrink-0 shadow-2xs flex items-center gap-0.5"
                           title="Open Google Drive Image Lightbox"
                         >
-                          <ImageIcon className="w-3.5 h-3.5 text-emerald-700" />
-                          <Eye className="w-2.5 h-2.5 text-emerald-600" />
+                          <ImageIcon className="w-3.5 h-3.5 text-[#0b6623]" />
+                          <Eye className="w-2.5 h-2.5 text-[#0b6623]" />
                         </button>
                       ) : (
                         <button
@@ -1912,7 +1912,7 @@ Cosmo.cnergy Procurement Team`;
                       </span>
                       <span>•</span>
                       <span className="flex items-center gap-1 truncate text-[#020617] font-medium">
-                        <Building2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                        <Building2 className="w-3 h-3 text-[#0b6623] shrink-0" />
                         <span className="truncate">
                           {componentVendorInfoMap.get(item.id)?.lowestCompanyText || (
                             <span className="text-slate-400 italic font-normal">Unassigned</span>
@@ -2010,9 +2010,9 @@ Cosmo.cnergy Procurement Team`;
                         className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#0b6623]/10 hover:bg-[#084d1a]/20 text-emerald-950 border border-emerald-500/30 text-[10px] font-bold shrink-0 transition-colors cursor-pointer"
                         title="Click to open Company Quotation & Commercial Parameters"
                       >
-                        <Building2 className="w-3.5 h-3.5 text-emerald-700" />
+                        <Building2 className="w-3.5 h-3.5 text-[#0b6623]" />
                         <span>{sCount} {sCount === 1 ? 'Company' : 'Companies'}</span>
-                        <ChevronRight className="w-3 h-3 text-emerald-600 group-hover/card:translate-x-0.5 transition-transform" />
+                        <ChevronRight className="w-3 h-3 text-[#0b6623] group-hover/card:translate-x-0.5 transition-transform" />
                       </button>
                     );
                   })()}
@@ -2287,7 +2287,7 @@ Cosmo.cnergy Procurement Team`;
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <div>
                     <label className="block font-bold text-xs text-[#020617] uppercase tracking-wider flex items-center gap-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <Building2 className="w-3.5 h-3.5 text-[#0b6623]" />
                       <span>Associated Sourcing Companies</span> <span className="text-[11px] text-slate-700 font-normal lowercase">(optional)</span>
                     </label>
                     <p className="text-[11px] text-[#1e293b] mt-0.5">
@@ -2296,7 +2296,7 @@ Cosmo.cnergy Procurement Team`;
                   </div>
                   {catalogForm.selectedCompanies.length >= 2 && (
                     <span className="self-start sm:self-auto flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#0b6623]/15 text-emerald-900 border border-emerald-500/30 text-[10px] font-black animate-in fade-in">
-                      <Sparkles className="w-3 h-3 text-emerald-600" />
+                      <Sparkles className="w-3 h-3 text-[#0b6623]" />
                       <span>Comparison Enabled ({catalogForm.selectedCompanies.length} Vendors)</span>
                     </span>
                   )}
@@ -2342,7 +2342,7 @@ Cosmo.cnergy Procurement Team`;
                           key={item.company_id}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-[#020617] border border-[#E2E8F0] text-xs font-bold shadow-2xs group"
                         >
-                          <Building2 className="w-3 h-3 text-emerald-600" />
+                          <Building2 className="w-3 h-3 text-[#0b6623]" />
                           <span className="truncate max-w-[140px]">{supp?.name || item.company_id}</span>
                           {idx === 0 && (
                             <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-100 text-emerald-800 font-semibold">
@@ -2371,7 +2371,7 @@ Cosmo.cnergy Procurement Team`;
                 {/* Multi-Company Highlighting Callout */}
                 {catalogForm.selectedCompanies.length >= 2 ? (
                   <div className="p-3 rounded-xl bg-teal-50 border border-teal-200 text-xs text-teal-950 flex items-start gap-2">
-                    <Sparkles className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
+                    <Sparkles className="w-4 h-4 text-[#0b6623] shrink-0 mt-0.5" />
                     <div>
                       <strong className="font-bold">Multi-Vendor Sourcing Active:</strong> You can tune individual RFQ quoted rates, MOQ, and lead times per company below. These metrics feed directly into algorithmic pre-scoring & Gemini 3.6 Flash recommendations.
                     </div>

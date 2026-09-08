@@ -184,9 +184,9 @@ export const CsvActionWidget: React.FC<Props> = ({
         title={`Import ${sectionType} from CSV file`}
       >
         {isImporting ? (
-          <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600" />
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-[#0b6623]" />
         ) : (
-          <Upload className="w-3.5 h-3.5 text-emerald-600" />
+          <Upload className="w-3.5 h-3.5 text-[#0b6623]" />
         )}
         <span className="hidden sm:inline">Import CSV</span>
         <span className="sm:hidden">Import</span>

@@ -219,7 +219,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-5 rounded-2xl bg-[#0B192C] text-white shadow-md">
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-            <History className="w-7 h-7 text-emerald-400" />
+            <History className="w-7 h-7 text-[#0b6623]" />
             <span>Procurement & Invoice Summary</span>
           </h2>
           <p className="text-xs text-slate-300 mt-1">
@@ -363,7 +363,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         {/* Table Header Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E2E8F0]">
           <div className="flex items-center gap-2">
-            <Receipt className="w-5 h-5 text-emerald-700" />
+            <Receipt className="w-5 h-5 text-[#0b6623]" />
             <h3 className="font-bold text-[#020617] text-sm md:text-base">
               Finance & Procurement Summary Registry ({filteredOrders.length})
             </h3>
@@ -445,7 +445,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                       {/* Date */}
                       <td className="py-3 px-3.5 align-middle whitespace-nowrap">
                         <div className="flex items-center gap-1.5 font-bold text-[#020617]">
-                          <Calendar className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                          <Calendar className="w-3.5 h-3.5 text-[#0b6623] shrink-0" />
                           <span>{formattedDate}</span>
                         </div>
                       </td>
@@ -464,7 +464,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                       {/* Receiver */}
                       <td className="py-3 px-3.5 align-middle">
                         <div className="flex items-center gap-1.5">
-                          <Building2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                          <Building2 className="w-3.5 h-3.5 text-[#0b6623] shrink-0" />
                           <span className="font-bold text-emerald-900 truncate max-w-[170px]" title={receiverName}>
                             {receiverName}
                           </span>

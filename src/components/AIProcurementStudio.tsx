@@ -212,7 +212,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
         <div className="bg-[#FDF6E3] border border-[#D6D1B1] rounded-2xl p-4 shadow-md animate-in fade-in space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold text-[#073642] uppercase tracking-wider flex items-center gap-1.5">
-              <Key className="w-4 h-4 text-emerald-600" />
+              <Key className="w-4 h-4 text-[#0b6623]" />
               <span>Gemini API Key Configuration</span>
             </h4>
             <span className="text-[11px] text-[#586E75]">Supports Google AI Studio API Keys</span>

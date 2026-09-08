@@ -596,7 +596,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
             <div className="bg-[#FFFFFF] p-5 rounded-2xl border border-[#E2E8F0] space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#1e293b] uppercase tracking-wider flex items-center gap-1.5">
-                  <Calculator className="w-4 h-4 text-emerald-600" />
+                  <Calculator className="w-4 h-4 text-[#0b6623]" />
                   <span>1. Production Assembly Target & Multiplier</span>
                 </span>
                 <span className="text-xs text-[#1e293b] font-semibold">
@@ -665,7 +665,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
             <div className="bg-[#FFFFFF] p-5 rounded-2xl border border-[#E2E8F0] space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#1e293b] uppercase tracking-wider flex items-center gap-1.5">
-                  <Layers className="w-4 h-4 text-emerald-600" />
+                  <Layers className="w-4 h-4 text-[#0b6623]" />
                   <span>1. Select Components for On-Demand Batch ({selectedCompIds.length} Selected)</span>
                 </span>
                 <span className="text-xs text-[#1e293b] font-semibold">
@@ -800,7 +800,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                         : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border-[#E2E8F0]'
                     }`}
                   >
-                    <Building2 className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-emerald-600'}`} />
+                    <Building2 className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#0b6623]'}`} />
                     <span>{draft.company.name}</span>
                     <span className="opacity-80 font-mono text-[10px]">
                       (₹{draft.total_amount.toLocaleString('en-IN')})
@@ -925,7 +925,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                     onClick={() => handleDispatchSingleVendorWebmail(selectedDraft)}
                     className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0B192C] hover:bg-[#1e3e62] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                   >
-                    <Mail className="w-3.5 h-3.5 text-emerald-400" />
+                    <Mail className="w-3.5 h-3.5 text-[#0b6623]" />
                     <span>Send this {orderType} via Webmail</span>
                   </button>
 

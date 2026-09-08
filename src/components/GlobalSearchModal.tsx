@@ -209,7 +209,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
         <div className="p-6 space-y-6 max-h-[65vh] overflow-y-auto">
           {!debouncedQuery ? (
             <div className="py-12 text-center space-y-3 text-[#1e293b]">
-              <Sparkles className="w-10 h-10 text-emerald-600 mx-auto opacity-80" />
+              <Sparkles className="w-10 h-10 text-[#0b6623] mx-auto opacity-80" />
               <p className="text-sm font-semibold text-[#020617]">
                 Type any component name, part number, SKU, product folder, or company name.
               </p>
@@ -241,7 +241,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                 results.components.length > 0 && (
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold text-[#1e293b] uppercase tracking-wider">
-                      <Package className="w-4 h-4 text-emerald-600" />
+                      <Package className="w-4 h-4 text-[#0b6623]" />
                       <span>Components & Raw Materials ({results.components.length})</span>
                     </div>
 
@@ -312,7 +312,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                     >
                                       <div className="space-y-0.5">
                                         <div className="flex items-center gap-2">
-                                          <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+                                          <Building2 className="w-3.5 h-3.5 text-[#0b6623]" />
                                           <span className="font-bold text-xs text-[#020617]">{supp.companyName}</span>
                                           {supp.isPrimary && (
                                             <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
@@ -366,7 +366,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                 results.folders.length > 0 && (
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold text-[#1e293b] uppercase tracking-wider">
-                      <Folder className="w-4 h-4 text-emerald-600" />
+                      <Folder className="w-4 h-4 text-[#0b6623]" />
                       <span>Product Folders & BOMs ({results.folders.length})</span>
                     </div>
 
@@ -413,7 +413,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                 (results.orders || []).length > 0 && (
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold text-[#1e293b] uppercase tracking-wider">
-                      <Send className="w-4 h-4 text-emerald-600" />
+                      <Send className="w-4 h-4 text-[#0b6623]" />
                       <span>Procurement Orders & Invoices ({results.orders.length})</span>
                     </div>
 
@@ -460,7 +460,7 @@ export const GlobalSearchModal: React.FC<Props> = ({
                 results.companies.length > 0 && (
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-xs font-bold text-[#1e293b] uppercase tracking-wider">
-                      <Truck className="w-4 h-4 text-emerald-600" />
+                      <Truck className="w-4 h-4 text-[#0b6623]" />
                       <span>Companies & Partners ({results.companies.length})</span>
                     </div>
 

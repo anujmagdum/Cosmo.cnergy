@@ -389,7 +389,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
         /* Optimal Stock Levels Banner (Slim Scale Format) */
         <div className="bg-emerald-50 border border-emerald-300 text-emerald-950 rounded-xl px-3.5 py-2 flex items-center justify-between shadow-xs text-xs">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-[#0b6623] shrink-0" />
             <span className="font-bold text-[#020617]">
               Stock Levels Optimal &mdash; All active inventory items have &gt; 20% safe buffer.
             </span>

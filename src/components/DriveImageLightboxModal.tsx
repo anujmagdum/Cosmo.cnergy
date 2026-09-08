@@ -88,7 +88,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
         <div className="relative w-full min-h-[320px] max-h-[65vh] bg-[#0B192C] rounded-2xl overflow-hidden flex items-center justify-center border border-slate-700">
           {isLoading && !hasError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-slate-300">
-              <RefreshCw className="w-8 h-8 animate-spin text-emerald-400" />
+              <RefreshCw className="w-8 h-8 animate-spin text-[#0b6623]" />
               <span className="text-xs font-mono font-bold tracking-wider">Streaming Google Drive CDN Thumbnail...</span>
             </div>
           )}
@@ -143,7 +143,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
         {/* Footer info */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#334155] pt-1">
           <span className="flex items-center gap-1.5">
-            <ZoomIn className="w-3.5 h-3.5 text-emerald-700" />
+            <ZoomIn className="w-3.5 h-3.5 text-[#0b6623]" />
             <span>Click image to toggle zoom</span>
           </span>
           <span className="font-mono text-[11px] truncate max-w-sm">

@@ -158,7 +158,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
                       onClick={() => handleDispatchVendorWhatsApp(draft)}
                       className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-[#f8fafc] text-[#0D0D0D] font-bold text-xs border border-[#E2E8F0] shadow-xs active:scale-95 transition-all"
                     >
-                      <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                      <MessageSquare className="w-3.5 h-3.5 text-[#0b6623]" />
                       <span>WhatsApp</span>
                     </button>
                   </div>

@@ -92,10 +92,12 @@ export const EditComponentModal: React.FC<Props> = ({
 
   const [formData, setFormData] = useState({
     name: item.name || '',
+    sku: item.sku || '',
     category: item.category || 'Capacitor',
     preset_price: item.preset_price !== undefined ? item.preset_price : 0,
     in_stock_qty: item.in_stock_qty !== undefined ? item.in_stock_qty : 100,
     min_order_qty: item.min_order_qty || 1,
+    alert_threshold_percent: item.alert_threshold_percent !== undefined ? item.alert_threshold_percent : 20,
     uom: item.uom || 'Pcs',
     specs: item.specs || '',
     procurement_status: (item.procurement_status || 'TO_BE_ORDERED') as OrderStatus,
@@ -104,6 +106,23 @@ export const EditComponentModal: React.FC<Props> = ({
 
   const [selectedCompanies, setSelectedCompanies] = useState<FormCompanyMapping[]>(initialCompanyMappings);
   const [companyError, setCompanyError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    setFormData({
+      name: item.name || '',
+      sku: item.sku || '',
+      category: item.category || 'Capacitor',
+      preset_price: item.preset_price !== undefined ? item.preset_price : 0,
+      in_stock_qty: item.in_stock_qty !== undefined ? item.in_stock_qty : 100,
+      min_order_qty: item.min_order_qty || 1,
+      alert_threshold_percent: item.alert_threshold_percent !== undefined ? item.alert_threshold_percent : 20,
+      uom: item.uom || 'Pcs',
+      specs: item.specs || '',
+      procurement_status: (item.procurement_status || 'TO_BE_ORDERED') as OrderStatus,
+      image_drive_url: item.image_drive_url || ''
+    });
+    setSelectedCompanies(initialCompanyMappings);
+  }, [item]);
 
   const handleAddCompany = (companyId: string) => {
     if (!companyId) return;
@@ -138,11 +157,13 @@ export const EditComponentModal: React.FC<Props> = ({
     const updated: CatalogItem = {
       ...item,
       name: formData.name.trim(),
+      sku: formData.sku.trim() || undefined,
       category: formData.category,
       category_id: matchedCat?.id || item.category_id,
       preset_price: Number(formData.preset_price) || 0,
       in_stock_qty: Number(formData.in_stock_qty) || 0,
       min_order_qty: Number(formData.min_order_qty) || 1,
+      alert_threshold_percent: formData.alert_threshold_percent,
       uom: formData.uom || 'Pcs',
       specs: formData.specs.trim(),
       company_id: selectedCompanies[0]?.company_id || item.company_id,
@@ -177,8 +198,8 @@ export const EditComponentModal: React.FC<Props> = ({
       <div className="bg-[white] w-full sm:max-w-xl sm:rounded-3xl rounded-t-3xl border border-[#e2e8f0] shadow-2xl flex flex-col max-h-[90vh] text-[#020617]">
         <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 px-5 py-4 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 flex items-center justify-center">
-              <Edit2 className="w-4 h-4" />
+            <div className="w-9 h-9 rounded-xl bg-[#0b6623]/15 text-[#0b6623] border border-[#0b6623]/30 flex items-center justify-center">
+              <Edit2 className="w-4 h-4 text-[#0b6623]" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-[#020617]">Edit Component Details</h3>
@@ -193,28 +214,54 @@ export const EditComponentModal: React.FC<Props> = ({
         <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
           <div className="overflow-y-auto flex-1 px-5 py-4 space-y-3.5 text-xs">
 
-            <div>
-              <label className="block font-semibold text-[#020617] mb-1">Component Name *</label>
-              <input type="text" required value={formData.name}
-                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                placeholder="e.g. 3.2V 100Ah LFP Cell"
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-semibold" />
+            {/* Component Name & Part Name (SKU) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block font-semibold text-[#020617] mb-1">Component Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g. 1000 pF / 50V"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-semibold"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#020617] mb-1">Part Name / SKU</label>
+                <input
+                  type="text"
+                  value={formData.sku}
+                  onChange={e => setFormData({ ...formData, sku: e.target.value })}
+                  placeholder="e.g. SMD, Radial, HC-49S"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block font-semibold text-[#020617] mb-1">Category</label>
-                <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-bold">
-                  {allCategoryNames.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                <select
+                  value={formData.category}
+                  onChange={e => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-bold"
+                >
+                  {allCategoryNames.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
                 </select>
               </div>
               <div>
                 <label className="block font-semibold text-[#020617] mb-1">Unit of Measure (UOM)</label>
-                <input type="text" value={formData.uom}
+                <input
+                  type="text"
+                  value={formData.uom}
                   onChange={e => setFormData({ ...formData, uom: e.target.value })}
                   placeholder="Pcs, Sets, Kg, etc."
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-medium" />
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                />
               </div>
             </div>
 
@@ -222,21 +269,24 @@ export const EditComponentModal: React.FC<Props> = ({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                 <div>
                   <label className="block font-bold text-xs text-[#020617] uppercase tracking-wider flex items-center gap-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <Building2 className="w-3.5 h-3.5 text-[#0b6623]" />
                     <span>Associated Sourcing Companies</span> <span className="text-[11px] text-slate-700 font-normal lowercase">(optional)</span>
                   </label>
                   <p className="text-[11px] text-[#1e293b] mt-0.5">Manage vendor associations. 2+ vendors enables <strong>Compare Companies</strong> AI engine.</p>
                 </div>
                 {selectedCompanies.length >= 2 && (
-                  <span className="self-start sm:self-auto flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#0b6623]/15 text-emerald-900 border border-emerald-500/30 text-[10px] font-black">
-                    <Sparkles className="w-3 h-3 text-emerald-600" />
+                  <span className="self-start sm:self-auto flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#0b6623]/15 text-[#0b6623] border border-[#0b6623]/30 text-[10px] font-black">
+                    <Sparkles className="w-3 h-3 text-[#0b6623]" />
                     <span>Comparison Enabled ({selectedCompanies.length} Vendors)</span>
                   </span>
                 )}
               </div>
 
-              <select value="" onChange={e => { if (e.target.value) handleAddCompany(e.target.value); }}
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#020617] focus:outline-none focus:border-emerald-500 font-medium cursor-pointer">
+              <select
+                value=""
+                onChange={e => { if (e.target.value) handleAddCompany(e.target.value); }}
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium cursor-pointer"
+              >
                 <option value="">+ Click to add a company to this component...</option>
                 {companies.filter(s => !selectedCompanies.some(sel => sel.company_id === s.id)).map(s => (
                   <option key={s.id} value={s.id}>{s.name} — {s.contact_person || s.category} {s.rating ? ['(★', s.rating, ')'].join(' ') : ''}</option>
@@ -255,9 +305,9 @@ export const EditComponentModal: React.FC<Props> = ({
                     const supp = companies.find(sup => sup.id === s.company_id);
                     return (
                       <span key={s.company_id} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-[#020617] border border-[#e2e8f0] text-xs font-bold shadow-xs">
-                        <Building2 className="w-3 h-3 text-emerald-600" />
+                        <Building2 className="w-3 h-3 text-[#0b6623]" />
                         <span className="truncate max-w-[130px]">{supp?.name || s.company_id}</span>
-                        {idx === 0 && <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-100 text-emerald-800 font-semibold">Primary</span>}
+                        {idx === 0 && <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-100 text-[#0b6623] font-semibold">Primary</span>}
                         <button type="button" onClick={() => handleRemoveCompany(s.company_id)} className="p-0.5 rounded-full hover:bg-red-100 text-[#1e293b] hover:text-red-700 transition-all cursor-pointer ml-1">
                           <X className="w-3 h-3" />
                         </button>
@@ -283,32 +333,49 @@ export const EditComponentModal: React.FC<Props> = ({
                           <div className="flex items-center gap-1.5 text-xs font-bold text-[#020617]">
                             <span className="w-4 h-4 rounded-full bg-[#0b6623] text-white text-[9px] flex items-center justify-center font-mono">{idx + 1}</span>
                             <span>{supp?.name}</span>
-                            {idx === 0 && <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-100 text-emerald-800 border border-emerald-300">Primary</span>}
+                            {idx === 0 && <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-100 text-[#0b6623] border border-emerald-300">Primary</span>}
                           </div>
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             <div>
                               <label className="block text-[10px] font-semibold text-[#1e293b] mb-0.5">RFQ Price (Rs.)</label>
-                              <input type="number" min={0} step="0.01" value={s.rfq_quoted_price}
+                              <input
+                                type="number"
+                                min={0}
+                                step="0.01"
+                                value={s.rfq_quoted_price}
                                 onChange={e => handleUpdateMapping(s.company_id, { rfq_quoted_price: Number(e.target.value) || 0 })}
-                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-emerald-500" />
+                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                              />
                             </div>
                             <div>
                               <label className="block text-[10px] font-semibold text-[#1e293b] mb-0.5">MOQ</label>
-                              <input type="number" min={1} value={s.moq}
+                              <input
+                                type="number"
+                                min={1}
+                                value={s.moq}
                                 onChange={e => handleUpdateMapping(s.company_id, { moq: Number(e.target.value) || 1 })}
-                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-emerald-500" />
+                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                              />
                             </div>
                             <div>
                               <label className="block text-[10px] font-semibold text-[#1e293b] mb-0.5">Lead Days</label>
-                              <input type="number" min={1} value={s.lead_time_days}
+                              <input
+                                type="number"
+                                min={1}
+                                value={s.lead_time_days}
                                 onChange={e => handleUpdateMapping(s.company_id, { lead_time_days: Number(e.target.value) || 1 })}
-                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-emerald-500" />
+                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                              />
                             </div>
                             <div>
                               <label className="block text-[10px] font-semibold text-[#1e293b] mb-0.5">Vendor SKU</label>
-                              <input type="text" value={s.part_number_vendor}
+                              <input
+                                type="text"
+                                value={s.part_number_vendor}
                                 onChange={e => handleUpdateMapping(s.company_id, { part_number_vendor: e.target.value })}
-                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-emerald-500" placeholder="OEM-SPEC" />
+                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                                placeholder="OEM-SPEC"
+                              />
                             </div>
                           </div>
                         </div>
@@ -322,23 +389,58 @@ export const EditComponentModal: React.FC<Props> = ({
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block font-semibold text-[#020617] mb-1">Price (Rs. INR, Optional)</label>
-                <input type="number" min={0} step="0.01" value={formData.preset_price}
+                <input
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  value={formData.preset_price}
                   onChange={e => setFormData({ ...formData, preset_price: Number(e.target.value) || 0 })}
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] font-mono font-bold focus:outline-none focus:border-emerald-500" />
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] font-mono font-bold focus:outline-none focus:border-[#0b6623]"
+                />
               </div>
               <div>
                 <label className="block font-semibold text-[#020617] mb-1">Stock Quantity (In-Stock)</label>
-                <input type="number" min={0} value={formData.in_stock_qty}
+                <input
+                  type="number"
+                  min={0}
+                  value={formData.in_stock_qty}
                   onChange={e => setFormData({ ...formData, in_stock_qty: Number(e.target.value) || 0 })}
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] font-mono font-bold focus:outline-none focus:border-emerald-500" />
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] font-mono font-bold focus:outline-none focus:border-[#0b6623]"
+                />
               </div>
+            </div>
+
+            {/* Custom Stock Alert Threshold Slider */}
+            <div>
+              <label className="flex items-center justify-between font-semibold text-[#020617] mb-1 text-sm">
+                <span>Low Stock Alert Threshold</span>
+                <span className="text-[#0b6623] bg-emerald-100 px-2 py-0.5 rounded text-xs font-bold">
+                  {formData.alert_threshold_percent}% of MOQ
+                </span>
+              </label>
+              <input
+                type="range"
+                min="5"
+                max="100"
+                step="5"
+                value={formData.alert_threshold_percent}
+                onChange={e => setFormData({ ...formData, alert_threshold_percent: Number(e.target.value) })}
+                className="w-full h-2 bg-[#e2e8f0] rounded-lg appearance-none cursor-pointer accent-[#0b6623]"
+              />
+              <p className="text-[10px] text-[#1e293b] mt-1">
+                Alert triggers when stock falls below {Math.floor((Number(formData.min_order_qty) || 1) * (formData.alert_threshold_percent / 100))} {formData.uom || 'Pcs'}
+              </p>
             </div>
 
             <div>
               <label className="block font-semibold text-[#020617] mb-1">Procurement Status</label>
-              <select value={formData.procurement_status} onChange={e => setFormData({ ...formData, procurement_status: e.target.value as OrderStatus })}
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-bold">
+              <select
+                value={formData.procurement_status}
+                onChange={e => setFormData({ ...formData, procurement_status: e.target.value as OrderStatus })}
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-bold"
+              >
                 <option value="TO_BE_ORDERED">To be ordered (Amber)</option>
+                <option value="IN_STOCK">In Stock (Green)</option>
                 <option value="RFQ_SENT">RFQ sent (Blue)</option>
                 <option value="ORDERED">Ordered / PO issued (Purple)</option>
                 <option value="DELIVERED">Delivered (Emerald Green)</option>
@@ -348,18 +450,25 @@ export const EditComponentModal: React.FC<Props> = ({
 
             <div>
               <label className="block font-semibold text-[#020617] mb-1">Google Drive Image Link</label>
-              <input type="url" value={formData.image_drive_url}
+              <input
+                type="url"
+                value={formData.image_drive_url}
                 onChange={e => setFormData({ ...formData, image_drive_url: e.target.value })}
                 placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500 font-mono text-xs" />
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-mono text-xs"
+              />
               <p className="text-[11px] text-[#1e293b] mt-1 italic">(Ensure link permissions are set to "Anyone with the link can view")</p>
             </div>
 
             <div>
               <label className="block font-semibold text-[#020617] mb-1">Technical Specification (Optional)</label>
-              <textarea rows={2} value={formData.specs} onChange={e => setFormData({ ...formData, specs: e.target.value })}
+              <textarea
+                rows={2}
+                value={formData.specs}
+                onChange={e => setFormData({ ...formData, specs: e.target.value })}
                 placeholder="Technical specs, grade, pinout, voltage..."
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-emerald-500" />
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623]"
+              />
             </div>
 
           </div>

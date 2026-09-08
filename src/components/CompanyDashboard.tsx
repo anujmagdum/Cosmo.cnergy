@@ -266,7 +266,7 @@ export const CompanyDashboard: React.FC<Props> = ({
               : 'text-[#020617] hover:bg-[#FFFFFF]'
           }`}
         >
-          <Building2 className="w-4 h-4 text-emerald-400" />
+          <Building2 className="w-4 h-4 text-[#0b6623]" />
           <span>All Companies ({companies.length})</span>
         </button>
 
@@ -300,7 +300,7 @@ export const CompanyDashboard: React.FC<Props> = ({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-5 rounded-2xl bg-[#0B192C] text-white shadow-md">
             <div>
               <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                <Building2 className="w-7 h-7 text-emerald-400" />
+                <Building2 className="w-7 h-7 text-[#0b6623]" />
                 <span>Company Directory</span>
               </h2>
               <p className="text-xs text-slate-300 mt-1">
@@ -376,7 +376,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 onChange={handleSelectAll}
                 className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
               />
-              <Building2 className="w-4 h-4 text-emerald-600" />
+              <Building2 className="w-4 h-4 text-[#0b6623]" />
               <span>Verified Vendors ({filteredCompanies.length})</span>
             </h3>
             <span className="text-[11px] text-[#1e293b] ml-6">Maximized density ladder view with bulk selection</span>
@@ -445,12 +445,12 @@ export const CompanyDashboard: React.FC<Props> = ({
                       <span className="font-semibold text-[#020617]">{company.contact_person}</span>
                       <span>•</span>
                       <span className="flex items-center gap-1">
-                        <Mail className="w-3 h-3 text-emerald-600 shrink-0" />
+                        <Mail className="w-3 h-3 text-[#0b6623] shrink-0" />
                         <span className="truncate">{company.email}</span>
                       </span>
                       <span>•</span>
                       <span className="flex items-center gap-1 font-mono">
-                        <Phone className="w-3 h-3 text-emerald-600 shrink-0" />
+                        <Phone className="w-3 h-3 text-[#0b6623] shrink-0" />
                         <span>{company.phone}</span>
                       </span>
                     </div>
@@ -697,7 +697,7 @@ export const CompanyDashboard: React.FC<Props> = ({
           <div className="bg-[#FFFFFF] w-full max-w-lg rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <div className="flex items-center gap-2">
-                <Edit2 className="w-5 h-5 text-emerald-600" />
+                <Edit2 className="w-5 h-5 text-[#0b6623]" />
                 <h3 className="text-xl font-bold text-[#020617]">Edit Company Attributes</h3>
               </div>
               <button

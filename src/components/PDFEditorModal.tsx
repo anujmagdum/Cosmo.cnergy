@@ -192,7 +192,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             {/* 1. Document Parameters */}
             <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs space-y-4">
               <h4 className="text-xs font-bold text-[#0D0D0D] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#E2E8F0]/60 pb-2">
-                <FileText className="w-4 h-4 text-emerald-600" />
+                <FileText className="w-4 h-4 text-[#0b6623]" />
                 <span>Document & Routing Parameters</span>
               </h4>
 
@@ -239,7 +239,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             {/* 2. Company Vendor Entity */}
             <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs space-y-4">
               <h4 className="text-xs font-bold text-[#0D0D0D] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#E2E8F0]/60 pb-2">
-                <Building2 className="w-4 h-4 text-emerald-600" />
+                <Building2 className="w-4 h-4 text-[#0b6623]" />
                 <span>Company / Vendor Entity</span>
               </h4>
 
@@ -340,7 +340,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs space-y-4">
               <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-2">
                 <h4 className="text-xs font-bold text-[#0D0D0D] uppercase tracking-wider flex items-center gap-1.5">
-                  <FileText className="w-4 h-4 text-emerald-600" />
+                  <FileText className="w-4 h-4 text-[#0b6623]" />
                   <span>Order Line Items ({editableOrder.items?.length || 0})</span>
                 </h4>
                 <button
@@ -452,7 +452,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
           <div className={`md:col-span-6 lg:col-span-6 p-4 md:p-6 flex flex-col overflow-hidden bg-[#FFFFFF] ${activeTab === 'editor' ? 'hidden md:flex' : 'flex'}`}>
             <div className="flex items-center justify-between mb-3 text-xs font-bold text-[#0D0D0D]">
               <span className="flex items-center gap-1.5">
-                <Eye className="w-4 h-4 text-emerald-600" />
+                <Eye className="w-4 h-4 text-[#0b6623]" />
                 <span>Live Vector PDF Preview (Selectable Text)</span>
               </span>
               <span className="text-[11px] font-semibold text-[#334155]">
@@ -481,7 +481,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
           <div className="flex items-center gap-2">
             {saveSuccess && (
               <span className="flex items-center gap-1 text-emerald-800 text-xs font-bold animate-fade-in">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-[#0b6623]" />
                 <span>Changes Saved to Database & Orders State!</span>
               </span>
             )}
@@ -501,7 +501,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
               onClick={handleSave}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B192C] hover:bg-[#1E3E62] text-white font-bold text-xs shadow-md transition-all active:scale-95"
             >
-              <Save className="w-4 h-4 text-emerald-400" />
+              <Save className="w-4 h-4 text-[#0b6623]" />
               <span>Save Changes</span>
             </button>
 

@@ -88,6 +88,44 @@ button.bg-green-700:hover,
   color: #ffffff !important;
 }
 
+/* Unified Deep Forest Green (#0b6623) Icons across all website tabs */
+svg.text-emerald-300,
+svg.text-emerald-400,
+svg.text-emerald-500,
+svg.text-emerald-600,
+svg.text-emerald-700,
+svg.text-green-400,
+svg.text-green-500,
+svg.text-green-600,
+svg.text-green-700,
+svg.text-teal-500,
+svg.text-teal-600,
+.lucide.text-emerald-300,
+.lucide.text-emerald-400,
+.lucide.text-emerald-500,
+.lucide.text-emerald-600,
+.lucide.text-emerald-700,
+.lucide.text-green-400,
+.lucide.text-green-500,
+.lucide.text-green-600,
+.lucide.text-green-700,
+.lucide.text-teal-500,
+.lucide.text-teal-600,
+.text-emerald-300 > svg,
+.text-emerald-400 > svg,
+.text-emerald-500 > svg,
+.text-emerald-600 > svg,
+.text-emerald-700 > svg,
+.text-green-400 > svg,
+.text-green-500 > svg,
+.text-green-600 > svg,
+.text-green-700 > svg,
+.text-teal-500 > svg,
+.text-teal-600 > svg {
+  color: #0b6623 !important;
+  stroke: #0b6623 !important;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

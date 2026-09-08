@@ -318,7 +318,7 @@ Cosmo Cnergy Procurement Team`
         {selectedChannel === 'whatsapp' && (
           <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] space-y-2 text-xs">
             <div className="flex items-center gap-2 font-bold text-emerald-800">
-              <MessageSquare className="w-4 h-4 text-emerald-600" />
+              <MessageSquare className="w-4 h-4 text-[#0b6623]" />
               <span>Target WhatsApp Contact: {company?.phone || '+91 98765 43210'}</span>
             </div>
             <p className="text-[#334155] leading-relaxed">

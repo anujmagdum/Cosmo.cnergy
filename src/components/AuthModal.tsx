@@ -94,7 +94,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
         <form onSubmit={handleSubmit} autoComplete="on" className="space-y-4 text-xs">
           <div>
             <label htmlFor="auth-email" className="block font-semibold text-[#073642] mb-1.5 flex items-center gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-emerald-600" />
+              <Mail className="w-3.5 h-3.5 text-[#0b6623]" />
               <span>Email Address</span>
             </label>
             <input
@@ -114,7 +114,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
 
           <div>
             <label htmlFor="auth-password" className="block font-semibold text-[#073642] mb-1.5 flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-emerald-600" />
+              <Lock className="w-3.5 h-3.5 text-[#0b6623]" />
               <span>Password</span>
             </label>
             <input
@@ -134,7 +134,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
           </div>
 
           <p className="text-[11px] text-[#586E75] text-center pt-1 flex items-center justify-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#0b6623]" />
             Secure Enterprise Authentication via Supabase Auth.
           </p>
 

@@ -235,7 +235,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
             <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-emerald-500/30 animate-pulse space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Bot className="w-5 h-5 text-emerald-600 animate-spin" />
+                  <Bot className="w-5 h-5 text-[#0b6623] animate-spin" />
                   <span className="text-xs font-bold text-emerald-900">
                     Gemini 3.6 Flash Analyzing RFQ Quotes, Reviews & Lead Times...
                   </span>
@@ -354,7 +354,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                           <span className="text-[9px] text-[#334155] uppercase font-bold block">Match Score</span>
                           <span
                             className={`font-mono text-base font-black ${
-                              matchScore >= 80 ? 'text-emerald-700' : matchScore >= 60 ? 'text-amber-700' : 'text-slate-700'
+                              matchScore >= 80 ? 'text-[#0b6623]' : matchScore >= 60 ? 'text-amber-700' : 'text-slate-700'
                             }`}
                           >
                             {matchScore}/100

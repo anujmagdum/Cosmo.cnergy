@@ -486,7 +486,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                       onClick={() => dispatchSingleVendorWhatsApp(draft)}
                       className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#FDF6E3] hover:bg-[#E4DDC7] text-[#073642] font-bold text-xs border border-[#D6D1B1] shadow-xs active:scale-95 transition-all cursor-pointer"
                     >
-                      <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                      <MessageSquare className="w-3.5 h-3.5 text-[#0b6623]" />
                       <span>WhatsApp</span>
                     </button>
                   </div>

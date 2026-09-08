@@ -345,7 +345,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
 
         <div className="flex items-center gap-2">
           <span className="px-3 py-1 rounded-full bg-[#0b6623]/10 text-emerald-900 border border-emerald-500/30 text-xs font-bold flex items-center gap-1.5">
-            <Building2 className="w-3.5 h-3.5 text-emerald-700" />
+            <Building2 className="w-3.5 h-3.5 text-[#0b6623]" />
             <span>{linkedCompanies.length} Linked {linkedCompanies.length === 1 ? 'Company' : 'Companies'}</span>
           </span>
         </div>
@@ -356,7 +356,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
             <div className="w-11 h-11 rounded-xl bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] flex items-center justify-center font-bold text-base shrink-0 shadow-2xs">
-              <Package className="w-6 h-6 text-emerald-700" />
+              <Package className="w-6 h-6 text-[#0b6623]" />
             </div>
 
             <div>
@@ -399,7 +399,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
         <div className="px-5 py-4 border-b border-[#E2E8F0]/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#FFFFFF]/60">
           <div>
             <h2 className="text-sm font-extrabold text-[#0D0D0D] flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-emerald-700" />
+              <Building2 className="w-4 h-4 text-[#0b6623]" />
               <span>Company Quotation & Commercial Parameters</span>
             </h2>
             <p className="text-[11px] text-[#334155] mt-0.5">
@@ -457,9 +457,9 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                     <span>RFQ Price (₹)</span>
                     {sortField === 'rfq_quoted_price' ? (
                       sortOrder === 'asc' ? (
-                        <ArrowUp className="w-3.5 h-3.5 text-emerald-700 stroke-[3]" />
+                        <ArrowUp className="w-3.5 h-3.5 text-[#0b6623] stroke-[3]" />
                       ) : (
-                        <ArrowDown className="w-3.5 h-3.5 text-emerald-700 stroke-[3]" />
+                        <ArrowDown className="w-3.5 h-3.5 text-[#0b6623] stroke-[3]" />
                       )
                     ) : (
                       <ArrowUpDown className="w-3 h-3 text-[#64748b] opacity-70" />
@@ -481,9 +481,9 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                     <span>MOQ (Units)</span>
                     {sortField === 'moq' ? (
                       sortOrder === 'asc' ? (
-                        <ArrowUp className="w-3.5 h-3.5 text-emerald-700 stroke-[3]" />
+                        <ArrowUp className="w-3.5 h-3.5 text-[#0b6623] stroke-[3]" />
                       ) : (
-                        <ArrowDown className="w-3.5 h-3.5 text-emerald-700 stroke-[3]" />
+                        <ArrowDown className="w-3.5 h-3.5 text-[#0b6623] stroke-[3]" />
                       )
                     ) : (
                       <ArrowUpDown className="w-3 h-3 text-[#64748b] opacity-70" />
@@ -505,9 +505,9 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                     <span>Lead Time (Days)</span>
                     {sortField === 'lead_time_days' ? (
                       sortOrder === 'asc' ? (
-                        <ArrowUp className="w-3.5 h-3.5 text-emerald-700 stroke-[3]" />
+                        <ArrowUp className="w-3.5 h-3.5 text-[#0b6623] stroke-[3]" />
                       ) : (
-                        <ArrowDown className="w-3.5 h-3.5 text-emerald-700 stroke-[3]" />
+                        <ArrowDown className="w-3.5 h-3.5 text-[#0b6623] stroke-[3]" />
                       )
                     ) : (
                       <ArrowUpDown className="w-3 h-3 text-[#64748b] opacity-70" />
@@ -604,7 +604,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                         >
                           <span>₹{priceVal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                           {lastSavedCell === `${link.id}-rfq_quoted_price` && (
-                            <Check className="w-3.5 h-3.5 text-emerald-700" />
+                            <Check className="w-3.5 h-3.5 text-[#0b6623]" />
                           )}
                         </div>
                       )}
@@ -644,7 +644,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                           <span>{moqVal}</span>
                           <span className="text-[10px] text-[#334155]">{component.uom || 'Pcs'}</span>
                           {lastSavedCell === `${link.id}-moq` && (
-                            <Check className="w-3.5 h-3.5 text-emerald-700" />
+                            <Check className="w-3.5 h-3.5 text-[#0b6623]" />
                           )}
                         </div>
                       )}
@@ -684,7 +684,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                           <Clock className="w-3 h-3 text-[#334155]" />
                           <span>{leadTimeVal} Days</span>
                           {lastSavedCell === `${link.id}-lead_time_days` && (
-                            <Check className="w-3.5 h-3.5 text-emerald-700" />
+                            <Check className="w-3.5 h-3.5 text-[#0b6623]" />
                           )}
                         </div>
                       )}
@@ -724,7 +724,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
         {/* Footer info note */}
         <div className="px-5 py-3 border-t border-[#E2E8F0]/60 bg-[#FFFFFF]/40 text-[11px] text-[#334155] flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <Info className="w-3.5 h-3.5 text-emerald-700" />
+            <Info className="w-3.5 h-3.5 text-[#0b6623]" />
             <span>Changes made via inline inputs are auto-saved directly to the database.</span>
           </div>
           <span className="font-mono text-[10px]">

@@ -422,7 +422,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
       {/* Left: CSV Context, Template Download & Columns Tooltip */}
       <div className="flex flex-wrap items-center gap-2 flex-1">
         <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 shrink-0 mr-1">
-          <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+          <FileSpreadsheet className="w-4 h-4 text-[#0b6623]" />
           <span>CSV Engine:</span>
         </div>
 
@@ -460,7 +460,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="font-bold text-slate-950 flex items-center gap-1.5">
-                  <Info className="w-3.5 h-3.5 text-emerald-600" />
+                  <Info className="w-3.5 h-3.5 text-[#0b6623]" />
                   <span>{schema.title}</span>
                 </span>
                 <span className="text-[10px] font-mono text-slate-800">RFC 4180</span>
@@ -520,7 +520,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
             }`}
           >
             {statusFeedback.type === 'success' ? (
-              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              <Check className="w-3.5 h-3.5 text-[#0b6623]" />
             ) : (
               <AlertCircle className="w-3.5 h-3.5 text-red-600" />
             )}

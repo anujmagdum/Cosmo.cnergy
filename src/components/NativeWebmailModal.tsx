@@ -195,7 +195,7 @@ Cosmo Cnergy`;
               <label className="block font-semibold text-[#020617] mb-1">Attachments</label>
               <div className="flex items-center gap-2">
                 <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[white] hover:bg-[#e2e8f0] border border-[#e2e8f0] text-[#020617] cursor-pointer text-xs font-semibold">
-                  <Paperclip className="w-3.5 h-3.5 text-emerald-600" />
+                  <Paperclip className="w-3.5 h-3.5 text-[#0b6623]" />
                   <span>Attach Document</span>
                   <input type="file" multiple onChange={handleFileChange} className="hidden" />
                 </label>
@@ -211,7 +211,7 @@ Cosmo Cnergy`;
                       key={idx}
                       className="flex items-center gap-1.5 bg-[white] border border-[#e2e8f0] px-2.5 py-1 rounded-lg text-xs"
                     >
-                      <FileText className="w-3 h-3 text-emerald-600" />
+                      <FileText className="w-3 h-3 text-[#0b6623]" />
                       <span className="truncate max-w-[120px] font-medium">{file.name}</span>
                       <button
                         type="button"

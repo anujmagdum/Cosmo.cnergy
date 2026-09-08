@@ -80,7 +80,7 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
             className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-[#FFFFFF] hover:bg-[#f8fafc] text-emerald-800 font-bold text-sm border border-[#E2E8F0] active:scale-95 transition-all group"
           >
             <div className="flex items-center gap-3">
-              <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform text-emerald-600" />
+              <MessageSquare className="w-5 h-5 group-hover:scale-110 transition-transform text-[#0b6623]" />
               <span>Send via WhatsApp</span>
             </div>
             <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full uppercase font-bold border border-emerald-300">Deep Link</span>

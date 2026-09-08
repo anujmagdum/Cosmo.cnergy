@@ -60,7 +60,7 @@ export const WhatsAppSmartModal: React.FC<Props> = ({
       <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 text-[#0D0D0D]">
         <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
           <div className="flex items-center gap-2.5 text-emerald-800 font-bold">
-            <MessageSquare className="w-5 h-5 text-emerald-600" />
+            <MessageSquare className="w-5 h-5 text-[#0b6623]" />
             <h3 className="text-lg font-bold text-[#0D0D0D]">WhatsApp Smart Dispatch</h3>
           </div>
           <button onClick={onClose} className="text-[#334155] hover:text-[#0D0D0D] font-bold">

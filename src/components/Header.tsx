@@ -94,7 +94,7 @@ export const Header: React.FC<Props> = ({
               </div>
               <div>
                 <span className="font-extrabold text-lg tracking-tight text-white font-sans">
-                  COSMO<span className="text-emerald-400">CNERGY</span>
+                  COSMO<span className="text-[#0b6623]">CNERGY</span>
                 </span>
                 <span className="hidden sm:inline-block ml-2 text-[10px] font-medium tracking-wide text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700/60">
                   Procurement OS
@@ -109,7 +109,7 @@ export const Header: React.FC<Props> = ({
                 className="p-2 rounded-xl bg-[#1e3e62]/70 border border-slate-700 text-slate-300 active:scale-95"
                 title="Search"
               >
-                <Search className="w-4 h-4 text-emerald-400" />
+                <Search className="w-4 h-4 text-[#0b6623]" />
               </button>
 
               {userName ? (
@@ -171,7 +171,7 @@ export const Header: React.FC<Props> = ({
                       : 'bg-[#10243E]/60 hover:bg-[#1E3E62] text-slate-300 hover:text-white border border-slate-700/50'
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-emerald-400'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#0b6623]'}`} />
                   <span>{item.label}</span>
                   {item.count !== undefined && item.count > 0 && (
                     <span
@@ -219,7 +219,7 @@ export const Header: React.FC<Props> = ({
                     <span className="text-[11px] font-semibold text-slate-300 group-hover:text-white transition-colors truncate max-w-[120px]">
                       {displayEmail}
                     </span>
-                    <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider">
+                    <span className="text-[9px] font-bold text-[#0b6623] uppercase tracking-wider">
                       {userName.split(' ')[0]}
                     </span>
                   </div>
@@ -245,7 +245,7 @@ export const Header: React.FC<Props> = ({
                         </div>
                       </div>
                       <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
-                        <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+                        <span className="flex items-center gap-1 text-[#0b6623] font-semibold">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                           Supabase Active
                         </span>
@@ -274,7 +274,7 @@ export const Header: React.FC<Props> = ({
             ) : (
               <button
                 onClick={onOpenAuth}
-                className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0b6623]/10 hover:bg-[#084d1a]/20 border border-emerald-500/30 text-xs font-bold text-emerald-400 transition-all active:scale-95"
+                className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0b6623]/10 hover:bg-[#084d1a]/20 border border-emerald-500/30 text-xs font-bold text-[#0b6623] transition-all active:scale-95"
               >
                 <LogIn className="w-4 h-4" />
                 <span>Login</span>

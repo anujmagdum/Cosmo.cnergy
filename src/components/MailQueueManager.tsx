@@ -31,7 +31,7 @@ export const MailQueueManager: React.FC = () => {
       {/* Header */}
       <div className="p-4 bg-emerald-900/40 border-b border-emerald-500/30 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Mail className="w-5 h-5 text-emerald-400" />
+          <Mail className="w-5 h-5 text-[#0b6623]" />
           <h3 className="font-bold text-sm">Background Mail Queue</h3>
         </div>
         <div className="flex items-center gap-2">
@@ -51,7 +51,7 @@ export const MailQueueManager: React.FC = () => {
             <Clock className="w-3.5 h-3.5 text-blue-400" /> {pendingCount}
           </span>
           <span className="text-slate-300 flex items-center gap-1">
-            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> {successCount}
+            <CheckCircle className="w-3.5 h-3.5 text-[#0b6623]" /> {successCount}
           </span>
           <span className="text-slate-300 flex items-center gap-1">
             <XCircle className="w-3.5 h-3.5 text-red-400" /> {failedCount}
@@ -104,7 +104,7 @@ export const MailQueueManager: React.FC = () => {
             <div className="flex items-center gap-2 shrink-0">
               {item.status === 'pending' && <Clock className="w-4 h-4 text-slate-700" />}
               {item.status === 'sending' && <span className="w-4 h-4 rounded-full border-2 border-t-emerald-500 border-slate-600 animate-spin" />}
-              {item.status === 'success' && <CheckCircle className="w-4 h-4 text-emerald-500" />}
+              {item.status === 'success' && <CheckCircle className="w-4 h-4 text-[#0b6623]" />}
               {item.status === 'failed' && <XCircle className="w-4 h-4 text-red-500" />}
               
               <button onClick={() => removeQueueItem(item.id)} className="text-slate-700 hover:text-red-400 p-0.5">

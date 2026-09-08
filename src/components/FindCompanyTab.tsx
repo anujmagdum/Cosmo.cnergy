@@ -381,7 +381,7 @@ export const FindCompanyTab: React.FC<Props> = ({
           <div className="lg:col-span-5 bg-[#FFFFFF] rounded-3xl border border-[#E2E8F0] shadow-xs flex flex-col overflow-hidden">
             <div className="bg-[#0B192C] text-white px-4 py-3 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-emerald-400" />
+                <MapPin className="w-4 h-4 text-[#0b6623]" />
                 <h3 className="text-xs font-bold text-white">Google Maps Live Plugin ({city})</h3>
               </div>
               <span className="text-[10px] text-cyan-300 font-mono">Interactive Location Map</span>
@@ -460,7 +460,7 @@ export const FindCompanyTab: React.FC<Props> = ({
             <div className="flex-1 p-4 overflow-y-auto space-y-3 max-h-[580px] scrollbar-thin">
               {isLoading ? (
                 <div className="py-24 text-center space-y-3">
-                  <RefreshCw className="w-8 h-8 animate-spin text-emerald-600 mx-auto" />
+                  <RefreshCw className="w-8 h-8 animate-spin text-[#0b6623] mx-auto" />
                   <p className="text-xs font-bold text-[#0D0D0D]">
                     Gemini Sourcing Companies across Google Maps, IndiaMart & Directories...
                   </p>
@@ -582,7 +582,7 @@ export const FindCompanyTab: React.FC<Props> = ({
                         <div className="ml-auto flex items-center gap-2">
                           {sup.isAddedToDb ? (
                             <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-xl flex items-center gap-1 border border-emerald-300">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                              <CheckCircle2 className="w-3.5 h-3.5 text-[#0b6623]" />
                               <span>Saved in Database</span>
                             </span>
                           ) : (
