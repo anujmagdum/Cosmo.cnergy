@@ -1636,7 +1636,7 @@ export const App: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsSearchOpen(true)}
-        className="fixed bottom-6 right-6 z-30 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] border border-[#0b6623]/40 text-white shadow-xl shadow-[#0b6623]/30 active:scale-95 transition-all group cursor-pointer backdrop-blur-md"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-30 flex items-center gap-2 sm:gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] border border-[#0b6623]/40 text-white shadow-xl shadow-[#0b6623]/30 active:scale-95 transition-all group cursor-pointer backdrop-blur-md"
         title="Master Data Universal Search (Ctrl + K)"
       >
         <div className="w-6 h-6 rounded-lg bg-white/20 border border-white/30 flex items-center justify-center text-white group-hover:scale-110 transition-transform">

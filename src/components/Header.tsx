@@ -81,46 +81,48 @@ export const Header: React.FC<Props> = ({
   return (
     <header className="sticky top-0 z-40 glass-panel border-b border-[#1C1E22] bg-[#0C0D0E] select-none shadow-xl">
       {/* Top Main Navigation Bar */}
-      <div className="px-4 lg:px-8 py-2.5">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          {/* Left: Brand Logo & Mobile Profile Trigger */}
+      <div className="px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-2.5 md:gap-4">
+          {/* Top Row on Mobile / Left on Desktop: Brand Logo + Mobile Actions */}
           <div className="flex items-center justify-between shrink-0">
             <div
               className="flex items-center gap-2.5 cursor-pointer group"
               onClick={() => setActiveTab('procurement')}
             >
-              <div className="w-9 h-9 rounded-xl bg-[#0b6623] flex items-center justify-center emerald-glow shadow-md shadow-[#0b6623]/20 group-hover:scale-105 transition-transform">
-                <Zap className="w-5 h-5 text-white fill-white" />
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#0b6623] flex items-center justify-center emerald-glow shadow-md shadow-[#0b6623]/20 group-hover:scale-105 transition-transform">
+                <Zap className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-white fill-white" />
               </div>
               <div>
-                <span className="font-extrabold text-lg tracking-tight text-white font-sans">
+                <span className="font-extrabold text-base sm:text-lg tracking-tight text-white font-sans">
                   COSMO<span className="text-[#0b6623]">CNERGY</span>
                 </span>
-                <span className="hidden sm:inline-block ml-2 text-[10px] font-medium tracking-wide text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700/60">
+                <span className="hidden xl:inline-block ml-2 text-[10px] font-medium tracking-wide text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700/60">
                   Procurement OS
                 </span>
               </div>
             </div>
 
-            {/* Mobile User Profile & Search Trigger */}
+            {/* Mobile Actions: 1-Tap BOM PO + Profile / Login (Mobile only) */}
             <div className="flex md:hidden items-center gap-2">
               <button
-                onClick={onOpenSearch}
-                className="p-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] border border-[#0b6623]/40 text-white active:scale-95 shadow-xs"
-                title="Master Data Search"
+                onClick={onOpenBOMModal}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs active:scale-95 border border-[#0b6623]/30 cursor-pointer"
+                title="1-Tap BOM Procurement Engine"
               >
-                <Search className="w-4 h-4 text-white" />
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>BOM PO</span>
               </button>
 
               {userName ? (
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-1.5 p-1.5 rounded-xl bg-[#1C1E22]/70 border border-slate-700 text-white active:scale-95"
+                  className="flex items-center gap-1 p-1 rounded-xl bg-[#1C1E22] border border-[#23262B] text-white active:scale-95 cursor-pointer"
+                  title="Profile Menu"
                 >
                   <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs">
                     {userInitial}
                   </div>
-                  <ChevronDown className="w-3 h-3 text-slate-400" />
+                  <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
                 </button>
               ) : (
                 <button
@@ -134,19 +136,19 @@ export const Header: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Center: Reordered Navigation Bar with Standout AI Studio Pill and Badges */}
-          <nav className="flex flex-wrap items-center justify-center md:justify-start gap-1.5 p-1 rounded-2xl bg-[#141618]/80 border border-slate-800/80 shadow-inner">
+          {/* Center: Horizontally Scrollable on Mobile, Flex on Desktop Navigation Bar */}
+          <nav className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#141618]/90 border border-[#23262B] shadow-inner overflow-x-auto scrollbar-none max-w-full scroll-smooth">
             {navItems.map(item => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
 
-              // Clean calm styling for AI Studio (no reflection or distracting pings)
+              // Clean calm styling for AI Studio
               if (item.isAi) {
                 return (
                   <button
                     key={item.id}
                     onClick={() => setActiveTab(item.id)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer ${
                       isActive
                         ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30 ring-1 ring-indigo-400/50'
                         : 'bg-indigo-950/40 hover:bg-indigo-900/50 text-indigo-300 hover:text-white border border-indigo-500/30'
@@ -165,10 +167,10 @@ export const Header: React.FC<Props> = ({
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer ${
                     isActive
                       ? 'bg-[#0b6623] text-white shadow-md shadow-[#0b6623]/30 ring-1 ring-[#0b6623]/40'
-                      : 'bg-[#1C1E22]/60 hover:bg-[#23262B] text-slate-300 hover:text-white border border-slate-700/50'
+                      : 'bg-[#1C1E22]/60 hover:bg-[#23262B] text-slate-300 hover:text-white border border-[#23262B]'
                   }`}
                 >
                   <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#0b6623]'}`} />
@@ -192,46 +194,32 @@ export const Header: React.FC<Props> = ({
             })}
           </nav>
 
-          {/* Right: Master Search + BOM Action + Profile Badge */}
-          <div className="flex items-center justify-end gap-2.5 shrink-0" ref={dropdownRef}>
-            {/* Master Data Search Trigger (Desktop) */}
-            <button
-              onClick={onOpenSearch}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all cursor-pointer border border-[#0b6623]/30"
-              title="Master Data Universal Search (Ctrl + K)"
-            >
-              <Search className="w-3.5 h-3.5 text-white" />
-              <span>Master Data Search</span>
-              <kbd className="hidden xl:inline-flex items-center px-1 py-0.2 rounded bg-[#084d1a] font-mono text-[9px] text-emerald-100">
-                Ctrl+K
-              </kbd>
-            </button>
-
+          {/* Right: BOM Action + Profile Badge (Desktop Only) */}
+          <div className="hidden md:flex items-center justify-end gap-3 shrink-0" ref={dropdownRef}>
             {/* 1-Tap BOM Procurement Button (Enhanced Datlion Style) */}
             <button
               onClick={onOpenBOMModal}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-black text-xs shadow-md active:scale-95 transition-all whitespace-nowrap border border-[#0b6623]/30"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-black text-xs shadow-md shadow-[#0b6623]/25 active:scale-95 transition-all whitespace-nowrap border border-[#0b6623]/30 cursor-pointer"
               title="1-Tap Multi-Company BOM Procurement Engine"
             >
-              <PlusCircle className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">1-Tap BOM PO</span>
-              <span className="md:hidden">BOM PO</span>
+              <PlusCircle className="w-4 h-4" />
+              <span>1-Tap BOM PO</span>
             </button>
 
             {/* User Profile Badge (Desktop) */}
             {userName ? (
-              <div className="hidden md:block relative">
+              <div className="relative">
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-[#1C1E22]/70 hover:bg-[#1C1E22] border border-slate-700/80 transition-all text-left group active:scale-95 overflow-hidden"
+                  className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-[#1C1E22] hover:bg-[#23262B] border border-[#23262B] transition-all text-left group active:scale-95 cursor-pointer"
                   title="User Profile & Session"
                 >
                   <div className="flex flex-col items-end">
-                    <span className="text-[11px] font-semibold text-slate-300 group-hover:text-white transition-colors truncate max-w-[120px]">
-                      {displayEmail}
+                    <span className="text-[11px] font-semibold text-slate-200 group-hover:text-white transition-colors truncate max-w-[130px]">
+                      {userName}
                     </span>
                     <span className="text-[9px] font-bold text-[#0b6623] uppercase tracking-wider">
-                      {userName.split(' ')[0]}
+                      {displayEmail.split('@')[0]}
                     </span>
                   </div>
 
