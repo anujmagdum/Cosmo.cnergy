@@ -51,6 +51,16 @@
   border-color: #0C0D0E !important;
 }
 
+/* Universal black #0C0D0E for navy blue variants */
+.bg-\[\#14293D\],
+.bg-\[\#14293d\],
+.bg-\[\#12243D\],
+.bg-\[\#12243d\],
+.bg-\[\#1A3150\],
+.bg-\[\#1a3150\] {
+  background-color: #0C0D0E !important;
+}
+
 /* Universal background #F0F2F5 for all tabs and page interiors */
 .bg-\[\#FAF5EF\],
 .bg-\[\#faf5ef\],

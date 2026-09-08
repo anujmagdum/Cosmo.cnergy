@@ -45,7 +45,7 @@ export const MailQueueManager: React.FC = () => {
       </div>
 
       {/* Stats & Actions */}
-      <div className="p-4 flex items-center justify-between bg-slate-900/50">
+      <div className="p-4 flex items-center justify-between bg-[#141618]">
         <div className="flex gap-4 text-xs font-semibold">
           <span className="text-slate-300 flex items-center gap-1">
             <Clock className="w-3.5 h-3.5 text-blue-400" /> {pendingCount}
@@ -87,9 +87,9 @@ export const MailQueueManager: React.FC = () => {
       </div>
 
       {/* Queue Items */}
-      <div className="max-h-60 overflow-y-auto p-2 space-y-2 bg-slate-900/30">
+      <div className="max-h-60 overflow-y-auto p-2 space-y-2 bg-[#0C0D0E]">
         {queue.map((item, index) => (
-          <div key={item.id} className="p-3 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center justify-between gap-3 text-xs">
+          <div key={item.id} className="p-3 rounded-xl bg-[#1C1E22] border border-[#23262B] flex items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-3 min-w-0">
               <div className="shrink-0 text-slate-800 font-mono text-[10px]">
                 {(index + 1).toString().padStart(2, '0')}

@@ -119,7 +119,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
                 </p>
               </div>
 
-              <div className="p-3 bg-slate-900/80 border border-slate-700 rounded-xl text-left text-[11px] text-slate-300 space-y-1">
+              <div className="p-3 bg-[#141618] border border-[#23262B] rounded-xl text-left text-[11px] text-slate-300 space-y-1">
                 <p className="font-bold text-[#0b6623]">How to fix:</p>
                 <p>1. Open the file in Google Drive.</p>
                 <p>2. Set Sharing permissions to <strong className="text-white">"Anyone with the link can view"</strong>.</p>

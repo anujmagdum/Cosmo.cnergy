@@ -736,21 +736,21 @@ export const Webmail: React.FC<Props> = ({
                 const found = accounts.find(a => a.email === e.target.value);
                 if (found) setSettingsForm({ ...found });
               }}
-              className="appearance-none bg-[#12243d] hover:bg-[#1a3150] border border-slate-700 text-slate-200 text-xs font-semibold rounded-xl pl-3 pr-8 py-2.5 focus:outline-none focus:border-[#0b6623] transition-all cursor-pointer shadow-sm"
+              className="appearance-none bg-[#0C0D0E] hover:bg-[#141618] border border-[#23262B] text-slate-200 text-xs font-semibold rounded-xl pl-3 pr-8 py-2.5 focus:outline-none focus:border-[#0b6623] transition-all cursor-pointer shadow-sm"
             >
               {accounts.map(acc => (
-                <option key={acc.id} value={acc.email}>
+                <option key={acc.id} value={acc.email} className="bg-[#0C0D0E] text-slate-200">
                   {acc.senderName} ({acc.email})
                 </option>
               ))}
             </select>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-800 absolute right-2.5 top-3.5 pointer-events-none" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 top-3.5 pointer-events-none" />
           </div>
 
           {/* Add Mailbox Button */}
           <button
             onClick={() => setIsAddAccountOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all shadow-xs active:scale-95"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#1C1E22] hover:bg-[#23262B] text-slate-200 hover:text-white border border-[#23262B] text-xs font-medium transition-all shadow-xs active:scale-95"
             title="Connect an additional IMAP/SMTP Mailbox"
           >
             <Plus className="w-3.5 h-3.5 text-[#0b6623]" />
@@ -761,7 +761,7 @@ export const Webmail: React.FC<Props> = ({
           <button
             onClick={handleFetchMail}
             disabled={isFetching}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-[#0b6623] hover:text-[#0b6623] border border-slate-700 text-xs font-semibold transition-all shadow-xs active:scale-95"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1C1E22] hover:bg-[#23262B] text-[#0b6623] hover:text-[#0b6623] border border-[#23262B] text-xs font-semibold transition-all shadow-xs active:scale-95"
             title="Poll IMAP server for new messages"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isFetching ? 'animate-spin text-[#0b6623]' : ''}`} />
@@ -775,7 +775,7 @@ export const Webmail: React.FC<Props> = ({
               setConnTestResult(null);
               setIsSettingsOpen(true);
             }}
-            className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-all shadow-xs active:scale-95"
+            className="p-2.5 rounded-xl bg-[#1C1E22] hover:bg-[#23262B] text-slate-200 hover:text-white border border-[#23262B] transition-all shadow-xs active:scale-95"
             title="IMAP / SMTP Server Settings"
           >
             <Settings className="w-4 h-4" />

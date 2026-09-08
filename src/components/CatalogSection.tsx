@@ -1155,8 +1155,8 @@ Cosmo.cnergy Procurement Team`;
           }}
           className={`rounded-xl p-4 border transition-all cursor-pointer flex flex-col justify-between select-none ${
             activeStatusFilter === 'ALL'
-              ? 'bg-slate-900 text-white border-slate-800 shadow-sm ring-2 ring-slate-700/50 font-bold scale-[1.01]'
-              : 'bg-white hover:bg-white border-slate-200 shadow-xs'
+              ? 'bg-[#0C0D0E] text-white border-[#1C1E22] shadow-md ring-2 ring-[#23262B] font-bold scale-[1.01]'
+              : 'bg-white hover:bg-slate-50 border-slate-200 shadow-xs'
           }`}
           title="Click to view all component inventory records"
         >
@@ -1169,7 +1169,7 @@ Cosmo.cnergy Procurement Team`;
               Total Catalog Components
             </span>
             {activeStatusFilter === 'ALL' && (
-              <span className="text-[10px] font-bold uppercase bg-emerald-600 text-white px-2 py-0.5 rounded-md">
+              <span className="text-[10px] font-bold uppercase bg-[#0b6623] text-white px-2 py-0.5 rounded-md">
                 All View
               </span>
             )}
@@ -1182,7 +1182,13 @@ Cosmo.cnergy Procurement Team`;
             >
               {counts.total}
             </span>
-            <span className="w-9 h-9 rounded-xl flex items-center justify-center border border-slate-200 bg-slate-100 text-lg">
+            <span
+              className={`w-9 h-9 rounded-xl flex items-center justify-center border text-lg ${
+                activeStatusFilter === 'ALL'
+                  ? 'border-[#23262B] bg-[#1C1E22]'
+                  : 'border-slate-200 bg-slate-100'
+              }`}
+            >
               📋
             </span>
           </div>
@@ -1771,7 +1777,7 @@ Cosmo.cnergy Procurement Team`;
                       setActiveStatusFilter('ALL');
                       setSearchTerm('');
                     }}
-                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+                    className="px-4 py-2 bg-[#0C0D0E] hover:bg-[#1C1E22] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                   >
                     View All Components ({catalog.length})
                   </button>

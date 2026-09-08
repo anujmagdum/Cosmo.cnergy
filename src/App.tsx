@@ -1636,16 +1636,16 @@ export const App: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsSearchOpen(true)}
-        className="fixed bottom-6 right-6 z-30 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-slate-900/95 hover:bg-slate-800 border border-slate-700 text-white shadow-xl shadow-slate-900/20 active:scale-95 transition-all group cursor-pointer backdrop-blur-md"
+        className="fixed bottom-6 right-6 z-30 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] border border-[#0b6623]/40 text-white shadow-xl shadow-[#0b6623]/30 active:scale-95 transition-all group cursor-pointer backdrop-blur-md"
         title="Master Data Universal Search (Ctrl + K)"
       >
-        <div className="w-6 h-6 rounded-lg bg-[#0b6623]/20 border border-[#0b6623]/30 flex items-center justify-center text-[#0b6623] group-hover:scale-110 transition-transform">
-          <Search className="w-3.5 h-3.5" />
+        <div className="w-6 h-6 rounded-lg bg-white/20 border border-white/30 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+          <Search className="w-3.5 h-3.5 text-white" />
         </div>
-        <span className="font-bold text-xs tracking-wide text-slate-100 group-hover:text-white">
+        <span className="font-bold text-xs tracking-wide text-white">
           Master Data Search
         </span>
-        <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-md bg-slate-800 border border-slate-700 font-mono text-[10px] text-slate-400 font-bold">
+        <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-md bg-[#084d1a] border border-emerald-400/40 font-mono text-[10px] text-emerald-100 font-bold">
           Ctrl+K
         </kbd>
       </button>

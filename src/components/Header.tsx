@@ -106,10 +106,10 @@ export const Header: React.FC<Props> = ({
             <div className="flex md:hidden items-center gap-2">
               <button
                 onClick={onOpenSearch}
-                className="p-2 rounded-xl bg-[#1C1E22]/70 border border-slate-700 text-slate-300 active:scale-95"
-                title="Search"
+                className="p-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] border border-[#0b6623]/40 text-white active:scale-95 shadow-xs"
+                title="Master Data Search"
               >
-                <Search className="w-4 h-4 text-[#0b6623]" />
+                <Search className="w-4 h-4 text-white" />
               </button>
 
               {userName ? (
@@ -194,7 +194,18 @@ export const Header: React.FC<Props> = ({
 
           {/* Right: Master Search + BOM Action + Profile Badge */}
           <div className="flex items-center justify-end gap-2.5 shrink-0" ref={dropdownRef}>
-
+            {/* Master Data Search Trigger (Desktop) */}
+            <button
+              onClick={onOpenSearch}
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all cursor-pointer border border-[#0b6623]/30"
+              title="Master Data Universal Search (Ctrl + K)"
+            >
+              <Search className="w-3.5 h-3.5 text-white" />
+              <span>Master Data Search</span>
+              <kbd className="hidden xl:inline-flex items-center px-1 py-0.2 rounded bg-[#084d1a] font-mono text-[9px] text-emerald-100">
+                Ctrl+K
+              </kbd>
+            </button>
 
             {/* 1-Tap BOM Procurement Button (Enhanced Datlion Style) */}
             <button
@@ -234,7 +245,7 @@ export const Header: React.FC<Props> = ({
                 {/* Interactive Profile Dropdown Menu */}
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#0C0D0E] border border-slate-700 shadow-2xl p-3 text-xs space-y-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150 overflow-hidden">
-                    <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
+                    <div className="p-2.5 rounded-xl bg-[#141618] border border-[#23262B] space-y-1">
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs shrink-0">
                           {userInitial}
@@ -244,12 +255,12 @@ export const Header: React.FC<Props> = ({
                           <div className="text-[11px] text-slate-400 truncate">{displayEmail}</div>
                         </div>
                       </div>
-                      <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
+                      <div className="pt-2 border-t border-[#23262B] flex items-center justify-between text-[10px] text-slate-400">
                         <span className="flex items-center gap-1 text-[#0b6623] font-semibold">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#0b6623] animate-pulse" />
                           Supabase Active
                         </span>
-                        <span>Solarized Light</span>
+                        <span>Cosmo Cnergy</span>
                       </div>
                     </div>
 
@@ -289,7 +300,7 @@ export const Header: React.FC<Props> = ({
       {/* Mobile Profile Dropdown Menu Drawer */}
       {isProfileDropdownOpen && userName && (
         <div className="md:hidden mt-2 p-3 rounded-2xl bg-[#141618] border border-slate-700 shadow-xl space-y-3 overflow-hidden mx-4 mb-3">
-          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-900 border border-slate-800">
+          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-[#0C0D0E] border border-[#23262B]">
             <div className="w-8 h-8 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs shrink-0">
               {userInitial}
             </div>
