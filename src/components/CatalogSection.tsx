@@ -13,7 +13,8 @@ import {
   STATUS_MAP,
   Category,
   ComponentCompany,
-  EmailMessage
+  EmailMessage,
+  FormCompanyMapping
 } from '../types';
 import { SKUCapacityCalculator } from './SKUCapacityCalculator';
 import { ReOrderConfirmationModal } from './ReOrderConfirmationModal';
@@ -1199,7 +1200,7 @@ Cosmo.cnergy Procurement Team`;
       {toastFeedback && (
         <div
           className={`fixed top-20 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce text-white font-bold text-sm ${
-            toastFeedback.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'
+            toastFeedback.type === 'success' ? 'bg-[#0b6623]' : 'bg-red-600'
           }`}
         >
           {toastFeedback.type === 'success' ? <Check className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}

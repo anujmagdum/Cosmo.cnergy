@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
-import { CatalogItem, Company, OrderStatus, Category, ComponentCompany, CompanyMappingInput } from '../types';
+import { CatalogItem, Company, OrderStatus, Category, ComponentCompany, CompanyMappingInput, FormCompanyMapping } from '../types';
 import { Edit2, X, Building2, AlertCircle, Sparkles } from 'lucide-react';
-
-interface FormCompanyMapping {
-  company_id: string;
-  rfq_quoted_price: number;
-  moq: number;
-  lead_time_days: number;
-  part_number_vendor: string;
-}
 
 interface Props {
   item: CatalogItem;

@@ -174,7 +174,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
         <div className="p-5 md:p-6 border-b border-[#E2E8F0]/70 bg-[#FFFFFF] sticky top-0 z-20 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-md shadow-[#0b6623]/20">
+              <div className="w-10 h-10 rounded-2xl bg-[#0b6623] text-white flex items-center justify-center font-bold shadow-md shadow-[#0b6623]/20">
                 <Building2 className="w-5 h-5" />
               </div>
               <div>
@@ -363,7 +363,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                         <div className="w-12 bg-slate-200 rounded-full h-2 overflow-hidden border border-slate-300">
                           <div
                             className={`h-full ${
-                              matchScore >= 80 ? 'bg-emerald-600' : matchScore >= 60 ? 'bg-amber-500' : 'bg-white0'
+                              matchScore >= 80 ? 'bg-[#0b6623]' : matchScore >= 60 ? 'bg-amber-500' : 'bg-white0'
                             }`}
                             style={{ width: `${matchScore}%` }}
                           />

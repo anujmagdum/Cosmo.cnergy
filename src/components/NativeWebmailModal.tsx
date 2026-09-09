@@ -87,10 +87,10 @@ Cosmo Cnergy`;
         })
       });
 
-      const resData = await response.json();
+      const resData = await response.json().catch(() => ({}));
 
-      if (!resData.success) {
-        throw new Error(resData.error || resData.message || 'SMTP transport failed to deliver message.');
+      if (!response.ok || !resData.success) {
+        throw new Error(resData.error || resData.message || `SMTP transport failed to deliver message (HTTP ${response.status}).`);
       }
 
       setSendSuccess(true);
@@ -113,7 +113,7 @@ Cosmo Cnergy`;
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-md shadow-[#0b6623]/20">
+            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-white font-bold shadow-md shadow-[#0b6623]/20">
               <Mail className="w-5 h-5" />
             </div>
             <div>

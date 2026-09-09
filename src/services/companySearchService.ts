@@ -83,7 +83,7 @@ For EACH company, provide complete realistic industrial contact details:
 
 Return 8 to 12 high-quality company results spread evenly across the sources in valid JSON array format.`;
 
-    const candidateModels = ['gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    const candidateModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
     let responseText = '';
 
     for (const model of candidateModels) {
@@ -170,7 +170,7 @@ Extract:
 
 Return strictly valid JSON object with keys: phoneNumber, email, contactPerson, gstNumber, address.`;
 
-    const candidateModels = ['gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    const candidateModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
     let responseText = '';
 
     for (const model of candidateModels) {

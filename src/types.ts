@@ -109,6 +109,15 @@ export interface CompanyMappingInput {
   part_number_vendor?: string;
 }
 
+export interface FormCompanyMapping {
+  company_id: string;
+  unit_price?: number;
+  rfq_quoted_price: number;
+  moq: number;
+  lead_time_days: number;
+  part_number_vendor: string;
+}
+
 // In Add Component schema: only 'name' is required; all other fields are nullable/optional
 export interface CatalogItem {
   id: string;

@@ -140,7 +140,7 @@ Return ONLY a valid JSON array of objects matching the schema:
     });
 
     console.log('[Gemini Multimodal] Dispatching generateContent request:', {
-      models: ['gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'],
+      models: ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'],
       hasImage: !!cleanBase64,
       mimeType: effectiveMime,
       imagePayloadSize: cleanBase64 ? `${Math.round(cleanBase64.length / 1024)} KB` : 'none'
@@ -148,7 +148,7 @@ Return ONLY a valid JSON array of objects matching the schema:
 
     let response: any = null;
     let lastError: any = null;
-    const candidateModels = ['gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    const candidateModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
     for (const model of candidateModels) {
       try {
@@ -348,7 +348,7 @@ ${itemsText}
 Respond ONLY in valid JSON format with keys "subject" and "body". Do not include markdown code block ticks.`;
 
     let responseText = '';
-    const candidateModels = ['gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    const candidateModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
 
     for (const model of candidateModels) {
       try {

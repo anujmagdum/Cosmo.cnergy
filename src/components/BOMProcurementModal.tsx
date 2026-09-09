@@ -535,7 +535,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
         {/* Modal Top Banner */}
         <div className="bg-[#0C0D0E] p-6 border-b border-[#E2E8F0]/60 flex items-center justify-between text-white">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-lg shadow-[#0b6623]/20">
+            <div className="w-12 h-12 rounded-2xl bg-[#0b6623] flex items-center justify-center text-white font-bold shadow-lg shadow-[#0b6623]/20">
               <Layers className="w-6 h-6" />
             </div>
             <div>
@@ -555,7 +555,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
 
           <button
             onClick={onClose}
-            className="text-slate-800 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-all font-bold cursor-pointer"
+            className="text-slate-400 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-all font-bold cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>

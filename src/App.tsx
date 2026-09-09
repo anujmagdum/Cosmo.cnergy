@@ -95,72 +95,103 @@ export const App: React.FC = () => {
   };
 
   // Core Data States
-  const [categories, setCategories] = useState<Category[]>([
-    { id: 'cat-1', name: 'Capacitor' },
-    { id: 'cat-2', name: 'Resistor' },
-    { id: 'cat-3', name: 'Diode' },
-    { id: 'cat-4', name: 'IC' },
-    { id: 'cat-5', name: 'IGBT' },
-    { id: 'cat-6', name: 'Transistor' },
-    { id: 'cat-7', name: 'Mosfet' },
-    { id: 'cat-8', name: 'Micro-Controller' },
-    { id: 'cat-9', name: 'Triac' },
-    { id: 'cat-10', name: 'IC Base' },
-    { id: 'cat-11', name: 'Connector' },
-    { id: 'cat-12', name: 'Push Button' },
-    { id: 'cat-13', name: 'MOV' },
-    { id: 'cat-14', name: 'Coil' },
-    { id: 'cat-15', name: 'Regulator' },
-    { id: 'cat-16', name: 'Fuse' },
-    { id: 'cat-17', name: 'Drill Bit' },
-    { id: 'cat-18', name: 'Crystal' }
-  ]);
+  const [categories, setCategories] = useState<Category[]>(() => {
+    try {
+      const saved = localStorage.getItem('cosmo_categories');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return [
+      { id: 'cat-1', name: 'Capacitor' },
+      { id: 'cat-2', name: 'Resistor' },
+      { id: 'cat-3', name: 'Diode' },
+      { id: 'cat-4', name: 'IC' },
+      { id: 'cat-5', name: 'IGBT' },
+      { id: 'cat-6', name: 'Transistor' },
+      { id: 'cat-7', name: 'Mosfet' },
+      { id: 'cat-8', name: 'Micro-Controller' },
+      { id: 'cat-9', name: 'Triac' },
+      { id: 'cat-10', name: 'IC Base' },
+      { id: 'cat-11', name: 'Connector' },
+      { id: 'cat-12', name: 'Push Button' },
+      { id: 'cat-13', name: 'MOV' },
+      { id: 'cat-14', name: 'Coil' },
+      { id: 'cat-15', name: 'Regulator' },
+      { id: 'cat-16', name: 'Fuse' },
+      { id: 'cat-17', name: 'Drill Bit' },
+      { id: 'cat-18', name: 'Crystal' }
+    ];
+  });
   const [catalog, setCatalog] = useState<CatalogItem[]>(() => {
-    const saved = localStorage.getItem('cosmo_catalog');
-    let items: CatalogItem[] = saved ? JSON.parse(saved) : INITIAL_CATALOG;
-    const catRemap: Record<string, string> = {
-      'Battery Cells': 'Capacitor',
-      'Electronics / BMS': 'Micro-Controller',
-      'Connectors & Busbars': 'Connector',
-      'Metal Enclosures': 'Push Button',
-      'Wiring & Harnesses': 'Connector',
-      'General Company': 'Capacitor',
-      'General Supplier': 'Capacitor'
-    };
-    return items.map(it => ({
-      ...it,
-      category: catRemap[it.category || ''] || it.category || 'Capacitor'
-    }));
+    try {
+      const saved = localStorage.getItem('cosmo_catalog');
+      let items: CatalogItem[] = saved ? JSON.parse(saved) : INITIAL_CATALOG;
+      if (!Array.isArray(items)) items = INITIAL_CATALOG;
+      const catRemap: Record<string, string> = {
+        'Battery Cells': 'Capacitor',
+        'Electronics / BMS': 'Micro-Controller',
+        'Connectors & Busbars': 'Connector',
+        'Metal Enclosures': 'Push Button',
+        'Wiring & Harnesses': 'Connector',
+        'General Company': 'Capacitor',
+        'General Supplier': 'Capacitor'
+      };
+      return items.map(it => ({
+        ...it,
+        category: catRemap[it.category || ''] || it.category || 'Capacitor'
+      }));
+    } catch {
+      return INITIAL_CATALOG;
+    }
   });
   const [companies, setCompanies] = useState<Company[]>(() => {
-    const saved = localStorage.getItem('cosmo_companies');
-    let items: Company[] = saved ? JSON.parse(saved) : INITIAL_SUPPLIERS;
-    const catRemap: Record<string, string> = {
-      'Battery Cells': 'Capacitor',
-      'Electronics / BMS': 'Micro-Controller',
-      'Connectors & Busbars': 'Connector',
-      'Metal Enclosures': 'Push Button',
-      'Wiring & Harnesses': 'Connector',
-      'General Company': 'Capacitor',
-      'General Supplier': 'Capacitor'
-    };
-    return items.map(s => ({
-      ...s,
-      category: catRemap[s.category || ''] || s.category || 'Capacitor',
-      categories: (s.categories || [s.category || 'Capacitor']).map(c => catRemap[c] || c)
-    }));
+    try {
+      const saved = localStorage.getItem('cosmo_companies');
+      let items: Company[] = saved ? JSON.parse(saved) : INITIAL_SUPPLIERS;
+      if (!Array.isArray(items)) items = INITIAL_SUPPLIERS;
+      const catRemap: Record<string, string> = {
+        'Battery Cells': 'Capacitor',
+        'Electronics / BMS': 'Micro-Controller',
+        'Connectors & Busbars': 'Connector',
+        'Metal Enclosures': 'Push Button',
+        'Wiring & Harnesses': 'Connector',
+        'General Company': 'Capacitor',
+        'General Supplier': 'Capacitor'
+      };
+      return items.map(s => ({
+        ...s,
+        category: catRemap[s.category || ''] || s.category || 'Capacitor',
+        categories: (s.categories || [s.category || 'Capacitor']).map(c => catRemap[c] || c)
+      }));
+    } catch {
+      return INITIAL_SUPPLIERS;
+    }
   });
   const [boms, setBoms] = useState<ProductBOM[]>(() => {
-    const saved = localStorage.getItem('cosmo_boms');
-    return saved ? JSON.parse(saved) : INITIAL_BOMS;
+    try {
+      const saved = localStorage.getItem('cosmo_boms');
+      return saved ? JSON.parse(saved) : INITIAL_BOMS;
+    } catch {
+      return INITIAL_BOMS;
+    }
   });
   const [folders, setFolders] = useState<ProductFolder[]>(() => {
-    const saved = localStorage.getItem('cosmo_folders');
-    return saved ? JSON.parse(saved) : INITIAL_FOLDERS;
+    try {
+      const saved = localStorage.getItem('cosmo_folders');
+      return saved ? JSON.parse(saved) : INITIAL_FOLDERS;
+    } catch {
+      return INITIAL_FOLDERS;
+    }
   });
   const [orders, setOrders] = useState<ProcurementOrder[]>(() => {
-    const saved = localStorage.getItem('cosmo_orders');
-    return saved ? JSON.parse(saved) : INITIAL_ORDERS;
+    try {
+      const saved = localStorage.getItem('cosmo_orders');
+      return saved ? JSON.parse(saved) : INITIAL_ORDERS;
+    } catch {
+      return INITIAL_ORDERS;
+    }
   });
   const [componentCompanies, setComponentCompanies] = useState<ComponentCompany[]>(() => {
     try {

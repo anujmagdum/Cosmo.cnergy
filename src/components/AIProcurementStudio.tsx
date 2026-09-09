@@ -202,7 +202,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
             }`}
           >
             <Key className="w-3.5 h-3.5" />
-            <span>{isKeyActive ? '🟢 Gemini 3.6 Active' : '🔑 Set Gemini API Key'}</span>
+            <span>{isKeyActive ? '🟢 Gemini 2.5 Flash Active' : '🔑 Set Gemini API Key'}</span>
           </button>
         </div>
       </div>

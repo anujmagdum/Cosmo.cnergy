@@ -410,7 +410,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
           {/* Active sort indicator badge */}
           {sortField && (
             <div className="flex items-center gap-2 text-xs">
-              <span className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white font-bold text-[11px] flex items-center gap-1 shadow-2xs">
+              <span className="px-2.5 py-1 rounded-lg bg-[#0b6623] text-white font-bold text-[11px] flex items-center gap-1 shadow-2xs">
                 <span>
                   Sorted by{' '}
                   {sortField === 'rfq_quoted_price'
@@ -448,7 +448,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                   onClick={() => handleSortToggle('rfq_quoted_price')}
                   className={`py-3.5 px-5 cursor-pointer transition-colors ${
                     sortField === 'rfq_quoted_price'
-                      ? 'bg-emerald-600/15 text-[#0b6623] font-black'
+                      ? 'bg-[#0b6623]/15 text-[#0b6623] font-black'
                       : 'hover:bg-[#f8fafc] text-[#0D0D0D]'
                   }`}
                   title="Click to toggle: Ascending (Lowest price) -> Descending (Highest price) -> Reset"
@@ -472,7 +472,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                   onClick={() => handleSortToggle('moq')}
                   className={`py-3.5 px-5 cursor-pointer transition-colors ${
                     sortField === 'moq'
-                      ? 'bg-emerald-600/15 text-[#0b6623] font-black'
+                      ? 'bg-[#0b6623]/15 text-[#0b6623] font-black'
                       : 'hover:bg-[#f8fafc] text-[#0D0D0D]'
                   }`}
                   title="Click to toggle: Ascending (Lowest MOQ) -> Descending (Highest MOQ) -> Reset"
@@ -496,7 +496,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                   onClick={() => handleSortToggle('lead_time_days')}
                   className={`py-3.5 px-5 cursor-pointer transition-colors ${
                     sortField === 'lead_time_days'
-                      ? 'bg-emerald-600/15 text-[#0b6623] font-black'
+                      ? 'bg-[#0b6623]/15 text-[#0b6623] font-black'
                       : 'hover:bg-[#f8fafc] text-[#0D0D0D]'
                   }`}
                   title="Click to toggle: Ascending (Shortest lead time) -> Descending (Longest lead time) -> Reset"

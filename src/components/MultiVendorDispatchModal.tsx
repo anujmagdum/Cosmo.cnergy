@@ -98,7 +98,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold shadow-md">
+            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-white font-bold shadow-md">
               <Rocket className="w-5 h-5" />
             </div>
             <div>

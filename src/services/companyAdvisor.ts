@@ -8,11 +8,11 @@ export interface CompanyRecommendationResult {
   badge: string;
   reasoning: string;
   candidateScores: Record<string, number>;
-  source: 'gemini-3.6-flash' | 'gemini-fallback' | 'deterministic-heuristic';
+  source: 'gemini-2.5-flash' | 'gemini-fallback' | 'deterministic-heuristic';
 }
 
 /**
- * Gemini 3.6 Flash Company Advisor Service
+ * Gemini 2.5 Flash Company Advisor Service
  * Evaluates component specs, RFQ quoted prices, multi-platform review summaries, and delivery metrics.
  */
 export const adviseBestCompany = async (
@@ -103,8 +103,8 @@ Top Candidates under evaluation:
 ${JSON.stringify(promptCandidates, null, 2)}
 `;
 
-  // Fallback cascade: gemini-3.6-flash -> gemini-2.0-flash -> gemini-1.5-flash
-  const models = ['gemini-3.6-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+  // Fallback cascade: gemini-2.5-flash -> gemini-2.0-flash -> gemini-1.5-flash
+  const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
   const ai = new GoogleGenAI({ apiKey });
 
   for (const model of models) {
@@ -130,7 +130,7 @@ ${JSON.stringify(promptCandidates, null, 2)}
           badge: parsed.badge || 'Best Overall Value',
           reasoning: parsed.reasoning || 'Selected as the optimal procurement partner based on RFQ pricing and multi-platform review metrics.',
           candidateScores: Object.fromEntries(topCandidates.map(c => [c.componentCompany.company_id, c.matchScore])),
-          source: model === 'gemini-3.6-flash' ? 'gemini-3.6-flash' : 'gemini-fallback'
+          source: model === 'gemini-2.5-flash' ? 'gemini-2.5-flash' : 'gemini-fallback'
         };
       }
     } catch (err: any) {

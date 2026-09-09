@@ -210,7 +210,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
       <div className="glass-card bg-[#FFFFFF] p-5 rounded-2xl border border-[#E2E8F0] shadow-xs space-y-3.5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#E2E8F0]/60 pb-2.5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-xs">
+            <div className="w-8 h-8 rounded-xl bg-[#0b6623] text-white flex items-center justify-center shadow-xs">
               <Calculator className="w-4 h-4" />
             </div>
             <div>
