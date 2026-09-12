@@ -23,7 +23,6 @@ import { ComponentComparisonPage } from './components/ComponentComparisonPage';
 import { Header } from './components/Header';
 import { CatalogSection } from './components/CatalogSection';
 import { CompanyDashboard } from './components/CompanyDashboard';
-import { AIProcurementStudio } from './components/AIProcurementStudio';
 import { OrderHistoryTimeline } from './components/OrderHistoryTimeline';
 import { BOMProcurementModal } from './components/BOMProcurementModal';
 import { Webmail } from './components/Webmail';
@@ -58,7 +57,6 @@ export const App: React.FC = () => {
     const firstSegment = segments[0] || '';
 
     if (firstSegment === 'companies') setActiveTab('companies');
-    else if (firstSegment === 'ai') setActiveTab('ai');
     else if (firstSegment === 'procurement') setActiveTab('procurement');
     else if (firstSegment === 'webmail') setActiveTab('webmail');
     else if (firstSegment === 'inventory' || firstSegment === '') setActiveTab('inventory');
@@ -1496,13 +1494,6 @@ export const App: React.FC = () => {
                 });
                 handleTabChange('webmail');
               }}
-            />
-          } />
-          <Route path="ai" element={
-            <AIProcurementStudio
-              catalog={catalog}
-              companies={companies}
-              onGenerateOrderFromAI={drafts => handleDispatchOrders(drafts, 'PO')}
             />
           } />
           <Route path="procurement" element={

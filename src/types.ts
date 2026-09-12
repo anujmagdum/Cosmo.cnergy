@@ -142,7 +142,7 @@ export interface CatalogItem {
   created_at?: string;
 }
 
-export type NavigationTab = 'procurement' | 'inventory' | 'companies' | 'ai' | 'webmail';
+export type NavigationTab = 'procurement' | 'inventory' | 'companies' | 'webmail';
 
 export interface ComponentCompany {
   id: string;

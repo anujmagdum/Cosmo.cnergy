@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Zap, LogOut, LogIn, User, PlusCircle, Sparkles, Truck, Layers, History, Search, Mail, ChevronDown, ShieldCheck, Building2, AlertTriangle, FolderPlus, Plus, Send } from 'lucide-react';
+import { Zap, LogOut, LogIn, User, PlusCircle, Truck, Layers, History, Search, Mail, ChevronDown, ShieldCheck, Building2, AlertTriangle, FolderPlus, Plus, Send } from 'lucide-react';
 
 import { NavigationTab } from '../types';
 
@@ -71,11 +71,10 @@ export const Header: React.FC<Props> = ({
 
   // Navigation Items with dynamic count badges
   const navItems = [
-    { id: 'procurement' as const, label: 'Procurement', icon: History, isAi: false, count: ordersCount, alert: false },
-    { id: 'inventory' as const, label: 'Inventory', icon: Layers, isAi: false, count: catalogCount, alert: alertsCount > 0 },
-    { id: 'companies' as const, label: 'Companies', icon: Building2, isAi: false, count: companiesCount, alert: false },
-    { id: 'webmail' as const, label: 'Webmail', icon: Mail, isAi: false, count: mailQueueCount > 0 ? mailQueueCount : undefined, alert: mailQueueCount > 0 },
-    { id: 'ai' as const, label: 'AI Studio', icon: Sparkles, isAi: true, count: undefined, alert: false },
+    { id: 'procurement' as const, label: 'Procurement', icon: History, count: ordersCount, alert: false },
+    { id: 'inventory' as const, label: 'Inventory', icon: Layers, count: catalogCount, alert: alertsCount > 0 },
+    { id: 'companies' as const, label: 'Companies', icon: Building2, count: companiesCount, alert: false },
+    { id: 'webmail' as const, label: 'Webmail', icon: Mail, count: mailQueueCount > 0 ? mailQueueCount : undefined, alert: mailQueueCount > 0 },
   ];
 
   return (
@@ -141,27 +140,6 @@ export const Header: React.FC<Props> = ({
             {navItems.map(item => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
-
-              // Clean calm styling for AI Studio
-              if (item.isAi) {
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id)}
-                    className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 whitespace-nowrap cursor-pointer ${
-                      isActive
-                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/30 ring-1 ring-indigo-400/50'
-                        : 'bg-indigo-950/40 hover:bg-indigo-900/50 text-indigo-300 hover:text-white border border-indigo-500/30'
-                    }`}
-                  >
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-indigo-400'}`} />
-                    <span>{item.label}</span>
-                    <span className="px-1.5 py-0.5 rounded-md bg-slate-800/70 text-slate-400 border border-slate-700 text-[9px] font-medium tracking-wider">
-                      PRO
-                    </span>
-                  </button>
-                );
-              }
 
               return (
                 <button
