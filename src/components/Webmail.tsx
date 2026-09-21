@@ -714,12 +714,12 @@ export const Webmail: React.FC<Props> = ({
       {/* Top Header & Account Management Bar */}
       <div className="glass-panel px-5 py-3.5 rounded-2xl bg-[#0C0D0E] text-white flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-md">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#0b6623] flex items-center justify-center shadow-md shadow-[#0b6623]/20 shrink-0">
+          <div className="w-9 h-9 rounded-xl bg-[#8db600] flex items-center justify-center shadow-md shadow-[#8db600]/20 shrink-0">
             <Mail className="w-4.5 h-4.5 text-black stroke-[2.5]" />
           </div>
           <div className="flex items-center gap-2.5 flex-wrap">
             <h2 className="text-lg font-bold text-white font-heading tracking-tight">Admin Webmail Client</h2>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-[#0b6623] border border-[#0b6623]/30">
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-[#8db600] border border-[#8db600]/30">
               IMAP / SMTP SSL
             </span>
           </div>
@@ -736,7 +736,7 @@ export const Webmail: React.FC<Props> = ({
                 const found = accounts.find(a => a.email === e.target.value);
                 if (found) setSettingsForm({ ...found });
               }}
-              className="appearance-none bg-[#0C0D0E] hover:bg-[#141618] border border-[#23262B] text-slate-200 text-xs font-semibold rounded-xl pl-3 pr-8 py-2.5 focus:outline-none focus:border-[#0b6623] transition-all cursor-pointer shadow-sm"
+              className="appearance-none bg-[#0C0D0E] hover:bg-[#141618] border border-[#23262B] text-slate-200 text-xs font-semibold rounded-xl pl-3 pr-8 py-2.5 focus:outline-none focus:border-[#8db600] transition-all cursor-pointer shadow-sm"
             >
               {accounts.map(acc => (
                 <option key={acc.id} value={acc.email} className="bg-[#0C0D0E] text-slate-200">
@@ -753,7 +753,7 @@ export const Webmail: React.FC<Props> = ({
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#1C1E22] hover:bg-[#23262B] text-slate-200 hover:text-white border border-[#23262B] text-xs font-medium transition-all shadow-xs active:scale-95"
             title="Connect an additional IMAP/SMTP Mailbox"
           >
-            <Plus className="w-3.5 h-3.5 text-[#0b6623]" />
+            <Plus className="w-3.5 h-3.5 text-[#8db600]" />
             <span>Add Mailbox</span>
           </button>
 
@@ -761,10 +761,10 @@ export const Webmail: React.FC<Props> = ({
           <button
             onClick={handleFetchMail}
             disabled={isFetching}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1C1E22] hover:bg-[#23262B] text-[#0b6623] hover:text-[#0b6623] border border-[#23262B] text-xs font-semibold transition-all shadow-xs active:scale-95"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#1C1E22] hover:bg-[#23262B] text-[#8db600] hover:text-[#8db600] border border-[#23262B] text-xs font-semibold transition-all shadow-xs active:scale-95"
             title="Poll IMAP server for new messages"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isFetching ? 'animate-spin text-[#0b6623]' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isFetching ? 'animate-spin text-[#8db600]' : ''}`} />
             <span>{isFetching ? 'Syncing...' : 'Fetch Mail'}</span>
           </button>
 
@@ -784,7 +784,7 @@ export const Webmail: React.FC<Props> = ({
           {/* Compose Mail Button */}
           <button
             onClick={() => setIsComposeOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs md:text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs md:text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
           >
             <Send className="w-4 h-4 fill-black text-black" />
             <span>Compose Mail</span>
@@ -796,8 +796,8 @@ export const Webmail: React.FC<Props> = ({
       {/* Handled by global MailQueueManager now */}
 
       {syncStatus && (
-        <div className="flex items-center gap-2 p-3 rounded-2xl bg-[#0b6623]/10 border border-[#0b6623]/20 text-[#0b6623] text-xs animate-fadeIn font-semibold">
-          <CheckCircle2 className="w-4 h-4 text-[#0b6623] shrink-0" />
+        <div className="flex items-center gap-2 p-3 rounded-2xl bg-[#8db600]/10 border border-[#8db600]/20 text-[#8db600] text-xs animate-fadeIn font-semibold">
+          <CheckCircle2 className="w-4 h-4 text-[#8db600] shrink-0" />
           <span>{syncStatus}</span>
         </div>
       )}
@@ -810,7 +810,7 @@ export const Webmail: React.FC<Props> = ({
             {/* Compose Quick Trigger */}
             <button
               onClick={() => setIsComposeOpen(true)}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-md shadow-[#8db600]/20 active:scale-95 transition-all cursor-pointer"
             >
               <Send className="w-3.5 h-3.5 fill-black text-black" />
               <span>Write New Mail</span>
@@ -822,7 +822,7 @@ export const Webmail: React.FC<Props> = ({
                 onClick={() => setActiveFolder('inbox')}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
                   activeFolder === 'inbox'
-                    ? 'bg-[#0b6623] text-black font-black shadow-sm'
+                    ? 'bg-[#8db600] text-black font-black shadow-sm'
                     : 'text-[#020617] hover:bg-[#e2e8f0]'
                 }`}
               >
@@ -833,7 +833,7 @@ export const Webmail: React.FC<Props> = ({
                 {unreadCount > 0 && (
                   <span
                     className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                      activeFolder === 'inbox' ? 'bg-black/20 text-black' : 'bg-emerald-100 text-[#0b6623]'
+                      activeFolder === 'inbox' ? 'bg-black/20 text-black' : 'bg-emerald-100 text-[#8db600]'
                     }`}
                   >
                     {unreadCount}
@@ -845,7 +845,7 @@ export const Webmail: React.FC<Props> = ({
                 onClick={() => setActiveFolder('starred')}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
                   activeFolder === 'starred'
-                    ? 'bg-[#0b6623] text-black font-black shadow-sm'
+                    ? 'bg-[#8db600] text-black font-black shadow-sm'
                     : 'text-[#020617] hover:bg-[#e2e8f0]'
                 }`}
               >
@@ -862,7 +862,7 @@ export const Webmail: React.FC<Props> = ({
                 onClick={() => setActiveFolder('sent')}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
                   activeFolder === 'sent'
-                    ? 'bg-[#0b6623] text-black font-black shadow-sm'
+                    ? 'bg-[#8db600] text-black font-black shadow-sm'
                     : 'text-[#020617] hover:bg-[#e2e8f0]'
                 }`}
               >
@@ -879,7 +879,7 @@ export const Webmail: React.FC<Props> = ({
                 onClick={() => setActiveFolder('drafts')}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
                   activeFolder === 'drafts'
-                    ? 'bg-[#0b6623] text-black font-black shadow-sm'
+                    ? 'bg-[#8db600] text-black font-black shadow-sm'
                     : 'text-[#020617] hover:bg-[#e2e8f0]'
                 }`}
               >
@@ -896,7 +896,7 @@ export const Webmail: React.FC<Props> = ({
                 onClick={() => setActiveFolder('trash')}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
                   activeFolder === 'trash'
-                    ? 'bg-[#0b6623] text-black font-black shadow-sm'
+                    ? 'bg-[#8db600] text-black font-black shadow-sm'
                     : 'text-[#020617] hover:bg-[#e2e8f0]'
                 }`}
               >
@@ -914,7 +914,7 @@ export const Webmail: React.FC<Props> = ({
           {/* Account Status Footer */}
           <div className="pt-4 border-t border-[#E2E8F0] text-[11px] text-[#1e293b] space-y-1">
             <div className="flex items-center gap-1.5 text-[#020617] font-bold">
-              <Shield className="w-3.5 h-3.5 text-[#0b6623]" />
+              <Shield className="w-3.5 h-3.5 text-[#8db600]" />
               <span className="truncate">{activeAccount.email}</span>
             </div>
             <div className="text-[10px] text-[#1e293b]">
@@ -934,7 +934,7 @@ export const Webmail: React.FC<Props> = ({
                 placeholder="Search mail by sender, subject..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-9 pr-3 py-1.5 text-xs text-[#0D0D0D] focus:outline-none focus:border-[#0b6623] shadow-xs font-medium placeholder-slate-400"
+                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-9 pr-3 py-1.5 text-xs text-[#0D0D0D] focus:outline-none focus:border-[#8db600] shadow-xs font-medium placeholder-slate-400"
               />
             </div>
           </div>
@@ -960,7 +960,7 @@ export const Webmail: React.FC<Props> = ({
                     onClick={() => handleSelectEmail(mail)}
                     className={`p-3.5 cursor-pointer transition-all border-b border-[#E2E8F0] ${
                       isSelected
-                        ? 'bg-[#ECFDF5] border-l-4 border-l-[#0b6623] shadow-xs'
+                        ? 'bg-[#ECFDF5] border-l-4 border-l-[#8db600] shadow-xs'
                         : mail.isUnread
                         ? 'bg-white hover:bg-slate-50 font-semibold'
                         : 'bg-white hover:bg-slate-50/80 text-slate-700'
@@ -970,7 +970,7 @@ export const Webmail: React.FC<Props> = ({
                     <div className="flex items-center justify-between gap-2 mb-1">
                       <div className="flex items-center gap-2 min-w-0 flex-1">
                         {mail.isUnread ? (
-                          <span className="w-2 h-2 rounded-full bg-[#0b6623] shrink-0" title="Unread" />
+                          <span className="w-2 h-2 rounded-full bg-[#8db600] shrink-0" title="Unread" />
                         ) : (
                           <span className="w-2 h-2 rounded-full bg-slate-300 shrink-0" title="Read" />
                         )}
@@ -1073,28 +1073,28 @@ export const Webmail: React.FC<Props> = ({
                     <div className="flex flex-wrap items-center gap-1.5 shrink-0">
                       <button
                         onClick={() => handleReply(selectedEmail)}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#0b6623] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#0b6623] text-xs font-semibold transition-all active:scale-95 shadow-2xs"
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#8db600] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#8db600] text-xs font-semibold transition-all active:scale-95 shadow-2xs"
                         title="Reply"
                       >
-                        <Reply className="w-3.5 h-3.5 text-[#0b6623]" />
+                        <Reply className="w-3.5 h-3.5 text-[#8db600]" />
                         <span className="hidden sm:inline">Reply</span>
                       </button>
 
                       <button
                         onClick={() => handleReplyAll(selectedEmail)}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#0b6623] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#0b6623] text-xs font-semibold transition-all active:scale-95 shadow-2xs"
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#8db600] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#8db600] text-xs font-semibold transition-all active:scale-95 shadow-2xs"
                         title="Reply All"
                       >
-                        <ReplyAll className="w-3.5 h-3.5 text-[#0b6623]" />
+                        <ReplyAll className="w-3.5 h-3.5 text-[#8db600]" />
                         <span className="hidden sm:inline">Reply All</span>
                       </button>
 
                       <button
                         onClick={() => handleForward(selectedEmail)}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#0b6623] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#0b6623] text-xs font-semibold transition-all active:scale-95 shadow-2xs"
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#8db600] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#8db600] text-xs font-semibold transition-all active:scale-95 shadow-2xs"
                         title="Forward"
                       >
-                        <Forward className="w-3.5 h-3.5 text-[#0b6623]" />
+                        <Forward className="w-3.5 h-3.5 text-[#8db600]" />
                         <span className="hidden sm:inline">Forward</span>
                       </button>
 
@@ -1102,12 +1102,12 @@ export const Webmail: React.FC<Props> = ({
                         onClick={() => handleToggleReadStatus(selectedEmail.id)}
                         className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all active:scale-95 shadow-2xs ${
                           selectedEmail.isUnread
-                            ? 'border-emerald-300 bg-emerald-50 text-[#0b6623]'
+                            ? 'border-emerald-300 bg-emerald-50 text-[#8db600]'
                             : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
                         }`}
                         title={selectedEmail.isUnread ? 'Mark as read' : 'Mark as unread'}
                       >
-                        <Mail className="w-3.5 h-3.5 text-[#0b6623]" />
+                        <Mail className="w-3.5 h-3.5 text-[#8db600]" />
                         <span className="hidden sm:inline">{selectedEmail.isUnread ? 'Mark Read' : 'Mark Unread'}</span>
                       </button>
 
@@ -1134,7 +1134,7 @@ export const Webmail: React.FC<Props> = ({
                   {/* Sub-line: Sender Avatar, Display Name <email@domain.com>, and relative timestamp */}
                   <div className="flex items-center justify-between gap-3 pt-0.5">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-7 h-7 rounded-full bg-[#0b6623] text-black font-black text-xs flex items-center justify-center shrink-0 uppercase shadow-2xs">
+                      <div className="w-7 h-7 rounded-full bg-[#8db600] text-black font-black text-xs flex items-center justify-center shrink-0 uppercase shadow-2xs">
                         {senderInitials}
                       </div>
                       <div className="min-w-0 truncate">
@@ -1169,17 +1169,17 @@ export const Webmail: React.FC<Props> = ({
                 {selectedEmail.attachments && selectedEmail.attachments.length > 0 && (
                   <div className="p-3 rounded-2xl bg-white border border-slate-200 space-y-2 shrink-0">
                     <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                      <Paperclip className="w-3.5 h-3.5 text-[#0b6623]" />
+                      <Paperclip className="w-3.5 h-3.5 text-[#8db600]" />
                       <span>Attachments ({selectedEmail.attachments.length})</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {selectedEmail.attachments.map((att, idx) => (
                         <div
                           key={idx}
-                          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-[#0D0D0D] shadow-2xs hover:border-[#0b6623] transition-all cursor-pointer font-medium"
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-[#0D0D0D] shadow-2xs hover:border-[#8db600] transition-all cursor-pointer font-medium"
                           onClick={() => alert(`Downloading attachment: ${att.filename}`)}
                         >
-                          <FileText className="w-3.5 h-3.5 text-[#0b6623]" />
+                          <FileText className="w-3.5 h-3.5 text-[#8db600]" />
                           <span className="truncate max-w-[140px]">{att.filename}</span>
                           <span className="text-[10px] text-slate-500 font-mono">({att.size})</span>
                           <Download className="w-3 h-3 text-slate-400 hover:text-slate-800" />
@@ -1217,7 +1217,7 @@ export const Webmail: React.FC<Props> = ({
           <div className="bg-[#FFFFFF] w-full max-w-xl rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <div className="flex items-center gap-2">
-                <Settings className="w-5 h-5 text-[#0b6623]" />
+                <Settings className="w-5 h-5 text-[#8db600]" />
                 <h3 className="text-xl font-bold text-[#020617]">Webmail IMAP & SMTP Settings</h3>
               </div>
               <button
@@ -1237,7 +1237,7 @@ export const Webmail: React.FC<Props> = ({
                     required
                     value={settingsForm.email}
                     onChange={e => setSettingsForm({ ...settingsForm, email: e.target.value })}
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                   />
                 </div>
 
@@ -1248,7 +1248,7 @@ export const Webmail: React.FC<Props> = ({
                     required
                     value={settingsForm.senderName}
                     onChange={e => setSettingsForm({ ...settingsForm, senderName: e.target.value })}
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-semibold"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-semibold"
                   />
                 </div>
               </div>
@@ -1262,7 +1262,7 @@ export const Webmail: React.FC<Props> = ({
                     value={settingsForm.imapHost}
                     onChange={e => setSettingsForm({ ...settingsForm, imapHost: e.target.value })}
                     placeholder="mail.cosmocnergy.com"
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-mono"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-mono"
                   />
                 </div>
 
@@ -1274,7 +1274,7 @@ export const Webmail: React.FC<Props> = ({
                     value={settingsForm.imapPort}
                     onChange={e => setSettingsForm({ ...settingsForm, imapPort: Number(e.target.value) || 993 })}
                     placeholder="993"
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-mono"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-mono"
                   />
                 </div>
               </div>
@@ -1288,7 +1288,7 @@ export const Webmail: React.FC<Props> = ({
                     value={settingsForm.smtpHost}
                     onChange={e => setSettingsForm({ ...settingsForm, smtpHost: e.target.value })}
                     placeholder="mail.cosmocnergy.com"
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-mono"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-mono"
                   />
                 </div>
 
@@ -1300,7 +1300,7 @@ export const Webmail: React.FC<Props> = ({
                     value={settingsForm.smtpPort}
                     onChange={e => setSettingsForm({ ...settingsForm, smtpPort: Number(e.target.value) || 465 })}
                     placeholder="465"
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-mono"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-mono"
                   />
                 </div>
               </div>
@@ -1313,7 +1313,7 @@ export const Webmail: React.FC<Props> = ({
                     required
                     value={settingsForm.username}
                     onChange={e => setSettingsForm({ ...settingsForm, username: e.target.value })}
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600]"
                   />
                 </div>
 
@@ -1324,7 +1324,7 @@ export const Webmail: React.FC<Props> = ({
                     value={settingsForm.password || ''}
                     onChange={e => setSettingsForm({ ...settingsForm, password: e.target.value })}
                     placeholder="••••••••••••"
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600]"
                   />
                 </div>
               </div>
@@ -1333,12 +1333,12 @@ export const Webmail: React.FC<Props> = ({
                 <div
                   className={`p-3 rounded-xl border text-xs flex items-center gap-2 ${
                     connTestResult.success
-                      ? 'bg-emerald-50 border-emerald-300 text-[#0b6623]'
+                      ? 'bg-emerald-50 border-emerald-300 text-[#8db600]'
                       : 'bg-red-50 border-red-300 text-red-800'
                   }`}
                 >
                   {connTestResult.success ? (
-                    <CheckCircle2 className="w-4 h-4 text-[#0b6623] shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-[#8db600] shrink-0" />
                   ) : (
                     <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
                   )}
@@ -1367,7 +1367,7 @@ export const Webmail: React.FC<Props> = ({
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 cursor-pointer"
+                    className="px-5 py-2 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-md shadow-[#8db600]/20 active:scale-95 cursor-pointer"
                   >
                     Save Settings
                   </button>
@@ -1384,7 +1384,7 @@ export const Webmail: React.FC<Props> = ({
           <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <h3 className="text-xl font-bold text-[#020617] flex items-center gap-2">
-                <Plus className="w-5 h-5 text-[#0b6623]" />
+                <Plus className="w-5 h-5 text-[#8db600]" />
                 <span>Connect New Mailbox</span>
               </h3>
               <button onClick={() => setIsAddAccountOpen(false)} className="text-[#1e293b] hover:text-[#020617] font-bold">
@@ -1507,7 +1507,7 @@ export const Webmail: React.FC<Props> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black shadow-md shadow-[#0b6623]/20 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black shadow-md shadow-[#8db600]/20 cursor-pointer"
                 >
                   Connect Mailbox
                 </button>
@@ -1523,7 +1523,7 @@ export const Webmail: React.FC<Props> = ({
           <div className="bg-[#FFFFFF] w-full max-w-2xl rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <div className="flex items-center gap-2">
-                <Send className="w-5 h-5 text-[#0b6623]" />
+                <Send className="w-5 h-5 text-[#8db600]" />
                 <h3 className="text-xl font-bold text-[#020617]">Compose New Message</h3>
               </div>
               <button onClick={handleCloseCompose} className="text-[#1e293b] hover:text-[#020617] font-bold p-1">
@@ -1546,7 +1546,7 @@ export const Webmail: React.FC<Props> = ({
                   value={composeTo}
                   onChange={e => setComposeTo(e.target.value)}
                   placeholder="vendor.sales@company.com"
-                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                 />
               </div>
 
@@ -1557,7 +1557,7 @@ export const Webmail: React.FC<Props> = ({
                   value={composeCc}
                   onChange={e => setComposeCc(e.target.value)}
                   placeholder="procurement-lead@cosmocnergy.com"
-                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs text-[#020617] focus:outline-none focus:border-[#8db600]"
                 />
               </div>
 
@@ -1569,7 +1569,7 @@ export const Webmail: React.FC<Props> = ({
                   value={composeSubject}
                   onChange={e => setComposeSubject(e.target.value)}
                   placeholder="Purchase Order (PO) - 51.2V 100Ah Pack Assembly"
-                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-semibold"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-semibold"
                 />
               </div>
 
@@ -1581,14 +1581,14 @@ export const Webmail: React.FC<Props> = ({
                   value={composeBody}
                   onChange={e => setComposeBody(e.target.value)}
                   placeholder="Type your official procurement dispatch message or quotation inquiry here..."
-                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-xs text-[#020617] focus:outline-none focus:border-[#0b6623] leading-relaxed font-sans"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2.5 text-xs text-[#020617] focus:outline-none focus:border-[#8db600] leading-relaxed font-sans"
                 />
               </div>
 
               {/* Attachment Picker */}
               <div className="flex items-center justify-between p-3 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0]">
                 <div className="flex items-center gap-2 text-[#1e293b]">
-                  <Paperclip className="w-4 h-4 text-[#0b6623]" />
+                  <Paperclip className="w-4 h-4 text-[#8db600]" />
                   {composeAttachment ? (
                     <span className="font-bold text-[#020617]">{composeAttachment.filename} ({composeAttachment.size})</span>
                   ) : (
@@ -1596,7 +1596,7 @@ export const Webmail: React.FC<Props> = ({
                   )}
                 </div>
 
-                <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-[#FFFFFF] border border-[#E2E8F0] hover:border-[#0b6623] text-[#020617] font-semibold text-xs transition-all shadow-2xs">
+                <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-[#FFFFFF] border border-[#E2E8F0] hover:border-[#8db600] text-[#020617] font-semibold text-xs transition-all shadow-2xs">
                   <span>Attach PDF / Specs</span>
                   <input
                     type="file"
@@ -1627,7 +1627,7 @@ export const Webmail: React.FC<Props> = ({
                 <button
                   type="submit"
                   disabled={isSending}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs md:text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs md:text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
                 >
                   <Send className="w-4 h-4 fill-black text-black" />
                   <span>{isSending ? 'Sending via SMTP...' : 'Send Message'}</span>

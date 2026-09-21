@@ -49,13 +49,13 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-screen bg-[#F0F2F5] text-[#0C0D0E] flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-[#FFFFFF] rounded-3xl p-6 sm:p-8 border border-[#E2E8F0] shadow-2xl space-y-6 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-[#0b6623] flex items-center justify-center mx-auto shadow-sm">
-              <AlertTriangle className="w-8 h-8 text-[#0b6623]" />
+            <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-[#8db600] flex items-center justify-center mx-auto shadow-sm">
+              <AlertTriangle className="w-8 h-8 text-[#8db600]" />
             </div>
 
             <div className="space-y-2">
               <h2 className="text-xl font-extrabold text-[#0C0D0E] tracking-tight">
-                Cosmo<span className="text-[#0b6623]">Cnergy</span> Recovery
+                Cosmo<span className="text-[#8db600]">Cnergy</span> Recovery
               </h2>
               <p className="text-xs text-slate-600 leading-relaxed">
                 An unexpected interface exception occurred. Your data has been preserved in local storage.
@@ -71,7 +71,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <button
                 type="button"
                 onClick={this.handleReload}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-[#0b6623]/25 active:scale-95 transition-all cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-md shadow-[#8db600]/25 active:scale-95 transition-all cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4 text-black stroke-[2.5]" />
                 <span className="text-black font-black">Reload Application</span>

@@ -141,7 +141,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
         {/* Modal Top Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0]/60 bg-[#0C0D0E] text-white shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#0b6623] text-black font-black flex items-center justify-center shadow-md shadow-[#0b6623]/20">
+            <div className="w-10 h-10 rounded-xl bg-[#8db600] text-black font-black flex items-center justify-center shadow-md shadow-[#8db600]/20">
               <Edit3 className="w-5 h-5 text-black stroke-[2.5]" />
             </div>
             <div>
@@ -149,7 +149,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                 <h3 className="text-lg font-bold text-white font-mono">
                   Edit PDF Document: #{editableOrder.order_number}
                 </h3>
-                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-[#0b6623] border border-[#0b6623]/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-[#8db600] border border-[#8db600]/30">
                   {editableOrder.type}
                 </span>
               </div>
@@ -164,13 +164,13 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             <div className="hidden sm:flex md:hidden items-center bg-slate-800 p-1 rounded-xl text-xs">
               <button
                 onClick={() => setActiveTab('editor')}
-                className={`px-3 py-1 rounded-lg font-black transition-all ${activeTab === 'editor' ? 'bg-[#0b6623] text-black' : 'text-slate-400 hover:text-white'}`}
+                className={`px-3 py-1 rounded-lg font-black transition-all ${activeTab === 'editor' ? 'bg-[#8db600] text-black' : 'text-slate-400 hover:text-white'}`}
               >
                 Editor
               </button>
               <button
                 onClick={() => setActiveTab('preview')}
-                className={`px-3 py-1 rounded-lg font-black transition-all ${activeTab === 'preview' ? 'bg-[#0b6623] text-black' : 'text-slate-400 hover:text-white'}`}
+                className={`px-3 py-1 rounded-lg font-black transition-all ${activeTab === 'preview' ? 'bg-[#8db600] text-black' : 'text-slate-400 hover:text-white'}`}
               >
                 Live Preview
               </button>
@@ -192,7 +192,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             {/* 1. Document Parameters */}
             <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs space-y-4">
               <h4 className="text-xs font-bold text-[#0D0D0D] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#E2E8F0]/60 pb-2">
-                <FileText className="w-4 h-4 text-[#0b6623]" />
+                <FileText className="w-4 h-4 text-[#8db600]" />
                 <span>Document & Routing Parameters</span>
               </h4>
 
@@ -203,7 +203,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                     type="text"
                     value={editableOrder.order_number}
                     onChange={e => setEditableOrder({ ...editableOrder, order_number: e.target.value })}
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-mono font-bold focus:outline-none focus:border-[#0b6623]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-mono font-bold focus:outline-none focus:border-[#8db600]"
                   />
                 </div>
 
@@ -212,7 +212,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                   <select
                     value={editableOrder.type}
                     onChange={e => setEditableOrder({ ...editableOrder, type: e.target.value as 'PO' | 'RFQ' })}
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-bold focus:outline-none focus:border-[#0b6623]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-bold focus:outline-none focus:border-[#8db600]"
                   >
                     <option value="PO">Purchase Order (PO)</option>
                     <option value="RFQ">Request for Quotation (RFQ)</option>
@@ -224,7 +224,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                   <select
                     value={editableOrder.status}
                     onChange={e => setEditableOrder({ ...editableOrder, status: e.target.value as OrderStatus })}
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-semibold focus:outline-none focus:border-[#0b6623]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-semibold focus:outline-none focus:border-[#8db600]"
                   >
                     <option value="TO_BE_ORDERED">🟡 To Be Ordered</option>
                     <option value="RFQ_SENT">🔵 RFQ Sent</option>
@@ -239,7 +239,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             {/* 2. Company Vendor Entity */}
             <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs space-y-4">
               <h4 className="text-xs font-bold text-[#0D0D0D] uppercase tracking-wider flex items-center gap-1.5 border-b border-[#E2E8F0]/60 pb-2">
-                <Building2 className="w-4 h-4 text-[#0b6623]" />
+                <Building2 className="w-4 h-4 text-[#8db600]" />
                 <span>Company / Vendor Entity</span>
               </h4>
 
@@ -258,7 +258,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                         }
                       })
                     }
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-bold focus:outline-none focus:border-[#0b6623]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-bold focus:outline-none focus:border-[#8db600]"
                   />
                 </div>
 
@@ -276,7 +276,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                         }
                       })
                     }
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] focus:outline-none focus:border-[#0b6623]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] focus:outline-none focus:border-[#8db600]"
                   />
                 </div>
 
@@ -294,7 +294,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                         }
                       })
                     }
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] focus:outline-none focus:border-[#0b6623]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] focus:outline-none focus:border-[#8db600]"
                   />
                 </div>
 
@@ -312,7 +312,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                         }
                       })
                     }
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-mono focus:outline-none focus:border-[#0b6623]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] font-mono focus:outline-none focus:border-[#8db600]"
                   />
                 </div>
 
@@ -330,7 +330,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                         }
                       })
                     }
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] focus:outline-none focus:border-[#0b6623]"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-[#0D0D0D] focus:outline-none focus:border-[#8db600]"
                   />
                 </div>
               </div>
@@ -340,13 +340,13 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xs space-y-4">
               <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-2">
                 <h4 className="text-xs font-bold text-[#0D0D0D] uppercase tracking-wider flex items-center gap-1.5">
-                  <FileText className="w-4 h-4 text-[#0b6623]" />
+                  <FileText className="w-4 h-4 text-[#8db600]" />
                   <span>Order Line Items ({editableOrder.items?.length || 0})</span>
                 </h4>
                 <button
                   type="button"
                   onClick={handleAddItem}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#0b6623]/15 hover:bg-[#084d1a]/25 text-[#0b6623] text-xs font-bold border border-[#0b6623]/30 transition-all active:scale-95"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#8db600]/15 hover:bg-[#709200]/25 text-[#8db600] text-xs font-bold border border-[#8db600]/30 transition-all active:scale-95"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>+ Add Item</span>
@@ -407,7 +407,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                           min={1}
                           value={item.quantity}
                           onChange={e => handleItemChange(idx, 'quantity', e.target.value)}
-                          className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-[#0D0D0D] font-mono font-bold text-center focus:outline-none focus:border-[#0b6623]"
+                          className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-[#0D0D0D] font-mono font-bold text-center focus:outline-none focus:border-[#8db600]"
                         />
                       </div>
                       <div>
@@ -418,12 +418,12 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                           step="0.01"
                           value={item.unit_price}
                           onChange={e => handleItemChange(idx, 'unit_price', e.target.value)}
-                          className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-[#0D0D0D] font-mono font-bold text-right focus:outline-none focus:border-[#0b6623]"
+                          className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-[#0D0D0D] font-mono font-bold text-right focus:outline-none focus:border-[#8db600]"
                         />
                       </div>
                       <div>
                         <label className="text-[10px] font-semibold text-[#334155] block mb-1">Line Total</label>
-                        <div className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-[#0b6623] font-mono font-bold text-right truncate overflow-hidden">
+                        <div className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1.5 text-[#8db600] font-mono font-bold text-right truncate overflow-hidden">
                           ₹{Number(item.total_price || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                       </div>
@@ -443,7 +443,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
                 value={editableOrder.notes || ''}
                 onChange={e => setEditableOrder({ ...editableOrder, notes: e.target.value })}
                 placeholder="1. Please confirm dispatch schedule within 24 hours of receipt..."
-                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-[#0b6623] font-medium"
+                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-[#8db600] font-medium"
               />
             </div>
           </div>
@@ -452,7 +452,7 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
           <div className={`md:col-span-6 lg:col-span-6 p-4 md:p-6 flex flex-col overflow-hidden bg-[#FFFFFF] ${activeTab === 'editor' ? 'hidden md:flex' : 'flex'}`}>
             <div className="flex items-center justify-between mb-3 text-xs font-bold text-[#0D0D0D]">
               <span className="flex items-center gap-1.5">
-                <Eye className="w-4 h-4 text-[#0b6623]" />
+                <Eye className="w-4 h-4 text-[#8db600]" />
                 <span>Live Vector PDF Preview (Selectable Text)</span>
               </span>
               <span className="text-[11px] font-semibold text-[#334155]">
@@ -480,8 +480,8 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
         <div className="px-6 py-4 border-t border-[#E2E8F0] bg-[#FFFFFF] flex flex-wrap items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-2">
             {saveSuccess && (
-              <span className="flex items-center gap-1 text-[#0b6623] text-xs font-bold animate-fade-in">
-                <CheckCircle2 className="w-4 h-4 text-[#0b6623]" />
+              <span className="flex items-center gap-1 text-[#8db600] text-xs font-bold animate-fade-in">
+                <CheckCircle2 className="w-4 h-4 text-[#8db600]" />
                 <span>Changes Saved to Database & Orders State!</span>
               </span>
             )}
@@ -501,14 +501,14 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
               onClick={handleSave}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0C0D0E] hover:bg-[#23262B] text-white font-bold text-xs shadow-md transition-all active:scale-95"
             >
-              <Save className="w-4 h-4 text-[#0b6623]" />
+              <Save className="w-4 h-4 text-[#8db600]" />
               <span>Save Changes</span>
             </button>
 
             <button
               type="button"
               onClick={handleDownload}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-lg shadow-emerald-500/25 transition-all active:scale-95"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-lg shadow-emerald-500/25 transition-all active:scale-95"
             >
               <Download className="w-4 h-4 text-black stroke-[2.5]" />
               <span className="text-black font-black">Download PDF</span>

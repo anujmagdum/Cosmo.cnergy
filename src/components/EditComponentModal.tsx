@@ -190,8 +190,8 @@ export const EditComponentModal: React.FC<Props> = ({
       <div className="bg-[white] w-full sm:max-w-xl sm:rounded-3xl rounded-t-3xl border border-[#e2e8f0] shadow-2xl flex flex-col max-h-[90vh] text-[#020617]">
         <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 px-5 py-4 shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#0b6623]/15 text-[#0b6623] border border-[#0b6623]/30 flex items-center justify-center">
-              <Edit2 className="w-4 h-4 text-[#0b6623]" />
+            <div className="w-9 h-9 rounded-xl bg-[#8db600]/15 text-[#8db600] border border-[#8db600]/30 flex items-center justify-center">
+              <Edit2 className="w-4 h-4 text-[#8db600]" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-[#020617]">Edit Component Details</h3>
@@ -216,7 +216,7 @@ export const EditComponentModal: React.FC<Props> = ({
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g. 1000 pF / 50V"
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-semibold"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-semibold"
                 />
               </div>
 
@@ -227,7 +227,7 @@ export const EditComponentModal: React.FC<Props> = ({
                   value={formData.sku}
                   onChange={e => setFormData({ ...formData, sku: e.target.value })}
                   placeholder="e.g. SMD, Radial, HC-49S"
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                 />
               </div>
             </div>
@@ -238,7 +238,7 @@ export const EditComponentModal: React.FC<Props> = ({
                 <select
                   value={formData.category}
                   onChange={e => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-bold"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-bold"
                 >
                   {allCategoryNames.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
@@ -252,7 +252,7 @@ export const EditComponentModal: React.FC<Props> = ({
                   value={formData.uom}
                   onChange={e => setFormData({ ...formData, uom: e.target.value })}
                   placeholder="Pcs, Sets, Kg, etc."
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                 />
               </div>
             </div>
@@ -261,14 +261,14 @@ export const EditComponentModal: React.FC<Props> = ({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                 <div>
                   <label className="block font-bold text-xs text-[#020617] uppercase tracking-wider flex items-center gap-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-[#0b6623]" />
+                    <Building2 className="w-3.5 h-3.5 text-[#8db600]" />
                     <span>Associated Sourcing Companies</span> <span className="text-[11px] text-slate-700 font-normal lowercase">(optional)</span>
                   </label>
                   <p className="text-[11px] text-[#1e293b] mt-0.5">Manage vendor associations. 2+ vendors enables <strong>Compare Companies</strong> AI engine.</p>
                 </div>
                 {selectedCompanies.length >= 2 && (
-                  <span className="self-start sm:self-auto flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#0b6623]/15 text-[#0b6623] border border-[#0b6623]/30 text-[10px] font-black">
-                    <Sparkles className="w-3 h-3 text-[#0b6623]" />
+                  <span className="self-start sm:self-auto flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#8db600]/15 text-[#8db600] border border-[#8db600]/30 text-[10px] font-black">
+                    <Sparkles className="w-3 h-3 text-[#8db600]" />
                     <span>Comparison Enabled ({selectedCompanies.length} Vendors)</span>
                   </span>
                 )}
@@ -277,7 +277,7 @@ export const EditComponentModal: React.FC<Props> = ({
               <select
                 value=""
                 onChange={e => { if (e.target.value) handleAddCompany(e.target.value); }}
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium cursor-pointer"
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-xs text-[#020617] focus:outline-none focus:border-[#8db600] font-medium cursor-pointer"
               >
                 <option value="">+ Click to add a company to this component...</option>
                 {companies.filter(s => !selectedCompanies.some(sel => sel.company_id === s.id)).map(s => (
@@ -297,9 +297,9 @@ export const EditComponentModal: React.FC<Props> = ({
                     const supp = companies.find(sup => sup.id === s.company_id);
                     return (
                       <span key={s.company_id} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-[#020617] border border-[#e2e8f0] text-xs font-bold shadow-xs">
-                        <Building2 className="w-3 h-3 text-[#0b6623]" />
+                        <Building2 className="w-3 h-3 text-[#8db600]" />
                         <span className="truncate max-w-[130px]">{supp?.name || s.company_id}</span>
-                        {idx === 0 && <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-100 text-[#0b6623] font-semibold">Primary</span>}
+                        {idx === 0 && <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-100 text-[#8db600] font-semibold">Primary</span>}
                         <button type="button" onClick={() => handleRemoveCompany(s.company_id)} className="p-0.5 rounded-full hover:bg-red-100 text-[#1e293b] hover:text-red-700 transition-all cursor-pointer ml-1">
                           <X className="w-3 h-3" />
                         </button>
@@ -323,9 +323,9 @@ export const EditComponentModal: React.FC<Props> = ({
                       return (
                         <div key={s.company_id} className="p-3 rounded-xl bg-[white] border border-[#e2e8f0] space-y-2">
                           <div className="flex items-center gap-1.5 text-xs font-bold text-[#020617]">
-                            <span className="w-4 h-4 rounded-full bg-[#0b6623] text-black font-black text-[9px] flex items-center justify-center font-mono">{idx + 1}</span>
+                            <span className="w-4 h-4 rounded-full bg-[#8db600] text-black font-black text-[9px] flex items-center justify-center font-mono">{idx + 1}</span>
                             <span>{supp?.name}</span>
-                            {idx === 0 && <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-100 text-[#0b6623] border border-emerald-300">Primary</span>}
+                            {idx === 0 && <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-100 text-[#8db600] border border-emerald-300">Primary</span>}
                           </div>
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             <div>
@@ -336,7 +336,7 @@ export const EditComponentModal: React.FC<Props> = ({
                                 step="0.01"
                                 value={s.rfq_quoted_price}
                                 onChange={e => handleUpdateMapping(s.company_id, { rfq_quoted_price: Number(e.target.value) || 0 })}
-                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#8db600]"
                               />
                             </div>
                             <div>
@@ -346,7 +346,7 @@ export const EditComponentModal: React.FC<Props> = ({
                                 min={1}
                                 value={s.moq}
                                 onChange={e => handleUpdateMapping(s.company_id, { moq: Number(e.target.value) || 1 })}
-                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#8db600]"
                               />
                             </div>
                             <div>
@@ -356,7 +356,7 @@ export const EditComponentModal: React.FC<Props> = ({
                                 min={1}
                                 value={s.lead_time_days}
                                 onChange={e => handleUpdateMapping(s.company_id, { lead_time_days: Number(e.target.value) || 1 })}
-                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#8db600]"
                               />
                             </div>
                             <div>
@@ -365,7 +365,7 @@ export const EditComponentModal: React.FC<Props> = ({
                                 type="text"
                                 value={s.part_number_vendor}
                                 onChange={e => handleUpdateMapping(s.company_id, { part_number_vendor: e.target.value })}
-                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                                className="w-full bg-[white] border border-[#e2e8f0] rounded-lg px-2 py-1 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#8db600]"
                                 placeholder="OEM-SPEC"
                               />
                             </div>
@@ -387,7 +387,7 @@ export const EditComponentModal: React.FC<Props> = ({
                   step="0.01"
                   value={formData.preset_price}
                   onChange={e => setFormData({ ...formData, preset_price: Number(e.target.value) || 0 })}
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] font-mono font-bold focus:outline-none focus:border-[#0b6623]"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] font-mono font-bold focus:outline-none focus:border-[#8db600]"
                 />
               </div>
               <div>
@@ -397,7 +397,7 @@ export const EditComponentModal: React.FC<Props> = ({
                   min={0}
                   value={formData.in_stock_qty}
                   onChange={e => setFormData({ ...formData, in_stock_qty: Number(e.target.value) || 0 })}
-                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] font-mono font-bold focus:outline-none focus:border-[#0b6623]"
+                  className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] font-mono font-bold focus:outline-none focus:border-[#8db600]"
                 />
               </div>
             </div>
@@ -406,7 +406,7 @@ export const EditComponentModal: React.FC<Props> = ({
             <div>
               <label className="flex items-center justify-between font-semibold text-[#020617] mb-1 text-sm">
                 <span>Low Stock Alert Threshold</span>
-                <span className="text-[#0b6623] bg-emerald-100 px-2 py-0.5 rounded text-xs font-bold">
+                <span className="text-[#8db600] bg-emerald-100 px-2 py-0.5 rounded text-xs font-bold">
                   {formData.alert_threshold_percent}% of MOQ
                 </span>
               </label>
@@ -417,7 +417,7 @@ export const EditComponentModal: React.FC<Props> = ({
                 step="5"
                 value={formData.alert_threshold_percent}
                 onChange={e => setFormData({ ...formData, alert_threshold_percent: Number(e.target.value) })}
-                className="w-full h-2 bg-[#e2e8f0] rounded-lg appearance-none cursor-pointer accent-[#0b6623]"
+                className="w-full h-2 bg-[#e2e8f0] rounded-lg appearance-none cursor-pointer accent-[#8db600]"
               />
               <p className="text-[10px] text-[#1e293b] mt-1">
                 Alert triggers when stock falls below {Math.floor((Number(formData.min_order_qty) || 1) * (formData.alert_threshold_percent / 100))} {formData.uom || 'Pcs'}
@@ -429,7 +429,7 @@ export const EditComponentModal: React.FC<Props> = ({
               <select
                 value={formData.procurement_status}
                 onChange={e => setFormData({ ...formData, procurement_status: e.target.value as OrderStatus })}
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-bold"
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-bold"
               >
                 <option value="TO_BE_ORDERED">To be ordered (Amber)</option>
                 <option value="IN_STOCK">In Stock (Green)</option>
@@ -447,7 +447,7 @@ export const EditComponentModal: React.FC<Props> = ({
                 value={formData.image_drive_url}
                 onChange={e => setFormData({ ...formData, image_drive_url: e.target.value })}
                 placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-mono text-xs"
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-mono text-xs"
               />
               <p className="text-[11px] text-[#1e293b] mt-1 italic">(Ensure link permissions are set to "Anyone with the link can view")</p>
             </div>
@@ -459,7 +459,7 @@ export const EditComponentModal: React.FC<Props> = ({
                 value={formData.specs}
                 onChange={e => setFormData({ ...formData, specs: e.target.value })}
                 placeholder="Technical specs, grade, pinout, voltage..."
-                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                className="w-full bg-[white] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600]"
               />
             </div>
 
@@ -467,7 +467,7 @@ export const EditComponentModal: React.FC<Props> = ({
 
           <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-[#e2e8f0]/60 shrink-0 bg-[white] sm:rounded-b-3xl">
             <button type="button" onClick={onClose} className="px-4 py-2 rounded-xl bg-[white] hover:bg-[#e2e8f0] text-[#020617] font-semibold">Cancel</button>
-            <button type="submit" className="px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black shadow-lg shadow-[#0b6623]/20 active:scale-95 transition-all">Update Component</button>
+            <button type="submit" className="px-6 py-2 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black shadow-lg shadow-[#8db600]/20 active:scale-95 transition-all">Update Component</button>
           </div>
         </form>
       </div>

@@ -70,7 +70,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center shadow-md shadow-[#0b6623]/20">
+            <div className="w-10 h-10 rounded-xl bg-[#8db600] flex items-center justify-center shadow-md shadow-[#8db600]/20">
               <Zap className="w-5 h-5 text-black fill-black stroke-[2.5]" />
             </div>
             <div>
@@ -94,7 +94,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
         <form onSubmit={handleSubmit} autoComplete="on" className="space-y-4 text-xs">
           <div>
             <label htmlFor="auth-email" className="block font-semibold text-[#020617] mb-1.5 flex items-center gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-[#0b6623]" />
+              <Mail className="w-3.5 h-3.5 text-[#8db600]" />
               <span>Email Address</span>
             </label>
             <input
@@ -108,13 +108,13 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="user@cosmocnergy.com"
-              className="w-full bg-[#F0F2F5] border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+              className="w-full bg-[#F0F2F5] border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
             />
           </div>
 
           <div>
             <label htmlFor="auth-password" className="block font-semibold text-[#020617] mb-1.5 flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-[#0b6623]" />
+              <Lock className="w-3.5 h-3.5 text-[#8db600]" />
               <span>Password</span>
             </label>
             <input
@@ -129,12 +129,12 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
               minLength={6}
-              className="w-full bg-[#F0F2F5] border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+              className="w-full bg-[#F0F2F5] border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
             />
           </div>
 
           <p className="text-[11px] text-slate-500 text-center pt-1 flex items-center justify-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#0b6623]" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#8db600]" />
             Secure Enterprise Authentication via Supabase Auth.
           </p>
 
@@ -149,7 +149,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black shadow-lg shadow-emerald-500/25 active:scale-95 transition-all disabled:opacity-50"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black shadow-lg shadow-emerald-500/25 active:scale-95 transition-all disabled:opacity-50"
             >
               {loading && <Loader2 className="w-4 h-4 animate-spin text-black stroke-[2.5]" />}
               <span className="text-black font-black">{loading ? 'Authenticating...' : 'Sign In'}</span>

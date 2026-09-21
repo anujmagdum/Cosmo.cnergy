@@ -217,7 +217,7 @@ export function buildSanitizedIframeDoc(rawHtml: string): string {
       border-collapse: collapse;
     }
     a {
-      color: #0b6623;
+      color: #8db600;
       text-decoration: underline;
     }
     blockquote {

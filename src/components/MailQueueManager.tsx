@@ -27,15 +27,15 @@ export const MailQueueManager: React.FC = () => {
   const pendingCount = queue.filter(q => q.status === 'pending' || q.status === 'sending').length;
 
   return (
-    <div className="fixed bottom-6 right-6 w-96 bg-[#0C0D0E] rounded-2xl shadow-2xl border border-[#0b6623]/30 overflow-hidden z-[100] text-white flex flex-col">
+    <div className="fixed bottom-6 right-6 w-96 bg-[#0C0D0E] rounded-2xl shadow-2xl border border-[#8db600]/30 overflow-hidden z-[100] text-white flex flex-col">
       {/* Header */}
-      <div className="p-4 bg-emerald-900/40 border-b border-[#0b6623]/30 flex items-center justify-between">
+      <div className="p-4 bg-emerald-900/40 border-b border-[#8db600]/30 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Mail className="w-5 h-5 text-[#0b6623]" />
+          <Mail className="w-5 h-5 text-[#8db600]" />
           <h3 className="font-bold text-sm">Background Mail Queue</h3>
         </div>
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-[#0b6623] font-bold border border-[#0b6623]/30">
+          <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-[#8db600] font-bold border border-[#8db600]/30">
             {queue.length} Tasks
           </span>
           <button onClick={clearQueue} className="text-slate-400 hover:text-white p-1 cursor-pointer" title="Clear Queue">
@@ -51,7 +51,7 @@ export const MailQueueManager: React.FC = () => {
             <Clock className="w-3.5 h-3.5 text-blue-400" /> {pendingCount}
           </span>
           <span className="text-slate-300 flex items-center gap-1">
-            <CheckCircle className="w-3.5 h-3.5 text-[#0b6623]" /> {successCount}
+            <CheckCircle className="w-3.5 h-3.5 text-[#8db600]" /> {successCount}
           </span>
           <span className="text-slate-300 flex items-center gap-1">
             <XCircle className="w-3.5 h-3.5 text-red-400" /> {failedCount}
@@ -71,7 +71,7 @@ export const MailQueueManager: React.FC = () => {
           {pendingCount > 0 && !isProcessing && (
             <button
               onClick={() => processQueue(activeAccount)}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-[10px] uppercase tracking-wider cursor-pointer"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#8db600] hover:bg-[#709200] text-black font-black text-[10px] uppercase tracking-wider cursor-pointer"
             >
               <Play className="w-3.5 h-3.5 fill-black text-black stroke-[2.5]" />
               <span className="text-black font-black">Process Queue</span>
@@ -103,8 +103,8 @@ export const MailQueueManager: React.FC = () => {
 
             <div className="flex items-center gap-2 shrink-0">
               {item.status === 'pending' && <Clock className="w-4 h-4 text-slate-500" />}
-              {item.status === 'sending' && <span className="w-4 h-4 rounded-full border-2 border-t-[#0b6623] border-slate-600 animate-spin" />}
-              {item.status === 'success' && <CheckCircle className="w-4 h-4 text-[#0b6623]" />}
+              {item.status === 'sending' && <span className="w-4 h-4 rounded-full border-2 border-t-[#8db600] border-slate-600 animate-spin" />}
+              {item.status === 'success' && <CheckCircle className="w-4 h-4 text-[#8db600]" />}
               {item.status === 'failed' && <XCircle className="w-4 h-4 text-red-500" />}
               
               <button onClick={() => removeQueueItem(item.id)} className="text-slate-400 hover:text-red-400 p-0.5 cursor-pointer">

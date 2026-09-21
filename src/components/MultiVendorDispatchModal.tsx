@@ -98,13 +98,13 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-black font-black shadow-md">
+            <div className="w-10 h-10 rounded-xl bg-[#8db600] flex items-center justify-center text-black font-black shadow-md">
               <Rocket className="w-5 h-5 text-black stroke-[2.5]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-bold text-[#0D0D0D]">Multi-Vendor Dispatch Workspace</h3>
-                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-[#0b6623] border border-emerald-300">
+                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-[#8db600] border border-emerald-300">
                   {drafts.length} Vendors
                 </span>
               </div>
@@ -133,13 +133,13 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0]/60 pb-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-black font-black flex items-center justify-center text-xs">
+                    <div className="w-7 h-7 rounded-lg bg-[#8db600] text-black font-black flex items-center justify-center text-xs">
                       {idx + 1}
                     </div>
                     <div>
                       <h4 className="font-bold text-sm text-[#0D0D0D]">{draft.company.name}</h4>
                       <p className="text-[11px] text-[#334155]">
-                        {draft.company.email} • {draft.items.length} items • <strong className="text-[#0b6623] font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
+                        {draft.company.email} • {draft.items.length} items • <strong className="text-[#8db600] font-mono">₹{draft.total_amount.toLocaleString('en-IN')}</strong>
                       </p>
                     </div>
                   </div>
@@ -148,7 +148,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
                     <button
                       onClick={() => handleDispatchVendorWebmail(draft)}
                       disabled={loadingVendorId === draft.company.id}
-                      className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-xs active:scale-95 transition-all"
+                      className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-xs active:scale-95 transition-all"
                     >
                       <Mail className="w-3.5 h-3.5 text-black stroke-[2.5]" />
                       <span className="text-black font-black">Open in Webmail</span>
@@ -158,7 +158,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
                       onClick={() => handleDispatchVendorWhatsApp(draft)}
                       className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-[#f8fafc] text-[#0D0D0D] font-bold text-xs border border-[#E2E8F0] shadow-xs active:scale-95 transition-all"
                     >
-                      <MessageSquare className="w-3.5 h-3.5 text-[#0b6623]" />
+                      <MessageSquare className="w-3.5 h-3.5 text-[#8db600]" />
                       <span>WhatsApp</span>
                     </button>
                   </div>
@@ -192,7 +192,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
           <button
             onClick={handleFinishAll}
             disabled={isProcessing}
-            className="px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all"
+            className="px-6 py-2 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-md shadow-[#8db600]/20 active:scale-95 transition-all"
           >
             {isProcessing ? 'Confirming...' : 'Confirm All Dispatches & Log Orders'}
           </button>

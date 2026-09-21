@@ -535,7 +535,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
         {/* Modal Top Banner */}
         <div className="bg-[#0C0D0E] p-6 border-b border-[#E2E8F0]/60 flex items-center justify-between text-white">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#0b6623] flex items-center justify-center text-black font-black shadow-lg shadow-[#0b6623]/20">
+            <div className="w-12 h-12 rounded-2xl bg-[#8db600] flex items-center justify-center text-black font-black shadow-lg shadow-[#8db600]/20">
               <Layers className="w-6 h-6 text-black stroke-[2.5]" />
             </div>
             <div>
@@ -543,7 +543,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 <h2 className="text-xl font-bold text-white tracking-tight">
                   1-Tap Automated BOM Procurement Engine
                 </h2>
-                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-[#0b6623] border border-[#0b6623]/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-[#8db600] border border-[#8db600]/30">
                   Multi-Vendor Auto-Split
                 </span>
               </div>
@@ -570,7 +570,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
               onClick={() => setActiveBOMTab('whole_product')}
               className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 activeBOMTab === 'whole_product'
-                  ? 'bg-[#0b6623] text-black font-black shadow-md'
+                  ? 'bg-[#8db600] text-black font-black shadow-md'
                   : 'text-[#1e293b] hover:text-[#020617] hover:bg-white/50'
               }`}
             >
@@ -582,7 +582,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
               onClick={() => setActiveBOMTab('selected_components')}
               className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 activeBOMTab === 'selected_components'
-                  ? 'bg-[#0b6623] text-black font-black shadow-md'
+                  ? 'bg-[#8db600] text-black font-black shadow-md'
                   : 'text-[#1e293b] hover:text-[#020617] hover:bg-white/50'
               }`}
             >
@@ -596,11 +596,11 @@ export const BOMProcurementModal: React.FC<Props> = ({
             <div className="bg-[#FFFFFF] p-5 rounded-2xl border border-[#E2E8F0] space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#1e293b] uppercase tracking-wider flex items-center gap-1.5">
-                  <Calculator className="w-4 h-4 text-[#0b6623]" />
+                  <Calculator className="w-4 h-4 text-[#8db600]" />
                   <span>1. Production Assembly Target & Multiplier</span>
                 </span>
                 <span className="text-xs text-[#1e293b] font-semibold">
-                  Assembly Multiplier: <strong className="text-[#0b6623] font-mono font-bold text-sm">x{packQuantity}</strong>
+                  Assembly Multiplier: <strong className="text-[#8db600] font-mono font-bold text-sm">x{packQuantity}</strong>
                 </span>
               </div>
 
@@ -612,7 +612,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 <select
                   value={selectedProductCode}
                   onChange={e => setSelectedProductCode(e.target.value)}
-                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 text-xs text-[#020617] font-semibold focus:outline-none focus:border-[#0b6623] shadow-xs cursor-pointer"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3.5 py-2.5 text-xs text-[#020617] font-semibold focus:outline-none focus:border-[#8db600] shadow-xs cursor-pointer"
                 >
                   <option value="">-- Choose Product Recipe Folder --</option>
                   {allSelectableProducts.map(p => (
@@ -633,7 +633,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                     onClick={() => setPackQuantity(val)}
                     className={`px-3 py-1 rounded-lg font-bold font-mono transition-all cursor-pointer ${
                       packQuantity === val
-                        ? 'bg-[#0b6623] text-black font-black shadow-xs'
+                        ? 'bg-[#8db600] text-black font-black shadow-xs'
                         : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border border-[#E2E8F0]'
                     }`}
                   >
@@ -646,11 +646,11 @@ export const BOMProcurementModal: React.FC<Props> = ({
             <div className="bg-[#FFFFFF] p-5 rounded-2xl border border-[#E2E8F0] space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#1e293b] uppercase tracking-wider flex items-center gap-1.5">
-                  <Layers className="w-4 h-4 text-[#0b6623]" />
+                  <Layers className="w-4 h-4 text-[#8db600]" />
                   <span>1. Select Components for On-Demand Batch ({selectedCompIds.length} Selected)</span>
                 </span>
                 <span className="text-xs text-[#1e293b] font-semibold">
-                  Auto-splits into <strong className="text-[#0b6623]">{activeDrafts.length} lowest-price company orders</strong>
+                  Auto-splits into <strong className="text-[#8db600]">{activeDrafts.length} lowest-price company orders</strong>
                 </span>
               </div>
 
@@ -664,7 +664,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                       placeholder="Search components to add to procurement batch..."
                       value={compSearchQuery}
                       onChange={e => setCompSearchQuery(e.target.value)}
-                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-9 pr-3 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-[#0b6623] shadow-xs placeholder-slate-400"
+                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-9 pr-3 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-[#8db600] shadow-xs placeholder-slate-400"
                     />
                   </div>
                   <button
@@ -700,7 +700,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                           }}
                           className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
                             isSelected
-                              ? 'bg-[#0b6623] text-black font-black border-[#0b6623] shadow-2xs'
+                              ? 'bg-[#8db600] text-black font-black border-[#8db600] shadow-2xs'
                               : 'bg-white text-[#1e293b] border-[#E2E8F0] hover:text-[#020617] hover:bg-white'
                           }`}
                         >
@@ -724,7 +724,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   onClick={() => setOrderType('PO')}
                   className={`px-4 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                     orderType === 'PO'
-                      ? 'bg-[#0b6623] text-black font-black shadow-sm'
+                      ? 'bg-[#8db600] text-black font-black shadow-sm'
                       : 'text-[#1e293b] hover:text-[#020617]'
                   }`}
                 >
@@ -735,7 +735,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   onClick={() => setOrderType('RFQ')}
                   className={`px-4 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                     orderType === 'RFQ'
-                      ? 'bg-[#0b6623] text-black font-black shadow-sm'
+                      ? 'bg-[#8db600] text-black font-black shadow-sm'
                       : 'text-[#1e293b] hover:text-[#020617]'
                   }`}
                 >
@@ -749,7 +749,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 <span className="text-[10px] text-[#1e293b] font-semibold uppercase block">
                   Total Procurement Value
                 </span>
-                <span className="text-xl font-extrabold text-[#0b6623] font-mono">
+                <span className="text-xl font-extrabold text-[#8db600] font-mono">
                   ₹{totalCalculatedCost.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </span>
               </div>
@@ -777,11 +777,11 @@ export const BOMProcurementModal: React.FC<Props> = ({
                     onClick={() => setActiveTabCompanyId(draft.company.id)}
                     className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-2 border transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-[#0b6623] text-black font-black shadow-md border-[#0b6623]'
+                        ? 'bg-[#8db600] text-black font-black shadow-md border-[#8db600]'
                         : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border-[#E2E8F0]'
                     }`}
                   >
-                    <Building2 className={`w-3.5 h-3.5 ${isActive ? 'text-black stroke-[2.5]' : 'text-[#0b6623]'}`} />
+                    <Building2 className={`w-3.5 h-3.5 ${isActive ? 'text-black stroke-[2.5]' : 'text-[#8db600]'}`} />
                     <span>{draft.company.name}</span>
                     <span className="opacity-80 font-mono text-[10px]">
                       (₹{draft.total_amount.toLocaleString('en-IN')})
@@ -798,7 +798,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                   <div>
                     <h4 className="font-bold text-sm text-[#020617] flex items-center gap-2">
                       <span>{selectedDraft.company.name}</span>
-                      <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-100 text-[#0b6623] border border-emerald-300 font-bold">
+                      <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-100 text-[#8db600] border border-emerald-300 font-bold">
                         {selectedDraft.items.length} Line Item(s)
                       </span>
                     </h4>
@@ -809,7 +809,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
 
                   <div className="text-right">
                     <span className="text-[10px] text-[#1e293b] uppercase block">Subtotal for this Vendor</span>
-                    <span className="text-base font-extrabold text-[#0b6623] font-mono">
+                    <span className="text-base font-extrabold text-[#8db600] font-mono">
                       ₹{selectedDraft.total_amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                     </span>
                   </div>
@@ -854,7 +854,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                                     setSelectedCompQtyOverrides(prev => ({ ...prev, [item.catalogItem.id]: val }));
                                   }
                                 }}
-                                className="w-20 px-2 py-1 text-xs font-mono font-bold bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] rounded-lg text-center focus:outline-none focus:border-[#0b6623] shadow-2xs"
+                                className="w-20 px-2 py-1 text-xs font-mono font-bold bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] rounded-lg text-center focus:outline-none focus:border-[#8db600] shadow-2xs"
                                 title="Edit quantity to satisfy MOQ or batch adjustments"
                               />
                               <span className="text-[10px] text-[#1e293b] font-semibold">
@@ -862,7 +862,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                               </span>
                             </div>
                           </td>
-                          <td className="py-2.5 text-right font-bold text-[#0b6623] font-mono">
+                          <td className="py-2.5 text-right font-bold text-[#8db600] font-mono">
                             ₹{item.total_price.toLocaleString('en-IN')}
                           </td>
                         </tr>
@@ -881,7 +881,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                       value={editableContacts[selectedDraft.company.id]?.email || ''}
                       onChange={e => handleContactChange(selectedDraft.company.id, 'email', e.target.value)}
                       placeholder="sales@vendor.com"
-                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-1.5 text-xs text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-1.5 text-xs text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                     />
                   </div>
 
@@ -894,7 +894,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                       value={editableContacts[selectedDraft.company.id]?.phone || ''}
                       onChange={e => handleContactChange(selectedDraft.company.id, 'phone', e.target.value)}
                       placeholder="+91 98765 43210"
-                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-1.5 text-xs text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                      className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-1.5 text-xs text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                     />
                   </div>
                 </div>
@@ -906,14 +906,14 @@ export const BOMProcurementModal: React.FC<Props> = ({
                     onClick={() => handleDispatchSingleVendorWebmail(selectedDraft)}
                     className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0C0D0E] hover:bg-[#1C1E22] text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
                   >
-                    <Mail className="w-3.5 h-3.5 text-[#0b6623]" />
+                    <Mail className="w-3.5 h-3.5 text-[#8db600]" />
                     <span>Send this {orderType} via Webmail</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleDispatchSingleVendorWhatsApp(selectedDraft)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0b6623] hover:bg-[#084d1a] text-black font-black rounded-xl text-xs transition-all shadow-xs cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#8db600] hover:bg-[#709200] text-black font-black rounded-xl text-xs transition-all shadow-xs cursor-pointer"
                   >
                     <MessageSquare className="w-3.5 h-3.5 fill-black text-black" />
                     <span>Send via WhatsApp</span>
@@ -932,7 +932,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                 type="checkbox"
                 checked={autoRecordOrders}
                 onChange={e => setAutoRecordOrders(e.target.checked)}
-                className="w-4 h-4 rounded text-[#0b6623] focus:ring-[#0b6623] accent-[#0b6623] cursor-pointer"
+                className="w-4 h-4 rounded text-[#8db600] focus:ring-[#8db600] accent-[#8db600] cursor-pointer"
               />
               <span>Record dispatched {orderType}s to Database Timeline</span>
             </label>
@@ -942,7 +942,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
               <select
                 value={dispatchChannel}
                 onChange={e => setDispatchChannel(e.target.value as any)}
-                className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1 text-xs font-semibold focus:outline-none focus:border-[#0b6623] cursor-pointer"
+                className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-lg px-2.5 py-1 text-xs font-semibold focus:outline-none focus:border-[#8db600] cursor-pointer"
               >
                 <option value="webmail">Native Webmail (Auto-Queued)</option>
                 <option value="whatsapp">WhatsApp Direct Deep Links</option>
@@ -961,7 +961,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
             <button
               onClick={handleMasterDispatch}
               disabled={isDispatching || activeDrafts.length === 0}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] disabled:opacity-50 text-black font-black text-xs shadow-lg shadow-emerald-600/30 active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#8db600] hover:bg-[#709200] disabled:opacity-50 text-black font-black text-xs shadow-lg shadow-emerald-600/30 active:scale-95 transition-all cursor-pointer"
             >
               <Zap className="w-4 h-4 fill-black text-black" />
               <span>

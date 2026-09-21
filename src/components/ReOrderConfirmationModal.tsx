@@ -156,7 +156,7 @@ Cosmo Cnergy Procurement Team`
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
         <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-8 border border-[#E2E8F0] shadow-2xl space-y-6 text-center my-8 animate-in fade-in zoom-in-95 duration-150 text-[#0D0D0D]">
-          <div className="w-16 h-16 rounded-3xl bg-emerald-500/15 border border-[#0b6623]/30 flex items-center justify-center mx-auto text-[#0b6623] shadow-md shadow-[#0b6623]/20">
+          <div className="w-16 h-16 rounded-3xl bg-emerald-500/15 border border-[#8db600]/30 flex items-center justify-center mx-auto text-[#8db600] shadow-md shadow-[#8db600]/20">
             <CheckCircle2 className="w-9 h-9" />
           </div>
 
@@ -170,7 +170,7 @@ Cosmo Cnergy Procurement Team`
           <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] space-y-2 text-xs text-left">
             <div className="flex items-center justify-between text-[#334155]">
               <span>Total Value:</span>
-              <span className="font-mono font-bold text-[#0b6623]">₹{totalPrice.toLocaleString('en-IN')}</span>
+              <span className="font-mono font-bold text-[#8db600]">₹{totalPrice.toLocaleString('en-IN')}</span>
             </div>
             <div className="flex items-center justify-between text-[#334155]">
               <span>Channel:</span>
@@ -182,7 +182,7 @@ Cosmo Cnergy Procurement Team`
             <button
               type="button"
               onClick={onClose}
-              className="w-full py-3 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all"
+              className="w-full py-3 rounded-2xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all"
             >
               Done & Return to Catalog
             </button>
@@ -198,7 +198,7 @@ Cosmo Cnergy Procurement Team`
         {/* Modal Top Header */}
         <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#0b6623] text-black font-black flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-[#8db600] text-black font-black flex items-center justify-center shadow-md">
               <ShoppingCart className="w-5 h-5 text-black stroke-[2.5]" />
             </div>
             <div>
@@ -218,7 +218,7 @@ Cosmo Cnergy Procurement Team`
         <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] space-y-2 text-xs">
           <div className="flex items-center justify-between">
             <span className="font-bold text-[#0D0D0D] text-sm">{item.name}</span>
-            <span className="font-mono font-bold text-[#0b6623] text-sm">
+            <span className="font-mono font-bold text-[#8db600] text-sm">
               ₹{totalPrice.toLocaleString('en-IN')}
             </span>
           </div>
@@ -244,7 +244,7 @@ Cosmo Cnergy Procurement Team`
               onClick={() => setSelectedChannel('webmail')}
               className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                 selectedChannel === 'webmail'
-                  ? 'bg-[#0b6623] text-black font-black shadow-md border-[#0b6623]'
+                  ? 'bg-[#8db600] text-black font-black shadow-md border-[#8db600]'
                   : 'bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#f8fafc] border-[#E2E8F0]'
               }`}
             >
@@ -257,7 +257,7 @@ Cosmo Cnergy Procurement Team`
               onClick={() => setSelectedChannel('whatsapp')}
               className={`p-3 rounded-2xl border text-xs font-bold flex flex-col items-center gap-1.5 transition-all ${
                 selectedChannel === 'whatsapp'
-                  ? 'bg-[#0b6623] text-black font-black shadow-md border-[#0b6623]'
+                  ? 'bg-[#8db600] text-black font-black shadow-md border-[#8db600]'
                   : 'bg-[#FFFFFF] text-[#0D0D0D] hover:bg-[#f8fafc] border-[#E2E8F0]'
               }`}
             >
@@ -290,7 +290,7 @@ Cosmo Cnergy Procurement Team`
               <select
                 value={selectedSubjectKey}
                 onChange={e => setSelectedSubjectKey(e.target.value)}
-                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs text-[#0D0D0D] font-semibold focus:outline-none focus:border-[#0b6623]"
+                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-xs text-[#0D0D0D] font-semibold focus:outline-none focus:border-[#8db600]"
               >
                 {subjectOptions.map(opt => (
                   <option key={opt.key} value={opt.key}>
@@ -308,7 +308,7 @@ Cosmo Cnergy Procurement Team`
                 rows={5}
                 value={emailBody}
                 onChange={e => setEmailBody(e.target.value)}
-                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl p-3 text-xs text-[#0D0D0D] font-mono focus:outline-none focus:border-[#0b6623] resize-none leading-relaxed"
+                className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl p-3 text-xs text-[#0D0D0D] font-mono focus:outline-none focus:border-[#8db600] resize-none leading-relaxed"
               />
             </div>
           </div>
@@ -317,8 +317,8 @@ Cosmo Cnergy Procurement Team`
         {/* WhatsApp Preview */}
         {selectedChannel === 'whatsapp' && (
           <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] space-y-2 text-xs">
-            <div className="flex items-center gap-2 font-bold text-[#0b6623]">
-              <MessageSquare className="w-4 h-4 text-[#0b6623]" />
+            <div className="flex items-center gap-2 font-bold text-[#8db600]">
+              <MessageSquare className="w-4 h-4 text-[#8db600]" />
               <span>Target WhatsApp Contact: {company?.phone || '+91 98765 43210'}</span>
             </div>
             <p className="text-[#334155] leading-relaxed">
@@ -354,7 +354,7 @@ Cosmo Cnergy Procurement Team`
             type="button"
             disabled={isPlacing}
             onClick={handleExecuteDispatch}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-lg shadow-emerald-500/25 active:scale-95 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-lg shadow-emerald-500/25 active:scale-95 transition-all disabled:opacity-50"
           >
             <Send className="w-4 h-4 text-black stroke-[2.5]" />
             <span className="text-black font-black">

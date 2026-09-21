@@ -13,9 +13,9 @@ export const STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
   IN_STOCK: {
     label: 'In Stock',
     badgeBg: 'bg-emerald-50',
-    badgeText: 'text-[#0b6623]',
+    badgeText: 'text-[#8db600]',
     badgeBorder: 'border-emerald-200',
-    dotColor: 'bg-[#0b6623]',
+    dotColor: 'bg-[#8db600]',
     iconName: 'PackageCheck'
   },
   TO_BE_ORDERED: {
@@ -45,9 +45,9 @@ export const STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
   DELIVERED: {
     label: 'Delivered',
     badgeBg: 'bg-emerald-50',
-    badgeText: 'text-[#0b6623]',
-    badgeBorder: 'border-[#0b6623]/30',
-    dotColor: 'bg-[#0b6623]',
+    badgeText: 'text-[#8db600]',
+    badgeBorder: 'border-[#8db600]/30',
+    dotColor: 'bg-[#8db600]',
     iconName: 'PackageCheck'
   },
   ON_HOLD: {

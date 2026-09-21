@@ -50,7 +50,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-[#E2E8F0]/70 pb-3.5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-[#0b6623]/30 flex items-center justify-center text-[#0b6623]">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-[#8db600]/30 flex items-center justify-center text-[#8db600]">
               <ImageIcon className="w-5 h-5" />
             </div>
             <div>
@@ -68,7 +68,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
               href={directDriveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-emerald-100 text-[#0D0D0D] hover:text-[#0b6623] border border-[#E2E8F0] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-[#FFFFFF] hover:bg-emerald-100 text-[#0D0D0D] hover:text-[#8db600] border border-[#E2E8F0] text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
               title="Open direct file in Google Drive"
             >
               <ExternalLink className="w-3.5 h-3.5" />
@@ -88,7 +88,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
         <div className="relative w-full min-h-[320px] max-h-[65vh] bg-[#0C0D0E] rounded-2xl overflow-hidden flex items-center justify-center border border-slate-700">
           {isLoading && !hasError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-slate-300">
-              <RefreshCw className="w-8 h-8 animate-spin text-[#0b6623]" />
+              <RefreshCw className="w-8 h-8 animate-spin text-[#8db600]" />
               <span className="text-xs font-mono font-bold tracking-wider">Streaming Google Drive CDN Thumbnail...</span>
             </div>
           )}
@@ -120,7 +120,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
               </div>
 
               <div className="p-3 bg-[#141618] border border-[#23262B] rounded-xl text-left text-[11px] text-slate-300 space-y-1">
-                <p className="font-bold text-[#0b6623]">How to fix:</p>
+                <p className="font-bold text-[#8db600]">How to fix:</p>
                 <p>1. Open the file in Google Drive.</p>
                 <p>2. Set Sharing permissions to <strong className="text-white">"Anyone with the link can view"</strong>.</p>
               </div>
@@ -130,7 +130,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
                   href={directDriveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-md transition-all cursor-pointer"
                 >
                   <ExternalLink className="w-4 h-4 text-black stroke-[2.5]" />
                   <span className="text-black font-black">Open File in Google Drive</span>
@@ -143,7 +143,7 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
         {/* Footer info */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#334155] pt-1">
           <span className="flex items-center gap-1.5">
-            <ZoomIn className="w-3.5 h-3.5 text-[#0b6623]" />
+            <ZoomIn className="w-3.5 h-3.5 text-[#8db600]" />
             <span>Click image to toggle zoom</span>
           </span>
           <span className="font-mono text-[11px] truncate max-w-sm">

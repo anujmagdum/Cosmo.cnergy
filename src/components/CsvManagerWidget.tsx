@@ -427,7 +427,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
       {/* Left: CSV Context, Template Download & Columns Tooltip */}
       <div className="flex flex-wrap items-center gap-2 flex-1">
         <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 shrink-0 mr-1">
-          <FileSpreadsheet className="w-4 h-4 text-[#0b6623]" />
+          <FileSpreadsheet className="w-4 h-4 text-[#8db600]" />
           <span>CSV Engine:</span>
         </div>
 
@@ -465,21 +465,21 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="font-bold text-slate-950 flex items-center gap-1.5">
-                  <Info className="w-3.5 h-3.5 text-[#0b6623]" />
+                  <Info className="w-3.5 h-3.5 text-[#8db600]" />
                   <span>{schema.title}</span>
                 </span>
                 <span className="text-[10px] font-mono text-slate-800">RFC 4180</span>
               </div>
 
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#0b6623] block mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#8db600] block mb-1">
                   Required Header:
                 </span>
                 <div className="flex flex-wrap gap-1">
                   {schema.requiredHeaders.map(h => (
                     <span
                       key={h.key}
-                      className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-[#0b6623] border border-emerald-200"
+                      className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-50 text-[#8db600] border border-emerald-200"
                     >
                       {h.label}*
                     </span>
@@ -520,12 +520,12 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
           <span
             className={`text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg shadow-2xs ${
               statusFeedback.type === 'success'
-                ? 'bg-emerald-50 text-[#0b6623] border border-emerald-200'
+                ? 'bg-emerald-50 text-[#8db600] border border-emerald-200'
                 : 'bg-red-50 text-red-800 border border-red-200'
             }`}
           >
             {statusFeedback.type === 'success' ? (
-              <Check className="w-3.5 h-3.5 text-[#0b6623]" />
+              <Check className="w-3.5 h-3.5 text-[#8db600]" />
             ) : (
               <AlertCircle className="w-3.5 h-3.5 text-red-600" />
             )}
@@ -548,7 +548,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
           type="button"
           disabled={isProcessing}
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-xs transition-all cursor-pointer disabled:opacity-50 active:scale-95"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-xs transition-all cursor-pointer disabled:opacity-50 active:scale-95"
           title={`Upload .csv file to batch insert ${sectionType}`}
         >
           <Upload className="w-3.5 h-3.5 text-black stroke-[2.5]" />

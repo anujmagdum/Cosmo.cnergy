@@ -248,7 +248,7 @@ export const CompanyDashboard: React.FC<Props> = ({
       {toastFeedback && (
         <div
           className={`fixed top-20 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce font-bold text-sm ${
-            toastFeedback.type === 'success' ? 'bg-[#0b6623] text-black font-black' : 'bg-red-600 text-white'
+            toastFeedback.type === 'success' ? 'bg-[#8db600] text-black font-black' : 'bg-red-600 text-white'
           }`}
         >
           {toastFeedback.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-black stroke-[2.5]" /> : <AlertCircle className="w-5 h-5 text-white" />}
@@ -266,7 +266,7 @@ export const CompanyDashboard: React.FC<Props> = ({
               : 'text-[#020617] hover:bg-[#FFFFFF]'
           }`}
         >
-          <Building2 className="w-4 h-4 text-[#0b6623]" />
+          <Building2 className="w-4 h-4 text-[#8db600]" />
           <span>All Companies ({companies.length})</span>
         </button>
 
@@ -274,8 +274,8 @@ export const CompanyDashboard: React.FC<Props> = ({
           onClick={() => setActiveCompanyTab('find_new')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeCompanyTab === 'find_new'
-              ? 'bg-[#0b6623] text-black font-black shadow-md'
-              : 'text-[#020617] hover:bg-emerald-50 hover:text-[#0b6623]'
+              ? 'bg-[#8db600] text-black font-black shadow-md'
+              : 'text-[#020617] hover:bg-emerald-50 hover:text-[#8db600]'
           }`}
         >
           <Search className="w-4 h-4 text-black stroke-[2.5]" />
@@ -300,7 +300,7 @@ export const CompanyDashboard: React.FC<Props> = ({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-5 rounded-2xl bg-[#0C0D0E] text-white shadow-md">
             <div>
               <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                <Building2 className="w-7 h-7 text-[#0b6623]" />
+                <Building2 className="w-7 h-7 text-[#8db600]" />
                 <span>Company Directory</span>
               </h2>
               <p className="text-xs text-slate-300 mt-1">
@@ -311,7 +311,7 @@ export const CompanyDashboard: React.FC<Props> = ({
             <div className="flex flex-wrap items-center gap-2.5">
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
+                className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-md shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4 text-black stroke-[2.5]" />
                 <span>+ Add Company</span>
@@ -343,7 +343,7 @@ export const CompanyDashboard: React.FC<Props> = ({
             placeholder="Search companies, contacts, locations..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-10 pr-4 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-[#0b6623] transition-all shadow-xs font-medium placeholder-slate-400"
+            className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl pl-10 pr-4 py-2 text-xs text-[#0D0D0D] focus:outline-none focus:border-[#8db600] transition-all shadow-xs font-medium placeholder-slate-400"
           />
         </div>
 
@@ -355,7 +355,7 @@ export const CompanyDashboard: React.FC<Props> = ({
               onClick={() => setSelectedCategory(cat as string)}
               className={`px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-[#0b6623] text-black font-black shadow-sm'
+                  ? 'bg-[#8db600] text-black font-black shadow-sm'
                   : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#FFFFFF] border border-[#E2E8F0]'
               }`}
             >
@@ -374,16 +374,16 @@ export const CompanyDashboard: React.FC<Props> = ({
                 type="checkbox"
                 checked={filteredCompanies.length > 0 && selectedCompanyIds.length === filteredCompanies.length}
                 onChange={handleSelectAll}
-                className="w-4 h-4 rounded text-[#0b6623] focus:ring-[#0b6623] cursor-pointer accent-[#0b6623]"
+                className="w-4 h-4 rounded text-[#8db600] focus:ring-[#8db600] cursor-pointer accent-[#8db600]"
               />
-              <Building2 className="w-4 h-4 text-[#0b6623]" />
+              <Building2 className="w-4 h-4 text-[#8db600]" />
               <span>Verified Vendors ({filteredCompanies.length})</span>
             </h3>
             <span className="text-[11px] text-[#1e293b] ml-6">Maximized density ladder view with bulk selection</span>
           </div>
 
           {selectedCompanyIds.length > 0 && (
-            <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-[#0b6623] animate-in fade-in">
+            <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-[#8db600] animate-in fade-in">
               <span className="text-xs font-bold text-[#020617] px-2">{selectedCompanyIds.length} Selected</span>
               <button
                 onClick={handleBulkDelete}
@@ -404,7 +404,7 @@ export const CompanyDashboard: React.FC<Props> = ({
             return (
               <div
                 key={company.id}
-                className="w-full bg-[#FFFFFF] rounded-xl p-3 border border-[#E2E8F0] hover:border-[#0b6623]/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all"
+                className="w-full bg-[#FFFFFF] rounded-xl p-3 border border-[#E2E8F0] hover:border-[#8db600]/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs transition-all"
               >
                 {/* Left: Checkbox, Company Name, Category, Contact Person, Email, Phone */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -412,10 +412,10 @@ export const CompanyDashboard: React.FC<Props> = ({
                     type="checkbox"
                     checked={selectedCompanyIds.includes(company.id)}
                     onChange={() => toggleSelectOne(company.id)}
-                    className="w-4 h-4 rounded text-[#0b6623] focus:ring-[#0b6623] cursor-pointer accent-[#0b6623] shrink-0"
+                    className="w-4 h-4 rounded text-[#8db600] focus:ring-[#8db600] cursor-pointer accent-[#8db600] shrink-0"
                   />
                   
-                  <div className="w-8 h-8 rounded-lg bg-[#0b6623]/15 text-[#0b6623] border border-[#0b6623]/30 flex items-center justify-center font-bold text-xs shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#8db600]/15 text-[#8db600] border border-[#8db600]/30 flex items-center justify-center font-bold text-xs shrink-0">
                     <Building2 className="w-4 h-4" />
                   </div>
 
@@ -427,7 +427,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                         ? company.categories
                         : [company.category || 'General Company']
                       ).slice(0, 2).map((cat, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-[#0b6623] border border-emerald-300 shrink-0">{cat}</span>
+                        <span key={i} className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-[#8db600] border border-emerald-300 shrink-0">{cat}</span>
                       ))}
                       {company.categories && company.categories.length > 2 && (
                         <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#FFFFFF] text-[#020617] border border-[#E2E8F0] shrink-0">
@@ -445,12 +445,12 @@ export const CompanyDashboard: React.FC<Props> = ({
                       <span className="font-semibold text-[#020617]">{company.contact_person}</span>
                       <span>•</span>
                       <span className="flex items-center gap-1">
-                        <Mail className="w-3 h-3 text-[#0b6623] shrink-0" />
+                        <Mail className="w-3 h-3 text-[#8db600] shrink-0" />
                         <span className="truncate">{company.email}</span>
                       </span>
                       <span>•</span>
                       <span className="flex items-center gap-1 font-mono">
-                        <Phone className="w-3 h-3 text-[#0b6623] shrink-0" />
+                        <Phone className="w-3 h-3 text-[#8db600] shrink-0" />
                         <span>{company.phone}</span>
                       </span>
                     </div>
@@ -468,7 +468,7 @@ export const CompanyDashboard: React.FC<Props> = ({
 
                   <div className="text-right">
                     <span className="text-[9px] text-[#1e293b] uppercase font-semibold block">Parts</span>
-                    <span className="text-xs font-bold text-[#0b6623] font-mono">
+                    <span className="text-xs font-bold text-[#8db600] font-mono">
                       {companyItems.length} items
                     </span>
                   </div>
@@ -479,7 +479,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => setEditingCompany({ ...company })}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
                       title="Edit Company"
                     >
                       <Edit2 className="w-3 h-3 text-black stroke-[2.5]" />
@@ -557,7 +557,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g. Acme Components Ltd."
-                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                 />
               </div>
 
@@ -569,7 +569,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     value={formData.contact_person}
                     onChange={e => setFormData({ ...formData, contact_person: e.target.value })}
                     placeholder="e.g. Rajesh Sharma"
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                   />
                 </div>
               </div>
@@ -581,7 +581,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 </label>
                 <div className="p-3 bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl space-y-2 max-h-36 overflow-y-auto">
                   {DEFAULT_CATEGORIES.map(cat => (
-                    <label key={cat} className="flex items-center gap-2.5 cursor-pointer hover:text-[#0b6623] group">
+                    <label key={cat} className="flex items-center gap-2.5 cursor-pointer hover:text-[#8db600] group">
                       <input
                         type="checkbox"
                         checked={formData.categories.includes(cat)}
@@ -591,9 +591,9 @@ export const CompanyDashboard: React.FC<Props> = ({
                             : formData.categories.filter(c => c !== cat);
                           setFormData({ ...formData, categories: next, category: next[0] || cat });
                         }}
-                        className="w-4 h-4 rounded text-[#0b6623] accent-[#0b6623] cursor-pointer shrink-0"
+                        className="w-4 h-4 rounded text-[#8db600] accent-[#8db600] cursor-pointer shrink-0"
                       />
-                      <span className="text-xs font-medium text-[#020617] group-hover:text-[#0b6623]">{cat}</span>
+                      <span className="text-xs font-medium text-[#020617] group-hover:text-[#8db600]">{cat}</span>
                     </label>
                   ))}
                 </div>
@@ -601,7 +601,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 {formData.categories.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-2">
                     {formData.categories.map((cat, i) => (
-                      <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 text-[#0b6623] border border-emerald-300 text-[10px] font-bold">
+                      <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 text-[#8db600] border border-emerald-300 text-[10px] font-bold">
                         {cat}
                         {i === 0 && <span className="text-[9px] opacity-70">(primary)</span>}
                       </span>
@@ -622,7 +622,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
                     placeholder="sales@company.com"
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                   />
                 </div>
                 <div>
@@ -632,7 +632,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="+91 98765 43210"
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-mono"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-mono"
                   />
                 </div>
               </div>
@@ -667,7 +667,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                   value={formData.address}
                   onChange={e => setFormData({ ...formData, address: e.target.value })}
                   placeholder="Plot 45, Electronics City, Industrial Zone..."
-                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600]"
                 />
               </div>
 
@@ -681,7 +681,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black shadow-lg shadow-[#0b6623]/20 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black shadow-lg shadow-[#8db600]/20 cursor-pointer"
                 >
                   Save Company
                 </button>
@@ -697,7 +697,7 @@ export const CompanyDashboard: React.FC<Props> = ({
           <div className="bg-[#FFFFFF] w-full max-w-lg rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <div className="flex items-center gap-2">
-                <Edit2 className="w-5 h-5 text-[#0b6623]" />
+                <Edit2 className="w-5 h-5 text-[#8db600]" />
                 <h3 className="text-xl font-bold text-[#020617]">Edit Company Attributes</h3>
               </div>
               <button
@@ -716,7 +716,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                   required
                   value={editingCompany.name}
                   onChange={e => setEditingCompany({ ...editingCompany, name: e.target.value })}
-                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                 />
               </div>
 
@@ -727,7 +727,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     type="text"
                     value={editingCompany.contact_person}
                     onChange={e => setEditingCompany({ ...editingCompany, contact_person: e.target.value })}
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                   />
                 </div>
               </div>
@@ -751,9 +751,9 @@ export const CompanyDashboard: React.FC<Props> = ({
                               : currentCats.filter(c => c !== cat);
                             setEditingCompany({ ...editingCompany, categories: next, category: next[0] || cat });
                           }}
-                          className="w-4 h-4 rounded text-[#0b6623] accent-[#0b6623] cursor-pointer shrink-0"
+                          className="w-4 h-4 rounded text-[#8db600] accent-[#8db600] cursor-pointer shrink-0"
                         />
-                        <span className="text-xs font-medium text-[#020617] group-hover:text-[#0b6623]">{cat}</span>
+                        <span className="text-xs font-medium text-[#020617] group-hover:text-[#8db600]">{cat}</span>
                       </label>
                     );
                   })}
@@ -764,7 +764,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                   return currentCats.length > 0 ? (
                     <div className="flex flex-wrap gap-1.5 mt-2">
                       {currentCats.map((cat, i) => (
-                        <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 text-[#0b6623] border border-emerald-300 text-[10px] font-bold">
+                        <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-100 text-[#8db600] border border-emerald-300 text-[10px] font-bold">
                           {cat}{i === 0 && <span className="text-[9px] opacity-70">(primary)</span>}
                         </span>
                       ))}
@@ -781,7 +781,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     type="email"
                     value={editingCompany.email}
                     onChange={e => setEditingCompany({ ...editingCompany, email: e.target.value })}
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-medium"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-medium"
                   />
                 </div>
                 <div>
@@ -790,7 +790,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                     type="text"
                     value={editingCompany.phone}
                     onChange={e => setEditingCompany({ ...editingCompany, phone: e.target.value })}
-                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623] font-mono"
+                    className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600] font-mono"
                   />
                 </div>
               </div>
@@ -825,7 +825,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                   value={editingCompany.address || ''}
                   onChange={e => setEditingCompany({ ...editingCompany, address: e.target.value })}
                   placeholder="Street, Industrial Area, City..."
-                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#0b6623]"
+                  className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl px-3 py-2 text-sm text-[#020617] focus:outline-none focus:border-[#8db600]"
                 />
               </div>
 
@@ -850,7 +850,7 @@ export const CompanyDashboard: React.FC<Props> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black shadow-lg shadow-[#0b6623]/20 cursor-pointer"
+                  className="px-5 py-2 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black shadow-lg shadow-[#8db600]/20 cursor-pointer"
                 >
                   Update Company
                 </button>

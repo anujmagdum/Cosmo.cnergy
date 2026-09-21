@@ -174,7 +174,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
         <div className="p-5 md:p-6 border-b border-[#E2E8F0]/70 bg-[#FFFFFF] sticky top-0 z-20 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#0b6623] text-black font-black flex items-center justify-center shadow-md shadow-[#0b6623]/20">
+              <div className="w-10 h-10 rounded-2xl bg-[#8db600] text-black font-black flex items-center justify-center shadow-md shadow-[#8db600]/20">
                 <Building2 className="w-5 h-5 text-black stroke-[2.5]" />
               </div>
               <div>
@@ -182,7 +182,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                   <h3 className="text-lg md:text-xl font-extrabold text-[#0D0D0D]">
                     Multi-Company Sourcing Matrix
                   </h3>
-                  <span className="bg-emerald-100 text-[#0b6623] border border-emerald-300 text-[10px] font-black px-2 py-0.5 rounded-full">
+                  <span className="bg-emerald-100 text-[#8db600] border border-emerald-300 text-[10px] font-black px-2 py-0.5 rounded-full">
                     {scoredCandidates.length} Vendors Available
                   </span>
                 </div>
@@ -221,7 +221,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
               </div>
               <div className="border-l border-[#E2E8F0] pl-4">
                 <span className="text-[9px] text-[#334155] uppercase block font-sans">Target MOQ</span>
-                <strong className="text-[#0b6623] text-xs">{component.min_order_qty || 10} {component.uom || 'Pcs'}</strong>
+                <strong className="text-[#8db600] text-xs">{component.min_order_qty || 10} {component.uom || 'Pcs'}</strong>
               </div>
             </div>
           </div>
@@ -232,15 +232,15 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
           {/* AI Recommendation Banner */}
           {isLoadingAI ? (
             /* Loading Skeleton */
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-[#0b6623]/30 animate-pulse space-y-3">
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-[#8db600]/30 animate-pulse space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Bot className="w-5 h-5 text-[#0b6623] animate-spin" />
-                  <span className="text-xs font-bold text-[#0b6623]">
+                  <Bot className="w-5 h-5 text-[#8db600] animate-spin" />
+                  <span className="text-xs font-bold text-[#8db600]">
                     Gemini 3.6 Flash Analyzing RFQ Quotes, Reviews & Lead Times...
                   </span>
                 </div>
-                <span className="bg-emerald-200 text-[#0b6623] text-[10px] px-2 py-0.5 rounded font-mono">
+                <span className="bg-emerald-200 text-[#8db600] text-[10px] px-2 py-0.5 rounded font-mono">
                   Evaluating 40% RFQ Price / 30% Rating
                 </span>
               </div>
@@ -249,19 +249,19 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
             </div>
           ) : recommendation ? (
             /* Gemini Recommendation Card */
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-[#0b6623]/50 shadow-sm space-y-2.5">
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-[#8db600]/50 shadow-sm space-y-2.5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-xl bg-[#0b6623] text-black font-black flex items-center justify-center shadow-xs">
+                  <div className="w-7 h-7 rounded-xl bg-[#8db600] text-black font-black flex items-center justify-center shadow-xs">
                     <Sparkles className="w-4 h-4 text-black stroke-[2.5]" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-black text-[#0b6623] uppercase tracking-wider block">
+                    <span className="text-[10px] font-black text-[#8db600] uppercase tracking-wider block">
                       AI Sourcing Advisor • Gemini 3.6 Flash
                     </span>
                     <h4 className="text-sm font-extrabold text-[#0D0D0D] flex items-center gap-2">
                       <span>Recommended Vendor:</span>
-                      <span className="text-[#0b6623] underline underline-offset-2">
+                      <span className="text-[#8db600] underline underline-offset-2">
                         {companies.find(s => s.id === recommendation.winning_company_id)?.name || 'Top Company'}
                       </span>
                     </h4>
@@ -269,7 +269,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                 </div>
 
                 <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <span className="bg-[#0b6623] text-black border border-emerald-700 text-xs font-black px-3 py-1 rounded-lg flex items-center gap-1.5 shadow-xs">
+                  <span className="bg-[#8db600] text-black border border-emerald-700 text-xs font-black px-3 py-1 rounded-lg flex items-center gap-1.5 shadow-xs">
                     <Award className="w-3.5 h-3.5 text-black stroke-[2.5]" />
                     <span>{recommendation.badge}</span>
                   </span>
@@ -311,7 +311,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                     key={cs.id}
                     className={`rounded-2xl p-4 border transition-all space-y-3 ${
                       isWinner
-                        ? 'bg-[#FFFBEB] border-2 border-[#0b6623] shadow-md ring-2 ring-[#0b6623]/40'
+                        ? 'bg-[#FFFBEB] border-2 border-[#8db600] shadow-md ring-2 ring-[#8db600]/40'
                         : 'bg-[#FFFFFF]/60 hover:bg-[#FFFFFF] border-[#E2E8F0] shadow-2xs'
                     }`}
                   >
@@ -321,7 +321,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                         <span
                           className={`w-7 h-7 rounded-xl flex items-center justify-center font-mono font-black text-xs shrink-0 ${
                             isWinner
-                              ? 'bg-[#0b6623] text-black shadow-xs'
+                              ? 'bg-[#8db600] text-black shadow-xs'
                               : 'bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0]'
                           }`}
                         >
@@ -334,7 +334,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                               {companyObj?.name || 'Industrial Company'}
                             </h5>
                             {isWinner && (
-                              <span className="bg-emerald-100 text-[#0b6623] border border-emerald-300 text-[10px] font-black px-2 py-0.2 rounded uppercase">
+                              <span className="bg-emerald-100 text-[#8db600] border border-emerald-300 text-[10px] font-black px-2 py-0.2 rounded uppercase">
                                 Recommended Winner
                               </span>
                             )}
@@ -354,7 +354,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                           <span className="text-[9px] text-[#334155] uppercase font-bold block">Match Score</span>
                           <span
                             className={`font-mono text-base font-black ${
-                              matchScore >= 80 ? 'text-[#0b6623]' : matchScore >= 60 ? 'text-amber-700' : 'text-slate-700'
+                              matchScore >= 80 ? 'text-[#8db600]' : matchScore >= 60 ? 'text-amber-700' : 'text-slate-700'
                             }`}
                           >
                             {matchScore}/100
@@ -363,7 +363,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                         <div className="w-12 bg-slate-200 rounded-full h-2 overflow-hidden border border-slate-300">
                           <div
                             className={`h-full ${
-                              matchScore >= 80 ? 'bg-[#0b6623]' : matchScore >= 60 ? 'bg-amber-500' : 'bg-white0'
+                              matchScore >= 80 ? 'bg-[#8db600]' : matchScore >= 60 ? 'bg-amber-500' : 'bg-white0'
                             }`}
                             style={{ width: `${matchScore}%` }}
                           />
@@ -376,7 +376,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                       {/* Price Box */}
                       <div className="bg-[#FFFFFF] p-2.5 rounded-xl border border-[#E2E8F0]/60">
                         <span className="text-[9px] text-[#334155] uppercase font-bold block">RFQ Quoted Price</span>
-                        <div className="font-mono font-black text-sm text-[#0b6623] mt-0.5">
+                        <div className="font-mono font-black text-sm text-[#8db600] mt-0.5">
                           ₹{effectivePrice.toLocaleString('en-IN')}
                         </div>
                         {cs.unit_price !== effectivePrice && (
@@ -452,7 +452,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                         }}
                         className={`px-4 py-2 rounded-xl font-black text-xs flex items-center gap-2 transition-all shadow-sm active:scale-95 cursor-pointer ${
                           isWinner
-                            ? 'bg-[#0b6623] hover:bg-[#084d1a] text-black shadow-emerald-500/25 ring-2 ring-[#0b6623]/40'
+                            ? 'bg-[#8db600] hover:bg-[#709200] text-black shadow-emerald-500/25 ring-2 ring-[#8db600]/40'
                             : 'bg-[#0C0D0E] hover:bg-slate-800 text-white'
                         }`}
                       >

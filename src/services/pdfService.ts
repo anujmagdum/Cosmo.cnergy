@@ -24,8 +24,8 @@ export const buildOrderPDFDoc = (order: ProcurementOrder): jsPDF => {
   const subtotal = grandTotal / 1.18;
   const gstAmount = grandTotal - subtotal;
 
-  // Primary brand colors (#0b6623 -> [11, 102, 35], Dark #0C0D0E -> [12, 13, 14])
-  const emerald: [number, number, number] = [11, 102, 35];
+  // Primary brand colors (#8db600 -> [141, 182, 0], Dark #0C0D0E -> [12, 13, 14])
+  const emerald: [number, number, number] = [141, 182, 0];
   const darkNavy: [number, number, number] = [12, 13, 14];
   const slateText: [number, number, number] = [51, 65, 85];
   const mutedText: [number, number, number] = [100, 116, 139];

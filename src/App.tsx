@@ -1440,7 +1440,7 @@ export const App: React.FC = () => {
   }).length;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F0F2F5] text-slate-950 selection:bg-[#0b6623] selection:text-black overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#F0F2F5] text-slate-950 selection:bg-[#8db600] selection:text-black overflow-x-hidden">
       {/* Top Header & Navigation */}
       
 
@@ -1658,7 +1658,7 @@ export const App: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsSearchOpen(true)}
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-30 flex items-center gap-2 sm:gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] border border-[#0b6623]/40 text-black shadow-xl shadow-[#0b6623]/30 active:scale-95 transition-all group cursor-pointer backdrop-blur-md"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-30 flex items-center gap-2 sm:gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-[#8db600] hover:bg-[#709200] border border-[#8db600]/40 text-black shadow-xl shadow-[#8db600]/30 active:scale-95 transition-all group cursor-pointer backdrop-blur-md"
         title="Master Data Universal Search (Ctrl + K)"
       >
         <div className="w-6 h-6 rounded-lg bg-black/15 border border-black/25 flex items-center justify-center text-black group-hover:scale-110 transition-transform">

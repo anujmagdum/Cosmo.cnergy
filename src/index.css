@@ -98,16 +98,16 @@ table tbody tr:hover {
   box-shadow: 0 0 15px rgba(11, 102, 35, 0.25);
 }
 
-/* Unified Green Color Buttons (#0b6623) across every tab - Datlion Cnergy Black Font */
+/* Unified Green Color Buttons (#8db600) across every tab - Datlion Cnergy Black Font */
 button.bg-emerald-600,
 button.bg-emerald-700,
 button.bg-emerald-500,
 button.bg-green-600,
 button.bg-green-700,
-[class~="bg-[#0b6623]"],
+[class~="bg-[#8db600]"],
 .btn-green,
 .btn-emerald {
-  background-color: #0b6623 !important;
+  background-color: #8db600 !important;
   color: #0C0D0E !important;
   font-weight: 700;
 }
@@ -117,16 +117,16 @@ button.bg-emerald-700:hover,
 button.bg-emerald-500:hover,
 button.bg-green-600:hover,
 button.bg-green-700:hover,
-[class~="bg-[#0b6623]"]:hover,
+[class~="bg-[#8db600]"]:hover,
 .btn-green:hover,
 .btn-emerald:hover {
-  background-color: #084d1a !important;
+  background-color: #709200 !important;
   color: #0C0D0E !important;
   font-weight: 700;
 }
 
 /* Ensure icons, labels, and text inside solid green elements inherit bold black */
-[class~="bg-[#0b6623]"] *,
+[class~="bg-[#8db600]"] *,
 button.bg-emerald-600 *,
 button.bg-emerald-700 *,
 .btn-green *,
@@ -134,8 +134,8 @@ button.bg-emerald-700 *,
   color: #0C0D0E !important;
 }
 
-[class~="bg-[#0b6623]"] svg,
-[class~="bg-[#0b6623]"] .lucide,
+[class~="bg-[#8db600]"] svg,
+[class~="bg-[#8db600]"] .lucide,
 button.bg-emerald-600 svg,
 button.bg-emerald-700 svg,
 .btn-green svg,
@@ -144,7 +144,7 @@ button.bg-emerald-700 svg,
   stroke: #0C0D0E !important;
 }
 
-/* Unified Deep Forest Green (#0b6623) Across All Website Text, Words, Numbers, Icons, Logos (#18AC88 -> #0b6623) */
+/* Unified Apple Green (#8db600) Across All Website Text, Words, Numbers, Icons, Logos */
 .text-emerald-300,
 .text-emerald-400,
 .text-emerald-500,
@@ -173,7 +173,7 @@ button.bg-emerald-700 svg,
 [class*="text-[#10b981]"],
 [class*="text-[#059669]"],
 [class*="text-[#047857]"] {
-  color: #0b6623 !important;
+  color: #8db600 !important;
 }
 
 svg.text-emerald-300,
@@ -212,11 +212,11 @@ svg.text-teal-600,
 .text-green-700 > svg,
 .text-teal-500 > svg,
 .text-teal-600 > svg {
-  color: #0b6623 !important;
-  stroke: #0b6623 !important;
+  color: #8db600 !important;
+  stroke: #8db600 !important;
 }
 
-/* Accent borders and rings into #0b6623 */
+/* Accent borders and rings into #8db600 */
 .border-emerald-400,
 .border-emerald-500,
 .border-emerald-600,
@@ -225,7 +225,7 @@ svg.text-teal-600,
 .border-teal-600,
 [class*="border-[#18AC88]"],
 [class*="border-[#18ac88]"] {
-  border-color: #0b6623 !important;
+  border-color: #8db600 !important;
 }
 
 /* Custom Scrollbar */

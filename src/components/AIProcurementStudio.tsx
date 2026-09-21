@@ -197,7 +197,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
             onClick={() => setIsKeyConfigOpen(!isKeyConfigOpen)}
             className={`px-3 py-1.5 rounded-full text-xs font-extrabold border transition-all flex items-center gap-1.5 ${
               isKeyActive
-                ? 'bg-emerald-500/20 text-[#0b6623] border-[#0b6623]/40 hover:bg-emerald-500/30'
+                ? 'bg-emerald-500/20 text-[#8db600] border-[#8db600]/40 hover:bg-emerald-500/30'
                 : 'bg-amber-500/20 text-amber-300 border-amber-500/40 hover:bg-amber-500/30 animate-pulse'
             }`}
           >
@@ -212,7 +212,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
         <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-4 shadow-md animate-in fade-in space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold text-[#020617] uppercase tracking-wider flex items-center gap-1.5">
-              <Key className="w-4 h-4 text-[#0b6623]" />
+              <Key className="w-4 h-4 text-[#8db600]" />
               <span>Gemini API Key Configuration</span>
             </h4>
             <span className="text-[11px] text-slate-500">Supports Google AI Studio API Keys</span>
@@ -223,11 +223,11 @@ export const AIProcurementStudio: React.FC<Props> = ({
               value={apiKeyInput}
               onChange={e => setApiKeyInput(e.target.value)}
               placeholder="Paste your AI Studio GEMINI_API_KEY (AIzaSy...)"
-              className="flex-1 bg-[#F0F2F5] border border-[#E2E8F0] rounded-xl px-3.5 py-2 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#0b6623]"
+              className="flex-1 bg-[#F0F2F5] border border-[#E2E8F0] rounded-xl px-3.5 py-2 text-xs font-mono text-[#020617] focus:outline-none focus:border-[#8db600]"
             />
             <button
               onClick={handleSaveApiKey}
-              className="px-4 py-2 bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs rounded-xl shadow-xs transition-all cursor-pointer"
+              className="px-4 py-2 bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs rounded-xl shadow-xs transition-all cursor-pointer"
             >
               Save Key
             </button>
@@ -239,7 +239,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
         {/* Input Panel: Voice / Photo / Text */}
         <div className="glass-card bg-[#FFFFFF] p-6 rounded-2xl space-y-5 border border-[#E2E8F0] text-[#0D0D0D] shadow-sm">
           <h3 className="text-base font-bold text-[#0D0D0D] flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#0b6623]" />
+            <Sparkles className="w-4 h-4 text-[#8db600]" />
             <span>1. Capture Input (Photo, Voice, or Text)</span>
           </h3>
 
@@ -253,12 +253,12 @@ export const AIProcurementStudio: React.FC<Props> = ({
                   : 'bg-[#FFFFFF] hover:bg-slate-50 border-[#E2E8F0] text-[#0D0D0D]'
               }`}
             >
-              <Mic className={`w-4 h-4 ${isRecording ? 'text-red-600' : 'text-[#0b6623]'}`} />
+              <Mic className={`w-4 h-4 ${isRecording ? 'text-red-600' : 'text-[#8db600]'}`} />
               <span>{isRecording ? 'Listening...' : 'Record Voice Note'}</span>
             </button>
 
             <label className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-xs bg-[#FFFFFF] hover:bg-slate-50 border border-[#E2E8F0] text-[#0D0D0D] cursor-pointer transition-all">
-              <Image className="w-4 h-4 text-[#0b6623]" />
+              <Image className="w-4 h-4 text-[#8db600]" />
               <span>Upload Photo/Note</span>
               <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
             </label>
@@ -296,14 +296,14 @@ export const AIProcurementStudio: React.FC<Props> = ({
               value={textPrompt}
               onChange={e => setTextPrompt(e.target.value)}
               placeholder="e.g. Speak or type: '12V 100Ah LFP Battery Pack assembly with 100A smart BMS' or describe product photo details..."
-              className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl p-3 text-sm text-[#0D0D0D] focus:outline-none focus:border-[#0b6623] resize-none font-medium placeholder-slate-400"
+              className="w-full bg-[#FFFFFF] border border-[#E2E8F0] rounded-xl p-3 text-sm text-[#0D0D0D] focus:outline-none focus:border-[#8db600] resize-none font-medium placeholder-slate-400"
             />
           </div>
 
           <button
             onClick={handleAnalyze}
             disabled={isAnalyzing || (!textPrompt.trim() && !imagePreview)}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-sm shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50 active:scale-95 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-sm shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50 active:scale-95 cursor-pointer"
           >
             {isAnalyzing ? (
               <>
@@ -324,7 +324,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-[#0D0D0D] flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#0b6623]" />
+                <CheckCircle2 className="w-4 h-4 text-[#8db600]" />
                 <span>2. Extracted BOM Line Items</span>
               </h3>
               <span className="text-xs font-semibold text-slate-500">{parsedItems.length} items parsed</span>
@@ -349,7 +349,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-bold text-[#0D0D0D] text-sm">{item.itemName}</span>
                         {item.category && (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-[#0b6623] border border-emerald-200">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-[#8db600] border border-emerald-200">
                             {item.category}
                           </span>
                         )}
@@ -371,12 +371,12 @@ export const AIProcurementStudio: React.FC<Props> = ({
                     </div>
 
                     <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E2E8F0]/60">
-                      <span className="px-2.5 py-1 rounded-lg bg-[#0b6623] text-black font-black text-xs shadow-2xs font-mono">
+                      <span className="px-2.5 py-1 rounded-lg bg-[#8db600] text-black font-black text-xs shadow-2xs font-mono">
                         Qty: {item.quantity}
                       </span>
                       <div className="text-right">
                         <span className="text-[10px] text-slate-500 block">₹{item.estimatedPrice.toLocaleString('en-IN')}/unit</span>
-                        <div className="text-[#0b6623] font-extrabold font-mono text-sm">
+                        <div className="text-[#8db600] font-extrabold font-mono text-sm">
                           ₹{(item.quantity * item.estimatedPrice).toLocaleString('en-IN')}
                         </div>
                       </div>
@@ -391,7 +391,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
           <button
             onClick={handleConvertToOrder}
             disabled={parsedItems.length === 0}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-sm shadow-lg shadow-[#0b6623]/20 transition-all disabled:opacity-40 active:scale-95 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-sm shadow-lg shadow-[#8db600]/20 transition-all disabled:opacity-40 active:scale-95 cursor-pointer"
           >
             <span>Convert AI Draft to Live Procurement Orders</span>
             <ArrowRight className="w-4 h-4 text-black stroke-[2.5]" />
