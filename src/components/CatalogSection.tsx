@@ -1301,7 +1301,7 @@ Cosmo.cnergy Procurement Team`;
           </div>
 
           {/* Category Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-hide">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none touch-scroll w-full sm:w-auto pb-1 sm:pb-0">
             <button
               onClick={() => handleSelectCategory('ALL')}
               className={`px-3 py-1.5 rounded-lg text-xs font-black whitespace-nowrap transition-all cursor-pointer ${

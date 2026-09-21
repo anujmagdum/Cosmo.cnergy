@@ -32,6 +32,7 @@ import {
   Clock,
   Sparkles,
   ChevronDown,
+  ChevronLeft,
   Eye,
   Download,
   ReplyAll,
@@ -804,8 +805,8 @@ export const Webmail: React.FC<Props> = ({
 
       {/* Main 3-Pane Webmail Interface (Solarized Light Theme) */}
       <div className="bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] shadow-xs overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[680px]">
-        {/* Left Folder Sidebar (3 Cols) */}
-        <div className="lg:col-span-3 bg-[#FFFFFF] p-4 border-r border-[#E2E8F0] flex flex-col justify-between">
+        {/* Left Folder Sidebar (3 Cols on Desktop, Hidden on Mobile/Tablet in favor of Mobile Folder Bar) */}
+        <div className="hidden lg:flex lg:col-span-3 bg-[#FFFFFF] p-4 border-r border-[#E2E8F0] flex-col justify-between">
           <div className="space-y-4">
             {/* Compose Quick Trigger */}
             <button
@@ -923,8 +924,52 @@ export const Webmail: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Middle Email List Pane (4 Cols) */}
-        <div className="lg:col-span-4 border-r border-[#E2E8F0] flex flex-col bg-[#FFFFFF]">
+        {/* Middle Email List Pane (4 Cols on Desktop, Full Width on Mobile when no email selected) */}
+        <div className={`lg:col-span-4 border-r border-[#E2E8F0] flex flex-col bg-[#FFFFFF] ${selectedEmailId ? 'hidden lg:flex' : 'flex'}`}>
+          {/* Mobile Folder Switcher & Quick Compose Bar (Mobile only) */}
+          <div className="lg:hidden p-3 border-b border-[#E2E8F0] space-y-2 bg-slate-50/70">
+            <div className="flex items-center justify-between gap-2">
+              <button
+                onClick={() => setIsComposeOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-xs active:scale-95 transition-all cursor-pointer shrink-0"
+              >
+                <Send className="w-3.5 h-3.5 fill-black text-black" />
+                <span>Write Mail</span>
+              </button>
+              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none touch-scroll py-0.5">
+                {[
+                  { id: 'inbox' as const, label: 'Inbox', icon: Inbox, count: unreadCount },
+                  { id: 'starred' as const, label: 'Starred', icon: Star },
+                  { id: 'sent' as const, label: 'Sent', icon: Send },
+                  { id: 'drafts' as const, label: 'Drafts', icon: FileText },
+                  { id: 'trash' as const, label: 'Trash', icon: Trash2 },
+                ].map(f => {
+                  const FIcon = f.icon;
+                  const isActive = activeFolder === f.id;
+                  return (
+                    <button
+                      key={f.id}
+                      onClick={() => setActiveFolder(f.id)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold whitespace-nowrap flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+                        isActive
+                          ? 'bg-[#8db600] text-black font-black shadow-xs'
+                          : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                      }`}
+                    >
+                      <FIcon className="w-3 h-3" />
+                      <span>{f.label}</span>
+                      {f.count !== undefined && f.count > 0 && (
+                        <span className={`px-1 rounded-full text-[9px] font-black ${isActive ? 'bg-black/20 text-black' : 'bg-emerald-100 text-[#8db600]'}`}>
+                          {f.count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
           {/* Universal Search Header */}
           <div className="p-3.5 border-b border-[#E2E8F0]/60 bg-[#FFFFFF]">
             <div className="relative">
@@ -1024,8 +1069,8 @@ export const Webmail: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Right Reading Pane (5 Cols) */}
-        <div className="lg:col-span-5 p-6 flex flex-col justify-between bg-[#FFFFFF] overflow-y-auto max-h-[680px] text-[#020617]">
+        {/* Right Reading Pane (5 Cols on Desktop, Full Width on Mobile when email selected) */}
+        <div className={`lg:col-span-5 p-4 sm:p-6 flex flex-col justify-between bg-[#FFFFFF] overflow-y-auto max-h-[680px] text-[#020617] ${selectedEmailId ? 'flex' : 'hidden lg:flex'}`}>
           {selectedEmail ? (() => {
             const rawFrom = decodeMimeQuotedPrintable(selectedEmail.from);
             const fromMatch = rawFrom.match(/^(.*?)(?:<([^>]+)>)?$/);
@@ -1061,6 +1106,16 @@ export const Webmail: React.FC<Props> = ({
 
             return (
               <div className="space-y-4 flex flex-col h-full">
+                {/* Mobile Back to Mailbox Button */}
+                <button
+                  type="button"
+                  onClick={() => setSelectedEmailId(null)}
+                  className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs w-fit transition-colors cursor-pointer shrink-0"
+                >
+                  <ChevronLeft className="w-4 h-4 text-slate-700" />
+                  <span>Back to Mailbox</span>
+                </button>
+
                 {/* Single Clean Header Card */}
                 <div className="border-b border-slate-200 pb-4 space-y-2.5 bg-white shrink-0">
                   {/* Top line: Large bold Subject line with Star, Delete, and Quick Email Actions */}
@@ -1519,8 +1574,8 @@ export const Webmail: React.FC<Props> = ({
 
       {/* Compose Mail Modal */}
       {isComposeOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
-          <div className="bg-[#FFFFFF] w-full max-w-2xl rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#020617]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-2.5 sm:p-4 overflow-y-auto">
+          <div className="bg-[#FFFFFF] w-full max-w-2xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-auto text-[#020617] max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <div className="flex items-center gap-2">
                 <Send className="w-5 h-5 text-[#8db600]" />

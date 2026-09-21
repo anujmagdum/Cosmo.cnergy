@@ -244,6 +244,22 @@ svg.text-teal-600,
   background: #94a3b8;
 }
 
+/* Hide scrollbar for clean horizontal swipe on phone & tablet */
+.scrollbar-none,
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth Momentum Touch Scrolling on iOS & Android */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Printable PO styling */
 @media print {
   body {
@@ -257,3 +273,4 @@ svg.text-teal-600,
     display: block !important;
   }
 }
+

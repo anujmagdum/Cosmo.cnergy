@@ -229,7 +229,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
       </div>
 
       {/* Datlion Cnergy Finance Summary KPI Section */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
         {/* Total Invoices / Orders */}
         <div className="bg-[#FFFFFF] p-4 rounded-2xl border border-[#E2E8F0] shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
@@ -239,7 +239,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl md:text-2xl font-black text-[#020617] font-mono">{financialSummary.totalCount}</div>
+            <div className="text-xl sm:text-2xl font-black text-[#020617] font-mono">{financialSummary.totalCount}</div>
             <div className="text-[11px] text-[#1e293b] mt-0.5 flex items-center gap-1.5 font-semibold">
               <span className="text-purple-700">{financialSummary.poCount} POs</span>
               <span>•</span>
@@ -257,7 +257,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl md:text-2xl font-black text-[#020617] font-mono">
+            <div className="text-lg sm:text-xl md:text-2xl font-black text-[#020617] font-mono truncate">
               ₹{financialSummary.taxableSubtotal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
             <div className="text-[11px] text-[#1e293b] mt-0.5 font-semibold">Base procurement valuation</div>
@@ -273,7 +273,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl md:text-2xl font-black text-amber-900 font-mono">
+            <div className="text-lg sm:text-xl md:text-2xl font-black text-amber-900 font-mono truncate">
               ₹{financialSummary.estimatedGst.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
             <div className="text-[11px] text-[#1e293b] mt-0.5 font-semibold">Standard 18% tax credit</div>
@@ -289,7 +289,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             </div>
           </div>
           <div className="mt-2">
-            <div className="text-xl md:text-2xl font-black text-[#8db600] font-mono">
+            <div className="text-lg sm:text-xl md:text-2xl font-black text-[#8db600] font-mono truncate">
               ₹{financialSummary.grossTotal.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
             </div>
             <div className="text-[11px] text-slate-500 mt-0.5 font-semibold">Gross dispatched order volume</div>
@@ -323,10 +323,10 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         </div>
 
         {/* Color-Coded Status Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none touch-scroll w-full sm:w-auto pb-1 sm:pb-0">
           <button
             onClick={() => setFilterStatus('ALL')}
-            className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               filterStatus === 'ALL'
                 ? 'bg-[#8db600] text-black font-black shadow-xs'
                 : 'bg-[#FFFFFF] text-[#1e293b] hover:bg-[#FFFFFF] border border-[#E2E8F0]'
@@ -343,7 +343,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
               <button
                 key={statusKey}
                 onClick={() => setFilterStatus(statusKey)}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 border transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 border transition-all cursor-pointer shrink-0 ${
                   filterStatus === statusKey
                     ? `${cfg.badgeBg} ${cfg.badgeText} ${cfg.badgeBorder} font-bold shadow-xs`
                     : 'bg-[#FFFFFF] text-[#1e293b] hover:bg-[#FFFFFF] border-[#E2E8F0]'
@@ -385,7 +385,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
         </div>
 
         {/* Responsive Table Container */}
-        <div className="overflow-x-auto rounded-2xl border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
+        <div className="overflow-x-auto scrollbar-none touch-scroll rounded-2xl border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-50/80 text-[#0D0D0D] font-bold uppercase text-[11px] tracking-wider border-b border-[#E2E8F0]">
@@ -397,13 +397,13 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                     className="w-4 h-4 rounded text-[#8db600] focus:ring-[#8db600] cursor-pointer accent-[#8db600]"
                   />
                 </th>
-                <th className="py-3 px-3.5">Date</th>
-                <th className="py-3 px-3.5">Issuer</th>
-                <th className="py-3 px-3.5">Receiver</th>
-                <th className="py-3 px-3.5">Inv #</th>
-                <th className="py-3 px-3.5 text-right">Taxable</th>
-                <th className="py-3 px-3.5 text-right">Total</th>
-                <th className="py-3 px-3.5 text-center">Actions</th>
+                <th className="py-3 px-3.5 min-w-[95px]">Date</th>
+                <th className="py-3 px-3.5 min-w-[130px]">Issuer</th>
+                <th className="py-3 px-3.5 min-w-[150px]">Receiver</th>
+                <th className="py-3 px-3.5 min-w-[120px]">Inv #</th>
+                <th className="py-3 px-3.5 text-right min-w-[100px]">Taxable</th>
+                <th className="py-3 px-3.5 text-right min-w-[100px]">Total</th>
+                <th className="py-3 px-3.5 text-center min-w-[140px]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E2E8F0] bg-[#FFFFFF]">

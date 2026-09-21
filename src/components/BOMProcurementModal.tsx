@@ -530,24 +530,24 @@ export const BOMProcurementModal: React.FC<Props> = ({
   const selectedDraft = activeDrafts.find(d => d.company.id === activeTabCompanyId) || activeDrafts[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
-      <div className="bg-[#FFFFFF] w-full max-w-5xl rounded-3xl border border-[#E2E8F0] shadow-2xl overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-150 text-[#020617]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-2.5 sm:p-4 overflow-y-auto">
+      <div className="bg-[#FFFFFF] w-full max-w-5xl rounded-2xl sm:rounded-3xl border border-[#E2E8F0] shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-150 text-[#020617] max-h-[96vh] flex flex-col">
         {/* Modal Top Banner */}
-        <div className="bg-[#0C0D0E] p-6 border-b border-[#E2E8F0]/60 flex items-center justify-between text-white">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#8db600] flex items-center justify-center text-black font-black shadow-lg shadow-[#8db600]/20">
-              <Layers className="w-6 h-6 text-black stroke-[2.5]" />
+        <div className="bg-[#0C0D0E] p-4 sm:p-6 border-b border-[#E2E8F0]/60 flex items-center justify-between text-white shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#8db600] flex items-center justify-center text-black font-black shadow-lg shadow-[#8db600]/20 shrink-0">
+              <Layers className="w-5 h-5 sm:w-6 sm:h-6 text-black stroke-[2.5]" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold text-white tracking-tight">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-base sm:text-xl font-bold text-white tracking-tight">
                   1-Tap Automated BOM Procurement Engine
                 </h2>
                 <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/20 text-[#8db600] border border-[#8db600]/30">
                   Multi-Vendor Auto-Split
                 </span>
               </div>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-slate-300 hidden sm:block">
                 Procure complete product assemblies or customized component batches — edit quantities inline and send RFQ or POs.
               </p>
             </div>
@@ -555,14 +555,14 @@ export const BOMProcurementModal: React.FC<Props> = ({
 
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-all font-bold cursor-pointer"
+            className="text-slate-400 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-all font-bold cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-5 max-h-[72vh] overflow-y-auto">
+        <div className="p-3.5 sm:p-6 space-y-4 sm:space-y-5 flex-1 overflow-y-auto touch-scroll">
           {/* Split Navigation Bar: Whole Product vs Selected Components */}
           <div className="flex items-center gap-2 bg-[#FFFFFF] p-1.5 rounded-2xl border border-[#E2E8F0]">
             <button
@@ -768,7 +768,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
             </div>
 
             {/* Company Tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none touch-scroll pb-1">
               {activeDrafts.map(draft => {
                 const isActive = (selectedDraft?.company.id === draft.company.id);
                 return (
@@ -925,8 +925,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
         </div>
 
         {/* Modal Footer Controls */}
-        <div className="p-6 bg-[#FFFFFF] border-t border-[#E2E8F0]/60 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4 text-xs">
+        <div className="p-4 sm:p-6 bg-[#FFFFFF] border-t border-[#E2E8F0]/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 shrink-0">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs">
             <label className="flex items-center gap-2 cursor-pointer font-semibold select-none">
               <input
                 type="checkbox"
@@ -937,7 +937,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
               <span>Record dispatched {orderType}s to Database Timeline</span>
             </label>
 
-            <div className="flex items-center gap-2 border-l border-[#E2E8F0] pl-4">
+            <div className="flex items-center gap-2 sm:border-l sm:border-[#E2E8F0] sm:pl-4">
               <span className="font-bold text-[#1e293b]">Bulk Channel:</span>
               <select
                 value={dispatchChannel}
@@ -950,7 +950,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               onClick={onClose}
               className="px-4 py-2.5 rounded-xl border border-[#E2E8F0] text-xs font-bold text-[#1e293b] hover:bg-[#e2e8f0] transition-all cursor-pointer"
@@ -961,7 +961,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
             <button
               onClick={handleMasterDispatch}
               disabled={isDispatching || activeDrafts.length === 0}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#8db600] hover:bg-[#709200] disabled:opacity-50 text-black font-black text-xs shadow-lg shadow-emerald-600/30 active:scale-95 transition-all cursor-pointer"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[#8db600] hover:bg-[#709200] disabled:opacity-50 text-black font-black text-xs shadow-lg shadow-emerald-600/30 active:scale-95 transition-all cursor-pointer"
             >
               <Zap className="w-4 h-4 fill-black text-black" />
               <span>

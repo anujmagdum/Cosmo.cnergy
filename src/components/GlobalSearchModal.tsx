@@ -153,8 +153,8 @@ export const GlobalSearchModal: React.FC<Props> = ({
         </div>
 
         {/* Filter Pills Bar */}
-        <div className="px-6 py-3 bg-[#FFFFFF] border-b border-[#E2E8F0] flex flex-wrap items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-1.5">
+        <div className="px-4 sm:px-6 py-2.5 sm:py-3 bg-[#FFFFFF] border-b border-[#E2E8F0] flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none touch-scroll w-full sm:w-auto pb-0.5 sm:pb-0">
             <button
               onClick={() => setActiveCategoryFilter('ALL')}
               className={`px-3 py-1.5 rounded-xl font-black transition-all ${

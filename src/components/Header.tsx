@@ -83,10 +83,10 @@ export const Header: React.FC<Props> = ({
     <header className="sticky top-0 z-40 bg-[#08090B] border-b border-[#1C1E22] select-none shadow-xl">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         {/* Desktop Single-Row Header (h-14) / Mobile Top Row */}
-        <div className="flex items-center justify-between h-14 gap-3 sm:gap-6">
+        <div className="flex items-center justify-between h-14 gap-2 sm:gap-6">
           {/* Brand Logo */}
           <div
-            className="flex items-center gap-2.5 cursor-pointer group shrink-0"
+            className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group shrink-0"
             onClick={() => setActiveTab('procurement')}
           >
             <div className="w-8 h-8 rounded-xl bg-[#8db600] flex items-center justify-center shadow-md shadow-[#8db600]/25 group-hover:scale-105 transition-transform">
@@ -154,24 +154,24 @@ export const Header: React.FC<Props> = ({
           </nav>
 
           {/* Right Section: Action Pill + User Profile Pill + Standalone Logout Icon */}
-          <div className="flex items-center justify-end gap-2.5 sm:gap-3 shrink-0" ref={dropdownRef}>
+          <div className="flex items-center justify-end gap-1.5 sm:gap-3 shrink-0" ref={dropdownRef}>
             {/* 1-Tap BOM PO Action Button (Green Pill matching Reference) */}
             <button
               onClick={onOpenBOMModal}
-              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#8db600] hover:bg-[#709200] text-black font-extrabold text-xs shadow-sm transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+              className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-4 py-1.5 rounded-full bg-[#8db600] hover:bg-[#709200] text-black font-extrabold text-xs shadow-sm transition-all active:scale-95 whitespace-nowrap cursor-pointer shrink-0"
               title="1-Tap Multi-Company BOM Procurement Engine"
             >
               <PlusCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black stroke-[2.5]" />
               <span className="hidden sm:inline">1-Tap BOM PO</span>
-              <span className="sm:hidden">BOM PO</span>
+              <span className="sm:hidden text-[11px]">BOM PO</span>
             </button>
 
             {/* User Profile Pill */}
             {userName || displayEmail ? (
-              <div className="relative">
+              <div className="relative shrink-0">
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-2 sm:gap-2.5 px-2.5 sm:px-3 py-1 rounded-full bg-[#0E131B] hover:bg-[#151D29] border border-[#1F293B] transition-all text-left group active:scale-95 cursor-pointer shadow-sm"
+                  className="flex items-center gap-1.5 sm:gap-2.5 px-2 sm:px-3 py-1 rounded-full bg-[#0E131B] hover:bg-[#151D29] border border-[#1F293B] transition-all text-left group active:scale-95 cursor-pointer shadow-sm shrink-0"
                   title="User Profile & Session Details"
                 >
                   {/* Circle Avatar with Apple Green fill and black bold letter */}
@@ -241,7 +241,7 @@ export const Header: React.FC<Props> = ({
             ) : (
               <button
                 onClick={onOpenAuth}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#8db600] hover:bg-[#709200] text-xs font-black text-black transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#8db600] hover:bg-[#709200] text-xs font-black text-black transition-all active:scale-95 cursor-pointer shrink-0"
               >
                 <LogIn className="w-3.5 h-3.5 text-black stroke-[2.5]" />
                 <span>Login</span>
@@ -252,7 +252,7 @@ export const Header: React.FC<Props> = ({
             <button
               onClick={onLogout}
               title="Log Out Session"
-              className="p-2 text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all rounded-xl cursor-pointer flex items-center justify-center shrink-0"
+              className="p-1.5 sm:p-2 text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all rounded-xl cursor-pointer flex items-center justify-center shrink-0"
             >
               <LogOut className="w-5 h-5 stroke-[1.8]" />
             </button>
@@ -260,7 +260,7 @@ export const Header: React.FC<Props> = ({
         </div>
 
         {/* Mobile Navigation Tabs Row (Horizontally Scrollable) */}
-        <div className="md:hidden flex items-center h-10 border-t border-[#1C1E22]/80 overflow-x-auto scrollbar-none gap-1">
+        <div className="md:hidden flex items-center h-10 border-t border-[#1C1E22]/80 overflow-x-auto scrollbar-none touch-scroll gap-1 px-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;

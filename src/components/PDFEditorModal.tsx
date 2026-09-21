@@ -161,18 +161,18 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
 
           <div className="flex items-center gap-2">
             {/* View Mode Switcher on Mobile/Tablet */}
-            <div className="hidden sm:flex md:hidden items-center bg-slate-800 p-1 rounded-xl text-xs">
+            <div className="flex md:hidden items-center bg-slate-800 p-1 rounded-xl text-xs">
               <button
                 onClick={() => setActiveTab('editor')}
-                className={`px-3 py-1 rounded-lg font-black transition-all ${activeTab === 'editor' ? 'bg-[#8db600] text-black' : 'text-slate-400 hover:text-white'}`}
+                className={`px-2.5 sm:px-3 py-1 rounded-lg font-black transition-all ${activeTab === 'editor' ? 'bg-[#8db600] text-black' : 'text-slate-400 hover:text-white'}`}
               >
                 Editor
               </button>
               <button
                 onClick={() => setActiveTab('preview')}
-                className={`px-3 py-1 rounded-lg font-black transition-all ${activeTab === 'preview' ? 'bg-[#8db600] text-black' : 'text-slate-400 hover:text-white'}`}
+                className={`px-2.5 sm:px-3 py-1 rounded-lg font-black transition-all ${activeTab === 'preview' ? 'bg-[#8db600] text-black' : 'text-slate-400 hover:text-white'}`}
               >
-                Live Preview
+                Preview
               </button>
             </div>
 

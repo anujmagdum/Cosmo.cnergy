@@ -257,7 +257,7 @@ export const CompanyDashboard: React.FC<Props> = ({
       )}
 
       {/* Sub-Tab Switcher Bar (All Companies vs Find New Companies) */}
-      <div className="flex items-center gap-2 p-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-fit shadow-xs">
+      <div className="flex items-center gap-2 p-1.5 bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl max-w-full overflow-x-auto scrollbar-none touch-scroll w-fit shadow-xs">
         <button
           onClick={() => setActiveCompanyTab('all_companies')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
@@ -348,7 +348,7 @@ export const CompanyDashboard: React.FC<Props> = ({
         </div>
 
         {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none touch-scroll w-full sm:w-auto pb-1 sm:pb-0">
           {allCategoryNames.map(cat => (
             <button
               key={cat}

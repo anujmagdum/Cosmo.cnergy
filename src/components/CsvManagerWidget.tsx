@@ -461,7 +461,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
             <div
               onMouseEnter={() => setShowColumnsPopover(true)}
               onMouseLeave={() => setShowColumnsPopover(false)}
-              className="absolute left-0 top-full mt-2 w-80 sm:w-96 p-4 rounded-xl bg-white border border-slate-200 shadow-2xl z-50 text-xs text-slate-800 space-y-2.5 animate-in fade-in zoom-in-95 duration-150"
+              className="absolute left-0 top-full mt-2 w-[calc(100vw-2.5rem)] max-w-sm sm:w-96 p-4 rounded-xl bg-white border border-slate-200 shadow-2xl z-50 text-xs text-slate-800 space-y-2.5 animate-in fade-in zoom-in-95 duration-150"
             >
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <span className="font-bold text-slate-950 flex items-center gap-1.5">
