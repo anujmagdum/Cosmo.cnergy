@@ -130,10 +130,10 @@ export const DriveImageLightboxModal: React.FC<Props> = ({
                   href={directDriveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md transition-all cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md transition-all cursor-pointer"
                 >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>Open File in Google Drive</span>
+                  <ExternalLink className="w-4 h-4 text-black stroke-[2.5]" />
+                  <span className="text-black font-black">Open File in Google Drive</span>
                 </a>
               </div>
             </div>

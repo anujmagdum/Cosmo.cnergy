@@ -71,7 +71,7 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
         <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center shadow-md shadow-[#0b6623]/20">
-              <Zap className="w-5 h-5 text-white fill-white" />
+              <Zap className="w-5 h-5 text-black fill-black stroke-[2.5]" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-[#020617]">CosmoCnergy Account</h3>
@@ -149,10 +149,10 @@ export const AuthModal: React.FC<Props> = ({ onClose, onLogin }) => {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold shadow-lg shadow-emerald-500/25 active:scale-95 transition-all disabled:opacity-50"
+              className="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black shadow-lg shadow-emerald-500/25 active:scale-95 transition-all disabled:opacity-50"
             >
-              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-              <span>{loading ? 'Authenticating...' : 'Sign In'}</span>
+              {loading && <Loader2 className="w-4 h-4 animate-spin text-black stroke-[2.5]" />}
+              <span className="text-black font-black">{loading ? 'Authenticating...' : 'Sign In'}</span>
             </button>
           </div>
         </form>

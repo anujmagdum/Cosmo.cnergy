@@ -113,8 +113,8 @@ Cosmo Cnergy`;
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#e2e8f0]/60 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-white font-bold shadow-md shadow-[#0b6623]/20">
-              <Mail className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-black font-black shadow-md shadow-[#0b6623]/20">
+              <Mail className="w-5 h-5 text-black stroke-[2.5]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -244,17 +244,17 @@ Cosmo Cnergy`;
               <button
                 type="submit"
                 disabled={isSending}
-                className="flex items-center gap-2 px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 disabled:opacity-50 transition-all"
+                className="flex items-center gap-2 px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 disabled:opacity-50 transition-all"
               >
                 {isSending ? (
                   <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Connecting SMTP...</span>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-black stroke-[2.5]" />
+                    <span className="text-black font-black">Connecting SMTP...</span>
                   </>
                 ) : (
                   <>
-                    <Send className="w-3.5 h-3.5" />
-                    <span>Send Official Webmail via SMTP</span>
+                    <Send className="w-3.5 h-3.5 text-black stroke-[2.5]" />
+                    <span className="text-black font-black">Send Official Webmail via SMTP</span>
                   </>
                 )}
               </button>

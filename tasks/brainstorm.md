@@ -1,47 +1,72 @@
-# Brainstorming & Architecture Exploration: CosmoCnergy Full-Stack Enhancement
+﻿# Brainstorming & Architecture Exploration: UPI & Direct Bank Transfer Integration
 
 ## 1. Problem Statement & Core Goals
-We are executing a comprehensive full-stack enhancement across 4 key pillars:
-1. **Information Architecture (IA) Restructuring:** Renaming core tabs (`Orders` ➔ `Procurement`, `Component & Product` ➔ `Inventory`, `Supplier` ➔ `Companies`) and synchronizing browser route states.
-2. **Relational Multi-Supplier Sourcing (M:N Schema):** Moving from single-supplier-per-component to a flexible `component_suppliers` junction table supporting vendor-specific pricing, MOQ, lead times, review summaries, and multi-platform rating breakdowns (IndiaMART, Google Maps, Amazon).
-3. **Hybrid AI Recommendation Engine:** Combining deterministic multi-criteria weighted pre-scoring (Cost 40%, Rating 30%, Lead Time 20%, MOQ 10%) with Gemini 3.6 Flash qualitative reasoning to award badges and select the best vendor.
-4. **Zero-Storage Google Drive Image Lightbox:** Transforming Google Drive links into instant thumbnail previews without hosting image binaries on Supabase storage.
+We want to integrate an automated, seamless payment system for **CosmoCnergy** directly interlinked with the company's bank account.
+Customers / procurement partners should be able to make payments in just a few clicks via:
+1. **UPI Instant Checkout** (Dynamic QR code on desktop + 1-Tap UPI Intent on mobile with GPay, PhonePe, Paytm, BHIM).
+2. **Automated B2B Bank Transfer** (Virtual Accounts for NEFT / RTGS / IMPS reconciliation for high-value orders above UPI limits).
+3. **Instant Automated Reconciliation** (Order automatically marked as Paid, receipt issued, stock reserved, zero manual bank statement checking).
 
 ---
 
-## 2. Architectural Trade-Offs & Design Options
+## 2. Option Comparison Matrix
 
-### Pillar 1: Navigation & Route Synchronization
-| Option | Description | Pros | Cons |
-| :--- | :--- | :--- | :--- |
-| **Option A: History API with URL Query Sync** *(Recommended)* | Uses `window.history.pushState` with path & query params (`/procurement`, `/inventory`, `/companies`) alongside reactive state. | No full-page reloads, clean URLs, deep-linkable PO drafts, lightweight without heavy router dependencies. | Requires manual route listener for browser back/forward buttons. |
-| **Option B: Pure State-Driven Tabs** | Internal state `activeTab` only without URL updates. | Simple implementation. | Users cannot bookmark or share links directly to a specific view or PO draft. |
-
----
-
-### Pillar 2: Sourcing Comparison UI & Trigger Location
-| Option | Description | Pros | Cons |
-| :--- | :--- | :--- | :--- |
-| **Option A: Dual-Trigger Matrix Drawer** *(Recommended)* | Accessible via both a **"🔍 Sourcing / Compare Vendors"** button on each Inventory Component card AND inside the Companies tab. | Maximum procurement velocity; engineer can compare suppliers while looking at low stock or while browsing vendor portfolios. | Slightly more trigger points to maintain. |
-| **Option B: Inventory-Only Drawer** | Only accessible from Component cards in the Inventory tab. | Minimal footprint. | Less discoverable from the Companies view. |
+| Option | Capabilities | Customer UX | Development Effort | MDR / Transaction Fees | Best For |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Option A: Razorpay Standard PG + Smart Collect** *(Recommended)* | UPI Intent, Dynamic QR, Netbanking, Cards + Virtual Accounts (NEFT/RTGS) | 1-Tap on mobile, Instant QR on desktop, Auto-generated Virtual Bank details for wire transfer | **Low-Medium** (~2 days) | 0% for UPI (P2M), 1.5–2% for cards/netbanking, flat ₹5–15 per B2B Virtual Account transfer | Fast rollout, best developer SDKs, battle-tested in India |
+| **Option B: Cashfree AutoCollect (B2B Focused)** | Dynamic UPI QR, UPI AutoPay, Virtual Account per Customer/PO for NEFT/RTGS | Dedicated VAN on PO/Invoice, auto-matched to Order ID within seconds | **Medium** (~3 days) | Competitive B2B rates (often flat ₹10/transfer for large NEFT/RTGS wire transfers) | Heavy B2B industrial component orders (₹1L – ₹50L+) |
+| **Option C: Direct Bank Open API (ICICI / HDFC Corporate eCMS)** | Direct host-to-host bank integration without third-party aggregator | Customer transfers to dedicated corporate sub-account, bank sends webhook | **High** (3–6 weeks) | Lowest transaction fee (Direct bank charges only) | Enterprise scale with existing bank relationship manager |
 
 ---
 
-### Pillar 3: Purchase Order Direct Routing Workflow
-| Option | Description | Pros | Cons |
-| :--- | :--- | :--- | :--- |
-| **Option A: Instant Pre-filled Modal / Dispatch Drawer** *(Recommended)* | Clicking "Create Purchase Order" in the comparison table automatically switches to `/procurement` and opens the pre-filled PO modal with winning vendor, unit price, and MOQ already populated. | 1-Tap frictionless dispatch via WhatsApp / Webmail / PDF. | None. |
-| **Option B: Raw Query Param Form** | Navigates to a blank purchase order page with URL parameters. | Standard web pattern. | Requires extra clicks to send RFQ or finalize order. |
+## 3. Recommended Approach & Architecture
+
+### Recommended: **Option A (Razorpay / Cashfree Dual Engine)**
+Combining **Instant UPI (QR/Intent)** for small-to-mid ticket purchases (< ₹1 Lakh) and **Smart Virtual Account (VAN)** for large industrial battery/component batches (> ₹1 Lakh).
+
+### Architecture Flow:
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Customer
+    participant Frontend as CosmoCnergy Web
+    participant Backend as Vercel /api Function
+    participant Gateway as Payment Gateway (Razorpay/Cashfree)
+    participant Bank as Company Current Account
+
+    Customer->>Frontend: Clicks "Pay Order ₹XX,XXX"
+    Frontend->>Backend: POST /api/create-payment-order (orderId, amount)
+    Backend->>Gateway: Create PG Order & Virtual Account (VAN)
+    Gateway-->>Backend: Return payment_id, UPI link, QR, & VAN details
+    Backend-->>Frontend: Display Payment Modal (UPI QR / Intent + Bank Wire Details)
+    Customer->>Gateway: Approves via UPI App (PIN) OR Transfers via NEFT/RTGS
+    Gateway->>Bank: Funds settled into Company Current Account (T+1)
+    Gateway->>Backend: Webhook: payment.captured / transfer.completed
+    Backend->>Frontend: Update Order status to "ORDERED/PAID" & Emit Receipt
+```
 
 ---
 
-### Pillar 4: Google Drive Thumbnail & Lightbox Strategy
-| Option | Description | Pros | Cons |
-| :--- | :--- | :--- | :--- |
-| **Option A: Multi-Endpoint Auto-Fallback** *(Recommended)* | Regex parses File ID and tries `lh3.googleusercontent.com/d/{id}=w1000` with fallback to `drive.google.com/thumbnail?id={id}&sz=w1000`. If access is restricted (private link), shows a polite warning with a direct "Open in Google Drive" button. | 100% zero-storage cost, ultra-fast CDN caching by Google, clean fallback UI. | Requires public Google Drive link permissions ("Anyone with link"). |
-| **Option B: Iframe Embed Only** | Renders Google Drive preview iframe (`drive.google.com/file/d/{id}/preview`). | Supports any file type. | Slower load time, heavy UI with Google toolbars. |
+## 4. Legal, Business & Technical Requirements Checklist
 
----
+### Phase 1: Business Prerequisites & KYC
+- Active **Current Bank Account** in the company name (CosmoCnergy / Datlion Cnergy).
+- **Company PAN** and **GSTIN Certificate**.
+- **Certificate of Incorporation / Udyam MSME Registration**.
+- **Cancelled Cheque** or Latest Bank Statement (showing Account Name, Number, and IFSC).
+- Authorized Signatory KYC (Aadhaar & PAN).
 
-## 3. Recommended Approach & Next Steps
-We recommend proceeding with **Option A across all pillars** to achieve maximum performance, responsive UX, and seamless AI procurement.
+### Phase 2: Website Regulatory Compliance
+Before payment aggregators approve live transactions, the website must have:
+- Public **Terms & Conditions** page.
+- Public **Privacy Policy** page.
+- **Refund, Return & Cancellation Policy** (with timeline, e.g., 7 days).
+- **Contact Us** page with real physical office/plant address, support email, and phone number.
+
+### Phase 3: Technical Implementation Tasks
+1. Serverless API Endpoint: `api/create-payment.ts`
+2. Secure Webhook Listener: `api/payment-webhook.ts` (with signature verification)
+3. Frontend UI:
+   - "Pay Now" trigger on Order History Timeline cards.
+   - Branded Payment Modal (`#0C0D0E`, `#0b6623`, `#F0F2F5`) displaying Dynamic UPI QR code + "Pay via App" button + Bank NEFT/RTGS copyable details.
+   - Payment Success receipt generation.

@@ -315,10 +315,10 @@ export const ComponentComparisonPage: React.FC<Props> = ({
         </p>
         <button
           onClick={() => navigate('/inventory')}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white text-xs font-bold transition-all shadow-md cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs transition-all shadow-md cursor-pointer"
         >
-          <ChevronLeft className="w-4 h-4" />
-          <span>Return to Inventory</span>
+          <ChevronLeft className="w-4 h-4 text-black stroke-[2.5]" />
+          <span className="text-black font-black">Return to Inventory</span>
         </button>
       </div>
     );
@@ -410,7 +410,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
           {/* Active sort indicator badge */}
           {sortField && (
             <div className="flex items-center gap-2 text-xs">
-              <span className="px-2.5 py-1 rounded-lg bg-[#0b6623] text-white font-bold text-[11px] flex items-center gap-1 shadow-2xs">
+              <span className="px-2.5 py-1 rounded-lg bg-[#0b6623] text-black font-black text-[11px] flex items-center gap-1 shadow-2xs">
                 <span>
                   Sorted by{' '}
                   {sortField === 'rfq_quoted_price'
@@ -425,7 +425,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                     setSortField(null);
                     setSortOrder(null);
                   }}
-                  className="hover:text-red-200 ml-1 font-black cursor-pointer"
+                  className="hover:text-red-800 ml-1 font-black cursor-pointer text-black"
                   title="Reset Sort"
                 >
                   ✕

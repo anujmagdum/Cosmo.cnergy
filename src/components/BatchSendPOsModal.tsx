@@ -335,8 +335,8 @@ export const BatchSendPOsModal: React.FC<Props> = ({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-white font-bold shadow-md shadow-[#0b6623]/20">
-              <Send className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-black font-black shadow-md shadow-[#0b6623]/20">
+              <Send className="w-5 h-5 text-black stroke-[2.5]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -365,9 +365,9 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={() => setOrderType('PO')}
-                  className={`px-3 py-1 rounded-lg font-bold transition-all ${
+                  className={`px-3 py-1 rounded-lg font-black transition-all ${
                     orderType === 'PO'
-                      ? 'bg-[#0b6623] text-white shadow-sm'
+                      ? 'bg-[#0b6623] text-black shadow-sm'
                       : 'text-slate-500 hover:text-[#020617]'
                   }`}
                 >
@@ -376,9 +376,9 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={() => setOrderType('RFQ')}
-                  className={`px-3 py-1 rounded-lg font-bold transition-all ${
+                  className={`px-3 py-1 rounded-lg font-black transition-all ${
                     orderType === 'RFQ'
-                      ? 'bg-[#0b6623] text-white shadow-sm'
+                      ? 'bg-[#0b6623] text-black shadow-sm'
                       : 'text-slate-500 hover:text-[#020617]'
                   }`}
                 >
@@ -393,26 +393,26 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                 <button
                   type="button"
                   onClick={() => setPreferredChannel('webmail')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-black transition-all ${
                     preferredChannel === 'webmail'
-                      ? 'bg-[#0b6623] text-white shadow-xs'
+                      ? 'bg-[#0b6623] text-black shadow-xs'
                       : 'text-slate-500 hover:text-[#020617]'
                   }`}
                 >
-                  <Mail className="w-3.5 h-3.5" />
+                  <Mail className={`w-3.5 h-3.5 ${preferredChannel === 'webmail' ? 'text-black stroke-[2.5]' : ''}`} />
                   <span>Webmail</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setPreferredChannel('whatsapp')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg font-black transition-all ${
                     preferredChannel === 'whatsapp'
-                      ? 'bg-[#0b6623] text-white shadow-xs'
+                      ? 'bg-[#0b6623] text-black shadow-xs'
                       : 'text-slate-500 hover:text-[#020617]'
                   }`}
                 >
-                  <MessageSquare className="w-3.5 h-3.5" />
+                  <MessageSquare className={`w-3.5 h-3.5 ${preferredChannel === 'whatsapp' ? 'text-black stroke-[2.5]' : 'text-[#0b6623]'}`} />
                   <span>WhatsApp</span>
                 </button>
               </div>
@@ -423,9 +423,9 @@ export const BatchSendPOsModal: React.FC<Props> = ({
             <button
               type="button"
               onClick={handleBatchDispatchAll}
-              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all cursor-pointer"
             >
-              <Rocket className="w-4 h-4" />
+              <Rocket className="w-4 h-4 text-black stroke-[2.5]" />
               <span>Dispatch All ({selectedVendorIds.length}) POs</span>
             </button>
           </div>
@@ -460,7 +460,7 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                       }}
                       className="w-4 h-4 text-[#0b6623] rounded border-[#E2E8F0] focus:ring-[#0b6623] accent-[#0b6623] cursor-pointer"
                     />
-                    <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs">
+                    <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-black font-black flex items-center justify-center text-xs">
                       {index + 1}
                     </div>
                     <div>
@@ -475,10 +475,10 @@ export const BatchSendPOsModal: React.FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => dispatchSingleVendorWebmail(draft)}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
                     >
-                      <Mail className="w-3.5 h-3.5" />
-                      <span>Open Webmail Draft</span>
+                      <Mail className="w-3.5 h-3.5 text-black stroke-[2.5]" />
+                      <span className="text-black font-black">Open Webmail Draft</span>
                     </button>
 
                     <button

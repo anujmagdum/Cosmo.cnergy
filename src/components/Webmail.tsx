@@ -715,7 +715,7 @@ export const Webmail: React.FC<Props> = ({
       <div className="glass-panel px-5 py-3.5 rounded-2xl bg-[#0C0D0E] text-white flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-md">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-[#0b6623] flex items-center justify-center shadow-md shadow-[#0b6623]/20 shrink-0">
-            <Mail className="w-4.5 h-4.5 text-white" />
+            <Mail className="w-4.5 h-4.5 text-black stroke-[2.5]" />
           </div>
           <div className="flex items-center gap-2.5 flex-wrap">
             <h2 className="text-lg font-bold text-white font-heading tracking-tight">Admin Webmail Client</h2>
@@ -784,9 +784,9 @@ export const Webmail: React.FC<Props> = ({
           {/* Compose Mail Button */}
           <button
             onClick={() => setIsComposeOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs md:text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs md:text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
           >
-            <Send className="w-4 h-4 fill-white" />
+            <Send className="w-4 h-4 fill-black text-black" />
             <span>Compose Mail</span>
           </button>
         </div>
@@ -810,9 +810,9 @@ export const Webmail: React.FC<Props> = ({
             {/* Compose Quick Trigger */}
             <button
               onClick={() => setIsComposeOpen(true)}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-extrabold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all"
+              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all cursor-pointer"
             >
-              <Send className="w-3.5 h-3.5 fill-white" />
+              <Send className="w-3.5 h-3.5 fill-black text-black" />
               <span>Write New Mail</span>
             </button>
 
@@ -822,7 +822,7 @@ export const Webmail: React.FC<Props> = ({
                 onClick={() => setActiveFolder('inbox')}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
                   activeFolder === 'inbox'
-                    ? 'bg-[#0b6623] text-white font-bold shadow-sm'
+                    ? 'bg-[#0b6623] text-black font-black shadow-sm'
                     : 'text-[#020617] hover:bg-[#e2e8f0]'
                 }`}
               >
@@ -832,8 +832,8 @@ export const Webmail: React.FC<Props> = ({
                 </div>
                 {unreadCount > 0 && (
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
-                      activeFolder === 'inbox' ? 'bg-white text-[#0b6623]' : 'bg-emerald-100 text-[#0b6623]'
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                      activeFolder === 'inbox' ? 'bg-black/20 text-black' : 'bg-emerald-100 text-[#0b6623]'
                     }`}
                   >
                     {unreadCount}
@@ -845,7 +845,7 @@ export const Webmail: React.FC<Props> = ({
                 onClick={() => setActiveFolder('starred')}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
                   activeFolder === 'starred'
-                    ? 'bg-[#0b6623] text-white font-bold shadow-sm'
+                    ? 'bg-[#0b6623] text-black font-black shadow-sm'
                     : 'text-[#020617] hover:bg-[#e2e8f0]'
                 }`}
               >
@@ -862,7 +862,7 @@ export const Webmail: React.FC<Props> = ({
                 onClick={() => setActiveFolder('sent')}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
                   activeFolder === 'sent'
-                    ? 'bg-[#0b6623] text-white font-bold shadow-sm'
+                    ? 'bg-[#0b6623] text-black font-black shadow-sm'
                     : 'text-[#020617] hover:bg-[#e2e8f0]'
                 }`}
               >
@@ -879,7 +879,7 @@ export const Webmail: React.FC<Props> = ({
                 onClick={() => setActiveFolder('drafts')}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
                   activeFolder === 'drafts'
-                    ? 'bg-[#0b6623] text-white font-bold shadow-sm'
+                    ? 'bg-[#0b6623] text-black font-black shadow-sm'
                     : 'text-[#020617] hover:bg-[#e2e8f0]'
                 }`}
               >
@@ -896,7 +896,7 @@ export const Webmail: React.FC<Props> = ({
                 onClick={() => setActiveFolder('trash')}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
                   activeFolder === 'trash'
-                    ? 'bg-[#0b6623] text-white font-bold shadow-sm'
+                    ? 'bg-[#0b6623] text-black font-black shadow-sm'
                     : 'text-[#020617] hover:bg-[#e2e8f0]'
                 }`}
               >
@@ -1134,7 +1134,7 @@ export const Webmail: React.FC<Props> = ({
                   {/* Sub-line: Sender Avatar, Display Name <email@domain.com>, and relative timestamp */}
                   <div className="flex items-center justify-between gap-3 pt-0.5">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-7 h-7 rounded-full bg-[#0b6623] text-white font-bold text-xs flex items-center justify-center shrink-0 uppercase shadow-2xs">
+                      <div className="w-7 h-7 rounded-full bg-[#0b6623] text-black font-black text-xs flex items-center justify-center shrink-0 uppercase shadow-2xs">
                         {senderInitials}
                       </div>
                       <div className="min-w-0 truncate">
@@ -1367,7 +1367,7 @@ export const Webmail: React.FC<Props> = ({
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95"
+                    className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 cursor-pointer"
                   >
                     Save Settings
                   </button>
@@ -1507,7 +1507,7 @@ export const Webmail: React.FC<Props> = ({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold shadow-md shadow-[#0b6623]/20"
+                  className="px-5 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black shadow-md shadow-[#0b6623]/20 cursor-pointer"
                 >
                   Connect Mailbox
                 </button>
@@ -1627,9 +1627,9 @@ export const Webmail: React.FC<Props> = ({
                 <button
                   type="submit"
                   disabled={isSending}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs md:text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs md:text-sm shadow-lg shadow-emerald-500/25 active:scale-95 transition-all cursor-pointer"
                 >
-                  <Send className="w-4 h-4 fill-white" />
+                  <Send className="w-4 h-4 fill-black text-black" />
                   <span>{isSending ? 'Sending via SMTP...' : 'Send Message'}</span>
                 </button>
               </div>

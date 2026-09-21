@@ -98,8 +98,8 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-white font-bold shadow-md">
-              <Rocket className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-black font-black shadow-md">
+              <Rocket className="w-5 h-5 text-black stroke-[2.5]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -133,7 +133,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E2E8F0]/60 pb-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-white flex items-center justify-center font-bold text-xs">
+                    <div className="w-7 h-7 rounded-lg bg-[#0b6623] text-black font-black flex items-center justify-center text-xs">
                       {idx + 1}
                     </div>
                     <div>
@@ -148,10 +148,10 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
                     <button
                       onClick={() => handleDispatchVendorWebmail(draft)}
                       disabled={loadingVendorId === draft.company.id}
-                      className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs active:scale-95 transition-all"
+                      className="flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-xs active:scale-95 transition-all"
                     >
-                      <Mail className="w-3.5 h-3.5" />
-                      <span>Open in Webmail</span>
+                      <Mail className="w-3.5 h-3.5 text-black stroke-[2.5]" />
+                      <span className="text-black font-black">Open in Webmail</span>
                     </button>
 
                     <button
@@ -192,7 +192,7 @@ export const MultiVendorDispatchModal: React.FC<Props> = ({
           <button
             onClick={handleFinishAll}
             disabled={isProcessing}
-            className="px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all"
+            className="px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all"
           >
             {isProcessing ? 'Confirming...' : 'Confirm All Dispatches & Log Orders'}
           </button>

@@ -141,8 +141,8 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
         {/* Modal Top Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0]/60 bg-[#0C0D0E] text-white shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#0b6623] text-white flex items-center justify-center font-bold shadow-md shadow-[#0b6623]/20">
-              <Edit3 className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-xl bg-[#0b6623] text-black font-black flex items-center justify-center shadow-md shadow-[#0b6623]/20">
+              <Edit3 className="w-5 h-5 text-black stroke-[2.5]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -164,13 +164,13 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             <div className="hidden sm:flex md:hidden items-center bg-slate-800 p-1 rounded-xl text-xs">
               <button
                 onClick={() => setActiveTab('editor')}
-                className={`px-3 py-1 rounded-lg font-bold transition-all ${activeTab === 'editor' ? 'bg-[#0b6623] text-white' : 'text-slate-400 hover:text-white'}`}
+                className={`px-3 py-1 rounded-lg font-black transition-all ${activeTab === 'editor' ? 'bg-[#0b6623] text-black' : 'text-slate-400 hover:text-white'}`}
               >
                 Editor
               </button>
               <button
                 onClick={() => setActiveTab('preview')}
-                className={`px-3 py-1 rounded-lg font-bold transition-all ${activeTab === 'preview' ? 'bg-[#0b6623] text-white' : 'text-slate-400 hover:text-white'}`}
+                className={`px-3 py-1 rounded-lg font-black transition-all ${activeTab === 'preview' ? 'bg-[#0b6623] text-black' : 'text-slate-400 hover:text-white'}`}
               >
                 Live Preview
               </button>
@@ -508,10 +508,10 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
             <button
               type="button"
               onClick={handleDownload}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-lg shadow-emerald-500/25 transition-all active:scale-95"
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-lg shadow-emerald-500/25 transition-all active:scale-95"
             >
-              <Download className="w-4 h-4" />
-              <span>Download PDF</span>
+              <Download className="w-4 h-4 text-black stroke-[2.5]" />
+              <span className="text-black font-black">Download PDF</span>
             </button>
           </div>
         </div>

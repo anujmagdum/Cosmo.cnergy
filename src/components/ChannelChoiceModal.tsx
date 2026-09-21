@@ -66,13 +66,13 @@ export const ChannelChoiceModal: React.FC<Props> = ({ order, onClose, onOpenWebm
         <div className="space-y-3">
           <button
             onClick={handleSendWebmail}
-            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-sm shadow-lg shadow-[#0b6623]/20 active:scale-95 transition-all group"
+            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-sm shadow-lg shadow-[#0b6623]/20 active:scale-95 transition-all group"
           >
             <div className="flex items-center gap-3">
-              <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span>Send via Webmail</span>
+              <Mail className="w-5 h-5 text-black stroke-[2.5] group-hover:scale-110 transition-transform" />
+              <span className="text-black font-black">Send via Webmail</span>
             </div>
-            <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full uppercase font-bold">Internal</span>
+            <span className="text-xs bg-black/20 text-black font-black px-2 py-0.5 rounded-full uppercase">Internal</span>
           </button>
 
           <button

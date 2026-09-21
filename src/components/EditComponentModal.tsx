@@ -323,7 +323,7 @@ export const EditComponentModal: React.FC<Props> = ({
                       return (
                         <div key={s.company_id} className="p-3 rounded-xl bg-[white] border border-[#e2e8f0] space-y-2">
                           <div className="flex items-center gap-1.5 text-xs font-bold text-[#020617]">
-                            <span className="w-4 h-4 rounded-full bg-[#0b6623] text-white text-[9px] flex items-center justify-center font-mono">{idx + 1}</span>
+                            <span className="w-4 h-4 rounded-full bg-[#0b6623] text-black font-black text-[9px] flex items-center justify-center font-mono">{idx + 1}</span>
                             <span>{supp?.name}</span>
                             {idx === 0 && <span className="px-1.5 py-0.5 rounded text-[9px] bg-emerald-100 text-[#0b6623] border border-emerald-300">Primary</span>}
                           </div>
@@ -467,7 +467,7 @@ export const EditComponentModal: React.FC<Props> = ({
 
           <div className="flex items-center justify-end gap-3 px-5 py-4 border-t border-[#e2e8f0]/60 shrink-0 bg-[white] sm:rounded-b-3xl">
             <button type="button" onClick={onClose} className="px-4 py-2 rounded-xl bg-[white] hover:bg-[#e2e8f0] text-[#020617] font-semibold">Cancel</button>
-            <button type="submit" className="px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold shadow-lg shadow-[#0b6623]/20 active:scale-95 transition-all">Update Component</button>
+            <button type="submit" className="px-6 py-2 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black shadow-lg shadow-[#0b6623]/20 active:scale-95 transition-all">Update Component</button>
           </div>
         </form>
       </div>

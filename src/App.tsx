@@ -1440,7 +1440,7 @@ export const App: React.FC = () => {
   }).length;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F0F2F5] text-slate-950 selection:bg-[#0b6623] selection:text-white overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#F0F2F5] text-slate-950 selection:bg-[#0b6623] selection:text-black overflow-x-hidden">
       {/* Top Header & Navigation */}
       
 
@@ -1658,16 +1658,16 @@ export const App: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsSearchOpen(true)}
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-30 flex items-center gap-2 sm:gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] border border-[#0b6623]/40 text-white shadow-xl shadow-[#0b6623]/30 active:scale-95 transition-all group cursor-pointer backdrop-blur-md"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-30 flex items-center gap-2 sm:gap-2.5 px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-[#0b6623] hover:bg-[#084d1a] border border-[#0b6623]/40 text-black shadow-xl shadow-[#0b6623]/30 active:scale-95 transition-all group cursor-pointer backdrop-blur-md"
         title="Master Data Universal Search (Ctrl + K)"
       >
-        <div className="w-6 h-6 rounded-lg bg-white/20 border border-white/30 flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-          <Search className="w-3.5 h-3.5 text-white" />
+        <div className="w-6 h-6 rounded-lg bg-black/15 border border-black/25 flex items-center justify-center text-black group-hover:scale-110 transition-transform">
+          <Search className="w-3.5 h-3.5 text-black stroke-[2.5]" />
         </div>
-        <span className="font-bold text-xs tracking-wide text-white">
+        <span className="font-black text-xs tracking-wide text-black">
           Master Data Search
         </span>
-        <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-md bg-[#084d1a] border border-emerald-400/40 font-mono text-[10px] text-emerald-100 font-bold">
+        <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded-md bg-black/20 border border-black/30 font-mono text-[10px] text-black font-black">
           Ctrl+K
         </kbd>
       </button>

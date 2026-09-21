@@ -206,11 +206,11 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
       {/* Toast Feedback Notification */}
       {toastFeedback && (
         <div
-          className={`fixed top-20 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce text-white font-bold text-sm ${
-            toastFeedback.type === 'success' ? 'bg-[#0b6623]' : 'bg-red-600'
+          className={`fixed top-20 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce font-bold text-sm ${
+            toastFeedback.type === 'success' ? 'bg-[#0b6623] text-black font-black' : 'bg-red-600 text-white'
           }`}
         >
-          {toastFeedback.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+          {toastFeedback.type === 'success' ? <CheckCircle className="w-5 h-5 text-black stroke-[2.5]" /> : <AlertCircle className="w-5 h-5 text-white" />}
           <span>{toastFeedback.message}</span>
         </div>
       )}
@@ -328,7 +328,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             onClick={() => setFilterStatus('ALL')}
             className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
               filterStatus === 'ALL'
-                ? 'bg-[#0b6623] text-white font-bold shadow-xs'
+                ? 'bg-[#0b6623] text-black font-black shadow-xs'
                 : 'bg-[#FFFFFF] text-[#1e293b] hover:bg-[#FFFFFF] border border-[#E2E8F0]'
             }`}
           >

@@ -121,8 +121,8 @@ export const GlobalSearchModal: React.FC<Props> = ({
       <div className="bg-[#FFFFFF] w-full max-w-4xl rounded-2xl sm:rounded-3xl border border-[#E2E8F0] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-[#0D0D0D] flex flex-col max-h-[94vh]">
         {/* Top Search Input Bar */}
         <div className="p-4 sm:p-5 border-b border-[#E2E8F0] bg-[#FFFFFF] flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-white shrink-0 shadow-md shadow-[#0b6623]/20">
-            <Search className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl bg-[#0b6623] flex items-center justify-center text-black font-black shrink-0 shadow-md shadow-[#0b6623]/20">
+            <Search className="w-5 h-5 text-black stroke-[2.5]" />
           </div>
 
           <div className="flex-1 relative">
@@ -157,9 +157,9 @@ export const GlobalSearchModal: React.FC<Props> = ({
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setActiveCategoryFilter('ALL')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-xl font-black transition-all ${
                 activeCategoryFilter === 'ALL'
-                  ? 'bg-[#0b6623] text-white shadow-sm'
+                  ? 'bg-[#0b6623] text-black shadow-sm'
                   : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border border-[#E2E8F0]'
               }`}
             >
@@ -168,9 +168,9 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
             <button
               onClick={() => setActiveCategoryFilter('COMPONENTS')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-xl font-black transition-all ${
                 activeCategoryFilter === 'COMPONENTS'
-                  ? 'bg-[#0b6623] text-white shadow-sm'
+                  ? 'bg-[#0b6623] text-black shadow-sm'
                   : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border border-[#E2E8F0]'
               }`}
             >
@@ -179,9 +179,9 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
             <button
               onClick={() => setActiveCategoryFilter('FOLDERS')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-xl font-black transition-all ${
                 activeCategoryFilter === 'FOLDERS'
-                  ? 'bg-[#0b6623] text-white shadow-sm'
+                  ? 'bg-[#0b6623] text-black shadow-sm'
                   : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border border-[#E2E8F0]'
               }`}
             >
@@ -190,9 +190,9 @@ export const GlobalSearchModal: React.FC<Props> = ({
 
             <button
               onClick={() => setActiveCategoryFilter('SUPPLIERS')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-xl font-black transition-all ${
                 activeCategoryFilter === 'SUPPLIERS'
-                  ? 'bg-[#0b6623] text-white shadow-sm'
+                  ? 'bg-[#0b6623] text-black shadow-sm'
                   : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#e2e8f0] border border-[#E2E8F0]'
               }`}
             >
@@ -329,10 +329,10 @@ export const GlobalSearchModal: React.FC<Props> = ({
                                       <div className="flex items-center gap-2">
                                         <button
                                           onClick={() => handleQuickDraftPO(supp, item)}
-                                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs active:scale-95 transition-all"
+                                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-xs active:scale-95 transition-all"
                                         >
-                                          <Mail className="w-3 h-3" />
-                                          <span>Draft PO</span>
+                                          <Mail className="w-3 h-3 text-black stroke-[2.5]" />
+                                          <span className="text-black font-black">Draft PO</span>
                                         </button>
 
                                         {supp.whatsapp && (

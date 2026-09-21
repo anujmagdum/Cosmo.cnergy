@@ -6,7 +6,8 @@ export type CsvSectionType = 'components' | 'orders' | 'companies';
 interface Props {
   sectionType: CsvSectionType;
   data?: any[];
-  onImport: (rows: any[]) => Promise<number | void> | number | void;
+  onImport: (rows: any[]) => Promise<number | void | { count: number; errors?: string[] }> | number | void | { count: number; errors?: string[] };
+  onExport?: () => void;
 }
 
 interface SchemaHeaderConfig {
@@ -402,8 +403,12 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
         throw new Error(`No valid ${sectionType} rows found. Please check that column headers match the expected schema.`);
       }
 
-      const count = await onImport(validObjects);
-      const insertedCount = typeof count === 'number' ? count : validObjects.length;
+      const countResult = await onImport(validObjects);
+      const insertedCount = typeof countResult === 'number' 
+        ? countResult 
+        : (countResult && typeof countResult === 'object' && 'count' in countResult) 
+        ? (countResult as any).count 
+        : validObjects.length;
 
       setStatusFeedback({ type: 'success', message: `Imported & synced ${insertedCount} ${sectionType} rows successfully!` });
       setTimeout(() => setStatusFeedback(null), 4500);
@@ -543,11 +548,11 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
           type="button"
           disabled={isProcessing}
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs transition-all cursor-pointer disabled:opacity-50 active:scale-95"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-xs transition-all cursor-pointer disabled:opacity-50 active:scale-95"
           title={`Upload .csv file to batch insert ${sectionType}`}
         >
-          <Upload className="w-3.5 h-3.5" />
-          <span>{isProcessing ? 'Importing...' : 'Import'}</span>
+          <Upload className="w-3.5 h-3.5 text-black stroke-[2.5]" />
+          <span className="text-black font-black">{isProcessing ? 'Importing...' : 'Import'}</span>
         </button>
       </div>
     </div>

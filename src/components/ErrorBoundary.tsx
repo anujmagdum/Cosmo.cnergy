@@ -1,4 +1,4 @@
-﻿import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Trash2 } from 'lucide-react';
 
 interface Props {
@@ -71,10 +71,10 @@ export class ErrorBoundary extends Component<Props, State> {
               <button
                 type="button"
                 onClick={this.handleReload}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/25 active:scale-95 transition-all cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-[#0b6623]/25 active:scale-95 transition-all cursor-pointer"
               >
-                <RefreshCw className="w-4 h-4" />
-                <span>Reload Application</span>
+                <RefreshCw className="w-4 h-4 text-black stroke-[2.5]" />
+                <span className="text-black font-black">Reload Application</span>
               </button>
 
               <button

@@ -98,16 +98,18 @@ table tbody tr:hover {
   box-shadow: 0 0 15px rgba(11, 102, 35, 0.25);
 }
 
-/* Unified Green Color Buttons (#0b6623) across every tab */
+/* Unified Green Color Buttons (#0b6623) across every tab - Datlion Cnergy Black Font */
 button.bg-emerald-600,
 button.bg-emerald-700,
 button.bg-emerald-500,
 button.bg-green-600,
 button.bg-green-700,
+[class~="bg-[#0b6623]"],
 .btn-green,
 .btn-emerald {
   background-color: #0b6623 !important;
-  color: #ffffff !important;
+  color: #0C0D0E !important;
+  font-weight: 700;
 }
 
 button.bg-emerald-600:hover,
@@ -115,10 +117,31 @@ button.bg-emerald-700:hover,
 button.bg-emerald-500:hover,
 button.bg-green-600:hover,
 button.bg-green-700:hover,
+[class~="bg-[#0b6623]"]:hover,
 .btn-green:hover,
 .btn-emerald:hover {
   background-color: #084d1a !important;
-  color: #ffffff !important;
+  color: #0C0D0E !important;
+  font-weight: 700;
+}
+
+/* Ensure icons, labels, and text inside solid green elements inherit bold black */
+[class~="bg-[#0b6623]"] *,
+button.bg-emerald-600 *,
+button.bg-emerald-700 *,
+.btn-green *,
+.btn-emerald * {
+  color: #0C0D0E !important;
+}
+
+[class~="bg-[#0b6623]"] svg,
+[class~="bg-[#0b6623]"] .lucide,
+button.bg-emerald-600 svg,
+button.bg-emerald-700 svg,
+.btn-green svg,
+.btn-emerald svg {
+  color: #0C0D0E !important;
+  stroke: #0C0D0E !important;
 }
 
 /* Unified Deep Forest Green (#0b6623) Across All Website Text, Words, Numbers, Icons, Logos (#18AC88 -> #0b6623) */

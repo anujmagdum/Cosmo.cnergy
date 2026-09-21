@@ -174,8 +174,8 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
         <div className="p-5 md:p-6 border-b border-[#E2E8F0]/70 bg-[#FFFFFF] sticky top-0 z-20 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#0b6623] text-white flex items-center justify-center font-bold shadow-md shadow-[#0b6623]/20">
-                <Building2 className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-2xl bg-[#0b6623] text-black font-black flex items-center justify-center shadow-md shadow-[#0b6623]/20">
+                <Building2 className="w-5 h-5 text-black stroke-[2.5]" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -252,8 +252,8 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
             <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-2 border-[#0b6623]/50 shadow-sm space-y-2.5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-xl bg-[#0b6623] text-white flex items-center justify-center shadow-xs">
-                    <Sparkles className="w-4 h-4" />
+                  <div className="w-7 h-7 rounded-xl bg-[#0b6623] text-black font-black flex items-center justify-center shadow-xs">
+                    <Sparkles className="w-4 h-4 text-black stroke-[2.5]" />
                   </div>
                   <div>
                     <span className="text-[10px] font-black text-[#0b6623] uppercase tracking-wider block">
@@ -269,8 +269,8 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                 </div>
 
                 <div className="flex items-center gap-1.5 self-start sm:self-auto">
-                  <span className="bg-[#0b6623] text-white border border-emerald-700 text-xs font-black px-3 py-1 rounded-lg flex items-center gap-1.5 shadow-xs">
-                    <Award className="w-3.5 h-3.5 text-amber-300" />
+                  <span className="bg-[#0b6623] text-black border border-emerald-700 text-xs font-black px-3 py-1 rounded-lg flex items-center gap-1.5 shadow-xs">
+                    <Award className="w-3.5 h-3.5 text-black stroke-[2.5]" />
                     <span>{recommendation.badge}</span>
                   </span>
                 </div>
@@ -321,7 +321,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                         <span
                           className={`w-7 h-7 rounded-xl flex items-center justify-center font-mono font-black text-xs shrink-0 ${
                             isWinner
-                              ? 'bg-[#0b6623] text-white shadow-xs'
+                              ? 'bg-[#0b6623] text-black shadow-xs'
                               : 'bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0]'
                           }`}
                         >
@@ -452,12 +452,12 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                         }}
                         className={`px-4 py-2 rounded-xl font-black text-xs flex items-center gap-2 transition-all shadow-sm active:scale-95 cursor-pointer ${
                           isWinner
-                            ? 'bg-[#0b6623] hover:bg-[#084d1a] text-white shadow-emerald-500/25 ring-2 ring-[#0b6623]/40'
+                            ? 'bg-[#0b6623] hover:bg-[#084d1a] text-black shadow-emerald-500/25 ring-2 ring-[#0b6623]/40'
                             : 'bg-[#0C0D0E] hover:bg-slate-800 text-white'
                         }`}
                       >
-                        <ShoppingCart className="w-3.5 h-3.5" />
-                        <span>Create Purchase Order (₹{effectivePrice.toLocaleString('en-IN')})</span>
+                        <ShoppingCart className={`w-3.5 h-3.5 ${isWinner ? 'text-black stroke-[2.5]' : 'text-white'}`} />
+                        <span className={isWinner ? 'text-black font-black' : 'text-white'}>Create Purchase Order (₹{effectivePrice.toLocaleString('en-IN')})</span>
                       </button>
                     </div>
                   </div>

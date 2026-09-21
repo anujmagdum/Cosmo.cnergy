@@ -227,7 +227,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
             />
             <button
               onClick={handleSaveApiKey}
-              className="px-4 py-2 bg-[#0b6623] hover:bg-[#084d1a] text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
+              className="px-4 py-2 bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs rounded-xl shadow-xs transition-all cursor-pointer"
             >
               Save Key
             </button>
@@ -303,17 +303,17 @@ export const AIProcurementStudio: React.FC<Props> = ({
           <button
             onClick={handleAnalyze}
             disabled={isAnalyzing || (!textPrompt.trim() && !imagePreview)}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-extrabold text-sm shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50 active:scale-95 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-sm shadow-lg shadow-emerald-500/25 transition-all disabled:opacity-50 active:scale-95 cursor-pointer"
           >
             {isAnalyzing ? (
               <>
-                <RefreshCw className="w-4 h-4 animate-spin text-white" />
-                <span>Gemini 2.5 Flash Analyzing Multimodal Input...</span>
+                <RefreshCw className="w-4 h-4 animate-spin text-black stroke-[2.5]" />
+                <span className="text-black font-black">Gemini 2.5 Flash Analyzing Multimodal Input...</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 fill-white text-white" />
-                <span>Parse Input with Gemini AI</span>
+                <Sparkles className="w-4 h-4 fill-black text-black stroke-[2.5]" />
+                <span className="text-black font-black">Parse Input with Gemini AI</span>
               </>
             )}
           </button>
@@ -371,7 +371,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
                     </div>
 
                     <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E2E8F0]/60">
-                      <span className="px-2.5 py-1 rounded-lg bg-[#0b6623] text-white font-extrabold text-xs shadow-2xs font-mono">
+                      <span className="px-2.5 py-1 rounded-lg bg-[#0b6623] text-black font-black text-xs shadow-2xs font-mono">
                         Qty: {item.quantity}
                       </span>
                       <div className="text-right">
@@ -391,10 +391,10 @@ export const AIProcurementStudio: React.FC<Props> = ({
           <button
             onClick={handleConvertToOrder}
             disabled={parsedItems.length === 0}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-extrabold text-sm shadow-lg shadow-[#0b6623]/20 transition-all disabled:opacity-40 active:scale-95 cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-sm shadow-lg shadow-[#0b6623]/20 transition-all disabled:opacity-40 active:scale-95 cursor-pointer"
           >
             <span>Convert AI Draft to Live Procurement Orders</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-black stroke-[2.5]" />
           </button>
         </div>
       </div>

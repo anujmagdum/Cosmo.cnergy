@@ -184,10 +184,10 @@ export const ProductFolderRecipeModal: React.FC<Props> = ({
             <button
               type="button"
               onClick={handleSave}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-md shadow-[#0b6623]/20 active:scale-95 transition-all"
             >
-              <Check className="w-4 h-4" />
-              <span>Save to Product Recipe</span>
+              <Check className="w-4 h-4 text-black stroke-[2.5]" />
+              <span className="text-black font-black">Save to Product Recipe</span>
             </button>
           </div>
         </div>

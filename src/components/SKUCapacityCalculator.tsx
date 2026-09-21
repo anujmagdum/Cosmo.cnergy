@@ -210,8 +210,8 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
       <div className="glass-card bg-[#FFFFFF] p-5 rounded-2xl border border-[#E2E8F0] shadow-xs space-y-3.5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-[#E2E8F0]/60 pb-2.5">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#0b6623] text-white flex items-center justify-center shadow-xs">
-              <Calculator className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-xl bg-[#0b6623] text-black font-black flex items-center justify-center shadow-xs">
+              <Calculator className="w-4 h-4 text-black stroke-[2.5]" />
             </div>
             <div>
               <h3 className="text-sm md:text-base font-bold text-[#020617]">SKU Build Capacity Calculator</h3>
@@ -262,10 +262,10 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
           <div className="col-span-1 flex items-center gap-2">
             <button
               onClick={handleCalculateCapacity}
-              className="flex-1 py-1.5 px-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-white font-bold text-xs shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              className="flex-1 py-1.5 px-3 rounded-xl bg-[#0b6623] hover:bg-[#084d1a] text-black font-black text-xs shadow-xs active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <Cpu className="w-3.5 h-3.5" />
-              <span>Calculate</span>
+              <Cpu className="w-3.5 h-3.5 text-black stroke-[2.5]" />
+              <span className="text-black font-black">Calculate</span>
             </button>
 
             {calculatedResult !== null && (

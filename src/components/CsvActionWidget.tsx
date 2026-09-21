@@ -196,14 +196,14 @@ export const CsvActionWidget: React.FC<Props> = ({
       {/* Feedback Toast Banner */}
       {feedback && (
         <div
-          className={`absolute top-full right-0 mt-2 z-50 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-xl whitespace-nowrap animate-in fade-in duration-150 ${
+          className={`absolute top-full right-0 mt-2 z-50 px-3.5 py-2 rounded-xl text-xs font-black flex items-center gap-2 shadow-xl whitespace-nowrap animate-in fade-in duration-150 ${
             feedback.type === 'success'
-              ? 'bg-[#0b6623] text-white shadow-[#0b6623]/20'
+              ? 'bg-[#0b6623] text-black shadow-[#0b6623]/20'
               : 'bg-red-600 text-white shadow-red-500/20'
           }`}
         >
           {feedback.type === 'success' ? (
-            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 shrink-0 text-black stroke-[2.5]" />
           ) : (
             <AlertCircle className="w-4 h-4 shrink-0" />
           )}
