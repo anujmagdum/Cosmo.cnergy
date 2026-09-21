@@ -80,10 +80,10 @@ export const Header: React.FC<Props> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-[#08090B] border-b border-[#1C1E22] select-none shadow-xl">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        {/* Desktop Single-Row Header (h-14) / Mobile Top Row */}
-        <div className="flex items-center justify-between h-14 gap-2 sm:gap-6">
+    <header className="sticky top-0 z-40 bg-[#08090B] border-b border-[#1C1E22] select-none shadow-xl overflow-x-clip">
+      <div className="max-w-7xl 2xl:max-w-[1440px] w-full mx-auto px-3 sm:px-6 lg:px-8">
+        {/* Desktop Single-Row Header (h-14) / Mobile & Tablet Top Row */}
+        <div className="flex items-center justify-between h-14 gap-2 sm:gap-3 lg:gap-4 xl:gap-6 min-w-0">
           {/* Brand Logo */}
           <div
             className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group shrink-0"
@@ -102,8 +102,8 @@ export const Header: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Center Navigation Tabs (Desktop) */}
-          <nav className="hidden md:flex items-center h-full gap-1 lg:gap-2">
+          {/* Center Navigation Tabs (Desktop >= 1024px) */}
+          <nav className="hidden lg:flex items-center h-full gap-1 xl:gap-2 min-w-0 shrink">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -112,7 +112,7 @@ export const Header: React.FC<Props> = ({
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`group relative h-full flex items-center gap-2 px-3 lg:px-4 text-xs lg:text-sm font-semibold transition-colors duration-150 shrink-0 cursor-pointer ${
+                  className={`group relative h-full flex items-center gap-1.5 xl:gap-2 px-2 lg:px-2.5 xl:px-3.5 text-xs xl:text-sm font-semibold transition-colors duration-150 shrink-0 cursor-pointer ${
                     isActive
                       ? 'text-[#8db600]'
                       : 'text-slate-400 hover:text-white'
@@ -154,24 +154,24 @@ export const Header: React.FC<Props> = ({
           </nav>
 
           {/* Right Section: Action Pill + User Profile Pill + Standalone Logout Icon */}
-          <div className="flex items-center justify-end gap-1.5 sm:gap-3 shrink-0" ref={dropdownRef}>
+          <div className="flex items-center justify-end gap-1.5 sm:gap-2 lg:gap-2.5 xl:gap-3 shrink-0 min-w-0" ref={dropdownRef}>
             {/* 1-Tap BOM PO Action Button (Green Pill matching Reference) */}
             <button
               onClick={onOpenBOMModal}
-              className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-4 py-1.5 rounded-full bg-[#8db600] hover:bg-[#709200] text-black font-extrabold text-xs shadow-sm transition-all active:scale-95 whitespace-nowrap cursor-pointer shrink-0"
+              className="flex items-center gap-1 sm:gap-1.5 xl:gap-2 px-2.5 sm:px-3 xl:px-4 py-1.5 rounded-full bg-[#8db600] hover:bg-[#709200] text-black font-extrabold text-xs shadow-sm transition-all active:scale-95 whitespace-nowrap cursor-pointer shrink-0"
               title="1-Tap Multi-Company BOM Procurement Engine"
             >
               <PlusCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black stroke-[2.5]" />
-              <span className="hidden sm:inline">1-Tap BOM PO</span>
-              <span className="sm:hidden text-[11px]">BOM PO</span>
+              <span className="hidden xl:inline">1-Tap BOM PO</span>
+              <span className="xl:hidden text-[11px] sm:text-xs">BOM PO</span>
             </button>
 
             {/* User Profile Pill */}
             {userName || displayEmail ? (
-              <div className="relative shrink-0">
+              <div className="relative min-w-0 shrink">
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-1.5 sm:gap-2.5 px-2 sm:px-3 py-1 rounded-full bg-[#0E131B] hover:bg-[#151D29] border border-[#1F293B] transition-all text-left group active:scale-95 cursor-pointer shadow-sm shrink-0"
+                  className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 px-2 sm:px-2.5 xl:px-3 py-1 rounded-full bg-[#0E131B] hover:bg-[#151D29] border border-[#1F293B] transition-all text-left group active:scale-95 cursor-pointer shadow-sm min-w-0 shrink max-w-full"
                   title="User Profile & Session Details"
                 >
                   {/* Circle Avatar with Apple Green fill and black bold letter */}
@@ -181,7 +181,7 @@ export const Header: React.FC<Props> = ({
 
                   {/* Two-Line Stacked Identity Text */}
                   <div className="hidden sm:flex flex-col text-left justify-center min-w-0 pr-0.5">
-                    <span className="text-white font-bold text-xs leading-none truncate max-w-[130px] lg:max-w-[175px] group-hover:text-white transition-colors">
+                    <span className="text-white font-bold text-xs leading-none truncate max-w-[75px] sm:max-w-[95px] lg:max-w-[115px] xl:max-w-[175px] group-hover:text-white transition-colors">
                       {displayEmail}
                     </span>
                     <span className="text-[#8db600] font-black text-[9px] uppercase tracking-wider leading-none mt-1">
@@ -259,8 +259,8 @@ export const Header: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Mobile Navigation Tabs Row (Horizontally Scrollable) */}
-        <div className="md:hidden flex items-center h-10 border-t border-[#1C1E22]/80 overflow-x-auto scrollbar-none touch-scroll gap-1 px-1">
+        {/* Mobile & Tablet Navigation Tabs Row (Horizontally Scrollable) */}
+        <div className="lg:hidden flex items-center h-10 border-t border-[#1C1E22]/80 overflow-x-auto scrollbar-none touch-scroll gap-1 px-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
