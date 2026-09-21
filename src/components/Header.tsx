@@ -102,8 +102,8 @@ export const Header: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Center Navigation Tabs (Desktop >= 1024px) */}
-          <nav className="hidden lg:flex items-center h-full gap-1 xl:gap-2 min-w-0 shrink">
+          {/* Center Navigation Tabs (Desktop Wide >= 1280px) */}
+          <nav className="hidden xl:flex items-center h-full gap-1.5 2xl:gap-2.5 shrink-0">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -112,7 +112,7 @@ export const Header: React.FC<Props> = ({
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`group relative h-full flex items-center gap-1.5 xl:gap-2 px-2 lg:px-2.5 xl:px-3.5 text-xs xl:text-sm font-semibold transition-colors duration-150 shrink-0 cursor-pointer ${
+                  className={`group relative h-full flex items-center gap-1.5 2xl:gap-2 px-3 2xl:px-4 text-xs 2xl:text-sm font-semibold transition-colors duration-150 shrink-0 cursor-pointer ${
                     isActive
                       ? 'text-[#8db600]'
                       : 'text-slate-400 hover:text-white'
@@ -259,8 +259,8 @@ export const Header: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Mobile & Tablet Navigation Tabs Row (Horizontally Scrollable) */}
-        <div className="lg:hidden flex items-center h-10 border-t border-[#1C1E22]/80 overflow-x-auto scrollbar-none touch-scroll gap-1 px-1">
+        {/* Laptops, Tablets & Mobile Navigation Tabs Row (Clean Dedicated Row < 1280px) */}
+        <div className="xl:hidden flex items-center justify-start md:justify-center h-11 border-t border-[#1C1E22] overflow-x-auto scrollbar-none touch-scroll gap-1 sm:gap-2 px-2 sm:px-4">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -269,14 +269,14 @@ export const Header: React.FC<Props> = ({
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`group relative h-full flex items-center gap-1.5 px-3 text-xs font-semibold transition-colors shrink-0 cursor-pointer ${
+                className={`group relative h-full flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 text-xs sm:text-sm font-semibold transition-colors shrink-0 cursor-pointer ${
                   isActive
                     ? 'text-[#8db600]'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
                 <Icon
-                  className={`w-3.5 h-3.5 transition-colors ${
+                  className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${
                     isActive
                       ? 'text-[#8db600]'
                       : 'text-slate-400 group-hover:text-white'
@@ -285,18 +285,18 @@ export const Header: React.FC<Props> = ({
                 <span>{item.label}</span>
                 {item.count !== undefined && item.count > 0 && (
                   <span
-                    className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold ${
+                    className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[9px] sm:text-[10px] font-bold ${
                       isActive
-                        ? 'bg-[#8db600]/20 text-[#8db600]'
-                        : 'bg-[#1C1E22] text-slate-400'
+                        ? 'bg-[#8db600]/20 text-[#8db600] border border-[#8db600]/40'
+                        : 'bg-[#1C1E22] text-slate-400 border border-slate-700/60'
                     }`}
                   >
                     {item.count}
                   </span>
                 )}
-                {/* Mobile Active Bottom Indicator */}
+                {/* Active Apple Green Bottom Indicator */}
                 {isActive && (
-                  <span className="absolute bottom-0 inset-x-0 h-[2px] bg-[#8db600] rounded-t-sm shadow-[0_-1px_6px_rgba(141,182,0,0.6)]" />
+                  <span className="absolute bottom-0 inset-x-0 h-[2.5px] bg-[#8db600] rounded-t-sm shadow-[0_-1px_8px_rgba(141,182,0,0.6)]" />
                 )}
               </button>
             );
