@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Zap, LogOut, LogIn, User, PlusCircle, Truck, Layers, History, Search, Mail, ChevronDown, ShieldCheck, Building2, AlertTriangle, FolderPlus, Plus, Send } from 'lucide-react';
-
+import { Zap, LogOut, LogIn, PlusCircle, ShoppingBag, Package, Building2, Mail, ChevronDown } from 'lucide-react';
 import { NavigationTab } from '../types';
 
 interface Props {
@@ -28,7 +27,7 @@ export const Header: React.FC<Props> = ({
   onOpenBOMModal,
   onOpenSearch,
   userName,
-  userEmail = 'anuj@cosmocnergy.com',
+  userEmail,
   onOpenAuth,
   onLogout,
   ordersCount = 0,
@@ -36,9 +35,6 @@ export const Header: React.FC<Props> = ({
   companiesCount = 0,
   alertsCount = 0,
   mailQueueCount = 0,
-  onOpenAddFolder,
-  onOpenAddCatalog,
-  onOpenAddCompany
 }) => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -66,78 +62,49 @@ export const Header: React.FC<Props> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const displayEmail = userEmail || (userName ? `${userName.toLowerCase().replace(/[^a-z0-9]/g, '')}@cosmocnergy.com` : '');
-  const userInitial = (userName ? userName.charAt(0) : (displayEmail ? displayEmail.charAt(0) : 'U')).toUpperCase();
+  const displayEmail =
+    userEmail ||
+    localStorage.getItem('cosmo_user_email') ||
+    (userName ? `${userName.toLowerCase().replace(/[^a-z0-9]/g, '')}@cosmocnergy.com` : 'anujmagdum@cnergy.co.in');
 
-  // Navigation Items with dynamic count badges
+  const userInitial = (
+    userName ? userName.charAt(0) : (displayEmail ? displayEmail.charAt(0) : 'A')
+  ).toUpperCase();
+
+  // Navigation Items matching the reference UI/UX
   const navItems = [
-    { id: 'procurement' as const, label: 'Procurement', icon: History, count: ordersCount, alert: false },
-    { id: 'inventory' as const, label: 'Inventory', icon: Layers, count: catalogCount, alert: alertsCount > 0 },
+    { id: 'procurement' as const, label: 'Procurement', icon: ShoppingBag, count: ordersCount, alert: false },
+    { id: 'inventory' as const, label: 'Inventory', icon: Package, count: catalogCount, alert: alertsCount > 0 },
     { id: 'companies' as const, label: 'Companies', icon: Building2, count: companiesCount, alert: false },
     { id: 'webmail' as const, label: 'Webmail', icon: Mail, count: mailQueueCount > 0 ? mailQueueCount : undefined, alert: mailQueueCount > 0 },
   ];
 
   return (
-    <header className="sticky top-0 z-40 glass-panel border-b border-[#1C1E22] bg-[#0C0D0E] select-none shadow-xl">
-      {/* Top Main Navigation Bar */}
-      <div className="px-3 sm:px-6 lg:px-8 py-2 sm:py-2.5">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-2.5 md:gap-4">
-          {/* Top Row on Mobile / Left on Desktop: Brand Logo + Mobile Actions */}
-          <div className="flex items-center justify-between shrink-0">
-            <div
-              className="flex items-center gap-2.5 cursor-pointer group"
-              onClick={() => setActiveTab('procurement')}
-            >
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#8db600] flex items-center justify-center emerald-glow shadow-md shadow-[#8db600]/20 group-hover:scale-105 transition-transform">
-                <Zap className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-black fill-black" />
-              </div>
-              <div>
-                <span className="font-extrabold text-base sm:text-lg tracking-tight text-white font-sans">
-                  COSMO<span className="text-[#8db600]">CNERGY</span>
-                </span>
-                <span className="hidden xl:inline-block ml-2 text-[10px] font-medium tracking-wide text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700/60">
-                  Procurement OS
-                </span>
-              </div>
+    <header className="sticky top-0 z-40 bg-[#08090B] border-b border-[#1C1E22] select-none shadow-xl">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        {/* Desktop Single-Row Header (h-14) / Mobile Top Row */}
+        <div className="flex items-center justify-between h-14 gap-3 sm:gap-6">
+          {/* Brand Logo */}
+          <div
+            className="flex items-center gap-2.5 cursor-pointer group shrink-0"
+            onClick={() => setActiveTab('procurement')}
+          >
+            <div className="w-8 h-8 rounded-xl bg-[#8db600] flex items-center justify-center shadow-md shadow-[#8db600]/25 group-hover:scale-105 transition-transform">
+              <Zap className="w-4.5 h-4.5 text-black fill-black" />
             </div>
-
-            {/* Mobile Actions: 1-Tap BOM PO + Profile / Login (Mobile only) */}
-            <div className="flex md:hidden items-center gap-2">
-              <button
-                onClick={onOpenBOMModal}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-xs active:scale-95 border border-[#8db600]/30 cursor-pointer"
-                title="1-Tap BOM Procurement Engine"
-              >
-                <PlusCircle className="w-3.5 h-3.5 text-black stroke-[2.5]" />
-                <span>BOM PO</span>
-              </button>
-
-              {userName ? (
-                <button
-                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-1 p-1 rounded-xl bg-[#1C1E22] border border-[#23262B] text-white active:scale-95 cursor-pointer"
-                  title="Profile Menu"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-[#8db600] text-black flex items-center justify-center font-black text-xs">
-                    {userInitial}
-                  </div>
-                  <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
-                </button>
-              ) : (
-                <button
-                  onClick={onOpenAuth}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#8db600] text-black text-xs font-black active:scale-95"
-                >
-                  <LogIn className="w-3.5 h-3.5 text-black stroke-[2.5]" />
-                  <span>Login</span>
-                </button>
-              )}
+            <div>
+              <span className="font-extrabold text-base sm:text-lg tracking-tight text-white font-sans">
+                COSMO<span className="text-[#8db600]">CNERGY</span>
+              </span>
+              <span className="hidden xl:inline-block ml-2 text-[10px] font-medium tracking-wide text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700/60">
+                Procurement OS
+              </span>
             </div>
           </div>
 
-          {/* Center: Horizontally Scrollable on Mobile, Flex on Desktop Navigation Bar */}
-          <nav className="flex items-center gap-1.5 p-1 rounded-2xl bg-[#141618]/90 border border-[#23262B] shadow-inner overflow-x-auto scrollbar-none max-w-full scroll-smooth">
-            {navItems.map(item => {
+          {/* Center Navigation Tabs (Desktop) */}
+          <nav className="hidden md:flex items-center h-full gap-1 lg:gap-2">
+            {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
 
@@ -145,88 +112,111 @@ export const Header: React.FC<Props> = ({
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`group flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs transition-all shrink-0 whitespace-nowrap cursor-pointer ${
+                  className={`group relative h-full flex items-center gap-2 px-3 lg:px-4 text-xs lg:text-sm font-semibold transition-colors duration-150 shrink-0 cursor-pointer ${
                     isActive
-                      ? 'bg-[#8db600] text-black font-black shadow-md shadow-[#8db600]/30 ring-1 ring-[#8db600]/40'
-                      : 'bg-[#1C1E22]/60 hover:bg-[#23262B] text-slate-400 hover:text-white font-bold border border-[#23262B]'
+                      ? 'text-[#8db600]'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-black stroke-[2.5]' : 'text-slate-400 group-hover:text-white'}`} />
+                  <Icon
+                    className={`w-4 h-4 transition-colors duration-150 ${
+                      isActive
+                        ? 'text-[#8db600]'
+                        : 'text-slate-400 group-hover:text-white'
+                    }`}
+                  />
                   <span>{item.label}</span>
                   {item.count !== undefined && item.count > 0 && (
                     <span
-                      className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] transition-colors ${
+                      className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-bold transition-colors ${
                         isActive
-                          ? 'bg-black/20 text-black font-extrabold'
-                          : 'bg-slate-800/80 text-slate-400 border border-slate-700 group-hover:text-white group-hover:border-slate-500'
+                          ? 'bg-[#8db600]/20 text-[#8db600] border border-[#8db600]/40'
+                          : 'bg-[#1C1E22] text-slate-400 group-hover:text-white border border-slate-700/60'
                       }`}
                     >
                       {item.count}
                     </span>
                   )}
                   {item.alert && (
-                    <span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse ml-0.5" title="Action alert available" />
+                    <span
+                      className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse ml-0.5"
+                      title="Action alert available"
+                    />
+                  )}
+
+                  {/* Active Apple Green Bottom Indicator Bar */}
+                  {isActive && (
+                    <span className="absolute bottom-0 inset-x-0 h-[2.5px] bg-[#8db600] rounded-t-sm shadow-[0_-1px_8px_rgba(141,182,0,0.6)]" />
                   )}
                 </button>
               );
             })}
           </nav>
 
-          {/* Right: BOM Action + Profile Badge (Desktop Only) */}
-          <div className="hidden md:flex items-center justify-end gap-3 shrink-0" ref={dropdownRef}>
-            {/* 1-Tap BOM Procurement Button (Enhanced Datlion Style) */}
+          {/* Right Section: Action Pill + User Profile Pill + Standalone Logout Icon */}
+          <div className="flex items-center justify-end gap-2.5 sm:gap-3 shrink-0" ref={dropdownRef}>
+            {/* 1-Tap BOM PO Action Button (Green Pill matching Reference) */}
             <button
               onClick={onOpenBOMModal}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#8db600] hover:bg-[#709200] text-black font-black text-xs shadow-md shadow-[#8db600]/25 active:scale-95 transition-all whitespace-nowrap border border-[#8db600]/30 cursor-pointer"
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#8db600] hover:bg-[#709200] text-black font-extrabold text-xs shadow-sm transition-all active:scale-95 whitespace-nowrap cursor-pointer"
               title="1-Tap Multi-Company BOM Procurement Engine"
             >
-              <PlusCircle className="w-4 h-4 text-black stroke-[2.5]" />
-              <span>1-Tap BOM PO</span>
+              <PlusCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black stroke-[2.5]" />
+              <span className="hidden sm:inline">1-Tap BOM PO</span>
+              <span className="sm:hidden">BOM PO</span>
             </button>
 
-            {/* User Profile Badge (Desktop) */}
-            {userName ? (
+            {/* User Profile Pill */}
+            {userName || displayEmail ? (
               <div className="relative">
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-[#1C1E22] hover:bg-[#23262B] border border-[#23262B] transition-all text-left group active:scale-95 cursor-pointer"
-                  title="User Profile & Session"
+                  className="flex items-center gap-2 sm:gap-2.5 px-2.5 sm:px-3 py-1 rounded-full bg-[#0E131B] hover:bg-[#151D29] border border-[#1F293B] transition-all text-left group active:scale-95 cursor-pointer shadow-sm"
+                  title="User Profile & Session Details"
                 >
-                  <div className="flex flex-col items-end">
-                    <span className="text-[11px] font-semibold text-slate-200 group-hover:text-white transition-colors truncate max-w-[130px]">
-                      {userName}
-                    </span>
-                    <span className="text-[9px] font-bold text-[#8db600] uppercase tracking-wider">
-                      {displayEmail.split('@')[0]}
-                    </span>
-                  </div>
-
-                  <div className="w-7 h-7 rounded-lg bg-[#8db600] text-black flex items-center justify-center font-black text-xs shadow-sm ring-1 ring-[#8db600]/40 shrink-0">
+                  {/* Circle Avatar with Apple Green fill and black bold letter */}
+                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#8db600] text-black flex items-center justify-center font-black text-xs shadow-sm shrink-0">
                     {userInitial}
                   </div>
 
-                  <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform shrink-0 ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
+                  {/* Two-Line Stacked Identity Text */}
+                  <div className="hidden sm:flex flex-col text-left justify-center min-w-0 pr-0.5">
+                    <span className="text-white font-bold text-xs leading-none truncate max-w-[130px] lg:max-w-[175px] group-hover:text-white transition-colors">
+                      {displayEmail}
+                    </span>
+                    <span className="text-[#8db600] font-black text-[9px] uppercase tracking-wider leading-none mt-1">
+                      BILLING & OPS
+                    </span>
+                  </div>
+
+                  <ChevronDown
+                    className={`w-3 h-3 text-slate-400 group-hover:text-white transition-transform shrink-0 ${
+                      isProfileDropdownOpen ? 'rotate-180' : ''
+                    }`}
+                  />
                 </button>
 
-                {/* Interactive Profile Dropdown Menu */}
+                {/* Profile Details Dropdown Menu */}
                 {isProfileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-[#0C0D0E] border border-slate-700 shadow-2xl p-3 text-xs space-y-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150 overflow-hidden">
-                    <div className="p-2.5 rounded-xl bg-[#141618] border border-[#23262B] space-y-1">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-[#8db600] text-black flex items-center justify-center font-black text-xs shrink-0">
+                    <div className="p-2.5 rounded-xl bg-[#141618] border border-[#23262B] space-y-1.5">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-[#8db600] text-black flex items-center justify-center font-black text-xs shrink-0">
                           {userInitial}
                         </div>
                         <div className="truncate min-w-0">
-                          <div className="font-bold text-white text-xs truncate">{userName}</div>
+                          <div className="font-bold text-white text-xs truncate">
+                            {userName || displayEmail.split('@')[0]}
+                          </div>
                           <div className="text-[11px] text-slate-400 truncate">{displayEmail}</div>
                         </div>
                       </div>
-                      <div className="pt-2 border-t border-[#23262B] flex items-center justify-between text-[10px] text-slate-400">
-                        <span className="flex items-center gap-1 text-[#8db600] font-semibold">
+                      <div className="pt-2 border-t border-[#23262B] flex items-center justify-between text-[10px]">
+                        <span className="flex items-center gap-1 text-[#8db600] font-bold">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#8db600] animate-pulse" />
-                          Supabase Active
+                          BILLING & OPS
                         </span>
-                        <span>Cosmo Cnergy</span>
+                        <span className="text-slate-400 font-medium">Cosmo Cnergy</span>
                       </div>
                     </div>
 
@@ -239,7 +229,7 @@ export const Header: React.FC<Props> = ({
                           setIsProfileDropdownOpen(false);
                           onLogout();
                         }}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold transition-all"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold transition-all cursor-pointer"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Log Out Session</span>
@@ -251,43 +241,68 @@ export const Header: React.FC<Props> = ({
             ) : (
               <button
                 onClick={onOpenAuth}
-                className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#8db600] hover:bg-[#709200] border border-[#8db600]/30 text-xs font-black text-black transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#8db600] hover:bg-[#709200] text-xs font-black text-black transition-all active:scale-95 cursor-pointer"
               >
-                <LogIn className="w-4 h-4 text-black stroke-[2.5]" />
+                <LogIn className="w-3.5 h-3.5 text-black stroke-[2.5]" />
                 <span>Login</span>
               </button>
             )}
+
+            {/* Dedicated Standalone Logout Icon Button (matching Reference on far right) */}
+            <button
+              onClick={onLogout}
+              title="Log Out Session"
+              className="p-2 text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all rounded-xl cursor-pointer flex items-center justify-center shrink-0"
+            >
+              <LogOut className="w-5 h-5 stroke-[1.8]" />
+            </button>
           </div>
+        </div>
+
+        {/* Mobile Navigation Tabs Row (Horizontally Scrollable) */}
+        <div className="md:hidden flex items-center h-10 border-t border-[#1C1E22]/80 overflow-x-auto scrollbar-none gap-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`group relative h-full flex items-center gap-1.5 px-3 text-xs font-semibold transition-colors shrink-0 cursor-pointer ${
+                  isActive
+                    ? 'text-[#8db600]'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Icon
+                  className={`w-3.5 h-3.5 transition-colors ${
+                    isActive
+                      ? 'text-[#8db600]'
+                      : 'text-slate-400 group-hover:text-white'
+                  }`}
+                />
+                <span>{item.label}</span>
+                {item.count !== undefined && item.count > 0 && (
+                  <span
+                    className={`ml-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold ${
+                      isActive
+                        ? 'bg-[#8db600]/20 text-[#8db600]'
+                        : 'bg-[#1C1E22] text-slate-400'
+                    }`}
+                  >
+                    {item.count}
+                  </span>
+                )}
+                {/* Mobile Active Bottom Indicator */}
+                {isActive && (
+                  <span className="absolute bottom-0 inset-x-0 h-[2px] bg-[#8db600] rounded-t-sm shadow-[0_-1px_6px_rgba(141,182,0,0.6)]" />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
-
-
-
-      {/* Mobile Profile Dropdown Menu Drawer */}
-      {isProfileDropdownOpen && userName && (
-        <div className="md:hidden mt-2 p-3 rounded-2xl bg-[#141618] border border-slate-700 shadow-xl space-y-3 overflow-hidden mx-4 mb-3">
-          <div className="flex items-center gap-2.5 p-2 rounded-xl bg-[#0C0D0E] border border-[#23262B]">
-            <div className="w-8 h-8 rounded-lg bg-[#8db600] text-black flex items-center justify-center font-black text-xs shrink-0">
-              {userInitial}
-            </div>
-            <div className="truncate min-w-0">
-              <div className="font-bold text-white text-xs truncate">{userName}</div>
-              <div className="text-[11px] text-slate-400 truncate">{displayEmail}</div>
-            </div>
-          </div>
-          <button
-            onClick={() => {
-              setIsProfileDropdownOpen(false);
-              onLogout();
-            }}
-            className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-red-500/10 text-red-400 font-bold text-xs"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Log Out Session</span>
-          </button>
-        </div>
-      )}
     </header>
   );
 };
-

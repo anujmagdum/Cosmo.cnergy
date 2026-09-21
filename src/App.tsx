@@ -1446,7 +1446,7 @@ export const App: React.FC = () => {
 
       {/* Main Content Area */}
       <Routes>
-        <Route path="/" element={<Layout activeTab={activeTab} setActiveTab={handleTabChange} unreadWebmailCount={mailDraftQueue.length} onOpenBOMModal={() => setIsBOMModalOpen(true)} onOpenSearch={() => setIsSearchOpen(true)} userName={userName} onOpenAuth={() => setIsAuthOpen(true)} onLogout={handleLogout} ordersCount={orders.length} catalogCount={catalog.length} companiesCount={companies.length} />}>
+        <Route path="/" element={<Layout activeTab={activeTab} setActiveTab={handleTabChange} unreadWebmailCount={mailDraftQueue.length} onOpenBOMModal={() => setIsBOMModalOpen(true)} onOpenSearch={() => setIsSearchOpen(true)} userName={userName} userEmail={userEmail} onOpenAuth={() => setIsAuthOpen(true)} onLogout={handleLogout} ordersCount={orders.length} catalogCount={catalog.length} companiesCount={companies.length} />}>
           <Route index element={
             <CatalogSection
               catalog={catalog}

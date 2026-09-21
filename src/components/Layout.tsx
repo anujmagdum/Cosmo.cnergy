@@ -7,6 +7,7 @@ interface LayoutProps {
   onOpenBOMModal: () => void;
   onOpenSearch: () => void;
   userName: string;
+  userEmail?: string;
   onOpenAuth: () => void;
   onLogout: () => void;
   ordersCount?: number;
@@ -17,7 +18,7 @@ interface LayoutProps {
   unreadWebmailCount: number;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, unreadWebmailCount, onOpenBOMModal, onOpenSearch, userName, onOpenAuth, onLogout, ordersCount, catalogCount, companiesCount }) => {
+export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, unreadWebmailCount, onOpenBOMModal, onOpenSearch, userName, userEmail, onOpenAuth, onLogout, ordersCount, catalogCount, companiesCount }) => {
   return (
     <div className="min-h-screen bg-[#F0F2F5] text-slate-950 flex flex-col font-sans">
       <Header
@@ -27,6 +28,7 @@ export const Layout: React.FC<LayoutProps> = ({ activeTab, setActiveTab, unreadW
         onOpenBOMModal={onOpenBOMModal}
         onOpenSearch={onOpenSearch}
         userName={userName}
+        userEmail={userEmail}
         onOpenAuth={onOpenAuth}
         onLogout={onLogout}
         ordersCount={ordersCount}
