@@ -93,6 +93,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
         setImagePreview(result);
       };
       reader.readAsDataURL(file);
+      e.target.value = '';
     }
   };
 
@@ -131,7 +132,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
     parsedItems.forEach(pi => {
       const matchedCatalog =
         (pi.matchedCatalogId ? catalog.find(c => c.id === pi.matchedCatalogId) : null) ||
-        catalog.find(c => c.name.toLowerCase().includes(pi.itemName.toLowerCase())) ||
+        catalog.find(c => (c.name || '').toLowerCase().includes((pi.itemName || '').toLowerCase())) ||
         catalog[0] || {
           id: `cat-ai-${Date.now()}`,
           name: pi.itemName,

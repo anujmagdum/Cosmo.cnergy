@@ -18,10 +18,13 @@ export default async function handler(req: any, res: any) {
   }
   body = body || {};
 
-  const { to, subject, text } = body;
+  const to = body.to || body.mail?.to;
+  const subject = body.subject || body.mail?.subject;
+  const html = body.html || body.mail?.html || body.mail?.bodyHtml;
+  const text = body.text || body.mail?.text || (html ? html.replace(/<[^>]+>/g, ' ').trim() : '');
 
-  if (!to || !subject || !text) {
-    return res.status(400).json({ error: 'Missing required parameters (to, subject, text)' });
+  if (!to || !subject || (!text && !html)) {
+    return res.status(400).json({ error: 'Missing required parameters: "to", "subject", and message content ("text" or "html") are required.' });
   }
 
   try {
@@ -51,7 +54,8 @@ export default async function handler(req: any, res: any) {
       from: `"${process.env.VITE_COMPANY_NAME || 'CosmoCnergy Procurement'}" <${process.env.SMTP_USER || 'noreply@cosmocnergy.com'}>`,
       to,
       subject,
-      text
+      text: text || undefined,
+      html: html || undefined
     });
 
     return res.status(200).json({ success: true, message: 'Email dispatched successfully via Vercel serverless!' });

@@ -175,12 +175,7 @@ Return ONLY a valid JSON array of objects matching the schema:
       } catch (err: any) {
         console.warn(`[Gemini Multimodal] Model ${model} encountered error:`, err?.message || err);
         lastError = err;
-        // If model not found or unavailable, try next candidate
-        const msg = String(err?.message || '').toLowerCase();
-        if (msg.includes('not found') || msg.includes('404') || msg.includes('no longer available') || msg.includes('deprecated')) {
-          continue;
-        }
-        throw err;
+        continue;
       }
     }
 
@@ -193,8 +188,19 @@ Return ONLY a valid JSON array of objects matching the schema:
       throw new Error('Gemini returned an empty response.');
     }
 
-    const cleanJson = responseText.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
-    const parsed = JSON.parse(cleanJson);
+    const cleanJson = responseText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+    let parsed: any = null;
+    try {
+      parsed = JSON.parse(cleanJson);
+    } catch {
+      const start = cleanJson.indexOf('[');
+      const end = cleanJson.lastIndexOf(']');
+      if (start !== -1 && end > start) {
+        try {
+          parsed = JSON.parse(cleanJson.slice(start, end + 1));
+        } catch {}
+      }
+    }
 
     if (!Array.isArray(parsed) || parsed.length === 0) {
       throw new Error('Gemini response format is invalid or returned no line items.');
@@ -340,7 +346,8 @@ export const generateProcurementEmailBodyWithGemini = async (
 Draft a professional, courteous, concise, and business-ready procurement email for:
 - Order Type: ${type === 'RFQ' ? 'Request for Quotation' : 'Purchase Order'}
 - Order Number: ${orderNumber}
-- Company: ${companyName} (Contact: ${contactPerson})
+- Vendor / Supplier: ${vendorName} (Contact: ${contactPerson || 'Sales Team'})
+- Buyer Organization: ${companyName}
 - Line Items:
 ${itemsText}
 - Total Amount: ₹${Number(totalAmount).toLocaleString('en-IN')}
@@ -372,8 +379,20 @@ Respond ONLY in valid JSON format with keys "subject" and "body". Do not include
       return { subject: defaultSubject, body: fallbackBody };
     }
 
-    const cleanJson = responseText.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
-    const parsed = JSON.parse(cleanJson);
+    const cleanJson = responseText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+    let parsed: any = null;
+    try {
+      parsed = JSON.parse(cleanJson);
+    } catch {
+      const start = cleanJson.indexOf('{');
+      const end = cleanJson.lastIndexOf('}');
+      if (start !== -1 && end > start) {
+        try {
+          parsed = JSON.parse(cleanJson.slice(start, end + 1));
+        } catch {}
+      }
+    }
+    parsed = parsed || {};
 
     return {
       subject: parsed.subject || defaultSubject,

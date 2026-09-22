@@ -64,12 +64,13 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
       let bottleneck = '';
 
       const details = targetFolder.components.map(comp => {
+        const compIdLower = (comp.item_id || '').toLowerCase();
         const catItem =
           catalog.find(c => c.id === comp.item_id) ||
-          catalog.find(c => c.name.toLowerCase() === comp.item_id.toLowerCase());
+          catalog.find(c => (c.name || '').toLowerCase() === compIdLower);
         const available = catItem?.in_stock_qty !== undefined ? Number(catItem.in_stock_qty) : 100;
-        const required = comp.qty_per_unit || 1;
-        const buildable = Math.floor(available / required);
+        const required = Math.max(1, comp.qty_per_unit || 1);
+        const buildable = Math.max(0, Math.floor(available / required));
 
         if (buildable < minBuildable) {
           minBuildable = buildable;
@@ -161,7 +162,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
 
       if (calculatedResult && calculatedResult.details.length > 0) {
         const buildDetail = calculatedResult.details.find(
-          d => d.itemId === item.id || d.name.toLowerCase() === item.name.toLowerCase()
+          d => d.itemId === item.id || (d.name || '').toLowerCase() === (item.name || '').toLowerCase()
         );
         if (buildDetail) {
           const targetBuildUnits = 50; // benchmark standard build batch

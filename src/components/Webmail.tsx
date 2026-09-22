@@ -1263,7 +1263,32 @@ export const Webmail: React.FC<Props> = ({
                         <div
                           key={idx}
                           className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-[#0D0D0D] shadow-xs hover:border-[#8db600] transition-all cursor-pointer font-medium"
-                          onClick={() => alert(`Downloading attachment: ${att.filename}`)}
+                          onClick={() => {
+                            try {
+                              if (att.dataBase64) {
+                                const link = document.createElement('a');
+                                link.href = att.dataBase64.startsWith('data:')
+                                  ? att.dataBase64
+                                  : `data:${att.type || 'application/octet-stream'};base64,${att.dataBase64}`;
+                                link.download = att.filename;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                              } else {
+                                const blob = new Blob([`Attachment file: ${att.filename}\nSize: ${att.size}`], { type: att.type || 'text/plain' });
+                                const url = URL.createObjectURL(blob);
+                                const link = document.createElement('a');
+                                link.href = url;
+                                link.download = att.filename;
+                                document.body.appendChild(link);
+                                link.click();
+                                document.body.removeChild(link);
+                                URL.revokeObjectURL(url);
+                              }
+                            } catch (e) {
+                              console.error('Failed to download attachment:', e);
+                            }
+                          }}
                         >
                           <FileText className="w-3.5 h-3.5 text-[#8db600]" />
                           <span className="truncate max-w-[140px]">{att.filename}</span>

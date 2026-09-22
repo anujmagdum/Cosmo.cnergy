@@ -471,15 +471,36 @@ export const App: React.FC = () => {
 
   const fetchSupabaseOrders = async () => {
     try {
+      let loadedOrders: any[] | null = null;
       const { data: ords, error: ordsErr } = await supabase
         .from('procurement_orders')
         .select('*, company:companies(*), items:order_items(*, item:catalog_items(*))')
         .order('created_at', { ascending: false });
 
-      if (ordsErr) console.error('[fetchSupabaseOrders] error:', ordsErr);
-      if (ords) {
-        setOrders(ords);
-        try { localStorage.setItem('cosmo_orders', JSON.stringify(ords)); } catch {}
+      if (ordsErr) {
+        console.warn('[fetchSupabaseOrders] Relational query failed, falling back to simple select:', ordsErr);
+        const { data: fallbackOrds } = await supabase
+          .from('procurement_orders')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (fallbackOrds) loadedOrders = fallbackOrds;
+      } else if (ords) {
+        loadedOrders = ords;
+      }
+
+      if (loadedOrders) {
+        const normalized = loadedOrders.map((o: any) => {
+          let orderItems = o.items;
+          if (typeof orderItems === 'string') {
+            try { orderItems = JSON.parse(orderItems); } catch {}
+          }
+          return {
+            ...o,
+            items: Array.isArray(orderItems) && orderItems.length > 0 ? orderItems : (o.items || [])
+          };
+        });
+        setOrders(normalized);
+        try { localStorage.setItem('cosmo_orders', JSON.stringify(normalized)); } catch {}
       }
     } catch (e) {
       console.warn('Failed to load orders from Supabase:', e);
@@ -780,7 +801,7 @@ export const App: React.FC = () => {
             buying_url: updatedCompany.buying_url,
             address: updatedCompany.address,
             category: updatedCompany.category,
-            category_id: updatedCompany.category_id,
+            category_id: updatedCompany.category_id || null,
             rating: updatedCompany.rating,
             gstin: updatedCompany.gstin,
             payment_terms: updatedCompany.payment_terms
@@ -1413,16 +1434,28 @@ export const App: React.FC = () => {
     specs?: string,
     qty?: number | string,
     context?: string,
-    statusState?: string
+    statusState?: string,
+    customSubject?: string,
+    customBody?: string
   ) => {
     const orderType = determineOrderType(context || 'CATALOG_BOM', statusState);
-    const subject = formatProcurementSubject(orderType, itemName || 'Battery Components');
-    const defaultBody = `Dear Sales Team (${company.name}),\n\nWe at Cosmo Cnergy would like to request an official ${orderType} for the following:\n\n• Item: ${itemName || 'Catalog Component'}\n• Specifications: ${specs || 'Standard industrial spec'}\n• Quantity Required: ${qty || 100}\n\nPlease confirm availability, GST rates, and delivery schedule to Pune plant.\n\nBest regards,\n${userName}\nCosmo Cnergy`;
+    const subject = customSubject || formatProcurementSubject(orderType, itemName || 'Battery Components');
+
+    // Detect if caller passed a full custom pre-formatted email body in specs
+    const isPreformattedBody = specs && (
+      specs.startsWith('Dear ') ||
+      specs.includes('\nDear ') ||
+      specs.includes('Best regards') ||
+      specs.includes('Please accept this formal') ||
+      specs.includes('Request for Quotation')
+    );
+
+    const body = customBody || (isPreformattedBody ? specs! : `Dear Sales Team (${company.name}),\n\nWe at Cosmo Cnergy would like to request an official ${orderType} for the following:\n\n• Item: ${itemName || 'Catalog Component'}\n• Specifications: ${specs || 'Standard industrial spec'}\n• Quantity Required: ${qty || 100}\n\nPlease confirm availability, GST rates, and delivery schedule to Pune plant.\n\nBest regards,\n${userName}\nCosmo Cnergy`);
 
     setWebmailInitialCompose({
       to: company.email || '',
       subject,
-      body: defaultBody,
+      body,
       context
     });
     handleTabChange('webmail');

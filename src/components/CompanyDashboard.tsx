@@ -98,17 +98,20 @@ export const CompanyDashboard: React.FC<Props> = ({
     return companies.filter(s => {
       const matchesSearch =
         !term ||
-        s.name.toLowerCase().includes(term) ||
-        s.contact_person.toLowerCase().includes(term) ||
+        (s.name || '').toLowerCase().includes(term) ||
+        (s.contact_person || '').toLowerCase().includes(term) ||
+        (s.email || '').toLowerCase().includes(term) ||
+        (s.phone || '').includes(term) ||
+        (s.whatsapp || '').includes(term) ||
         (s.address && s.address.toLowerCase().includes(term)) ||
         (s.category && s.category.toLowerCase().includes(term)) ||
-        (s.categories && s.categories.some(c => c.toLowerCase().includes(term)));
+        (s.categories && s.categories.some(c => (c || '').toLowerCase().includes(term)));
 
       let matchesCategory = activeCat === 'all';
       if (!matchesCategory) {
         // Check multi-category array first
         if (s.categories && s.categories.length > 0) {
-          matchesCategory = s.categories.some(c => c.toLowerCase().trim() === activeCat);
+          matchesCategory = s.categories.some(c => (c || '').toLowerCase().trim() === activeCat);
         }
         // Fallback to single category field
         if (!matchesCategory) {
@@ -128,8 +131,8 @@ export const CompanyDashboard: React.FC<Props> = ({
     e.preventDefault();
     if (!formData.name.trim()) return;
 
-    const primaryCat = formData.categories[0] || formData.category;
-    const matchedCat = categories.find(c => c.name.toLowerCase() === primaryCat.toLowerCase());
+    const primaryCat = formData.categories[0] || formData.category || 'Capacitor';
+    const matchedCat = categories.find(c => (c.name || '').toLowerCase() === primaryCat.toLowerCase());
 
     try {
       await onAddCompany({
@@ -168,8 +171,8 @@ export const CompanyDashboard: React.FC<Props> = ({
 
     const primaryCat = (editingCompany.categories && editingCompany.categories.length > 0)
       ? editingCompany.categories[0]
-      : (editingCompany.category || '');
-    const matchedCat = categories.find(c => c.name.toLowerCase() === primaryCat.toLowerCase());
+      : (editingCompany.category || 'Capacitor');
+    const matchedCat = categories.find(c => (c.name || '').toLowerCase() === primaryCat.toLowerCase());
 
     try {
       if (onUpdateCompany) {

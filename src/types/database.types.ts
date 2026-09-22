@@ -375,6 +375,7 @@ export interface Database {
       webmail_accounts: {
         Row: {
           id: string
+          username: string
           email: string
           sender_name: string
           imap_host: string
@@ -385,9 +386,11 @@ export interface Database {
           auth_password: string | null
           is_default: boolean
           created_at: string
+          updated_at: number | null
         }
         Insert: {
           id?: string
+          username?: string
           email: string
           sender_name: string
           imap_host: string
@@ -398,9 +401,11 @@ export interface Database {
           auth_password?: string | null
           is_default?: boolean
           created_at?: string
+          updated_at?: number | null
         }
         Update: {
           id?: string
+          username?: string
           email?: string
           sender_name?: string
           imap_host?: string
@@ -411,6 +416,7 @@ export interface Database {
           auth_password?: string | null
           is_default?: boolean
           created_at?: string
+          updated_at?: number | null
         }
       }
       users: {
