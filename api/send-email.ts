@@ -8,21 +8,43 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { to, subject, text } = req.body;
+  let body = req.body;
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      return res.status(400).json({ error: 'Invalid JSON request body' });
+    }
+  }
+  body = body || {};
+
+  const { to, subject, text } = body;
 
   if (!to || !subject || !text) {
     return res.status(400).json({ error: 'Missing required parameters (to, subject, text)' });
   }
 
   try {
+    const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
+    const smtpPort = Number(process.env.SMTP_PORT) || 587;
+    const isSecure = smtpPort === 465;
+
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
+      host: smtpHost,
+      port: smtpPort,
+      secure: isSecure,
+      requireTLS: !isSecure && smtpPort === 587,
       auth: {
         user: process.env.SMTP_USER || '',
         pass: process.env.SMTP_PASS || ''
-      }
+      },
+      tls: {
+        rejectUnauthorized: false,
+        minVersion: 'TLSv1.2'
+      },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000
     });
 
     await transporter.sendMail({

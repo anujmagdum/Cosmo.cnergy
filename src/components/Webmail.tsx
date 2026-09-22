@@ -539,9 +539,40 @@ export const Webmail: React.FC<Props> = ({
   };
 
   // Add New Mail Account
-  const handleCreateAccount = (newAcc: WebmailAccount) => {
-    setAccounts(prev => [...prev, newAcc]);
+  const handleCreateAccount = async (newAcc: WebmailAccount) => {
+    setAccounts(prev => {
+      const next = [...prev, newAcc];
+      try {
+        localStorage.setItem('cosmo_webmail_accounts', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
     setActiveAccountEmail(newAcc.email);
+
+    if (isSupabaseConfigured()) {
+      try {
+        const { error } = await supabase.from('webmail_accounts').upsert({
+          id: newAcc.id,
+          username: currentUser || 'admin',
+          email: newAcc.email,
+          sender_name: newAcc.senderName,
+          imap_host: newAcc.imapHost,
+          imap_port: newAcc.imapPort,
+          smtp_host: newAcc.smtpHost,
+          smtp_port: newAcc.smtpPort,
+          auth_username: newAcc.username,
+          auth_password: newAcc.password,
+          is_default: newAcc.isDefault || false,
+          updated_at: Date.now()
+        });
+        if (error) {
+          console.warn('[Webmail] Failed to persist new account to Supabase:', error);
+        }
+      } catch (err) {
+        console.warn('[Webmail] Supabase create account error:', err);
+      }
+    }
+
     setIsAddAccountOpen(false);
   };
 

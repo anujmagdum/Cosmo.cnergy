@@ -968,7 +968,11 @@ export const App: React.FC = () => {
       if (isSupabaseConfigured()) {
         try {
           await supabase.from('component_companies').delete().eq('component_id', normalizedItem.id);
-          await supabase.from('component_companies').upsert(newJunctions);
+          const dbPayload = newJunctions.map(({ company, ...rest }) => rest);
+          const { error: csErr } = await supabase.from('component_companies').upsert(dbPayload);
+          if (csErr) {
+            console.warn('[Supabase component_companies update error]:', csErr);
+          }
         } catch (csErr) {
           console.warn('[Supabase component_companies update error]:', csErr);
         }
@@ -1125,7 +1129,7 @@ export const App: React.FC = () => {
       return {
         id: `po-${Date.now()}-${idx}`,
         order_number: orderNum,
-        company_id: supp?.id || companies[0]?.id || '',
+        company_id: supp?.id || (companies[0] ? companies[0].id : null),
         company: supp || companies[0],
         type,
         status: (row.status || (type === 'RFQ' ? 'RFQ_SENT' : 'ORDERED')) as OrderStatus,
@@ -1143,7 +1147,7 @@ export const App: React.FC = () => {
         const payload = importedOrders.map(o => ({
           id: o.id,
           order_number: o.order_number,
-          company_id: o.company_id,
+          company_id: o.company_id || null,
           type: o.type,
           status: o.status,
           total_amount: o.total_amount,
@@ -1151,7 +1155,8 @@ export const App: React.FC = () => {
           created_by: o.created_by,
           created_at: o.created_at
         }));
-        await supabase.from('procurement_orders').upsert(payload);
+        const { error: poErr } = await supabase.from('procurement_orders').upsert(payload);
+        if (poErr) console.warn('[Supabase batch insert procurement_orders error]:', poErr);
       } catch (e) {
         console.warn('Batch insert procurement_orders to Supabase error:', e);
       }
@@ -1288,7 +1293,7 @@ export const App: React.FC = () => {
       const newOrder: ProcurementOrder = {
         id: orderId,
         order_number: orderNumber,
-        company_id: draft.company.id,
+        company_id: draft.company?.id || null,
         company: draft.company,
         type,
         status: type === 'PO' ? 'ORDERED' : 'RFQ_SENT',
@@ -1312,10 +1317,10 @@ export const App: React.FC = () => {
       // Save to Supabase
       if (isSupabaseConfigured()) {
         try {
-          await supabase.from('procurement_orders').insert({
+          const { error: poErr } = await supabase.from('procurement_orders').insert({
             id: newOrder.id,
             order_number: newOrder.order_number,
-            company_id: newOrder.company_id,
+            company_id: newOrder.company_id || null,
             type: newOrder.type,
             status: newOrder.status,
             total_amount: newOrder.total_amount,
@@ -1323,6 +1328,10 @@ export const App: React.FC = () => {
             created_by: newOrder.created_by,
             created_at: newOrder.created_at
           });
+
+          if (poErr) {
+            console.warn('[Supabase procurement_orders insert error]:', poErr);
+          }
 
           const orderItemsPayload = (newOrder.items || []).map(it => ({
             id: it.id,
@@ -1333,7 +1342,10 @@ export const App: React.FC = () => {
             total_price: it.total_price
           }));
 
-          await supabase.from('order_items').insert(orderItemsPayload);
+          if (!poErr && orderItemsPayload.length > 0) {
+            const { error: itemErr } = await supabase.from('order_items').insert(orderItemsPayload);
+            if (itemErr) console.warn('[Supabase order_items insert error]:', itemErr);
+          }
         } catch (e) {
           console.warn('Failed to insert orders into Supabase:', e);
         }

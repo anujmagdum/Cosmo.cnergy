@@ -8,7 +8,15 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const payload = req.body || {};
+  let payload = req.body;
+  if (typeof payload === 'string') {
+    try {
+      payload = JSON.parse(payload);
+    } catch {
+      return res.status(400).json({ success: false, error: 'Invalid JSON request body' });
+    }
+  }
+  payload = payload || {};
   const account = payload.account || {};
   const to = payload.to || payload.mail?.to;
   const cc = payload.cc || payload.mail?.cc;

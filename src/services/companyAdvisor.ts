@@ -123,7 +123,21 @@ ${JSON.stringify(promptCandidates, null, 2)}
       const responseText = response.text ? response.text.trim() : '';
       if (!responseText) continue;
 
-      const parsed = JSON.parse(responseText);
+      // Clean markdown code blocks if present
+      const cleanJson = responseText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+      let parsed: any = null;
+      try {
+        parsed = JSON.parse(cleanJson);
+      } catch {
+        const start = cleanJson.indexOf('{');
+        const end = cleanJson.lastIndexOf('}');
+        if (start !== -1 && end > start) {
+          try {
+            parsed = JSON.parse(cleanJson.slice(start, end + 1));
+          } catch {}
+        }
+      }
+
       if (parsed && parsed.winning_company_id) {
         return {
           winning_company_id: parsed.winning_company_id,

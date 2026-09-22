@@ -107,7 +107,15 @@ export default async function handler(req: any, res: any) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { account, mode = 'fetch', folder = 'inbox' } = req.body || {};
+  let body = req.body;
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      return res.status(400).json({ success: false, error: 'Invalid JSON request body' });
+    }
+  }
+  const { account, mode = 'fetch', folder = 'inbox' } = body || {};
 
   const imapHost = (account?.imapHost || account?.imap_host || process.env.IMAP_HOST || '').trim();
   const imapPort = Number(account?.imapPort) || Number(account?.imap_port) || Number(process.env.IMAP_PORT) || 993;
@@ -128,9 +136,11 @@ export default async function handler(req: any, res: any) {
     });
   }
 
+  let client: ImapFlow | null = null;
+
   try {
     const isSecure = imapPort === 993;
-    const client = new ImapFlow({
+    client = new ImapFlow({
       host: imapHost,
       port: imapPort,
       secure: isSecure,
@@ -149,6 +159,7 @@ export default async function handler(req: any, res: any) {
 
     if (mode === 'test') {
       await client.logout();
+      client = null;
       return res.status(200).json({
         success: true,
         message: `Connection & authentication to ${imapHost}:${imapPort} verified for ${authUser}!`
@@ -167,8 +178,19 @@ export default async function handler(req: any, res: any) {
     try {
       lock = await client.getMailboxLock(mailboxPath);
     } catch (boxErr) {
-      console.warn(`[IMAP] Could not lock ${mailboxPath}, falling back to INBOX:`, boxErr);
-      lock = await client.getMailboxLock('INBOX');
+      console.warn(`[IMAP] Could not lock ${mailboxPath}, trying fallback...`, boxErr);
+      if (mailboxPath !== 'INBOX') {
+        try {
+          const altPath = `INBOX.${mailboxPath}`;
+          lock = await client.getMailboxLock(altPath);
+          mailboxPath = altPath;
+        } catch {
+          lock = await client.getMailboxLock('INBOX');
+          mailboxPath = 'INBOX';
+        }
+      } else {
+        throw boxErr;
+      }
     }
 
     const fetchedEmails: any[] = [];
@@ -272,7 +294,13 @@ export default async function handler(req: any, res: any) {
       if (lock) lock.release();
     }
 
-    await client.logout();
+    if (client) {
+      try {
+        await client.logout();
+      } catch {}
+      client = null;
+    }
+
     return res.status(200).json({ 
       success: true, 
       emails: fetchedEmails.reverse(),
@@ -286,5 +314,13 @@ export default async function handler(req: any, res: any) {
       success: false,
       error: error.message || 'Failed to connect to IMAP server. Please verify IMAP host, port, username, and password.'
     });
+  } finally {
+    if (client) {
+      try {
+        await client.logout();
+      } catch (logoutErr) {
+        console.warn('[IMAP Service] Error during cleanup logout:', logoutErr);
+      }
+    }
   }
 }
