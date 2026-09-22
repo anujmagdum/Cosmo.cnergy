@@ -518,7 +518,7 @@ export const CsvManagerWidget: React.FC<Props> = ({ sectionType, data, onImport 
         {/* Feedback Alert */}
         {statusFeedback && (
           <span
-            className={`text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg shadow-2xs ${
+            className={`text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg shadow-xs ${
               statusFeedback.type === 'success'
                 ? 'bg-emerald-50 text-[#8db600] border border-emerald-200'
                 : 'bg-red-50 text-red-800 border border-red-200'

@@ -371,7 +371,7 @@ export const AIProcurementStudio: React.FC<Props> = ({
                     </div>
 
                     <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E2E8F0]/60">
-                      <span className="px-2.5 py-1 rounded-lg bg-[#8db600] text-black font-black text-xs shadow-2xs font-mono">
+                      <span className="px-2.5 py-1 rounded-lg bg-[#8db600] text-black font-black text-xs shadow-xs font-mono">
                         Qty: {item.quantity}
                       </span>
                       <div className="text-right">

@@ -331,7 +331,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/inventory')}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FFFFFF] hover:bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] font-bold text-xs transition-all shadow-2xs cursor-pointer group"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FFFFFF] hover:bg-slate-50 hover:border-slate-300 text-[#0D0D0D] border border-[#E2E8F0] font-bold text-xs transition-all shadow-xs cursor-pointer group"
           >
             <ChevronLeft className="w-4 h-4 text-[#334155] group-hover:-translate-x-0.5 transition-transform" />
             <span>Back to Inventory</span>
@@ -355,7 +355,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
       <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-5 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
-            <div className="w-11 h-11 rounded-xl bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] flex items-center justify-center font-bold text-base shrink-0 shadow-2xs">
+            <div className="w-11 h-11 rounded-xl bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] flex items-center justify-center font-bold text-base shrink-0 shadow-xs">
               <Package className="w-6 h-6 text-[#8db600]" />
             </div>
 
@@ -410,7 +410,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
           {/* Active sort indicator badge */}
           {sortField && (
             <div className="flex items-center gap-2 text-xs">
-              <span className="px-2.5 py-1 rounded-lg bg-[#8db600] text-black font-black text-[11px] flex items-center gap-1 shadow-2xs">
+              <span className="px-2.5 py-1 rounded-lg bg-[#8db600] text-black font-black text-[11px] flex items-center gap-1 shadow-xs">
                 <span>
                   Sorted by{' '}
                   {sortField === 'rfq_quoted_price'
@@ -598,7 +598,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border font-mono font-extrabold cursor-pointer transition-all ${
                             lastSavedCell === `${link.id}-rfq_quoted_price`
                               ? 'bg-emerald-200 border-[#8db600] text-[#8db600] scale-105'
-                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-[#8db600] text-[#8db600] shadow-2xs'
+                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-[#8db600] text-[#8db600] shadow-xs'
                           }`}
                           title="Click to edit RFQ Price inline"
                         >
@@ -637,7 +637,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border font-mono font-bold cursor-pointer transition-all ${
                             lastSavedCell === `${link.id}-moq`
                               ? 'bg-emerald-200 border-[#8db600] text-[#8db600] scale-105'
-                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-[#8db600] text-[#0D0D0D] shadow-2xs'
+                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-[#8db600] text-[#0D0D0D] shadow-xs'
                           }`}
                           title="Click to edit MOQ inline"
                         >
@@ -677,7 +677,7 @@ export const ComponentComparisonPage: React.FC<Props> = ({
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border font-mono font-bold cursor-pointer transition-all ${
                             lastSavedCell === `${link.id}-lead_time_days`
                               ? 'bg-emerald-200 border-[#8db600] text-[#8db600] scale-105'
-                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-[#8db600] text-[#0D0D0D] shadow-2xs'
+                              : 'bg-[#FFFFFF]/70 hover:bg-white border-[#E2E8F0] hover:border-[#8db600] text-[#0D0D0D] shadow-xs'
                           }`}
                           title="Click to edit Lead Time inline"
                         >

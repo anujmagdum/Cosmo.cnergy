@@ -206,7 +206,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
       {/* Toast Feedback Notification */}
       {toastFeedback && (
         <div
-          className={`fixed top-20 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce font-bold text-sm ${
+          className={`fixed top-20 right-4 sm:right-6 left-4 sm:left-auto max-w-[calc(100vw-2rem)] z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce font-bold text-sm ${
             toastFeedback.type === 'success' ? 'bg-[#8db600] text-black font-black' : 'bg-red-600 text-white'
           }`}
         >
@@ -329,7 +329,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
             className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 ${
               filterStatus === 'ALL'
                 ? 'bg-[#8db600] text-black font-black shadow-xs'
-                : 'bg-[#FFFFFF] text-[#1e293b] hover:bg-[#FFFFFF] border border-[#E2E8F0]'
+                : 'bg-[#FFFFFF] text-[#1e293b] hover:bg-slate-50 hover:border-slate-300 border border-[#E2E8F0]'
             }`}
           >
             All ({orders.length})
@@ -346,7 +346,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                 className={`px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 border transition-all cursor-pointer shrink-0 ${
                   filterStatus === statusKey
                     ? `${cfg.badgeBg} ${cfg.badgeText} ${cfg.badgeBorder} font-bold shadow-xs`
-                    : 'bg-[#FFFFFF] text-[#1e293b] hover:bg-[#FFFFFF] border-[#E2E8F0]'
+                    : 'bg-[#FFFFFF] text-[#1e293b] hover:bg-slate-50 hover:border-slate-300 border-[#E2E8F0]'
                 }`}
               >
                 <span className={`w-2 h-2 rounded-full ${cfg.dotColor}`} />
@@ -523,7 +523,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                           <button
                             type="button"
                             onClick={() => setEditingPDFOrder(order)}
-                            className="p-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-[#8db600] border border-emerald-300 shadow-2xs active:scale-95 transition-all cursor-pointer"
+                            className="p-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-[#8db600] border border-emerald-300 shadow-xs active:scale-95 transition-all cursor-pointer"
                             title="Edit PDF (Interactive vector editor with jsPDF & autotable)"
                           >
                             <FileEdit className="w-3.5 h-3.5" />
@@ -534,7 +534,7 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                             type="button"
                             disabled={isDownloadingPdf === order.id}
                             onClick={() => handleDownloadDirectPDF(order)}
-                            className="p-1.5 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-900 border border-blue-300 shadow-2xs active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+                            className="p-1.5 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-900 border border-blue-300 shadow-xs active:scale-95 transition-all cursor-pointer disabled:opacity-50"
                             title="Download Vector PDF"
                           >
                             <Download className="w-3.5 h-3.5" />
@@ -544,32 +544,32 @@ export const OrderHistoryTimeline: React.FC<Props> = ({
                           <button
                             type="button"
                             onClick={() => handleOpenNoteModal(order)}
-                            className={`p-1.5 rounded-lg border shadow-2xs active:scale-95 transition-all cursor-pointer ${
+                            className={`p-1.5 rounded-lg border shadow-xs active:scale-95 transition-all cursor-pointer ${
                               order.notes && order.notes.trim().length > 0
                                 ? 'bg-amber-200 text-amber-950 border-amber-400 font-bold'
                                 : 'bg-amber-50 hover:bg-amber-100 text-amber-900 border-amber-200'
                             }`}
-                            title={order.notes ? `View/Edit Note: "${order.notes}"` : 'Add Note / Logistics Instructions'}
+                            title={order.notes ? `Note: ${order.notes}` : 'Add Logistics / Dispatch Note'}
                           >
                             <StickyNote className="w-3.5 h-3.5" />
                           </button>
 
-                          {/* 4. Send Mail Icon */}
+                          {/* 4. Send Invoices Webmail Trigger */}
                           <button
                             type="button"
-                            onClick={() => handleSendMail(order)}
-                            className="p-1.5 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 shadow-2xs active:scale-95 transition-all cursor-pointer"
-                            title="Compose & Send Webmail to Vendor"
+                            onClick={() => handleSendInvoiceWebmail(order)}
+                            className="p-1.5 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 shadow-xs active:scale-95 transition-all cursor-pointer"
+                            title="Send invoice/PO to vendor via Admin Webmail"
                           >
                             <Mail className="w-3.5 h-3.5" />
                           </button>
 
-                          {/* 5. Delete Order Icon */}
+                          {/* 5. Delete Order Button */}
                           <button
                             type="button"
                             onClick={() => setOrderToDelete(order)}
-                            className="p-1.5 rounded-lg bg-[#FFFFFF] hover:bg-red-100 text-[#1e293b] hover:text-red-700 border border-[#E2E8F0] shadow-2xs active:scale-95 transition-all cursor-pointer"
-                            title="Delete Order Record"
+                            className="p-1.5 rounded-lg bg-[#FFFFFF] hover:bg-red-100 text-[#1e293b] hover:text-red-700 border border-[#E2E8F0] shadow-xs active:scale-95 transition-all cursor-pointer"
+                            title="Delete this order"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>

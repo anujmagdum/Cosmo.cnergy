@@ -1128,7 +1128,7 @@ export const Webmail: React.FC<Props> = ({
                     <div className="flex flex-wrap items-center gap-1.5 shrink-0">
                       <button
                         onClick={() => handleReply(selectedEmail)}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#8db600] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#8db600] text-xs font-semibold transition-all active:scale-95 shadow-2xs"
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#8db600] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#8db600] text-xs font-semibold transition-all active:scale-95 shadow-xs"
                         title="Reply"
                       >
                         <Reply className="w-3.5 h-3.5 text-[#8db600]" />
@@ -1137,7 +1137,7 @@ export const Webmail: React.FC<Props> = ({
 
                       <button
                         onClick={() => handleReplyAll(selectedEmail)}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#8db600] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#8db600] text-xs font-semibold transition-all active:scale-95 shadow-2xs"
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#8db600] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#8db600] text-xs font-semibold transition-all active:scale-95 shadow-xs"
                         title="Reply All"
                       >
                         <ReplyAll className="w-3.5 h-3.5 text-[#8db600]" />
@@ -1146,7 +1146,7 @@ export const Webmail: React.FC<Props> = ({
 
                       <button
                         onClick={() => handleForward(selectedEmail)}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#8db600] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#8db600] text-xs font-semibold transition-all active:scale-95 shadow-2xs"
+                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:border-[#8db600] bg-white hover:bg-emerald-50/50 text-slate-700 hover:text-[#8db600] text-xs font-semibold transition-all active:scale-95 shadow-xs"
                         title="Forward"
                       >
                         <Forward className="w-3.5 h-3.5 text-[#8db600]" />
@@ -1155,7 +1155,7 @@ export const Webmail: React.FC<Props> = ({
 
                       <button
                         onClick={() => handleToggleReadStatus(selectedEmail.id)}
-                        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all active:scale-95 shadow-2xs ${
+                        className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all active:scale-95 shadow-xs ${
                           selectedEmail.isUnread
                             ? 'border-emerald-300 bg-emerald-50 text-[#8db600]'
                             : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
@@ -1170,7 +1170,7 @@ export const Webmail: React.FC<Props> = ({
 
                       <button
                         onClick={e => handleToggleStar(selectedEmail.id, e)}
-                        className="p-1.5 rounded-lg border border-slate-200 hover:border-amber-400 bg-white hover:bg-amber-50 text-slate-400 hover:text-amber-500 transition-all shadow-2xs"
+                        className="p-1.5 rounded-lg border border-slate-200 hover:border-amber-400 bg-white hover:bg-amber-50 text-slate-400 hover:text-amber-500 transition-all shadow-xs"
                         title={selectedEmail.isStarred ? 'Starred' : 'Star email'}
                       >
                         <Star className={`w-4 h-4 ${selectedEmail.isStarred ? 'text-amber-500 fill-amber-500' : ''}`} />
@@ -1178,7 +1178,7 @@ export const Webmail: React.FC<Props> = ({
 
                       <button
                         onClick={() => handleDeleteEmail(selectedEmail.id)}
-                        className="p-1.5 rounded-lg border border-slate-200 hover:border-red-300 bg-white hover:bg-red-50 text-slate-500 hover:text-red-600 transition-all shadow-2xs"
+                        className="p-1.5 rounded-lg border border-slate-200 hover:border-red-300 bg-white hover:bg-red-50 text-slate-500 hover:text-red-600 transition-all shadow-xs"
                         title="Delete / Move to Trash"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1189,7 +1189,7 @@ export const Webmail: React.FC<Props> = ({
                   {/* Sub-line: Sender Avatar, Display Name <email@domain.com>, and relative timestamp */}
                   <div className="flex items-center justify-between gap-3 pt-0.5">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-7 h-7 rounded-full bg-[#8db600] text-black font-black text-xs flex items-center justify-center shrink-0 uppercase shadow-2xs">
+                      <div className="w-7 h-7 rounded-full bg-[#8db600] text-black font-black text-xs flex items-center justify-center shrink-0 uppercase shadow-xs">
                         {senderInitials}
                       </div>
                       <div className="min-w-0 truncate">
@@ -1231,7 +1231,7 @@ export const Webmail: React.FC<Props> = ({
                       {selectedEmail.attachments.map((att, idx) => (
                         <div
                           key={idx}
-                          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-[#0D0D0D] shadow-2xs hover:border-[#8db600] transition-all cursor-pointer font-medium"
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-[#0D0D0D] shadow-xs hover:border-[#8db600] transition-all cursor-pointer font-medium"
                           onClick={() => alert(`Downloading attachment: ${att.filename}`)}
                         >
                           <FileText className="w-3.5 h-3.5 text-[#8db600]" />
@@ -1245,7 +1245,7 @@ export const Webmail: React.FC<Props> = ({
                 )}
 
                 {/* Safe Sanitized HTML Email Body rendered inside isolated sandboxed iframe */}
-                <div className="flex-1 w-full min-h-[480px] bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+                <div className="flex-1 w-full min-h-[480px] bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
                   <iframe
                     key={selectedEmail.id}
                     title={`Email Body: ${decodedSubject}`}
@@ -1268,7 +1268,10 @@ export const Webmail: React.FC<Props> = ({
 
       {/* Settings / Edit Modal */}
       {isSettingsOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setIsSettingsOpen(false); }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto"
+        >
           <div className="bg-[#FFFFFF] w-full max-w-xl rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <div className="flex items-center gap-2">
@@ -1435,7 +1438,10 @@ export const Webmail: React.FC<Props> = ({
 
       {/* Add Mailbox Modal */}
       {isAddAccountOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setIsAddAccountOpen(false); }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4"
+        >
           <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <h3 className="text-xl font-bold text-[#020617] flex items-center gap-2">
@@ -1574,7 +1580,10 @@ export const Webmail: React.FC<Props> = ({
 
       {/* Compose Mail Modal */}
       {isComposeOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-2.5 sm:p-4 overflow-y-auto">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) handleCloseCompose(); }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-2.5 sm:p-4 overflow-y-auto"
+        >
           <div className="bg-[#FFFFFF] w-full max-w-2xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-auto text-[#020617] max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <div className="flex items-center gap-2">
@@ -1651,7 +1660,7 @@ export const Webmail: React.FC<Props> = ({
                   )}
                 </div>
 
-                <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-[#FFFFFF] border border-[#E2E8F0] hover:border-[#8db600] text-[#020617] font-semibold text-xs transition-all shadow-2xs">
+                <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-[#FFFFFF] border border-[#E2E8F0] hover:border-[#8db600] text-[#020617] font-semibold text-xs transition-all shadow-xs">
                   <span>Attach PDF / Specs</span>
                   <input
                     type="file"

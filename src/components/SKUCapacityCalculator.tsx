@@ -349,7 +349,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
             <span className="text-xs font-black text-[#020617] whitespace-nowrap">
               Inventory Bottlenecks (&le; 20%):
             </span>
-            <span className="bg-amber-200 text-amber-950 border border-amber-400 text-[10px] px-2 py-0.5 rounded-full font-black font-mono shrink-0 shadow-2xs">
+            <span className="bg-amber-200 text-amber-950 border border-amber-400 text-[10px] px-2 py-0.5 rounded-full font-black font-mono shrink-0 shadow-xs">
               {inventoryBottlenecks.length} Items
             </span>
           </div>
@@ -359,7 +359,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
             {inventoryBottlenecks.map(item => (
               <div
                 key={item.id}
-                className="flex items-center gap-2 bg-[#FEF3C7] hover:bg-[#FDE68A] border border-amber-300 hover:border-amber-400 rounded-lg px-2.5 py-1 text-xs whitespace-nowrap shadow-2xs transition-all shrink-0 cursor-default"
+                className="flex items-center gap-2 bg-[#FEF3C7] hover:bg-[#FDE68A] border border-amber-300 hover:border-amber-400 rounded-lg px-2.5 py-1 text-xs whitespace-nowrap shadow-xs transition-all shrink-0 cursor-default"
                 title={`${item.name} | SKU: ${item.skuOrPartNumber} | Current Stock: ${item.currentStock}/${item.targetThreshold} (${item.percentageRemaining}%)`}
               >
                 <div className="flex items-center gap-1.5">
@@ -378,7 +378,7 @@ export const SKUCapacityCalculator: React.FC<Props> = ({ boms, catalog, folders 
                   <span className="text-red-700 font-bold ml-0.5">({item.percentageRemaining}%)</span>
                 </span>
 
-                <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-1.5 py-0.5 rounded font-mono shadow-2xs">
+                <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-1.5 py-0.5 rounded font-mono shadow-xs">
                   +{item.shortageQty} {item.uom}
                 </span>
               </div>

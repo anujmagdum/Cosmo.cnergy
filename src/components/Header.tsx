@@ -154,7 +154,7 @@ export const Header: React.FC<Props> = ({
           </nav>
 
           {/* Right Section: Action Pill + User Profile Pill + Standalone Logout Icon */}
-          <div className="flex items-center justify-end gap-1.5 sm:gap-2 lg:gap-2.5 xl:gap-3 shrink-0 min-w-0" ref={dropdownRef}>
+          <div className="flex items-center justify-end gap-1.5 sm:gap-2 lg:gap-2.5 xl:gap-3 shrink-0 min-w-0">
             {/* 1-Tap BOM PO Action Button (Green Pill matching Reference) */}
             <button
               onClick={onOpenBOMModal}
@@ -162,13 +162,13 @@ export const Header: React.FC<Props> = ({
               title="1-Tap Multi-Company BOM Procurement Engine"
             >
               <PlusCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black stroke-[2.5]" />
-              <span className="hidden xl:inline">1-Tap BOM PO</span>
-              <span className="xl:hidden text-[11px] sm:text-xs">BOM PO</span>
+              <span className="hidden sm:inline">1-Tap BOM PO</span>
+              <span className="sm:hidden text-[11px]">BOM PO</span>
             </button>
 
             {/* User Profile Pill */}
             {userName || displayEmail ? (
-              <div className="relative min-w-0 shrink">
+              <div className="relative min-w-0 shrink" ref={dropdownRef}>
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                   className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 px-2 sm:px-2.5 xl:px-3 py-1 rounded-full bg-[#0E131B] hover:bg-[#151D29] border border-[#1F293B] transition-all text-left group active:scale-95 cursor-pointer shadow-sm min-w-0 shrink max-w-full"

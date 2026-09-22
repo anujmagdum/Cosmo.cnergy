@@ -1199,7 +1199,7 @@ Cosmo.cnergy Procurement Team`;
       {/* Toast Feedback Notification */}
       {toastFeedback && (
         <div
-          className={`fixed top-20 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce font-bold text-sm ${
+          className={`fixed top-20 right-4 sm:right-6 left-4 sm:left-auto max-w-[calc(100vw-2rem)] z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce font-bold text-sm ${
             toastFeedback.type === 'success' ? 'bg-[#8db600] text-black font-black' : 'bg-red-600 text-white'
           }`}
         >
@@ -1213,32 +1213,31 @@ Cosmo.cnergy Procurement Team`;
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-slate-950 flex items-center gap-2.5">
             <Layers className="w-6 h-6 text-[#8db600]" />
-            <span>Components & Product Catalog</span>
+            Component Catalog ({catalog.length})
           </h2>
-          <p className="text-xs text-slate-700 mt-1">
-            Component inventory, assembly folders, relational multi-vendor pricing, and 1-Tap procurement routing.
+          <p className="text-xs sm:text-sm text-slate-700 mt-1">
+            Global repository of procurement parts, real-time pricing, stock buffers, and supplier assignments.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Build Capacity Drawer Trigger */}
+        {/* Global Toolbar Action Buttons */}
+        <div className="flex items-center gap-2.5 flex-wrap">
           <button
-            type="button"
             onClick={() => setIsCalculatorOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
-            title="Open SKU Build Capacity Calculator in slide-over drawer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer bg-slate-900 text-white hover:bg-slate-800 shadow-xs"
+            title="Open SKU Capacity & Shortage Calculator"
           >
             <Calculator className="w-4 h-4 text-[#8db600]" />
-            <span>Build Calculator</span>
+            <span>Capacity Calculator</span>
           </button>
 
           <button
-            type="button"
             onClick={() => setIsAddFolderOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer bg-slate-900 text-white hover:bg-slate-800 shadow-xs"
+            title="Create a new finished goods product assembly"
           >
-            <FolderPlus className="w-4 h-4 text-slate-800" />
-            <span>+ Product Folder</span>
+            <FolderPlus className="w-4 h-4 text-[#8db600]" />
+            <span>New Product Folder</span>
           </button>
 
           <button
@@ -1348,7 +1347,7 @@ Cosmo.cnergy Procurement Team`;
       </div>
 
       {/* SUBSECTION 1: PRODUCT FOLDERS (Collapsible Accordion Header - Collapsed by Default) */}
-      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-3.5 shadow-2xs transition-all">
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl p-3.5 shadow-xs transition-all">
         <div className="flex items-center justify-between">
           <button
             type="button"
@@ -1563,7 +1562,10 @@ Cosmo.cnergy Procurement Team`;
 
           {/* Bulk Send RFQ/PO Modal */}
           {showBulkSendModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto">
+            <div
+              onClick={(e) => { if (e.target === e.currentTarget) { setShowBulkSendModal(false); setBulkSendProgress(null); } }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4 overflow-y-auto"
+            >
               <div className="bg-[#FFFFFF] w-full max-w-2xl rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#020617]">
                 {/* Modal Header */}
                 <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
@@ -1693,7 +1695,7 @@ Cosmo.cnergy Procurement Team`;
                       )}
                     </div>
 
-                    <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-[#FFFFFF] border border-[#E2E8F0] hover:border-[#8db600] text-[#020617] font-semibold text-xs transition-all shadow-2xs">
+                    <label className="cursor-pointer px-3 py-1.5 rounded-xl bg-[#FFFFFF] border border-[#E2E8F0] hover:border-[#8db600] text-[#020617] font-semibold text-xs transition-all shadow-xs">
                       <span>Attach PDF / Specs</span>
                       <input
                         type="file"
@@ -1844,7 +1846,7 @@ Cosmo.cnergy Procurement Team`;
                             e.stopPropagation();
                             setLightboxData({ url: item.image_drive_url!, name: item.name });
                           }}
-                          className="p-1 rounded-md bg-emerald-100 hover:bg-emerald-200 text-[#8db600] border border-emerald-300 transition-all cursor-pointer shrink-0 shadow-2xs flex items-center gap-0.5"
+                          className="p-1 rounded-md bg-[#8db600]/15 hover:bg-[#8db600]/25 text-[#8db600] border border-[#8db600]/30 transition-all cursor-pointer shrink-0 shadow-xs flex items-center gap-0.5"
                           title="Open Google Drive Image Lightbox"
                         >
                           <ImageIcon className="w-3.5 h-3.5 text-[#8db600]" />
@@ -1897,7 +1899,7 @@ Cosmo.cnergy Procurement Team`;
                           setTimeout(() => setToastFeedback(null), 3000);
                         }}
                         onClick={e => e.stopPropagation()}
-                        className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100/90 text-[#8db600] border border-emerald-300 hover:border-[#8db600] transition-all cursor-pointer focus:outline-none shrink-0"
+                        className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#8db600]/15 text-[#8db600] border border-[#8db600]/30 hover:border-[#8db600] transition-all cursor-pointer focus:outline-none shrink-0"
                         title="Click to change category"
                       >
                         <option value="">Uncategorized</option>
@@ -1939,7 +1941,7 @@ Cosmo.cnergy Procurement Team`;
                         e.stopPropagation();
                         handleToggleItemProcurementStatus(item);
                       }}
-                      className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 border border-amber-500/40 text-xs px-2.5 py-1 rounded-md font-semibold flex items-center gap-1.5 shrink-0 select-none shadow-2xs cursor-pointer transition-all"
+                      className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 border border-amber-500/40 text-xs px-2.5 py-1 rounded-md font-semibold flex items-center gap-1.5 shrink-0 select-none shadow-xs cursor-pointer transition-all"
                       title="Click to toggle: Mark as In Stock (badge will disappear)"
                     >
                       <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
@@ -2096,7 +2098,7 @@ Cosmo.cnergy Procurement Team`;
                   }}
                   className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
                     pageSize === size && !isAllPages
-                      ? 'bg-[#8db600] text-black font-black border-[#8db600] shadow-2xs'
+                      ? 'bg-[#8db600] text-black font-black border-[#8db600] shadow-xs'
                       : 'bg-[#FFFFFF] text-slate-700 border-[#E2E8F0] hover:border-[#8db600] hover:bg-slate-50'
                   }`}
                 >
@@ -2111,7 +2113,7 @@ Cosmo.cnergy Procurement Team`;
                 }}
                 className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
                   isAllPages
-                    ? 'bg-[#8db600] text-black font-black border-[#8db600] shadow-2xs'
+                    ? 'bg-[#8db600] text-black font-black border-[#8db600] shadow-xs'
                     : 'bg-[#FFFFFF] text-slate-700 border-[#E2E8F0] hover:border-[#8db600] hover:bg-slate-50'
                 }`}
                 title="Display all components without pagination"
@@ -2174,7 +2176,10 @@ Cosmo.cnergy Procurement Team`;
 
       {/* Add Product Folder Modal */}
       {isAddFolderOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setIsAddFolderOpen(false); }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+        >
           <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <h3 className="text-lg font-bold text-[#020617]">Create New Product Folder</h3>
@@ -2220,7 +2225,10 @@ Cosmo.cnergy Procurement Team`;
 
       {/* Add Component Modal — Responsive: bottom-sheet on mobile, centered on desktop */}
       {isAddCatalogOpen && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setIsAddCatalogOpen(false); }}
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm"
+        >
           <div className="bg-[#FFFFFF] w-full sm:max-w-xl sm:rounded-3xl rounded-t-3xl border border-[#E2E8F0] shadow-2xl flex flex-col max-h-[90vh] text-[#020617]">
             {/* Sticky Header */}
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 px-5 py-4 shrink-0">
@@ -2290,7 +2298,7 @@ Cosmo.cnergy Procurement Team`;
               </div>
 
               {/* Multi-Company Sourcing Association (Tag / Pill UI + Commercial Parameters) */}
-              <div className="space-y-3 p-4 bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] shadow-2xs">
+              <div className="space-y-3 p-4 bg-[#FFFFFF] rounded-2xl border border-[#E2E8F0] shadow-xs">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <div>
                     <label className="block font-bold text-xs text-[#020617] uppercase tracking-wider flex items-center gap-1.5">
@@ -2347,7 +2355,7 @@ Cosmo.cnergy Procurement Team`;
                       return (
                         <span
                           key={item.company_id}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-[#020617] border border-[#E2E8F0] text-xs font-bold shadow-2xs group"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white text-[#020617] border border-[#E2E8F0] text-xs font-bold shadow-xs group"
                         >
                           <Building2 className="w-3 h-3 text-[#8db600]" />
                           <span className="truncate max-w-[140px]">{supp?.name || item.company_id}</span>
@@ -2619,7 +2627,10 @@ Cosmo.cnergy Procurement Team`;
 
       {/* Product Folder View / Details Modal */}
       {activeDetailFolder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setActiveDetailFolder(null); }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto"
+        >
           <div className="bg-[#FFFFFF] w-full max-w-4xl rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-6 my-8 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-4">
               <div className="flex items-center gap-3">
@@ -2735,7 +2746,10 @@ Cosmo.cnergy Procurement Team`;
 
       {/* Folder Deletion Confirmation Dialog */}
       {folderToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setFolderToDelete(null); }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+        >
           <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 text-[#020617]">
             <h3 className="text-lg font-bold text-red-700">Delete Product Folder</h3>
             <p className="text-xs text-[#1e293b]">
@@ -2765,7 +2779,10 @@ Cosmo.cnergy Procurement Team`;
 
       {/* Component Deletion Confirmation Dialog */}
       {componentToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setComponentToDelete(null); }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+        >
           <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 text-[#020617]">
             <h3 className="text-lg font-bold text-red-700">Delete Component</h3>
             <p className="text-xs text-[#1e293b]">

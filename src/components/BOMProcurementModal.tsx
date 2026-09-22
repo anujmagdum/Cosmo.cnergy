@@ -530,7 +530,10 @@ export const BOMProcurementModal: React.FC<Props> = ({
   const selectedDraft = activeDrafts.find(d => d.company.id === activeTabCompanyId) || activeDrafts[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-2.5 sm:p-4 overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-2.5 sm:p-4 overflow-y-auto"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
       <div className="bg-[#FFFFFF] w-full max-w-5xl rounded-2xl sm:rounded-3xl border border-[#E2E8F0] shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-150 text-[#020617] max-h-[96vh] flex flex-col">
         {/* Modal Top Banner */}
         <div className="bg-[#0C0D0E] p-4 sm:p-6 border-b border-[#E2E8F0]/60 flex items-center justify-between text-white shrink-0">
@@ -571,7 +574,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
               className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 activeBOMTab === 'whole_product'
                   ? 'bg-[#8db600] text-black font-black shadow-md'
-                  : 'text-[#1e293b] hover:text-[#020617] hover:bg-white/50'
+                  : 'text-[#1e293b] hover:text-[#020617] hover:bg-slate-100'
               }`}
             >
               <Package className="w-4 h-4" />
@@ -583,7 +586,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
               className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
                 activeBOMTab === 'selected_components'
                   ? 'bg-[#8db600] text-black font-black shadow-md'
-                  : 'text-[#1e293b] hover:text-[#020617] hover:bg-white/50'
+                  : 'text-[#1e293b] hover:text-[#020617] hover:bg-slate-100'
               }`}
             >
               <Layers className="w-4 h-4" />
@@ -700,8 +703,8 @@ export const BOMProcurementModal: React.FC<Props> = ({
                           }}
                           className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border cursor-pointer ${
                             isSelected
-                              ? 'bg-[#8db600] text-black font-black border-[#8db600] shadow-2xs'
-                              : 'bg-white text-[#1e293b] border-[#E2E8F0] hover:text-[#020617] hover:bg-white'
+                              ? 'bg-[#8db600] text-black font-black border-[#8db600] shadow-xs'
+                              : 'bg-white text-[#1e293b] border-[#E2E8F0] hover:text-[#020617] hover:bg-slate-100 hover:border-slate-300'
                           }`}
                         >
                           <span className="font-mono">{isSelected ? '✓' : '+'}</span>
@@ -854,7 +857,7 @@ export const BOMProcurementModal: React.FC<Props> = ({
                                     setSelectedCompQtyOverrides(prev => ({ ...prev, [item.catalogItem.id]: val }));
                                   }
                                 }}
-                                className="w-20 px-2 py-1 text-xs font-mono font-bold bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] rounded-lg text-center focus:outline-none focus:border-[#8db600] shadow-2xs"
+                                className="w-20 px-2 py-1 text-xs font-mono font-bold bg-[#FFFFFF] text-[#0D0D0D] border border-[#E2E8F0] rounded-lg text-center focus:outline-none focus:border-[#8db600] shadow-xs"
                                 title="Edit quantity to satisfy MOQ or batch adjustments"
                               />
                               <span className="text-[10px] text-[#1e293b] font-semibold">

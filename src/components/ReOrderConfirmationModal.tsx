@@ -154,7 +154,10 @@ Cosmo Cnergy Procurement Team`
 
   if (isSuccess) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto"
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      >
         <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-8 border border-[#E2E8F0] shadow-2xl space-y-6 text-center my-8 animate-in fade-in zoom-in-95 duration-150 text-[#0D0D0D]">
           <div className="w-16 h-16 rounded-3xl bg-emerald-500/15 border border-[#8db600]/30 flex items-center justify-center mx-auto text-[#8db600] shadow-md shadow-[#8db600]/20">
             <CheckCircle2 className="w-9 h-9" />
@@ -193,7 +196,10 @@ Cosmo Cnergy Procurement Team`
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
       <div className="bg-[#FFFFFF] w-full max-w-xl rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#0D0D0D]">
         {/* Modal Top Header */}
         <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">

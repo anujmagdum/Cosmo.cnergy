@@ -136,7 +136,10 @@ export const PDFEditorModal: React.FC<Props> = ({ order, onClose, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 overflow-y-auto">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 overflow-y-auto"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
       <div className="bg-[#FFFFFF] w-full max-w-7xl h-[94vh] rounded-3xl border border-[#E2E8F0] shadow-2xl flex flex-col overflow-hidden my-auto text-[#0D0D0D]">
         {/* Modal Top Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0]/60 bg-[#0C0D0E] text-white shrink-0">

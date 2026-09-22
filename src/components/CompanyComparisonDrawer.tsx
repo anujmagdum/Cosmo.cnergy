@@ -312,7 +312,7 @@ export const CompanyComparisonDrawer: React.FC<Props> = ({
                     className={`rounded-2xl p-4 border transition-all space-y-3 ${
                       isWinner
                         ? 'bg-[#FFFBEB] border-2 border-[#8db600] shadow-md ring-2 ring-[#8db600]/40'
-                        : 'bg-[#FFFFFF]/60 hover:bg-[#FFFFFF] border-[#E2E8F0] shadow-2xs'
+                        : 'bg-[#FFFFFF]/60 hover:bg-[#FFFFFF] border-[#E2E8F0] shadow-xs'
                     }`}
                   >
                     {/* Top Row: Rank, Company Info, Match Score */}

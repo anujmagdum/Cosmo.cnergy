@@ -247,7 +247,7 @@ export const CompanyDashboard: React.FC<Props> = ({
       {/* Toast Feedback Notification */}
       {toastFeedback && (
         <div
-          className={`fixed top-20 right-6 z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce font-bold text-sm ${
+          className={`fixed top-20 right-4 sm:right-6 left-4 sm:left-auto max-w-[calc(100vw-2rem)] z-50 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce font-bold text-sm ${
             toastFeedback.type === 'success' ? 'bg-[#8db600] text-black font-black' : 'bg-red-600 text-white'
           }`}
         >
@@ -263,7 +263,7 @@ export const CompanyDashboard: React.FC<Props> = ({
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
             activeCompanyTab === 'all_companies'
               ? 'bg-[#0C0D0E] text-white shadow-md'
-              : 'text-[#020617] hover:bg-[#FFFFFF]'
+              : 'text-[#020617] hover:bg-slate-100'
           }`}
         >
           <Building2 className="w-4 h-4 text-[#8db600]" />
@@ -356,7 +356,7 @@ export const CompanyDashboard: React.FC<Props> = ({
               className={`px-3 py-1 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-[#8db600] text-black font-black shadow-sm'
-                  : 'bg-[#FFFFFF] text-[#020617] hover:bg-[#FFFFFF] border border-[#E2E8F0]'
+                  : 'bg-[#FFFFFF] text-[#020617] hover:bg-slate-50 hover:border-slate-300 border border-[#E2E8F0]'
               }`}
             >
               {cat}
@@ -506,7 +506,10 @@ export const CompanyDashboard: React.FC<Props> = ({
 
       {/* Delete Company Confirmation Modal */}
       {companyToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setCompanyToDelete(null); }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+        >
           <div className="bg-[#FFFFFF] w-full max-w-md rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 text-[#020617]">
             <h3 className="text-lg font-bold text-red-700">Delete Company</h3>
             <p className="text-xs text-[#1e293b]">
@@ -536,7 +539,10 @@ export const CompanyDashboard: React.FC<Props> = ({
 
       {/* Add Company Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setIsAddModalOpen(false); }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
+        >
           <div className="bg-[#FFFFFF] w-full max-w-lg rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <h3 className="text-xl font-bold text-[#020617]">Add New Company</h3>
@@ -693,7 +699,10 @@ export const CompanyDashboard: React.FC<Props> = ({
 
       {/* Edit Company Modal */}
       {editingCompany && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setEditingCompany(null); }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
+        >
           <div className="bg-[#FFFFFF] w-full max-w-lg rounded-3xl p-6 border border-[#E2E8F0] shadow-2xl space-y-4 my-8 text-[#020617]">
             <div className="flex items-center justify-between border-b border-[#E2E8F0]/60 pb-3">
               <div className="flex items-center gap-2">
